@@ -4,7 +4,7 @@ using System.Text;
 using System.Web;
 using System.Web.UI;
 
-namespace ClientDependency.Providers
+namespace ClientDependency.Core.Providers
 {
 	public class ClientSideRegistrationProvider : ClientDependencyProvider
 	{
@@ -21,7 +21,7 @@ namespace ClientDependency.Providers
 		}
 
 		/// <summary>Path to the dependency loader we need for adding control dependencies.</summary>
-		protected const string DependencyLoaderResourceName = "ClientDependency.UmbracoDependencyLoader.js";		
+		protected const string DependencyLoaderResourceName = "ClientDependency.Core.UmbracoDependencyLoader.js";		
 
 		protected override void RegisterJsFiles(List<IClientDependencyFile> jsDependencies)
 		{

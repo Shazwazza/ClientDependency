@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClientDependency
+namespace ClientDependency.Core
 {
 	/// <summary>
 	/// The type of client file

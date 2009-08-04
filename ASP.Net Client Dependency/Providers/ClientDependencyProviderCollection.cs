@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Configuration.Provider;
 
-namespace ClientDependency.Providers
+namespace ClientDependency.Core.Providers
 {
 	public class ClientDependencyProviderCollection : ProviderCollection
 	{

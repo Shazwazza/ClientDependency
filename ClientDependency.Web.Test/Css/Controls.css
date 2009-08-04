@@ -1,0 +1,30 @@
+﻿.control 
+{
+    background-color: #EDF2EE;
+    border:solid 1px #468259;
+    display:block;
+    padding:5px;
+    margin:3px;
+}
+
+.control.header 
+{
+    display:block;
+    height:150px;
+    width:968px;
+}
+
+.control.footer 
+{
+    display:block;
+    height:50px;
+    width:968px;
+}
+
+.control.sidebar 
+{
+    float:left;
+    width:250px;
+    height:100%;
+    display:block;
+}

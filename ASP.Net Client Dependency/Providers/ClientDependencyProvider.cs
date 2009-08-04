@@ -5,9 +5,9 @@ using System.Web.UI;
 using System.Configuration.Provider;
 using System.Web;
 using System.Linq;
-using ClientDependency.Controls;
+using ClientDependency.Core.Controls;
 
-namespace ClientDependency.Providers
+namespace ClientDependency.Core.Providers
 {
 	public abstract class ClientDependencyProvider : ProviderBase
 	{

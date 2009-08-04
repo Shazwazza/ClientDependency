@@ -1,0 +1,38 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Master.master.cs" Inherits="ClientDependency.Core.Web.Test.Pages.Master" %>
+<%@ Register Namespace="ClientDependency.Core.Controls" Assembly="ClientDependency.Core" TagPrefix="CD" %>
+
+<%@ Register src="../Controls/Header.ascx" tagname="Header" tagprefix="uc1" %>
+<%@ Register src="../Controls/Sidebar.ascx" tagname="Sidebar" tagprefix="uc2" %>
+<%@ Register src="../Controls/Footer.ascx" tagname="Footer" tagprefix="uc3" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head runat="server">
+    <title></title>
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+	
+	<CD:ClientDependencyLoader runat="server" id="Loader" ProviderName="PageHeaderProvider">
+		<Paths>
+			<CD:ClientDependencyPath Name="Styles" Path="~/Css" />
+			<%--You can even data bind!--%>
+			<CD:ClientDependencyPath Name="Scripts" Path='<%#"~/Js"%>' />
+		</Paths>
+	</CD:ClientDependencyLoader>
+	
+	<CD:CssInclude ID="CssInclude1" runat="server" FilePath="Site.css" PathNameAlias="Styles" />
+
+    <form id="form1" runat="server">
+    
+    <uc1:Header ID="Header1" runat="server" />    
+    <div class="clearfix">
+		<uc2:Sidebar ID="Sidebar1" runat="server" />    
+        <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server"></asp:ContentPlaceHolder>
+    </div>
+	<uc3:Footer ID="Footer1" runat="server" />
+    </form>
+</body>
+</html>

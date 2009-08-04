@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Web.UI;
 
-namespace ClientDependency.Controls
+namespace ClientDependency.Core.Controls
 {
 	
 	/// <summary>

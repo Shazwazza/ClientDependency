@@ -5,7 +5,7 @@ using System.Text;
 using System.Web;
 using System.Web.UI;
 
-namespace ClientDependency
+namespace ClientDependency.Core
 {
 	public class BasicClientDependencyPath : IClientDependencyPath
 	{

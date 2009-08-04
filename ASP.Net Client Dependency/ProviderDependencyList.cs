@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ClientDependency.Providers;
+using ClientDependency.Core.Providers;
 
-namespace ClientDependency
+namespace ClientDependency.Core
 {
 	internal class ProviderDependencyList
 	{

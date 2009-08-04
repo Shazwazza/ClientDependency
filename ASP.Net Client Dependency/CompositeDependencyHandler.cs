@@ -7,9 +7,9 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Linq;
-using ClientDependency.Config;
+using ClientDependency.Core.Config;
 
-namespace ClientDependency
+namespace ClientDependency.Core
 {
 	public class CompositeDependencyHandler : IHttpHandler
 	{
@@ -30,6 +30,7 @@ namespace ClientDependency
 		/// </summary>
 		/// <remarks>
 		/// If this handler path needs to change, it can be change by setting it in the global.asax on application start
+        /// TODO: Update this so that it searches the web.config handlers for the dependency handler type to get the path
 		/// </remarks>
 		public static string HandlerFileName { get; set; }
 
@@ -100,12 +101,14 @@ namespace ClientDependency
 						SetContentEncodingHeaders(context, cType);
 						//save combined file
 						compositeFileName = CompositeFileProcessor.SaveCompositeFile(outputBytes, type);
-
-						//Update the XML file map
-						CompositeFileXmlMapper.Instance.CreateMap(fileset, cType.ToString(),
-							fDefs
-								.Where(f => f.IsLocalFile)
-							    .Select(x => new FileInfo(context.Server.MapPath(x.Uri))).ToList(), compositeFileName);
+                        if (!string.IsNullOrEmpty(compositeFileName))
+                        {
+                            //Update the XML file map
+                            CompositeFileXmlMapper.Instance.CreateMap(fileset, cType.ToString(),
+                                fDefs
+                                    .Where(f => f.IsLocalFile)
+                                    .Select(x => new FileInfo(context.Server.MapPath(x.Uri))).ToList(), compositeFileName);
+                        }						
 					}
 					else
 					{
@@ -162,8 +165,9 @@ namespace ClientDependency
 			FieldInfo maxAgeField = cache.GetType().GetField("_maxAge", BindingFlags.Instance | BindingFlags.NonPublic);
 			maxAgeField.SetValue(cache, duration);
 
-			//make this output cache dependent on the file.
-			context.Response.AddFileDependency(fileName);
+			//make this output cache dependent on the file if there is one.
+            if (!string.IsNullOrEmpty(fileName))
+			    context.Response.AddFileDependency(fileName);
 		}
 
 		/// <summary>

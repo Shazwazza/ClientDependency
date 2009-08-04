@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ClientDependency.Config;
+using ClientDependency.Core.Config;
 using System.IO;
 using System.Web;
 using System.Net;
 using System.IO.Compression;
 
-namespace ClientDependency
+namespace ClientDependency.Core
 {
 	public enum CompressionType
 	{
@@ -58,6 +58,10 @@ namespace ClientDependency
 		/// </remarks>
 		public static string SaveCompositeFile(byte[] fileContents, ClientDependencyType type)
 		{
+            //don't save the file if composite files are disabled.
+            if (!ClientDependencySettings.Instance.EnableCompositeFiles)
+                return string.Empty;
+
 			if (!ClientDependencySettings.Instance.CompositeFilePath.Exists)
 				ClientDependencySettings.Instance.CompositeFilePath.Create();
 			FileInfo fi = new FileInfo(

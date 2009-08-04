@@ -1,0 +1,11 @@
+﻿.mainContent
+{
+    background-color:#FFF7C0;
+    border:solid 1px #FED626;
+    color:#525150;
+    float:left;
+    clear:right;
+    padding:5px;
+    margin:3px;
+    width:700px;
+}

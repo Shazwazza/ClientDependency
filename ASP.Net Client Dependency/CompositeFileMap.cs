@@ -5,7 +5,7 @@ using System.Text;
 using System.Xml.Linq;
 using System.IO;
 
-namespace ClientDependency
+namespace ClientDependency.Core
 {
 	/// <summary>
 	/// Deserialized structure of the XML stored in the map file

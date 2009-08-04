@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClientDependency
+namespace ClientDependency.Core
 {
 	/// <summary>
 	/// This attribute is used for data types that uses client assets like Javascript and CSS for liveediting.
@@ -51,8 +51,9 @@ namespace ClientDependency
 		public string FilePath { get; set; }
 
 		/// <summary>
-		/// The path alias to be pre-pended to the file path if specified.		
-		/// If the alias specified does not exist in the ClientDependencyLoader
+		/// The path alias to be pre-pended to the file path if specified.
+		/// The alias is specified in in the ClientDependencyHelper constructor.
+		/// If the alias specified does not exist in the ClientDependencyHelper
 		/// path collection, an exception is thrown.
 		/// </summary>
 		public string PathNameAlias { get; set; }

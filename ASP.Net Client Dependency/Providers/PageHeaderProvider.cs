@@ -4,7 +4,7 @@ using System.Text;
 using System.Web.UI;
 using System.Linq;
 
-namespace ClientDependency.Providers
+namespace ClientDependency.Core.Providers
 {
 	public class PageHeaderProvider : ClientDependencyProvider
 	{		

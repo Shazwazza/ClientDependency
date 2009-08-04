@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClientDependency.Controls
+namespace ClientDependency.Core.Controls
 {
 	public class ClientDependencyPathCollection : List<ClientDependencyPath>
 	{

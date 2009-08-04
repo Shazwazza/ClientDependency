@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ClientDependency.Controls
+namespace ClientDependency.Core.Controls
 {
 	public class JsInclude : ClientDependencyInclude
 	{
