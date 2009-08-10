@@ -15,7 +15,7 @@
 </head>
 <body>
 	
-	<CD:ClientDependencyLoader runat="server" id="Loader" ProviderName="PageHeaderProvider">
+	<CD:ClientDependencyLoader runat="server" id="Loader" IsDebugMode="true">
 		<Paths>
 			<CD:ClientDependencyPath Name="Styles" Path="~/Css" />
 			<%--You can even data bind!--%>
@@ -26,6 +26,8 @@
 	<CD:CssInclude ID="CssInclude1" runat="server" FilePath="Site.css" PathNameAlias="Styles" />
 
     <form id="form1" runat="server">
+    
+    
     
     <uc1:Header ID="Header1" runat="server" />    
     <div class="clearfix">

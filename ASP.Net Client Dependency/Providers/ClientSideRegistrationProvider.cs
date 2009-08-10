@@ -21,7 +21,7 @@ namespace ClientDependency.Core.Providers
 		}
 
 		/// <summary>Path to the dependency loader we need for adding control dependencies.</summary>
-		protected const string DependencyLoaderResourceName = "ClientDependency.Core.UmbracoDependencyLoader.js";		
+        protected const string DependencyLoaderResourceName = "ClientDependency.Core.Resources.LazyLoader.js";		
 
 		protected override void RegisterJsFiles(List<IClientDependencyFile> jsDependencies)
 		{
@@ -46,13 +46,30 @@ namespace ClientDependency.Core.Providers
 				foreach (string js in jsList)
 				{
 					ProcessSingleJsFile(string.Format("'{0}','{1}'", js, string.Empty));
-				}
+				}                
 			}
 		}
 
+        protected override void RegisterStartupScripts(List<IClientDependencyFile> jsDependencies)
+        {
+            if (IsDebugMode)
+                return;
+
+            StringBuilder strClientLoader = new StringBuilder("CDLazyLoader");
+            foreach (IClientDependencyFile dependency in jsDependencies)
+            {
+                if (!string.IsNullOrEmpty(dependency.InvokeJavascriptMethodOnLoad))
+                {
+                    strClientLoader.AppendFormat(".RegisterCallbackMethod('{0}')", dependency.InvokeJavascriptMethodOnLoad);
+                    strClientLoader.Append(';');
+                }                
+            }
+            RegisterScript(strClientLoader.ToString());
+        }
+
 		protected override void ProcessSingleJsFile(string js)
 		{
-			StringBuilder strClientLoader = new StringBuilder("UmbDependencyLoader");
+            StringBuilder strClientLoader = new StringBuilder("CDLazyLoader");
 			DependantControl.Page.Trace.Write("ClientDependency", string.Format("Registering: {0}", js));
 			strClientLoader.AppendFormat(".AddJs({0})", js);
 			strClientLoader.Append(';');
@@ -90,7 +107,7 @@ namespace ClientDependency.Core.Providers
 
 		protected override void ProcessSingleCssFile(string css)
 		{
-			StringBuilder strClientLoader = new StringBuilder("UmbDependencyLoader");
+            StringBuilder strClientLoader = new StringBuilder("CDLazyLoader");
 			DependantControl.Page.Trace.Write("ClientDependency", string.Format("Registering: {0}", css));
 			strClientLoader.AppendFormat(".AddCss('{0}')", css);
 			strClientLoader.Append(';');
@@ -111,7 +128,7 @@ namespace ClientDependency.Core.Providers
 
 		private void RegisterScriptFile(string scriptPath)
 		{
-			DependantControl.Page.ClientScript.RegisterClientScriptResource(this.GetType(), scriptPath);
+			DependantControl.Page.ClientScript.RegisterClientScriptResource(typeof(ClientSideRegistrationProvider), scriptPath);
 		}
 
 		private void RegisterScript(string strScript)

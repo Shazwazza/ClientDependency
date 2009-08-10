@@ -8,7 +8,7 @@
     <ProjectGuid>{EA35B06D-0CC8-4830-A3F7-9BB3D36D0FAF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClientDependency.Core.Core</RootNamespace>
+    <RootNamespace>ClientDependency.Core</RootNamespace>
     <AssemblyName>ClientDependency.Core</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -83,7 +83,7 @@
     <Compile Include="Providers\PageHeaderProvider.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="UmbracoDependencyLoader.js" />
+    <EmbeddedResource Include="Resources\LazyLoader.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

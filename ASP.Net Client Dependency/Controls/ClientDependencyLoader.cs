@@ -19,6 +19,9 @@ namespace ClientDependency.Core.Controls
 		{
 			Paths = new ClientDependencyPathCollection();
             
+            //by default the provider is the default provider 
+            Provider = ClientDependencySettings.Instance.DefaultProvider;
+            
             //default debug mode is specified in config but can be overriden in control.
             this.IsDebugMode = ClientDependencySettings.Instance.IsDebugMode;
 
@@ -113,7 +116,7 @@ namespace ClientDependency.Core.Controls
         public string ProviderName
         {
             get
-            {
+            {                
                 return Provider.Name;
             }
             set

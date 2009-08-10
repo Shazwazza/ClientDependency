@@ -75,10 +75,10 @@ namespace ClientDependency.Core.Providers
 		/// <param name="jsDependencies"></param>
 		protected virtual void RegisterStartupScripts(List<IClientDependencyFile> dependencies)
 		{
-			//foreach (var js in dependencies)
-			//{
-			//    DependantControl.Page.ClientScript.RegisterStartupScript(this.GetType(), js.GetHashCode().ToString(), js.InvokeJavascriptMethodOnLoad, true);
-			//}
+            foreach (var js in dependencies)
+            {
+                DependantControl.Page.ClientScript.RegisterStartupScript(this.GetType(), js.GetHashCode().ToString(), string.Format("eval('{0}').call(this)", js.InvokeJavascriptMethodOnLoad), true);
+            }
 		}
 
 		/// <summary>

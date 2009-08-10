@@ -27,3 +27,14 @@ html[xmlns] .clearfix {
 * html .clearfix {
 	height: 1%;
 }
+
+a 
+{
+    color:#525150;
+    font-size:12px;
+    text-decoration:none;
+}
+a:hover 
+{
+    text-decoration:underline;
+}

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ClientDependency")]
+[assembly: AssemblyTitle("ClientDependency.Core")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ClientDependency")]
+[assembly: AssemblyCompany("The Farm Digital")]
+[assembly: AssemblyProduct("ClientDependency.Core")]
 [assembly: AssemblyCopyright("Copyright ©  2009")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -36,4 +36,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
 //ADD RESOURCES
-[assembly: System.Web.UI.WebResource("ClientDependency.Core.UmbracoDependencyLoader.js", "application/x-javascript")]
+[assembly: System.Web.UI.WebResource("ClientDependency.Core.Resources.LazyLoader.js", "text/javascript")]
