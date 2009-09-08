@@ -15,7 +15,7 @@
 </head>
 <body>
 	
-	<CD:ClientDependencyLoader runat="server" id="Loader" IsDebugMode="true">
+	<CD:ClientDependencyLoader runat="server" id="Loader" >
 		<Paths>
 			<CD:ClientDependencyPath Name="Styles" Path="~/Css" />
 			<%--You can even data bind!--%>

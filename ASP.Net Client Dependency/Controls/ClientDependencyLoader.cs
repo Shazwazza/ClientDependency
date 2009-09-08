@@ -4,8 +4,8 @@ using System.Text;
 using System.Web.UI;
 using System.Web;
 using System.Linq;
-using ClientDependency.Core.Providers;
 using ClientDependency.Core.Config;
+using ClientDependency.Core.FileRegistration.Providers;
 
 namespace ClientDependency.Core.Controls
 {
@@ -20,7 +20,7 @@ namespace ClientDependency.Core.Controls
 			Paths = new ClientDependencyPathCollection();
             
             //by default the provider is the default provider 
-            Provider = ClientDependencySettings.Instance.DefaultProvider;
+            Provider = ClientDependencySettings.Instance.DefaultFileRegistrationProvider;
             
             //default debug mode is specified in config but can be overriden in control.
             this.IsDebugMode = ClientDependencySettings.Instance.IsDebugMode;
@@ -121,7 +121,7 @@ namespace ClientDependency.Core.Controls
             }
             set
             {
-                this.Provider = ClientDependencySettings.Instance.ProviderCollection[value];
+                this.Provider = ClientDependencySettings.Instance.FileRegistrationProviderCollection[value];
             }
         }
         //public ClientDependencyEmbedType EmbedType
@@ -147,7 +147,7 @@ namespace ClientDependency.Core.Controls
         //private ClientDependencyEmbedType m_EmbedType = ClientDependencyEmbedType.Header;
 
         public bool IsDebugMode { get; set; }
-		public ClientDependencyProvider Provider { get; set; }
+		public BaseFileRegistrationProvider Provider { get; set; }
 
 
 
@@ -250,7 +250,7 @@ namespace ClientDependency.Core.Controls
 		/// <remarks>
 		/// This is the top most overloaded method
 		/// </remarks>
-		public void RegisterClientDependencies(ClientDependencyProvider provider, ClientDependencyCollection dependencies, IEnumerable<IClientDependencyPath> paths)
+		public void RegisterClientDependencies(BaseFileRegistrationProvider provider, ClientDependencyCollection dependencies, IEnumerable<IClientDependencyPath> paths)
 		{
 			//find or create the ProviderDependencyList for the provider passed in
 			ProviderDependencyList currList = m_Dependencies
@@ -291,18 +291,18 @@ namespace ClientDependency.Core.Controls
 		/// <param name="paths"></param>
 		public void RegisterClientDependencies(string providerName, Control control, IEnumerable<IClientDependencyPath> paths)
 		{
-			RegisterClientDependencies(ClientDependencySettings.Instance.ProviderCollection[providerName], control, paths);
+			RegisterClientDependencies(ClientDependencySettings.Instance.FileRegistrationProviderCollection[providerName], control, paths);
 		}
 
 		/// <summary>
 		/// Registers dependencies with the provider specified by T
 		/// </summary>
 		public void RegisterClientDependencies<T>(Control control, List<IClientDependencyPath> paths)
-			where T : ClientDependencyProvider
+			where T : BaseFileRegistrationProvider
 		{
 			//need to find the provider with the type
-			ClientDependencyProvider found = null;
-			foreach (ClientDependencyProvider p in ClientDependencySettings.Instance.ProviderCollection)
+			BaseFileRegistrationProvider found = null;
+			foreach (BaseFileRegistrationProvider p in ClientDependencySettings.Instance.FileRegistrationProviderCollection)
 			{
 				if (p.GetType().Equals(typeof(T)))
 				{
@@ -316,7 +316,7 @@ namespace ClientDependency.Core.Controls
 			RegisterClientDependencies(found, control, paths);
 		}
 
-		public void RegisterClientDependencies(ClientDependencyProvider provider, Control control, IEnumerable<IClientDependencyPath> paths)
+		public void RegisterClientDependencies(BaseFileRegistrationProvider provider, Control control, IEnumerable<IClientDependencyPath> paths)
 		{
 			ClientDependencyCollection dependencies = FindDependencies(control);
 			RegisterClientDependencies(provider, dependencies, paths);

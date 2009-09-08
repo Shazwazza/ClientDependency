@@ -4,9 +4,9 @@ using System.Text;
 using System.Web.UI;
 using System.Linq;
 
-namespace ClientDependency.Core.Providers
+namespace ClientDependency.Core.FileRegistration.Providers
 {
-	public class PageHeaderProvider : ClientDependencyProvider
+	public class PageHeaderProvider : BaseFileRegistrationProvider
 	{		
 
 		public const string DefaultName = "PageHeaderProvider";

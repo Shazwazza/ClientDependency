@@ -6,10 +6,11 @@ using System.Configuration.Provider;
 using System.Web;
 using System.Linq;
 using ClientDependency.Core.Controls;
+using ClientDependency.Core.Config;
 
-namespace ClientDependency.Core.Providers
+namespace ClientDependency.Core.FileRegistration.Providers
 {
-	public abstract class ClientDependencyProvider : ProviderBase
+	public abstract class BaseFileRegistrationProvider : ProviderBase
 	{
 		protected Control DependantControl { get; private set; }
 		protected HashSet<IClientDependencyPath> FolderPaths { get; private set; }
@@ -109,7 +110,7 @@ namespace ClientDependency.Core.Providers
 			{
 				files.Append(a.FilePath + ";");
 			}
-			string combinedurl = string.Format(handler, CompositeDependencyHandler.HandlerFileName, HttpContext.Current.Server.UrlEncode(EncodeTo64(files.ToString())), type.ToString());
+			string combinedurl = string.Format(handler, ClientDependencySettings.Instance.CompositeFileHandlerPath, HttpContext.Current.Server.UrlEncode(EncodeTo64(files.ToString())), type.ToString());
 			rVal.Add(combinedurl);
 
 			//add any urls that are not to be optimized

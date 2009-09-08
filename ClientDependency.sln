@@ -6,6 +6,18 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientDependency.Web.Test", "ClientDependency.Web.Test\ClientDependency.Web.Test.csproj", "{D2DA8882-0CCE-4AE0-87BF-9947B0D19CC6}"
 EndProject
 Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 3
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs04.codeplex.com/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = ClientDependency.Web.Test\\ClientDependency.Web.Test.csproj
+		SccProjectName1 = ClientDependency.Web.Test
+		SccLocalPath1 = ClientDependency.Web.Test
+		SccProjectUniqueName2 = ASP.Net\u0020Client\u0020Dependency\\ClientDependency.Core.csproj
+		SccProjectName2 = ASP.Net\u0020Client\u0020Dependency
+		SccLocalPath2 = ASP.Net\u0020Client\u0020Dependency
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU

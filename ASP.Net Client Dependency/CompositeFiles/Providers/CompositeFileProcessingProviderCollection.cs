@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.Configuration.Provider;
 
-namespace ClientDependency.Core.Providers
+namespace ClientDependency.Core.CompositeFiles.Providers
 {
-	public class ClientDependencyProviderCollection : ProviderCollection
+	public class CompositeFileProcessingProviderCollection : ProviderCollection
 	{
-		public new ClientDependencyProvider this[string name]
+		public new BaseCompositeFileProcessingProvider this[string name]
 		{
-			get { return (ClientDependencyProvider)base[name]; }
+			get { return (BaseCompositeFileProcessingProvider)base[name]; }
 		}
 
 		public override void Add(ProviderBase provider)
@@ -17,7 +17,7 @@ namespace ClientDependency.Core.Providers
 			if (provider == null)
 				throw new ArgumentNullException("provider");
 
-			if (!(provider is ClientDependencyProvider))
+			if (!(provider is BaseCompositeFileProcessingProvider))
 				throw new ArgumentException("Invalid provider type", "provider");
 
 			base.Add(provider);

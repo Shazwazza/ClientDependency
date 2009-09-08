@@ -4,12 +4,12 @@ using System.Text;
 using System.Web;
 using System.Web.UI;
 
-namespace ClientDependency.Core.Providers
+namespace ClientDependency.Core.FileRegistration.Providers
 {
-	public class ClientSideRegistrationProvider : ClientDependencyProvider
+	public class LazyLoadProvider : BaseFileRegistrationProvider
 	{
 
-		public const string DefaultName = "ClientSideRegistrationProvider";
+		public const string DefaultName = "LazyLoadProvider";
 
 		public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
 		{
@@ -128,7 +128,7 @@ namespace ClientDependency.Core.Providers
 
 		private void RegisterScriptFile(string scriptPath)
 		{
-			DependantControl.Page.ClientScript.RegisterClientScriptResource(typeof(ClientSideRegistrationProvider), scriptPath);
+			DependantControl.Page.ClientScript.RegisterClientScriptResource(typeof(LazyLoadProvider), scriptPath);
 		}
 
 		private void RegisterScript(string strScript)

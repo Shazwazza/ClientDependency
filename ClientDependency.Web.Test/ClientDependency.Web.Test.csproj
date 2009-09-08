@@ -11,6 +11,10 @@
     <RootNamespace>ClientDependency.Core.Web.Test</RootNamespace>
     <AssemblyName>ClientDependency.Web.Test</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -90,12 +94,12 @@
     <Compile Include="Pages\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\LazyLoadProvider.aspx.cs">
-      <DependentUpon>LazyLoadProvider.aspx</DependentUpon>
+    <Compile Include="Pages\LazyLoadProviderTest.aspx.cs">
+      <DependentUpon>LazyLoadProviderTest.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\LazyLoadProvider.aspx.designer.cs">
-      <DependentUpon>LazyLoadProvider.aspx</DependentUpon>
+    <Compile Include="Pages\LazyLoadProviderTest.aspx.designer.cs">
+      <DependentUpon>LazyLoadProviderTest.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Master.Master.cs">
       <DependentUpon>Master.Master</DependentUpon>
@@ -110,7 +114,7 @@
     <Content Include="Css\Content.css" />
     <Content Include="Js\FooterScript.js" />
     <Content Include="Js\jquery-1.3.2.min.js" />
-    <Content Include="Pages\LazyLoadProvider.aspx" />
+    <Content Include="Pages\LazyLoadProviderTest.aspx" />
     <Content Include="Pages\Master.Master" />
   </ItemGroup>
   <ItemGroup>
