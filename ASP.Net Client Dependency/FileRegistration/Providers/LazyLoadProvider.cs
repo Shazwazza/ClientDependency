@@ -55,12 +55,12 @@ namespace ClientDependency.Core.FileRegistration.Providers
             if (IsDebugMode)
                 return;
 
-            StringBuilder strClientLoader = new StringBuilder("CDLazyLoader");
+            StringBuilder strClientLoader = new StringBuilder();
             foreach (IClientDependencyFile dependency in jsDependencies)
             {
                 if (!string.IsNullOrEmpty(dependency.InvokeJavascriptMethodOnLoad))
                 {
-                    strClientLoader.AppendFormat(".RegisterCallbackMethod('{0}')", dependency.InvokeJavascriptMethodOnLoad);
+					strClientLoader.AppendFormat("CDLazyLoader.RegisterCallbackMethod('{0}')", dependency.InvokeJavascriptMethodOnLoad);
                     strClientLoader.Append(';');
                 }                
             }

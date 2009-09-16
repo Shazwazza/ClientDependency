@@ -92,6 +92,12 @@ namespace ClientDependency.Core.Controls
 			}				
 		}
 
+		/// <summary>
+		/// TODO: Can we render everything after pre render somehow? if we do it on the render method
+		/// than provider need to actual 'write' their own output and can't rely on scriptmanager or page
+		/// to render dependencies.
+		/// </summary>
+		/// <param name="e"></param>
 		protected override void OnPreRender(EventArgs e)
 		{
 			base.OnPreRender(e);
@@ -252,16 +258,46 @@ namespace ClientDependency.Core.Controls
 		/// </remarks>
 		public void RegisterClientDependencies(BaseFileRegistrationProvider provider, ClientDependencyCollection dependencies, IEnumerable<IClientDependencyPath> paths)
 		{
-			//find or create the ProviderDependencyList for the provider passed in
+			//find or create the ProviderDependencyList for the provider
 			ProviderDependencyList currList = m_Dependencies
 				.Where(x => x.Contains(provider))
 				.DefaultIfEmpty(new ProviderDependencyList(provider))
 				.SingleOrDefault();
-			//add the dependencies
-			currList.AddDependencies(dependencies);
+			//add the dependencies that don't have a provider specified
+			currList.AddDependencies(dependencies
+				.Where(x => string.IsNullOrEmpty(x.ForceProvider)));
 			//add the list if it is new
 			if (!m_Dependencies.Contains(currList))
 				m_Dependencies.Add(currList);
+
+			//we need to look up all of the dependencies that have forced providers, 
+			//check if we've got a provider list for it, create one if not and add the dependencies
+			//to it.
+			List<BaseFileRegistrationProvider> forceProviders = new List<BaseFileRegistrationProvider>();
+			var allProviderNamesInList = dependencies
+				.Select(x => x.ForceProvider)
+				.Where(x => !string.IsNullOrEmpty(x))
+				.Distinct();
+			foreach (var provName in allProviderNamesInList)
+			{
+				if (ClientDependencySettings.Instance.FileRegistrationProviderCollection[provName] != null)
+					forceProviders.Add(ClientDependencySettings.Instance.FileRegistrationProviderCollection[provName]);
+			}
+			foreach (var prov in forceProviders)
+			{
+				//find or create the ProviderDependencyList for the prov
+				ProviderDependencyList forceList = m_Dependencies
+					.Where(x => x.Contains(prov))
+					.DefaultIfEmpty(new ProviderDependencyList(prov))
+					.SingleOrDefault();
+				//add the dependencies that don't have a force provider specified
+				forceList.AddDependencies(dependencies
+					.Where(x => x.ForceProvider == prov.Name));
+				//add the list if it is new
+				if (!m_Dependencies.Contains(forceList))
+					m_Dependencies.Add(forceList);
+			}
+			
 			//add the paths, ensure no dups
 			m_Paths.UnionWith(paths);
 		}

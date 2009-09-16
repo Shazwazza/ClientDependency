@@ -50,6 +50,10 @@ namespace ClientDependency.Core.Controls
         public string PathNameAlias { get; set; }
         public int Priority { get; set; }
         public string InvokeJavascriptMethodOnLoad { get; set; }
+		/// <summary>
+		/// This can be empty and will use default provider
+		/// </summary>
+		public string ForceProvider { get; set; }
 
 		protected override void OnPreRender(EventArgs e)
 		{

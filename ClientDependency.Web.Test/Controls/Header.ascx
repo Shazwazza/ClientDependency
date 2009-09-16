@@ -10,6 +10,7 @@
 	This is a header
 	<ul>
 		<li><a href="/Pages/Default.aspx">Default Provider</a></li>
-		<li><a href="/Pages/LazyLoadProvider.aspx">Lazy Load Provider with dynamic registration</a></li>
+		<li><a href="/Pages/LazyLoadProviderTest.aspx">Lazy Load Provider with dynamic registration</a></li>
+		<li><a href="/Pages/ForcedProviders.aspx">Default Provider with a Forced Lazy Load provider dependency</a></li>
 	</ul>
 </div>

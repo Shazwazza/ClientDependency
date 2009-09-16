@@ -45,6 +45,11 @@ namespace ClientDependency.Core
 		public int Priority { get; set; }
 
 		/// <summary>
+		/// This can be empty and will use default provider
+		/// </summary>
+		public string ForceProvider { get; set; }
+
+		/// <summary>
 		/// Gets or sets the file path.
 		/// </summary>
 		/// <value>The file path.</value>

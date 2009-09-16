@@ -8,10 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClientDependency.Core.Web.Test.Controls {
+namespace ClientDependency.Core.Web.Test.Pages {
     
     
-    public partial class Header {
+    public partial class FocedProviders {
         
         /// <summary>
         /// JsInclude1 control.
@@ -30,5 +30,14 @@ namespace ClientDependency.Core.Web.Test.Controls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClientDependency.Core.Controls.CssInclude CssInclude1;
+        
+        /// <summary>
+        /// JsInclude2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClientDependency.Core.Controls.JsInclude JsInclude2;
     }
 }

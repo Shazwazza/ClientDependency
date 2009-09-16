@@ -20,6 +20,10 @@ namespace ClientDependency.Core
 		public int Priority { get; set; }
 		public string PathNameAlias { get; set; }
 		public bool DoNotOptimize { get; set; }
+		/// <summary>
+		/// This can be empty and will use default provider
+		/// </summary>
+		public string ForceProvider { get; set; }
 
 		#endregion
 	}

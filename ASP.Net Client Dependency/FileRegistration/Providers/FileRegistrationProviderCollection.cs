@@ -22,6 +22,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
 			base.Add(provider);
 		}
+
 	}
 
 }

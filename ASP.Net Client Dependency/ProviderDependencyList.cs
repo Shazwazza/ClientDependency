@@ -20,7 +20,7 @@ namespace ClientDependency.Core
 			return Provider.Name == provider.Name;
 		}
 
-		internal void AddDependencies(ClientDependencyCollection list)
+		internal void AddDependencies(IEnumerable<IClientDependencyFile> list)
 		{
 			Dependencies.UnionWith(list);
 		}

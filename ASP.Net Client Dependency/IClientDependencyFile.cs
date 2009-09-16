@@ -12,5 +12,6 @@ namespace ClientDependency.Core
 		int Priority { get; set; }
         string PathNameAlias { get; set; }
 		bool DoNotOptimize { get; set; }
+		string ForceProvider { get; set; }
 	}
 }
