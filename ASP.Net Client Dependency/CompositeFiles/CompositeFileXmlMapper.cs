@@ -111,13 +111,13 @@ namespace ClientDependency.Core.CompositeFiles
 		/// </summary>
 		/// <param name="base64Key"></param>
 		/// <returns></returns>
-		public CompositeFileMap GetCompositeFile(string base64Key)
+		public CompositeFileMap GetCompositeFile(string base64Key, int version)
 		{
             //return null if composite files are disabled.
             if (!ClientDependencySettings.Instance.EnableCompositeFiles)
                 return null;
 
-			XElement x = FindItem(base64Key);
+			XElement x = FindItem(base64Key, version);
 			try
 			{
 				return (x == null ? null : new CompositeFileMap(base64Key,
@@ -125,7 +125,7 @@ namespace ClientDependency.Core.CompositeFiles
 				x.Attribute("file").Value,
 				x.Descendants("file")
 					.Select(f => new FileInfo(f.Attribute("name").Value))
-					.ToList()));
+                    .ToList(), int.Parse(x.Attribute("version").Value)));
 			}
 			catch
 			{
@@ -153,7 +153,7 @@ namespace ClientDependency.Core.CompositeFiles
 		/// </map>
 		/// ]]>
 		/// </example>
-		public void CreateMap(string base64Key, string compressionType, List<FileInfo> dependentFiles, string compositeFile)
+		public void CreateMap(string base64Key, string compressionType, List<FileInfo> dependentFiles, string compositeFile, int version)
 		{
             //return if composite files are disabled.
             if (!ClientDependencySettings.Instance.EnableCompositeFiles)
@@ -162,7 +162,7 @@ namespace ClientDependency.Core.CompositeFiles
 			lock (m_Lock)
 			{
 				//see if we can find an item with the key already
-				XElement x = FindItem(base64Key);
+				XElement x = FindItem(base64Key, version);
 
 				if (x != null)
 				{
@@ -179,6 +179,7 @@ namespace ClientDependency.Core.CompositeFiles
 						new XAttribute("key", base64Key),
 						new XAttribute("file", compositeFile),
 						new XAttribute("compression", compressionType),
+                        new XAttribute("version", version),
 						CreateFileNode(dependentFiles)));
 				}
 
@@ -186,10 +187,10 @@ namespace ClientDependency.Core.CompositeFiles
 			}
 		}
 
-		private XElement FindItem(string key)
+		private XElement FindItem(string key, int version)
 		{
 			return m_Doc.Root.Elements("item")
-					.Where(e => (string)e.Attribute("key") == key)
+					.Where(e => (string)e.Attribute("key") == key && (string)e.Attribute("version") == version.ToString())
 					.SingleOrDefault();
 		}
 

@@ -97,7 +97,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 		/// If the DoNotOptimize setting has been set for any of the dependencies in the list, then this will ignore them.
 		/// </remarks>
 		/// <returns></returns>
-		protected List<string> ProcessCompositeList(List<IClientDependencyFile> dependencies, ClientDependencyType type)
+		public List<string> ProcessCompositeList(List<IClientDependencyFile> dependencies, ClientDependencyType type)
 		{
 			List<string> rVal = new List<string>();
 			if (dependencies.Count == 0)
@@ -111,12 +111,12 @@ namespace ClientDependency.Core.FileRegistration.Providers
 				files.Append(a.FilePath + ";");
 			}
 			string combinedurl = string.Format(handler, ClientDependencySettings.Instance.CompositeFileHandlerPath, HttpContext.Current.Server.UrlEncode(EncodeTo64(files.ToString())), type.ToString());
-			rVal.Add(combinedurl);
+            rVal.Add(AppendVersionQueryString(combinedurl)); //append our version to the combined url
 
-			//add any urls that are not to be optimized
+			//add any urls that are not to be optimized, add the version string to them
 			foreach (IClientDependencyFile a in dependencies.Where(x => x.DoNotOptimize))
 			{
-				rVal.Add(a.FilePath);
+				rVal.Add(AppendVersionQueryString(a.FilePath));
 			}
 			
 			//if (url.Length > CompositeDependencyHandler.MaxHandlerUrlLength)
@@ -162,8 +162,26 @@ namespace ClientDependency.Core.FileRegistration.Providers
 				{
 					dependency.FilePath = DependantControl.ResolveUrl(dependency.FilePath);
 				}
+
+                //append query strings to each file if we are in debug mode
+                if (ClientDependencySettings.Instance.IsDebugMode)
+                {
+                    dependency.FilePath = AppendVersionQueryString(dependency.FilePath);
+                }
 			}
 		}
+
+        private string AppendVersionQueryString(string url)
+        {
+            if (ClientDependencySettings.Instance.Version == 0)
+                return url;
+
+            //ensure there's not duplicated query string syntax
+            url += url.Contains('?') ? "&" : "?";
+            //append a version
+            url += "cdv=" + ClientDependencySettings.Instance.Version.ToString();
+            return url;
+        }
 		
 
 	}

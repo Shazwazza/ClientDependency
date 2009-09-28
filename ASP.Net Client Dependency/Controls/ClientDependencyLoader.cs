@@ -184,6 +184,17 @@ namespace ClientDependency.Core.Controls
 
 		}
 
+        public static string GetCompositeUrl(IEnumerable<string> urls, ClientDependencyType type)
+        {
+            List<IClientDependencyFile> list = urls
+                .Select(x => new BasicClientDependencyFile(type) {
+                     FilePath = x                      
+                }).Cast<IClientDependencyFile>()
+                .ToList();
+            return ClientDependencySettings.Instance
+                .DefaultFileRegistrationProvider.ProcessCompositeList(list, type)[0];          
+        }
+
 		#endregion
 
 		/// <summary>

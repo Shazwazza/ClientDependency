@@ -50,6 +50,8 @@ namespace ClientDependency.Core.CompositeFiles
 			HttpResponse response = context.Response;
 			string fileset = context.Server.UrlDecode(context.Request["s"]);
 			ClientDependencyType type;
+            int version = 0;
+            int.TryParse(context.Request["cdv"], out version);
 			try
 			{
 				type = (ClientDependencyType)Enum.Parse(typeof(ClientDependencyType), context.Request["t"], true);
@@ -66,7 +68,7 @@ namespace ClientDependency.Core.CompositeFiles
 			byte[] outputBytes = null;
 
 			//get the map to the composite file for this file set, if it exists.
-			CompositeFileMap map = CompositeFileXmlMapper.Instance.GetCompositeFile(fileset);
+			CompositeFileMap map = CompositeFileXmlMapper.Instance.GetCompositeFile(fileset, version);
 			
 			if (map != null && map.HasFileBytes)
 			{
@@ -101,7 +103,8 @@ namespace ClientDependency.Core.CompositeFiles
                             CompositeFileXmlMapper.Instance.CreateMap(fileset, cType.ToString(),
                                 fDefs
                                     .Where(f => f.IsLocalFile)
-                                    .Select(x => new FileInfo(context.Server.MapPath(x.Uri))).ToList(), compositeFileName);
+                                    .Select(x => new FileInfo(context.Server.MapPath(x.Uri))).ToList(), compositeFileName, 
+                                    ClientDependencySettings.Instance.Version);
                         }						
 					}
 					else

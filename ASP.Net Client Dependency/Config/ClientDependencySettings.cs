@@ -64,6 +64,7 @@ namespace ClientDependency.Core.Config
         /// </summary>
         public bool EnableCompositeFiles { get; set; }
         public bool IsDebugMode { get; set; }
+        public int Version { get; set; }
 		public BaseFileRegistrationProvider DefaultFileRegistrationProvider
 		{
 			get
@@ -151,6 +152,7 @@ namespace ClientDependency.Core.Config
 
 						CompositeFileHandlerPath = section.CompositeFileElement.CompositeFileHandlerPath;
                         IsDebugMode = section.IsDebugMode;
+                        this.Version = section.Version;
                         EnableCompositeFiles = section.FileRegistrationElement.EnableCompositeFiles;
 						FileBasedDependencyExtensionList = section.FileRegistrationElement.FileBasedDependencyExtensionList.ToList();
 						CompositeFilePath = new DirectoryInfo(HttpContext.Current.Server.MapPath(section.CompositeFileElement.CompositeFilePath));

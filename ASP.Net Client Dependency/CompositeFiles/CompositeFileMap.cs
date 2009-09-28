@@ -13,17 +13,19 @@ namespace ClientDependency.Core.CompositeFiles
 	public class CompositeFileMap
 	{
 
-		internal CompositeFileMap(string key, string compressionType, string file, List<FileInfo> files)
+		internal CompositeFileMap(string key, string compressionType, string file, List<FileInfo> files, int version)
 		{
 			DependentFiles = files;
 			Base64Key = key;
 			CompositeFileName = file;
 			CompressionType = compressionType;
+            Version = version;
 		}
 
 		public string Base64Key { get; private set; }
 		public string CompositeFileName { get; private set; }
 		public string CompressionType { get; private set; }
+        public int Version { get; private set; }
 
 		private byte[] m_FileBytes;
 

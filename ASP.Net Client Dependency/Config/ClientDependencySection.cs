@@ -9,9 +9,19 @@ namespace ClientDependency.Core.Config
 	public class ClientDependencySection : ConfigurationSection
 	{
 
-		
 
-        
+
+        /// <summary>
+        /// Set the version for the files, this will reset all composite file caching, and if
+        /// composite files are disabled will add a query string to each request so that 
+        /// any client side cached files will be re-downloaded.
+        /// </summary>
+        [ConfigurationProperty("version", DefaultValue = 0)]
+        public int Version
+        {
+            get { return (int)base["version"]; }
+            set { base["version"] = value; }
+        }
         
         /// <summary>
         /// Set the default isDebugMode property for all loaders

@@ -40,7 +40,8 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 				ClientDependencySettings.Instance.CompositeFilePath.Create();
 			FileInfo fi = new FileInfo(
 				Path.Combine(ClientDependencySettings.Instance.CompositeFilePath.FullName,
-					fileContents.GetHashCode().ToString() + ".cd" + type.ToString().Substring(0, 1).ToLower()));
+					ClientDependencySettings.Instance.Version.ToString() + "_" 
+                        + fileContents.GetHashCode().ToString() + ".cd" + type.ToString().Substring(0, 1).ToLower()));
 			if (fi.Exists)
 				fi.Delete();
 			FileStream fs = fi.Create();
