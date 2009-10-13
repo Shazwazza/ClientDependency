@@ -11,16 +11,55 @@ using System.Configuration.Provider;
 
 namespace ClientDependency.Core.CompositeFiles.Providers
 {
-	public abstract class BaseCompositeFileProcessingProvider : ProviderBase, ICompositeFileProcessingProvider
+	public abstract class BaseCompositeFileProcessingProvider : ProviderBase
 	{
 
-		#region ICompositeFileProcessingProvider Members
+		#region Provider Members
 
 		public abstract FileInfo SaveCompositeFile(byte[] fileContents, ClientDependencyType type);
 		public abstract byte[] CombineFiles(string[] strFiles, HttpContext context, ClientDependencyType type, out List<CompositeFileDefinition> fileDefs);
 		public abstract byte[] CompressBytes(CompressionType type, byte[] fileBytes);
 
+        public virtual bool EnableCssMinify { get; set; }
+        public virtual bool EnableJsMinify { get; set; }
+
 		#endregion
+
+        public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
+        {
+            EnableCssMinify = true;//enabled by default
+            EnableJsMinify = true;//enabled by default
+            if (config != null)
+            {
+                if (config["enableCssMinify"] != null)
+                {
+                    bool enableCssMinify;
+                    if (bool.TryParse(config["enableCssMinify"], out enableCssMinify))
+                        EnableCssMinify = enableCssMinify;
+                }
+                if (config["enableJsMinify"] != null)
+                {
+                    bool enableJsMinify;
+                    if (bool.TryParse(config["enableJsMinify"], out enableJsMinify))
+                        EnableJsMinify = enableJsMinify;
+                }
+            }
+
+            base.Initialize(name, config);
+        }
+
+        protected string MinifyFile(string fileContents, ClientDependencyType type)
+        {
+            switch (type)
+            {
+                case ClientDependencyType.Css:
+                    return EnableCssMinify ? CssMin.CompressCSS(fileContents) : fileContents;
+                case ClientDependencyType.Javascript:
+                    return EnableJsMinify ? JSMin.CompressJS(fileContents) : fileContents;
+                default:
+                    return fileContents;
+            }
+        }
 
 		/// <summary>
 		/// This ensures that all paths (i.e. images) in a CSS file have their paths change to absolute paths.

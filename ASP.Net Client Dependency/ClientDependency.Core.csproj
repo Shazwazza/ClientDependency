@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{EA35B06D-0CC8-4830-A3F7-9BB3D36D0FAF}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -53,10 +53,11 @@
   <ItemGroup>
     <Compile Include="BasicClientDependencyFile.cs" />
     <Compile Include="BasicClientDependencyPath.cs" />
+    <Compile Include="CompositeFiles\CSSMin.cs" />
+    <Compile Include="CompositeFiles\JSMin.cs" />
     <Compile Include="CompositeFiles\Providers\BaseCompositeFileProcessingProvider.cs" />
     <Compile Include="CompositeFiles\CompositeFileDefinition.cs" />
     <Compile Include="CompositeFiles\CompressionType.cs" />
-    <Compile Include="CompositeFiles\Providers\ICompositeFileProcessingProvider.cs" />
     <Compile Include="Config\CompositeFileSection.cs" />
     <Compile Include="Config\FileRegistrationSection.cs" />
     <Compile Include="Controls\ClientDependencyInclude.cs" />

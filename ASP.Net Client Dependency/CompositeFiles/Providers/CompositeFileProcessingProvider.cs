@@ -14,7 +14,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 {
 
 	/// <summary>
-	/// A utility class for combining, compressing and saving composite scripts/css files
+	/// A utility class for combining, minifying, compressing and saving composite scripts/css files
 	/// </summary>
 	public class CompositeFileProcessingProvider : BaseCompositeFileProcessingProvider
 	{
@@ -167,7 +167,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 			if (rVal)
 			{
 				//write the contents of the external request.
-				sw.WriteLine(ParseCssFilePaths(requestOutput, type, url));
+                sw.WriteLine(MinifyFile(ParseCssFilePaths(requestOutput, type, url), type));
 				fileDefs.Add(new CompositeFileDefinition(url, false));
 			}
 			return rVal;
@@ -179,7 +179,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 			{
 				//if it is a file based dependency then read it
 				string fileContents = File.ReadAllText(fi.FullName);
-				sw.WriteLine(ParseCssFilePaths(fileContents, type, origUrl));
+                sw.WriteLine(MinifyFile(ParseCssFilePaths(fileContents, type, origUrl), type));
 				fileDefs.Add(new CompositeFileDefinition(origUrl, true));
 				return true;
 			}
