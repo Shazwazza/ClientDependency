@@ -78,7 +78,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 		{
             foreach (var js in dependencies)
             {
-                DependantControl.Page.ClientScript.RegisterStartupScript(this.GetType(), js.GetHashCode().ToString(), string.Format("eval('{0}').call(this)", js.InvokeJavascriptMethodOnLoad), true);
+                DependantControl.Page.ClientScript.RegisterStartupScript(this.GetType(), js.GetHashCode().ToString(), string.Format("eval('{0}').call(this);", js.InvokeJavascriptMethodOnLoad), true);
             }
 		}
 
