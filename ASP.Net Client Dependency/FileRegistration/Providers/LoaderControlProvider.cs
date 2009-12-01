@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Web.UI;
-using System.Linq;
+using ClientDependency.Core.Controls;
 
 namespace ClientDependency.Core.FileRegistration.Providers
 {
-	public class PageHeaderProvider : BaseFileRegistrationProvider
-	{		
-
-		public const string DefaultName = "PageHeaderProvider";
-		
+	public class LoaderControlProvider : BaseFileRegistrationProvider
+	{
+		public const string DefaultName = "LoaderControlProvider";
 
 		public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
-		{			
+		{
 			// Assign the provider a default name if it doesn't have one
 			if (string.IsNullOrEmpty(name))
 				name = DefaultName;
@@ -21,11 +20,13 @@ namespace ClientDependency.Core.FileRegistration.Providers
 			base.Initialize(name, config);
 		}
 
+
+
 		protected override void RegisterJsFiles(List<IClientDependencyFile> jsDependencies)
 		{
 			if (jsDependencies.Count == 0)
 				return;
-			
+
 			if (IsDebugMode)
 			{
 				foreach (IClientDependencyFile dependency in jsDependencies)
@@ -36,26 +37,14 @@ namespace ClientDependency.Core.FileRegistration.Providers
 			else
 			{
 				List<string> jsList = ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript);
-				
+
 				DependantControl.Page.Trace.Write("ClientDependency", string.Format("Processed composite list: {0}", jsList[0]));
-				
+
 				foreach (string js in jsList)
 				{
 					ProcessSingleJsFile(js);
-				}				
+				}
 			}
-
-		}
-
-		
-
-		protected override void ProcessSingleJsFile(string js)
-		{
-			if (DependantControl.Page.Header == null)
-				throw new NullReferenceException("PageHeaderProvider requires a runat='server' tag in the page's header tag");
-
-			DependantControl.Page.Trace.Write("ClientDependency", string.Format("Registering: {0}", js));
-			AddToHead(string.Format(HtmlEmbedContants.ScriptEmbed, js));
 		}
 
 		protected override void RegisterCssFiles(List<IClientDependencyFile> cssDependencies)
@@ -82,24 +71,23 @@ namespace ClientDependency.Core.FileRegistration.Providers
 			}
 		}
 
-		protected override void ProcessSingleCssFile(string css)
+		protected override void ProcessSingleJsFile(string js)
 		{
-			if (DependantControl.Page.Header == null)
-				throw new NullReferenceException("PageHeaderProvider requires a runat='server' tag in the page's header tag");
-			DependantControl.Page.Trace.Write("ClientDependency", string.Format("Registering: {0}", css));
-			AddToHead(string.Format(HtmlEmbedContants.CssEmbed, css));
+			DependantControl.Page.Trace.Write("ClientDependency", string.Format("Registering: {0}", js));
+			AddToControl(string.Format(HtmlEmbedContants.ScriptEmbed, js));
 		}
 
-		/// <summary>
-		/// inserts the dependencies at the top of the head so needs to search the head
-		/// controls to find out where to insert.
-		/// </summary>
-		/// <param name="literal"></param>
-		private void AddToHead(string literal)
+		protected override void ProcessSingleCssFile(string css)
+		{
+			DependantControl.Page.Trace.Write("ClientDependency", string.Format("Registering: {0}", css));
+			AddToControl(string.Format(HtmlEmbedContants.CssEmbed, css));
+		}
+
+		private void AddToControl(string literal)
 		{
 			List<int> indexes = new List<int>();
 			Type iDependency = typeof(IClientDependencyFile);
-			foreach (Control ctl in DependantControl.Page.Header.Controls)
+			foreach (Control ctl in ClientDependencyLoader.Instance.Controls)
 			{
 				if (ctl.ID != null && ctl.ID.StartsWith("CD_"))
 					indexes.Add(DependantControl.Page.Header.Controls.IndexOf(ctl));
@@ -110,9 +98,9 @@ namespace ClientDependency.Core.FileRegistration.Providers
 			LiteralControl dCtl = new LiteralControl(literal);
 			dCtl.ID = "CD_" + newIndex.ToString();
 			if (newIndex >= DependantControl.Page.Header.Controls.Count)
-				DependantControl.Page.Header.Controls.Add(dCtl);
+				ClientDependencyLoader.Instance.Controls.Add(dCtl);
 			else
-				DependantControl.Page.Header.Controls.AddAt(newIndex, dCtl);
+				ClientDependencyLoader.Instance.Controls.AddAt(newIndex, dCtl);
 
 
 		}

@@ -34,7 +34,8 @@ namespace ClientDependency.Core.FileRegistration.Providers
 			{
 				foreach (IClientDependencyFile dependency in jsDependencies)
 				{
-					ProcessSingleJsFile(string.Format("'{0}','{1}'", dependency.FilePath, dependency.InvokeJavascriptMethodOnLoad));
+					//ProcessSingleJsFile(string.Format("'{0}','{1}'", dependency.FilePath, dependency.InvokeJavascriptMethodOnLoad));
+					ProcessSingleJsFile(string.Format("'{0}','{1}'", dependency.FilePath, string.Empty));
 				}
 			}
 			else
@@ -50,22 +51,22 @@ namespace ClientDependency.Core.FileRegistration.Providers
 			}
 		}
 
-        protected override void RegisterStartupScripts(List<IClientDependencyFile> jsDependencies)
-        {
-            if (IsDebugMode)
-                return;
+		//protected override void RegisterStartupScripts(List<IClientDependencyFile> jsDependencies)
+		//{
+		//    if (IsDebugMode)
+		//        return;
 
-            StringBuilder strClientLoader = new StringBuilder();
-            foreach (IClientDependencyFile dependency in jsDependencies)
-            {
-                if (!string.IsNullOrEmpty(dependency.InvokeJavascriptMethodOnLoad))
-                {
-					strClientLoader.AppendFormat("CDLazyLoader.RegisterCallbackMethod('{0}')", dependency.InvokeJavascriptMethodOnLoad);
-                    strClientLoader.Append(';');
-                }                
-            }
-            RegisterScript(strClientLoader.ToString());
-        }
+		//    StringBuilder strClientLoader = new StringBuilder();
+		//    foreach (IClientDependencyFile dependency in jsDependencies)
+		//    {
+		//        if (!string.IsNullOrEmpty(dependency.InvokeJavascriptMethodOnLoad))
+		//        {
+		//            strClientLoader.AppendFormat("CDLazyLoader.RegisterCallbackMethod('{0}')", dependency.InvokeJavascriptMethodOnLoad);
+		//            strClientLoader.Append(';');
+		//        }                
+		//    }
+		//    RegisterScript(strClientLoader.ToString());
+		//}
 
 		protected override void ProcessSingleJsFile(string js)
 		{

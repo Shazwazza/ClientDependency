@@ -18,11 +18,11 @@ namespace ClientDependency.Core.Controls
 		public ClientDependencyInclude(IClientDependencyFile file)
 		{
 			Priority = file.Priority;
-			DoNotOptimize = file.DoNotOptimize;
+			//DoNotOptimize = file.DoNotOptimize;
 			PathNameAlias = file.PathNameAlias;
 			FilePath = file.FilePath;
 			DependencyType = file.DependencyType;
-			InvokeJavascriptMethodOnLoad = file.InvokeJavascriptMethodOnLoad;
+			//InvokeJavascriptMethodOnLoad = file.InvokeJavascriptMethodOnLoad;
 		}
 
         /// <summary>

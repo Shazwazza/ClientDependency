@@ -62,25 +62,25 @@ namespace ClientDependency.Core.FileRegistration.Providers
             RegisterCssFiles(cssDependencies.ConvertAll<IClientDependencyFile>(a => { return (IClientDependencyFile)a; }));
 			RegisterJsFiles(jsDependencies.ConvertAll<IClientDependencyFile>(a => { return (IClientDependencyFile)a; }));
 
-			//Register all startup scripts in order
-			RegisterStartupScripts(dependencies
-				.Where(x => !string.IsNullOrEmpty(x.InvokeJavascriptMethodOnLoad))
-				.OrderBy(x => x.Priority)
-				.ToList());
+			////Register all startup scripts in order
+			//RegisterStartupScripts(dependencies
+			//    .Where(x => !string.IsNullOrEmpty(x.InvokeJavascriptMethodOnLoad))
+			//    .OrderBy(x => x.Priority)
+			//    .ToList());
 		}
 
-		/// <summary>
-		/// Registers all of the methods/scripts to be invoked that have been set in the InvokeJavaScriptMethodOnLoad propery
-		/// for each dependent js script.
-		/// </summary>
-		/// <param name="jsDependencies"></param>
-		protected virtual void RegisterStartupScripts(List<IClientDependencyFile> dependencies)
-		{
-            foreach (var js in dependencies)
-            {
-                DependantControl.Page.ClientScript.RegisterStartupScript(this.GetType(), js.GetHashCode().ToString(), string.Format("eval('{0}').call(this);", js.InvokeJavascriptMethodOnLoad), true);
-            }
-		}
+		///// <summary>
+		///// Registers all of the methods/scripts to be invoked that have been set in the InvokeJavaScriptMethodOnLoad propery
+		///// for each dependent js script.
+		///// </summary>
+		///// <param name="jsDependencies"></param>
+		//protected virtual void RegisterStartupScripts(List<IClientDependencyFile> dependencies)
+		//{
+		//    foreach (var js in dependencies)
+		//    {
+		//        DependantControl.Page.ClientScript.RegisterStartupScript(this.GetType(), js.GetHashCode().ToString(), string.Format("eval('{0}').call(this);", js.InvokeJavascriptMethodOnLoad), true);
+		//    }
+		//}
 
 		/// <summary>
 		/// Returns a list of urls. The array will consist of only one entry if 
@@ -106,7 +106,8 @@ namespace ClientDependency.Core.FileRegistration.Providers
 			//build the combined composite list url
 			string handler = "{0}?s={1}&t={2}";			
 			StringBuilder files = new StringBuilder();
-			foreach (IClientDependencyFile a in dependencies.Where(x => !x.DoNotOptimize))
+			//foreach (IClientDependencyFile a in dependencies.Where(x => !x.DoNotOptimize))
+			foreach (IClientDependencyFile a in dependencies)
 			{
 				files.Append(a.FilePath + ";");
 			}
@@ -114,7 +115,8 @@ namespace ClientDependency.Core.FileRegistration.Providers
             rVal.Add(AppendVersionQueryString(combinedurl)); //append our version to the combined url
 
 			//add any urls that are not to be optimized, add the version string to them
-			foreach (IClientDependencyFile a in dependencies.Where(x => x.DoNotOptimize))
+			//foreach (IClientDependencyFile a in dependencies.Where(x => x.DoNotOptimize))
+			foreach (IClientDependencyFile a in dependencies)
 			{
 				rVal.Add(AppendVersionQueryString(a.FilePath));
 			}
