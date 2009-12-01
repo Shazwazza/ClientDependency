@@ -2,7 +2,7 @@
 <%@ Register Namespace="ClientDependency.Core.Controls" Assembly="ClientDependency.Core" TagPrefix="CD" %>
 
 <asp:Content ID="Content1" runat="server" ContentPlaceHolderID="ContentPlaceHolder1">
-	<CD:JsInclude ID="JsInclude1" runat="server" FilePath="~/Js/SomeLazyLoadScript.js" ForceProvider="LazyLoadProvider" InvokeJavascriptMethodOnLoad="someLazyLoadScript" />
+	<CD:JsInclude ID="JsInclude1" runat="server" FilePath="~/Js/SomeLazyLoadScript.js" ForceProvider="LazyLoadProvider"  />
 	<CD:CssInclude ID="CssInclude1" runat="server" FilePath="Test.css" PathNameAlias="Styles" ForceProvider="LazyLoadProvider" />
 	<CD:JsInclude ID="JsInclude2" runat="server" FilePath="~/Js/AnotherTest.js" ForceProvider="LazyLoadProvider" />
 	<div class="mainContent">

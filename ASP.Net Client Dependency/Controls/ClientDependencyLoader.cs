@@ -216,7 +216,7 @@ namespace ClientDependency.Core.Controls
 		/// <param name="type"></param>
 		public ClientDependencyLoader RegisterDependency(string filePath, string pathNameAlias, ClientDependencyType type)
 		{
-			ClientDependencyLoader.Instance.RegisterDependency(ClientDependencyInclude.DefaultPriority, false, filePath, pathNameAlias, type, "");
+			ClientDependencyLoader.Instance.RegisterDependency(ClientDependencyInclude.DefaultPriority, filePath, pathNameAlias, type);
 			return this;
 		}
 		
@@ -247,14 +247,12 @@ namespace ClientDependency.Core.Controls
 		/// Registers a file dependency with the default provider.
 		/// </summary>
 		/// <param name="file"></param>
-		public void RegisterDependency(int priority, bool doNotOptimize, string filePath, string pathNameAlias, ClientDependencyType type, string invokeJavascriptMethodOnLoad)
+		public void RegisterDependency(int priority, string filePath, string pathNameAlias, ClientDependencyType type)
 		{
-			BasicClientDependencyFile file = new BasicClientDependencyFile(type);
-			file.DoNotOptimize = doNotOptimize;
+			IClientDependencyFile file = new BasicClientDependencyFile(type);
 			file.Priority = priority;
 			file.FilePath = filePath;
 			file.PathNameAlias = pathNameAlias;
-			file.InvokeJavascriptMethodOnLoad = invokeJavascriptMethodOnLoad;
 			RegisterClientDependencies(new ClientDependencyCollection() { file }, new List<IClientDependencyPath>()); //send an empty paths collection
 		}
 

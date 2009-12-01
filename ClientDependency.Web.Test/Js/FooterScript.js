@@ -25,6 +25,3 @@ function writeFooterStuff() {
         
     }
 }
-function callFooterAlert() {
-    myFooterAlert("Hello!");
-}

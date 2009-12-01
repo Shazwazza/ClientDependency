@@ -62,40 +62,18 @@ namespace ClientDependency.Core.FileRegistration.Providers
             RegisterCssFiles(cssDependencies.ConvertAll<IClientDependencyFile>(a => { return (IClientDependencyFile)a; }));
 			RegisterJsFiles(jsDependencies.ConvertAll<IClientDependencyFile>(a => { return (IClientDependencyFile)a; }));
 
-			////Register all startup scripts in order
-			//RegisterStartupScripts(dependencies
-			//    .Where(x => !string.IsNullOrEmpty(x.InvokeJavascriptMethodOnLoad))
-			//    .OrderBy(x => x.Priority)
-			//    .ToList());
 		}
 
-		///// <summary>
-		///// Registers all of the methods/scripts to be invoked that have been set in the InvokeJavaScriptMethodOnLoad propery
-		///// for each dependent js script.
-		///// </summary>
-		///// <param name="jsDependencies"></param>
-		//protected virtual void RegisterStartupScripts(List<IClientDependencyFile> dependencies)
-		//{
-		//    foreach (var js in dependencies)
-		//    {
-		//        DependantControl.Page.ClientScript.RegisterStartupScript(this.GetType(), js.GetHashCode().ToString(), string.Format("eval('{0}').call(this);", js.InvokeJavascriptMethodOnLoad), true);
-		//    }
-		//}
+	
 
 		/// <summary>
-		/// Returns a list of urls. The array will consist of only one entry if 
-		/// none of the dependencies are tagged as DoNotOptimize, otherwise, if any of them are, 
-		/// this will return the path to the file.
-		/// 
+		/// Returns a list of urls. 
 		/// For the optimized files, the full url with the encoded query strings for the handler which will process the composite list
 		/// of dependencies. The handler will compbine, compress, minify (if JS), and output cache the results
 		/// based on a hash key of the base64 encoded string.
 		/// </summary>
 		/// <param name="dependencies"></param>
 		/// <param name="groupName"></param>
-		/// <remarks>
-		/// If the DoNotOptimize setting has been set for any of the dependencies in the list, then this will ignore them.
-		/// </remarks>
 		/// <returns></returns>
 		public List<string> ProcessCompositeList(List<IClientDependencyFile> dependencies, ClientDependencyType type)
 		{
@@ -106,7 +84,6 @@ namespace ClientDependency.Core.FileRegistration.Providers
 			//build the combined composite list url
 			string handler = "{0}?s={1}&t={2}";			
 			StringBuilder files = new StringBuilder();
-			//foreach (IClientDependencyFile a in dependencies.Where(x => !x.DoNotOptimize))
 			foreach (IClientDependencyFile a in dependencies)
 			{
 				files.Append(a.FilePath + ";");
@@ -115,7 +92,6 @@ namespace ClientDependency.Core.FileRegistration.Providers
             rVal.Add(AppendVersionQueryString(combinedurl)); //append our version to the combined url
 
 			//add any urls that are not to be optimized, add the version string to them
-			//foreach (IClientDependencyFile a in dependencies.Where(x => x.DoNotOptimize))
 			foreach (IClientDependencyFile a in dependencies)
 			{
 				rVal.Add(AppendVersionQueryString(a.FilePath));

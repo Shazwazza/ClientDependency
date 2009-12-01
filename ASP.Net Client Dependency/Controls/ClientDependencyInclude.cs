@@ -10,19 +10,16 @@ namespace ClientDependency.Core.Controls
 
 		public ClientDependencyInclude()
 		{			
-            Priority = DefaultPriority;
-			DoNotOptimize = false;
+            Priority = DefaultPriority;			
 			PathNameAlias = "";
 		}
 
 		public ClientDependencyInclude(IClientDependencyFile file)
 		{
 			Priority = file.Priority;
-			//DoNotOptimize = file.DoNotOptimize;
 			PathNameAlias = file.PathNameAlias;
 			FilePath = file.FilePath;
 			DependencyType = file.DependencyType;
-			//InvokeJavascriptMethodOnLoad = file.InvokeJavascriptMethodOnLoad;
 		}
 
         /// <summary>
@@ -34,22 +31,12 @@ namespace ClientDependency.Core.Controls
         /// </remarks>
         public const int DefaultPriority = 100;
 
-		/// <summary>
-		/// If set to true, this file will not be compressed, combined, etc...
-		/// it will be rendered out as is. 
-		/// </summary>
-		/// <remarks>
-		/// Useful for debugging dodgy scripts.
-		/// Default is false.
-		/// </remarks>
-		public bool DoNotOptimize { get; set; }
-
 		public ClientDependencyType DependencyType { get; internal set; }
 
 		public string FilePath { get; set; }
         public string PathNameAlias { get; set; }
         public int Priority { get; set; }
-        public string InvokeJavascriptMethodOnLoad { get; set; }
+
 		/// <summary>
 		/// This can be empty and will use default provider
 		/// </summary>

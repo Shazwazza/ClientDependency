@@ -16,10 +16,8 @@ namespace ClientDependency.Core
 
 		public string FilePath { get; set; }
 		public ClientDependencyType DependencyType { get; private set; }
-		public string InvokeJavascriptMethodOnLoad { get; set; }
 		public int Priority { get; set; }
 		public string PathNameAlias { get; set; }
-		public bool DoNotOptimize { get; set; }
 		/// <summary>
 		/// This can be empty and will use default provider
 		/// </summary>

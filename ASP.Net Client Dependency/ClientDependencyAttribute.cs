@@ -15,7 +15,6 @@ namespace ClientDependency.Core
         public ClientDependencyAttribute()
         {
             Priority = DefaultPriority;
-			DoNotOptimize = false;
 			PathNameAlias = "";
         }
 
@@ -27,16 +26,6 @@ namespace ClientDependency.Core
         /// have unless the priority is explicitly set above 100.
         /// </remarks>
         protected const int DefaultPriority = 100;
-
-		/// <summary>
-		/// If set to true, this file will not be compressed, combined, etc...
-		/// it will be rendered out as is. 
-		/// </summary>
-		/// <remarks>
-		/// Useful for debugging dodgy scripts.
-		/// Default is false.
-		/// </remarks>
-		public bool DoNotOptimize { get; set; }	
 
 		/// <summary>
 		/// Gets or sets the priority.
@@ -69,18 +58,12 @@ namespace ClientDependency.Core
 		/// <value>The type of the dependency.</value>
 		public ClientDependencyType DependencyType { get; set; }
 
-		/// <summary>
-		/// Gets or sets the name of an optional javascript method that should be called on load.
-		/// </summary>
-		/// <value>The name of the method.</value>
-		public string InvokeJavascriptMethodOnLoad { get; set; }
-
 		public ClientDependencyAttribute(ClientDependencyType dependencyType, string fullFilePath)
-			: this(DefaultPriority, dependencyType, fullFilePath, string.Empty, string.Empty)
+			: this(DefaultPriority, dependencyType, fullFilePath, string.Empty)
 		{ }
 
 		public ClientDependencyAttribute(ClientDependencyType dependencyType, string fileName, string pathNameAlias)
-			: this(DefaultPriority, dependencyType, fileName, pathNameAlias, string.Empty)
+			: this(DefaultPriority, dependencyType, fileName, pathNameAlias)
 		{ }
 
 		/// <summary>
@@ -90,22 +73,9 @@ namespace ClientDependency.Core
 		/// <param name="dependencyType">Type of the dependency.</param>
 		/// <param name="fullFilePath">The file path to the dependency.</param>
 		public ClientDependencyAttribute(int priority, ClientDependencyType dependencyType, string fullFilePath)
-			: this(priority, dependencyType, fullFilePath, string.Empty, string.Empty)
+			: this(priority, dependencyType, fullFilePath, string.Empty)
 		{ }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ClientDependencyAttribute"/> class.
-		/// </summary>
-		/// <param name="priority">The priority.</param>
-		/// <param name="dependencyType">Type of the dependency.</param>
-		/// <param name="filePath">The file path to the dependency.</param>
-		/// <param name="pathName">
-		/// If set, this will prepend the 'Path' found in the ClientDependencyPathCollection with the pathName specified.
-		/// If the pathName specified is not found in the collection, an exception will be thrown.
-		/// </param>
-		public ClientDependencyAttribute(int priority, ClientDependencyType dependencyType, string fileName, string pathNameAlias)
-			: this(priority, dependencyType, fileName, pathNameAlias, string.Empty)
-		{ }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ClientDependencyAttribute"/> class.
@@ -114,8 +84,7 @@ namespace ClientDependency.Core
 		/// <param name="dependencyType">Type of the dependency.</param>
 		/// <param name="filePath">The file path to the dependency.</param>
 		/// <param name="appendUmbracoPath">if set to <c>true</c> the current umbraco path will be prefixed to the filePath.</param>
-		/// <param name="invokeJavascriptMethodOnLoad">The name of the Javascript method to invoke when the dependency is loaded.</param>
-		public ClientDependencyAttribute(int priority, ClientDependencyType dependencyType, string fileName, string pathNameAlias, string invokeJavascriptMethodOnLoad)
+		public ClientDependencyAttribute(int priority, ClientDependencyType dependencyType, string fileName, string pathNameAlias)
 		{
 			if (String.IsNullOrEmpty(fileName))
 				throw new ArgumentNullException("fileName");
@@ -125,10 +94,8 @@ namespace ClientDependency.Core
 
 			FilePath = fileName;
 			PathNameAlias = pathNameAlias;
-			//CompositeGroupName = compositeGroupName;
 
 			DependencyType = dependencyType;
-			InvokeJavascriptMethodOnLoad = invokeJavascriptMethodOnLoad ?? string.Empty;
 		}
         
 	}
