@@ -35,14 +35,11 @@ namespace ClientDependency.Core.FileRegistration.Providers
 			}
 			else
 			{
-				List<string> jsList = ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript);
+				string js = ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript);
 				
-				DependantControl.Page.Trace.Write("ClientDependency", string.Format("Processed composite list: {0}", jsList[0]));
+				DependantControl.Page.Trace.Write("ClientDependency", string.Format("Processed composite list: {0}", js));
 				
-				foreach (string js in jsList)
-				{
-					ProcessSingleJsFile(js);
-				}				
+                ProcessSingleJsFile(js);
 			}
 
 		}
@@ -72,13 +69,11 @@ namespace ClientDependency.Core.FileRegistration.Providers
 			}
 			else
 			{
-				List<string> cssList = ProcessCompositeList(cssDependencies, ClientDependencyType.Css);				
+				string css = ProcessCompositeList(cssDependencies, ClientDependencyType.Css);
+
+                DependantControl.Page.Trace.Write("ClientDependency", string.Format("Processed composite list: {0}", css));				
 				
-				DependantControl.Page.Trace.Write("ClientDependency", string.Format("Processed composite list: {0}", cssList[0]));				
-				foreach (string css in cssList)
-				{
-					ProcessSingleCssFile(css);
-				}				
+                ProcessSingleCssFile(css);
 			}
 		}
 

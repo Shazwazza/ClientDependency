@@ -192,7 +192,7 @@ namespace ClientDependency.Core.Controls
                 }).Cast<IClientDependencyFile>()
                 .ToList();
             return ClientDependencySettings.Instance
-                .DefaultFileRegistrationProvider.ProcessCompositeList(list, type)[0];          
+                .DefaultFileRegistrationProvider.ProcessCompositeList(list, type);          
         }
 
 		#endregion

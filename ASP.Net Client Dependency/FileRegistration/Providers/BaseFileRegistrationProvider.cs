@@ -67,19 +67,21 @@ namespace ClientDependency.Core.FileRegistration.Providers
 	
 
 		/// <summary>
-		/// Returns a list of urls. 
-		/// For the optimized files, the full url with the encoded query strings for the handler which will process the composite list
-		/// of dependencies. The handler will compbine, compress, minify (if JS), and output cache the results
-		/// based on a hash key of the base64 encoded string.
+		/// Returns a URL used to return a compbined/compressed/optimized version of all dependencies.
+		/// <remarks>
+        /// The full url with the encoded query strings for the handler which will process the composite list
+        /// of dependencies. The handler will compbine, compress, minify (if JS), and output cache the results
+        /// based on a hash key of the base64 encoded string.
+        /// </remarks>        
 		/// </summary>
 		/// <param name="dependencies"></param>
 		/// <param name="groupName"></param>
 		/// <returns></returns>
-		public List<string> ProcessCompositeList(List<IClientDependencyFile> dependencies, ClientDependencyType type)
+		public string ProcessCompositeList(List<IClientDependencyFile> dependencies, ClientDependencyType type)
 		{
-			List<string> rVal = new List<string>();
+			string rVal;
 			if (dependencies.Count == 0)
-				return rVal;
+				return "";
 
 			//build the combined composite list url
 			string handler = "{0}?s={1}&t={2}";			
@@ -89,13 +91,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 				files.Append(a.FilePath + ";");
 			}
 			string combinedurl = string.Format(handler, ClientDependencySettings.Instance.CompositeFileHandlerPath, HttpContext.Current.Server.UrlEncode(EncodeTo64(files.ToString())), type.ToString());
-            rVal.Add(AppendVersionQueryString(combinedurl)); //append our version to the combined url
-
-			//add any urls that are not to be optimized, add the version string to them
-			foreach (IClientDependencyFile a in dependencies)
-			{
-				rVal.Add(AppendVersionQueryString(a.FilePath));
-			}
+            rVal = AppendVersionQueryString(combinedurl); //append our version to the combined url            		
 			
 			//if (url.Length > CompositeDependencyHandler.MaxHandlerUrlLength)
 			//    throw new ArgumentOutOfRangeException("The number of files in the composite group " + groupName + " creates a url handler address that exceeds the CompositeDependencyHandler MaxHandlerUrlLength. Reducing the amount of files in this composite group should fix the issue");
