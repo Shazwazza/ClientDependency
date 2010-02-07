@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Text;
 using System.Configuration;
 using System.Linq;
+using ClientDependency.Core.Logging;
 
 namespace ClientDependency.Core.Config
 {
-	public class ClientDependencySection : ConfigurationSection
+    public class ClientDependencySection : ConfigurationSection
 	{
-
-
-
         /// <summary>
         /// Set the version for the files, this will reset all composite file caching, and if
         /// composite files are disabled will add a query string to each request so that 
@@ -51,7 +49,14 @@ namespace ClientDependency.Core.Config
 			}
 		}
 
-		
+        [ConfigurationProperty("loggerType", IsRequired = false)]
+        public string LoggerType
+        {
+            get
+            {
+                return (string)this["loggerType"];
+            }
+        }
 	}
 
 }
