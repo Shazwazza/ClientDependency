@@ -72,7 +72,7 @@ namespace ClientDependency.Core.CompositeFiles
                 ClientDependencySettings.Instance.Logger.Error(() => string.Format("No bytes were returned, this is attempt {0}. Fileset: {1}, Type: {2}, Version: {3}", i, fileset, type, version));
             }
 
-            if (outputBytes != null && outputBytes.Length > 0)
+            if (outputBytes == null || outputBytes.Length == 0)
             {
                 ClientDependencySettings.Instance.Logger.Fatal(() => string.Format("No bytes were returned after 5 attempts. Fileset: {0}, Type: {1}, Version: {2}", fileset, type, version));
                 List<CompositeFileDefinition> fDefs;

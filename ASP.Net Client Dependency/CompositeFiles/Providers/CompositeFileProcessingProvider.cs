@@ -101,8 +101,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 						else
 						{
 							//if this fails, log the exception in trace, but continue
-							HttpContext.Current.Trace.Warn("ClientDependency", "Could not load file contents from " + s, ex);
-							//System.Diagnostics.Debug.Assert(false, "Could not load file contents from " + s, ex.Message);
+                            ClientDependencySettings.Instance.Logger.Error(() => string.Format("Could not load file contents from {0}. EXCEPTION: {1}", s, ex.Message));					
 						}
 					}
 				}
@@ -185,8 +184,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 			}
 			catch (Exception ex)
 			{
-				HttpContext.Current.Trace.Warn("ClientDependency", "Could not write file " + fi.FullName + " contents to stream", ex);
-				//System.Diagnostics.Debug.Assert(false, "Could not write file " + fi.FullName + " contents to stream", ex.Message);
+                ClientDependencySettings.Instance.Logger.Error(() => string.Format("Could not write file {0} contents to stream. EXCEPTION: {1}", fi.FullName, ex.Message));
 				return false;
 			}			
 		}		

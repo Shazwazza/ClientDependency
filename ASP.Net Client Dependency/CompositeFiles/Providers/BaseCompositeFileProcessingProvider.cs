@@ -122,8 +122,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 					}
 					catch (Exception ex)
 					{
-						HttpContext.Current.Trace.Warn("ClientDependency", "Could not load file contents from " + url, ex);
-						//System.Diagnostics.Debug.Assert(false, "Could not load file contents from " + url, ex.Message);
+                        ClientDependencySettings.Instance.Logger.Error(() => string.Format("Could not load file contents from {0}. EXCEPTION: {1}", url, ex.Message));					
 					}
 				}
 				else
@@ -139,8 +138,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 					}
 					catch (Exception ex)
 					{
-						HttpContext.Current.Trace.Warn("ClientDependency", "Could not load file contents from " + url, ex);
-						//System.Diagnostics.Debug.Assert(false, "Could not load file contents from " + url, ex.Message);
+                        ClientDependencySettings.Instance.Logger.Error(() => string.Format("Could not load file contents from {0}. EXCEPTION: {1}", url, ex.Message));
 					}
 				}
 
