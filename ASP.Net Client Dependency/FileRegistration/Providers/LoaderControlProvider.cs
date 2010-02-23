@@ -92,7 +92,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 			int newIndex = indexes.Count == 0 ? 0 : indexes.Max() + 1;
 			LiteralControl dCtl = new LiteralControl(literal);
 			dCtl.ID = "CD_" + newIndex.ToString();
-			if (newIndex >= DependantControl.Page.Header.Controls.Count)
+            if (newIndex >= ClientDependencyLoader.Instance.Controls.Count)
 				ClientDependencyLoader.Instance.Controls.Add(dCtl);
 			else
 				ClientDependencyLoader.Instance.Controls.AddAt(newIndex, dCtl);
