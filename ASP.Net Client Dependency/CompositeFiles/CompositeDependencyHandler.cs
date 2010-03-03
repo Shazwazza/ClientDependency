@@ -180,9 +180,10 @@ namespace ClientDependency.Core.CompositeFiles
             cache.SetOmitVaryStar(true);
             //ensure client browser maintains strict caching rules
             cache.AppendCacheExtension("must-revalidate, proxy-revalidate");
+            
             //This is the only way to set the max-age cachability header in ASP.Net!
-            FieldInfo maxAgeField = cache.GetType().GetField("_maxAge", BindingFlags.Instance | BindingFlags.NonPublic);
-            maxAgeField.SetValue(cache, duration);
+            //FieldInfo maxAgeField = cache.GetType().GetField("_maxAge", BindingFlags.Instance | BindingFlags.NonPublic);
+            //maxAgeField.SetValue(cache, duration);
 
             //make this output cache dependent on the file if there is one.
             if (!string.IsNullOrEmpty(fileName))
