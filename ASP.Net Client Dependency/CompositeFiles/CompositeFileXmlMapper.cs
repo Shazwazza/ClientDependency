@@ -54,8 +54,9 @@ namespace ClientDependency.Core.CompositeFiles
             if (!ClientDependencySettings.Instance.EnableCompositeFiles)
                 return;
 
+            //Name the map file according to the machine name
 			m_XmlFile = new FileInfo(
-					Path.Combine(ClientDependencySettings.Instance.CompositeFilePath.FullName, MapFileName));
+					Path.Combine(ClientDependencySettings.Instance.CompositeFilePath.FullName, Environment.MachineName + "-" + MapFileName));
 
 			EnsureXmlFile();
 

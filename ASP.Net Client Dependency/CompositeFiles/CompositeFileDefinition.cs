@@ -30,9 +30,13 @@ namespace ClientDependency.Core.CompositeFiles
 				&& ((CompositeFileDefinition)obj).Uri.Equals(Uri));
 		}
 
+        /// <summary>
+        /// overrides hash code to ensure that it is unique per machine
+        /// </summary>
+        /// <returns></returns>
 		public override int GetHashCode()
 		{
-			return Uri.GetHashCode();
+			return (Environment.MachineName + Uri).GetHashCode();
 		}
 	}
 }
