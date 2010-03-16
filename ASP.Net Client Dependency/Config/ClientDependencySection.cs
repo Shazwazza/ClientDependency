@@ -20,17 +20,7 @@ namespace ClientDependency.Core.Config
             get { return (int)base["version"]; }
             set { base["version"] = value; }
         }
-        
-        /// <summary>
-        /// Set the default isDebugMode property for all loaders
-        /// </summary>
-        [ConfigurationProperty("isDebugMode", DefaultValue = "false")]
-        public bool IsDebugMode
-        {
-            get { return (bool)base["isDebugMode"]; }
-            set { base["isDebugMode"] = value; }
-        }
-
+       
 		[ConfigurationProperty("compositeFiles", IsRequired = true)]
 		public CompositeFileSection CompositeFileElement
 		{

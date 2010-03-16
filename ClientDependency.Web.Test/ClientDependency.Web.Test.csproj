@@ -139,6 +139,7 @@
   <ItemGroup>
     <Content Include="Controls\ServiceControl.ascx" />
     <Content Include="Css\Content.css" />
+    <Content Include="Css\OverrideStyles.css" />
     <Content Include="Css\Test.css" />
     <Content Include="Js\AnotherTest.js" />
     <Content Include="Js\SomeLazyLoadScript.js" />

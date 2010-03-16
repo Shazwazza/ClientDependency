@@ -1,4 +1,5 @@
 ﻿function doSomething() {
+    
     if (!$.isReady) {
         $(document).ready(function() {
             writeStuff();
@@ -22,6 +23,4 @@ function writeStuff() {
     }, 50);
 
 }
-function someLazyLoadScript() {
-    doSomething();
-}
+doSomething();

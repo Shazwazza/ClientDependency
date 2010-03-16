@@ -22,9 +22,6 @@ namespace ClientDependency.Core.Controls
             //by default the provider is the default provider 
             Provider = ClientDependencySettings.Instance.DefaultFileRegistrationProvider;
             
-            //default debug mode is specified in config but can be overriden in control.
-            this.IsDebugMode = ClientDependencySettings.Instance.IsDebugMode;
-
 			//add this object to the context and validate the context type
 			if (HttpContext.Current != null)
 			{
@@ -103,7 +100,6 @@ namespace ClientDependency.Core.Controls
 			base.OnPreRender(e);
 
 			m_Paths.UnionWith(Paths.Cast<IClientDependencyPath>());
-			Provider.IsDebugMode = IsDebugMode;
 			RegisterClientDependencies(Provider, this.Page, m_Paths);
 			RenderDependencies();
 		}
@@ -130,29 +126,8 @@ namespace ClientDependency.Core.Controls
                 this.Provider = ClientDependencySettings.Instance.FileRegistrationProviderCollection[value];
             }
         }
-        //public ClientDependencyEmbedType EmbedType
-        //{
-        //    get
-        //    {
-        //        return m_EmbedType;
-        //    }
-        //    set
-        //    {
-        //        m_EmbedType = value;
-        //        switch (m_EmbedType)
-        //        {
-        //            case ClientDependencyEmbedType.Header:
-        //                Provider = ClientDependencySettings.Instance.ProviderCollection[PageHeaderProvider.DefaultName];
-        //                break;
-        //            case ClientDependencyEmbedType.ClientSideRegistration:
-        //                Provider = ClientDependencySettings.Instance.ProviderCollection[ClientSideRegistrationProvider.DefaultName];
-        //                break;
-        //        }
-        //    }
-        //}
-        //private ClientDependencyEmbedType m_EmbedType = ClientDependencyEmbedType.Header;
+        
 
-        public bool IsDebugMode { get; set; }
 		public BaseFileRegistrationProvider Provider { get; set; }
 
 

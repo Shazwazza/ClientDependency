@@ -64,7 +64,7 @@ namespace ClientDependency.Core.Config
         /// This also allows for the ability to easily clear the cache so the files are refreshed.
         /// </summary>
         public bool EnableCompositeFiles { get; set; }
-        public bool IsDebugMode { get; set; }
+        
         public int Version { get; set; }
 
         private ILogger _logger;
@@ -163,7 +163,7 @@ namespace ClientDependency.Core.Config
                             throw new ProviderException("Unable to load default composite file provider");
 
                         CompositeFileHandlerPath = section.CompositeFileElement.CompositeFileHandlerPath;
-                        IsDebugMode = section.IsDebugMode;
+                        //IsDebugMode = section.IsDebugMode;
                         this.Version = section.Version;
                         EnableCompositeFiles = section.FileRegistrationElement.EnableCompositeFiles;
                         FileBasedDependencyExtensionList = section.FileRegistrationElement.FileBasedDependencyExtensionList.ToList();
