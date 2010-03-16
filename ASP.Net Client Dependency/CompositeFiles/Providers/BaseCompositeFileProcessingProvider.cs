@@ -13,6 +13,16 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 {
 	public abstract class BaseCompositeFileProcessingProvider : ProviderBase
 	{
+        /// <summary>
+        /// constructor sets defaults
+        /// </summary>
+        public BaseCompositeFileProcessingProvider()
+        {
+            PersistCompositeFiles = true;
+            EnableCssMinify = true;
+            EnableJsMinify = true;
+            CompositeFilePath = new DirectoryInfo(HttpContext.Current.Server.MapPath("~/App_Data/ClientDependency"));
+        }
 
 		#region Provider Members
 
@@ -20,15 +30,23 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 		public abstract byte[] CombineFiles(string[] strFiles, HttpContext context, ClientDependencyType type, out List<CompositeFileDefinition> fileDefs);
 		public abstract byte[] CompressBytes(CompressionType type, byte[] fileBytes);
 
-        public virtual bool EnableCssMinify { get; set; }
-        public virtual bool EnableJsMinify { get; set; }
+        /// <summary>
+        /// Flags whether or not to enable composite file script creation/persistence.
+        /// Composite file persistence will increase performance in the case of cache turnover or application
+        /// startup since the files are already combined and compressed.
+        /// This also allows for the ability to easily clear the cache so the files are refreshed.
+        /// </summary>
+        public bool PersistCompositeFiles { get; set; }
+        public bool EnableCssMinify { get; set; }
+        public bool EnableJsMinify { get; set; }
+        public DirectoryInfo CompositeFilePath { get; set; }
 
 		#endregion
 
         public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
         {
-            EnableCssMinify = true;//enabled by default
-            EnableJsMinify = true;//enabled by default
+            base.Initialize(name, config);
+
             if (config != null)
             {
                 if (config["enableCssMinify"] != null)
@@ -43,9 +61,19 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                     if (bool.TryParse(config["enableJsMinify"], out enableJsMinify))
                         EnableJsMinify = enableJsMinify;
                 }
-            }
 
-            base.Initialize(name, config);
+                if (config["persistFiles"] != null)
+                {
+                    bool persistFiles;
+                    if (bool.TryParse(config["persistFiles"], out persistFiles))
+                        PersistCompositeFiles = persistFiles;
+                }
+                if (config["compositeFilePath"] != null)
+                {
+                    CompositeFilePath = new DirectoryInfo(HttpContext.Current.Server.MapPath(config["compositeFilePath"]));    
+                }                
+            }
+            
         }
 
         protected string MinifyFile(string fileContents, ClientDependencyType type)

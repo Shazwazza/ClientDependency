@@ -19,7 +19,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 	public class CompositeFileProcessingProvider : BaseCompositeFileProcessingProvider
 	{
 
-		public const string DefaultName = "CompositeFileProvider";
+        public const string DefaultName = "CompositeFileProcessor";
 
 		/// <summary>
 		/// Saves the file's bytes to disk with a hash of the byte array
@@ -33,13 +33,13 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 		public override FileInfo SaveCompositeFile(byte[] fileContents, ClientDependencyType type)
 		{
             //don't save the file if composite files are disabled.
-            if (!ClientDependencySettings.Instance.EnableCompositeFiles)
+            if (!this.PersistCompositeFiles)
                 return null;
 
-			if (!ClientDependencySettings.Instance.CompositeFilePath.Exists)
-				ClientDependencySettings.Instance.CompositeFilePath.Create();
+			if (!ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CompositeFilePath.Exists)
+				ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CompositeFilePath.Create();
 			FileInfo fi = new FileInfo(
-				Path.Combine(ClientDependencySettings.Instance.CompositeFilePath.FullName,
+                Path.Combine(ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CompositeFilePath.FullName,
 					ClientDependencySettings.Instance.Version.ToString() + "_" 
                         + fileContents.GetHashCode().ToString() + ".cd" + type.ToString().Substring(0, 1).ToLower()));
 			if (fi.Exists)

@@ -57,13 +57,8 @@ namespace ClientDependency.Core.Config
         /// </remarks>
         public List<string> FileBasedDependencyExtensionList { get; set; }
 
-        /// <summary>
-        /// Flags whether or not to enable composite file script creation.
-        /// Composite file creation will increase performance in the case of cache turnover or application
-        /// startup since the files are already combined and compressed.
-        /// This also allows for the ability to easily clear the cache so the files are refreshed.
-        /// </summary>
-        public bool EnableCompositeFiles { get; set; }
+        
+        //public bool EnableCompositeFiles { get; set; }
         
         public int Version { get; set; }
 
@@ -104,7 +99,8 @@ namespace ClientDependency.Core.Config
                 return m_CompositeFileProviders;
             }
         }
-        public DirectoryInfo CompositeFilePath { get; set; }
+
+        //public DirectoryInfo CompositeFilePath { get; set; }
         public string CompositeFileHandlerPath { get; set; }
 
 
@@ -165,9 +161,9 @@ namespace ClientDependency.Core.Config
                         CompositeFileHandlerPath = section.CompositeFileElement.CompositeFileHandlerPath;
                         //IsDebugMode = section.IsDebugMode;
                         this.Version = section.Version;
-                        EnableCompositeFiles = section.FileRegistrationElement.EnableCompositeFiles;
+                        //EnableCompositeFiles = section.FileRegistrationElement.EnableCompositeFiles;
                         FileBasedDependencyExtensionList = section.FileRegistrationElement.FileBasedDependencyExtensionList.ToList();
-                        CompositeFilePath = new DirectoryInfo(HttpContext.Current.Server.MapPath(section.CompositeFileElement.CompositeFilePath));
+                        //CompositeFilePath = new DirectoryInfo(HttpContext.Current.Server.MapPath(section.CompositeFileElement.CompositeFilePath));
 
                         if (string.IsNullOrEmpty(section.LoggerType))
                         {

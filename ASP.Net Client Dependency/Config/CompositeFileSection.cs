@@ -21,18 +21,7 @@ namespace ClientDependency.Core.Config
 		{
 			get { return (string)base["defaultProvider"]; }
 			set { base["defaultProvider"] = value; }
-		}
-
-		/// <summary>
-		/// This is the folder that composite script/css files will be stored once they are combined.
-		/// </summary>
-		[StringValidator(MinLength = 1)]
-		[ConfigurationProperty("compositeFilePath", DefaultValue = "~/App_Data/ClientDependency")]
-		public string CompositeFilePath
-		{
-			get { return (string)base["compositeFilePath"]; }
-			set { base["compositeFilePath"] = value; }
-		}
+		}		
 
 		[ConfigurationProperty("compositeFileHandlerPath", DefaultValue = "DependencyHandler.axd")]
 		public string CompositeFileHandlerPath

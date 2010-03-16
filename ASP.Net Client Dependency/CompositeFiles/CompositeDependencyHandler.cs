@@ -19,12 +19,6 @@ namespace ClientDependency.Core.CompositeFiles
         private object m_Lock = new object();
 
         /// <summary>
-        /// The handler file name, by default this is DependencyHandler.axd which is the default config setting.
-        /// this can be overridden by specifying the property.
-        /// </summary>
-        private static readonly string HandlerFileName = ClientDependencySettings.Instance.CompositeFileHandlerPath;
-
-        /// <summary>
         /// When building composite includes, it creates a Base64 encoded string of all of the combined dependency file paths
         /// for a given composite group. If this group contains too many files, then the file path with the query string will be very long.
         /// This is the maximum allowed number of characters that there is allowed, otherwise an exception is thrown.

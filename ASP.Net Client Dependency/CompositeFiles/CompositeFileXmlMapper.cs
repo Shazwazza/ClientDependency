@@ -51,12 +51,12 @@ namespace ClientDependency.Core.CompositeFiles
 		private void Initialize()
 		{
             //return if composite files are disabled.
-            if (!ClientDependencySettings.Instance.EnableCompositeFiles)
+            if (!ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.PersistCompositeFiles)
                 return;
 
             //Name the map file according to the machine name
 			m_XmlFile = new FileInfo(
-					Path.Combine(ClientDependencySettings.Instance.CompositeFilePath.FullName, Environment.MachineName + "-" + MapFileName));
+					Path.Combine(ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CompositeFilePath.FullName, Environment.MachineName + "-" + MapFileName));
 
 			EnsureXmlFile();
 
@@ -78,7 +78,7 @@ namespace ClientDependency.Core.CompositeFiles
 		private void CreateNewXmlFile()
 		{
             //return if composite files are disabled.
-            if (!ClientDependencySettings.Instance.EnableCompositeFiles)
+            if (!ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.PersistCompositeFiles)
                 return;
 
 			if (m_XmlFile.Exists)
@@ -98,8 +98,8 @@ namespace ClientDependency.Core.CompositeFiles
 					//double check
 					if (!m_XmlFile.Exists)
 					{
-						if (!ClientDependencySettings.Instance.CompositeFilePath.Exists)
-							ClientDependencySettings.Instance.CompositeFilePath.Create();
+						if (!ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CompositeFilePath.Exists)
+                            ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CompositeFilePath.Create();
 						CreateNewXmlFile();
 					}
 				}
@@ -115,7 +115,7 @@ namespace ClientDependency.Core.CompositeFiles
 		public CompositeFileMap GetCompositeFile(string base64Key, int version)
 		{
             //return null if composite files are disabled.
-            if (!ClientDependencySettings.Instance.EnableCompositeFiles)
+            if (!ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.PersistCompositeFiles)
                 return null;
 
 			XElement x = FindItem(base64Key, version);
@@ -157,7 +157,7 @@ namespace ClientDependency.Core.CompositeFiles
 		public void CreateMap(string base64Key, string compressionType, List<FileInfo> dependentFiles, string compositeFile, int version)
 		{
             //return if composite files are disabled.
-            if (!ClientDependencySettings.Instance.EnableCompositeFiles)
+            if (!ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.PersistCompositeFiles)
                 return;
 
 			lock (m_Lock)
