@@ -53,6 +53,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="BasicClientDependencyFile.cs" />
     <Compile Include="BasicClientDependencyPath.cs" />
     <Compile Include="CompositeFiles\CSSMin.cs" />
