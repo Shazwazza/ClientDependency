@@ -128,7 +128,6 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 			MemoryStream ms = new MemoryStream();
 			Stream compressedStream = null;
 
-			//deflate is faster in .Net according to Mads Kristensen (blogengine.net)
 			if (type == CompressionType.deflate)
 			{
 				compressedStream = new DeflateStream(ms, CompressionMode.Compress, true);

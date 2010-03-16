@@ -107,26 +107,25 @@ namespace ClientDependency.Core.CompositeFiles
 		}
 
 		/// <summary>
-		/// Returns the composite file map associated with the base 64 key of the URL
-		/// for the handler.
+		/// Returns the composite file map associated with the base 64 key of the URL, the version and the compression type
 		/// </summary>
 		/// <param name="base64Key"></param>
 		/// <returns></returns>
-		public CompositeFileMap GetCompositeFile(string base64Key, int version)
+		public CompositeFileMap GetCompositeFile(string base64Key, int version, string compression)
 		{
             //return null if composite files are disabled.
             if (!ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.PersistCompositeFiles)
                 return null;
 
-			XElement x = FindItem(base64Key, version);
+			XElement x = FindItem(base64Key, version, compression);
 			try
 			{
 				return (x == null ? null : new CompositeFileMap(base64Key,
-				x.Attribute("compression").Value,
-				x.Attribute("file").Value,
-				x.Descendants("file")
-					.Select(f => new FileInfo(f.Attribute("name").Value))
-                    .ToList(), int.Parse(x.Attribute("version").Value)));
+				    x.Attribute("compression").Value,
+				    x.Attribute("file").Value,
+				    x.Descendants("file")
+					    .Select(f => new FileInfo(f.Attribute("name").Value))
+                        .ToList(), int.Parse(x.Attribute("version").Value)));
 			}
 			catch
 			{
@@ -163,7 +162,7 @@ namespace ClientDependency.Core.CompositeFiles
 			lock (m_Lock)
 			{
 				//see if we can find an item with the key already
-				XElement x = FindItem(base64Key, version);
+                XElement x = FindItem(base64Key, version, compressionType);
 
 				if (x != null)
 				{
@@ -188,10 +187,12 @@ namespace ClientDependency.Core.CompositeFiles
 			}
 		}
 
-		private XElement FindItem(string key, int version)
+		private XElement FindItem(string key, int version, string compression)
 		{
 			return m_Doc.Root.Elements("item")
-					.Where(e => (string)e.Attribute("key") == key && (string)e.Attribute("version") == version.ToString())
+					.Where(e => (string)e.Attribute("key") == key 
+                        && (string)e.Attribute("version") == version.ToString()
+                        && (string)e.Attribute("compression") == compression)
 					.SingleOrDefault();
 		}
 

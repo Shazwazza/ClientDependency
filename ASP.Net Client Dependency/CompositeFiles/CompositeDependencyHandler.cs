@@ -57,6 +57,8 @@ namespace ClientDependency.Core.CompositeFiles
 
             byte[] outputBytes = null;
 
+            //retry up to 5 times... this is only here due to a bug found in another website that was returning a blank 
+            //result. To date, it can't be replicated in VS, but 
             for (int i = 0; i < 5; i++)
             {
                 outputBytes = ProcessRequestInternal(context, fileset, type, version, outputBytes);
@@ -79,8 +81,11 @@ namespace ClientDependency.Core.CompositeFiles
 
         internal byte[] ProcessRequestInternal(HttpContext context, string fileset, ClientDependencyType type, int version, byte[] outputBytes)
         {
+            //get the compression type supported
+            CompressionType cType = GetCompression(context); 
+
             //get the map to the composite file for this file set, if it exists.
-            CompositeFileMap map = CompositeFileXmlMapper.Instance.GetCompositeFile(fileset, version);
+            CompositeFileMap map = CompositeFileXmlMapper.Instance.GetCompositeFile(fileset, version, cType.ToString());
 
             string compositeFileName = "";
             if (map != null && map.HasFileBytes)
@@ -100,8 +105,7 @@ namespace ClientDependency.Core.CompositeFiles
 
                         List<CompositeFileDefinition> fDefs;
                         byte[] fileBytes = GetCombinedFiles(context, fileset, type, out fDefs);
-                        //compress data
-                        CompressionType cType = GetCompression(context);
+                        //compress data                        
                         outputBytes = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CompressBytes(cType, fileBytes);
                         SetContentEncodingHeaders(context, cType);
                         //save combined file
@@ -162,14 +166,22 @@ namespace ClientDependency.Core.CompositeFiles
             TimeSpan duration = TimeSpan.FromDays(10);
             HttpCachePolicy cache = context.Response.Cache;
             cache.SetCacheability(HttpCacheability.Public);
+
             cache.SetExpires(DateTime.Now.Add(duration));
             cache.SetMaxAge(duration);
             cache.SetValidUntilExpires(true);
             cache.SetLastModified(DateTime.Now);
-            cache.SetETag(Guid.NewGuid().ToString());
+            
+            cache.SetETagFromFileDependencies();
+            
             //set server OutputCache to vary by our params
             cache.VaryByParams["t"] = true;
             cache.VaryByParams["s"] = true;
+            cache.VaryByParams["cdv"] = true;
+            //ensure the cache is different based on the encoding specified per browser
+            cache.VaryByContentEncodings["gzip"] = true;
+            cache.VaryByContentEncodings["deflate"] = true;
+
             //don't allow varying by wildcard
             cache.SetOmitVaryStar(true);
             //ensure client browser maintains strict caching rules
@@ -202,7 +214,9 @@ namespace ClientDependency.Core.CompositeFiles
         }
 
         /// <summary>
-        /// Check what kind of compression to use
+        /// Check what kind of compression to use. Need to select the first available compression 
+        /// from the header value as this is how .Net performs caching by compression so we need to follow
+        /// this process.
         /// </summary>
         private CompressionType GetCompression(HttpContext context)
         {
@@ -211,14 +225,20 @@ namespace ClientDependency.Core.CompositeFiles
 
             if (!string.IsNullOrEmpty(acceptEncoding))
             {
-                //deflate is faster in .Net according to Mads Kristensen (blogengine.net)
-                if (acceptEncoding.Contains("deflate"))
+                string[] supported = acceptEncoding.Split(',');
+                //get the first type that we support
+                for (var i = 0; i < supported.Length; i++)
                 {
-                    type = CompressionType.deflate;
-                }
-                else if (acceptEncoding.Contains("gzip"))
-                {
-                    type = CompressionType.gzip;
+                    if (supported[i] == "deflate")
+                    {
+                        type = CompressionType.deflate;
+                        break;
+                    }
+                    else if (supported[i] == "gzip")
+                    {
+                        type = CompressionType.gzip;
+                        break;
+                    }
                 }
             }
 
