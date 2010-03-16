@@ -150,7 +150,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 					}
 					catch (Exception ex)
 					{
-                        ClientDependencySettings.Instance.Logger.Error(() => string.Format("Could not load file contents from {0}. EXCEPTION: {1}", url, ex.Message));					
+                        ClientDependencySettings.Instance.Logger.Error(string.Format("Could not load file contents from {0}. EXCEPTION: {1}", url, ex.Message), ex);
 					}
 				}
 				else
@@ -166,7 +166,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 					}
 					catch (Exception ex)
 					{
-                        ClientDependencySettings.Instance.Logger.Error(() => string.Format("Could not load file contents from {0}. EXCEPTION: {1}", url, ex.Message));
+                        ClientDependencySettings.Instance.Logger.Error(string.Format("Could not load file contents from {0}. EXCEPTION: {1}", url, ex.Message), ex);
 					}
 				}
 

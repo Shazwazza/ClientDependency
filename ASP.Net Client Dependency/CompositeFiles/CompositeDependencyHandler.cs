@@ -58,19 +58,19 @@ namespace ClientDependency.Core.CompositeFiles
             byte[] outputBytes = null;
 
             //retry up to 5 times... this is only here due to a bug found in another website that was returning a blank 
-            //result. To date, it can't be replicated in VS, but 
+            //result. To date, it can't be replicated in VS, but we'll leave it here for error handling support... can't hurt
             for (int i = 0; i < 5; i++)
             {
                 outputBytes = ProcessRequestInternal(context, fileset, type, version, outputBytes);
                 if (outputBytes != null && outputBytes.Length > 0)
                     break;
 
-                ClientDependencySettings.Instance.Logger.Error(() => string.Format("No bytes were returned, this is attempt {0}. Fileset: {1}, Type: {2}, Version: {3}", i, fileset, type, version));
+                ClientDependencySettings.Instance.Logger.Error(string.Format("No bytes were returned, this is attempt {0}. Fileset: {1}, Type: {2}, Version: {3}", i, fileset, type, version), null);
             }
 
             if (outputBytes == null || outputBytes.Length == 0)
             {
-                ClientDependencySettings.Instance.Logger.Fatal(() => string.Format("No bytes were returned after 5 attempts. Fileset: {0}, Type: {1}, Version: {2}", fileset, type, version));
+                ClientDependencySettings.Instance.Logger.Fatal(string.Format("No bytes were returned after 5 attempts. Fileset: {0}, Type: {1}, Version: {2}", fileset, type, version), null);
                 List<CompositeFileDefinition> fDefs;
                 outputBytes = GetCombinedFiles(context, fileset, type, out fDefs);
             }

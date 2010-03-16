@@ -8,10 +8,10 @@ namespace ClientDependency.Core.Logging
 {
     public interface ILogger
     {
-        void Debug(Action action);
-        void Info(Action action);
-        void Warn(Action action);
-        void Error(Action action);
-        void Fatal(Action action);
+        void Debug(string msg);
+        void Info(string msg);
+        void Warn(string msg);
+        void Error(string msg, Exception ex);
+        void Fatal(string msg, Exception ex);
     }
 }

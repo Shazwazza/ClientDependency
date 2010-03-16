@@ -9,23 +9,23 @@ namespace ClientDependency.Core.Logging
     {
         #region ILogger Members
 
-        public void Debug(Action action)
+        public void Debug(string msg)
         {
         }
 
-        public void Info(Action action)
+        public void Info(string msg)
         {
         }
 
-        public void Warn(Action action)
+        public void Warn(string msg)
         {
         }
 
-        public void Error(Action action)
+        public void Error(string msg, Exception ex)
         {
         }
 
-        public void Fatal(Action action)
+        public void Fatal(string msg, Exception ex)
         {
         }
 

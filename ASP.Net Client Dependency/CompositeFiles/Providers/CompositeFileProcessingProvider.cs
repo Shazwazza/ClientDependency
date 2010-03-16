@@ -101,7 +101,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 						else
 						{
 							//if this fails, log the exception in trace, but continue
-                            ClientDependencySettings.Instance.Logger.Error(() => string.Format("Could not load file contents from {0}. EXCEPTION: {1}", s, ex.Message));					
+                            ClientDependencySettings.Instance.Logger.Error(string.Format("Could not load file contents from {0}. EXCEPTION: {1}", s, ex.Message), ex);
 						}
 					}
 				}
@@ -183,7 +183,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 			}
 			catch (Exception ex)
 			{
-                ClientDependencySettings.Instance.Logger.Error(() => string.Format("Could not write file {0} contents to stream. EXCEPTION: {1}", fi.FullName, ex.Message));
+                ClientDependencySettings.Instance.Logger.Error(string.Format("Could not write file {0} contents to stream. EXCEPTION: {1}", fi.FullName, ex.Message), ex);
 				return false;
 			}			
 		}		
