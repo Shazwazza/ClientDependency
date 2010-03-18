@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Pages/Master.Master" AutoEventWireup="true" CodeBehind="LazyLoadProviderTest.aspx.cs" Inherits="ClientDependency.Core.Web.Test.Pages.LazyLoadProviderTest" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Pages/Master.Master" AutoEventWireup="true" CodeBehind="LazyLoadProviderTest.aspx.cs" Inherits="ClientDependency.Web.Test.Pages.LazyLoadProviderTest" %>
 <%@ Register Namespace="ClientDependency.Core.Controls" Assembly="ClientDependency.Core" TagPrefix="CD" %>
 
 <asp:Content ID="Content1" runat="server" ContentPlaceHolderID="ContentPlaceHolder1">

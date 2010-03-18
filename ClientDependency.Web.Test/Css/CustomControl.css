@@ -1,0 +1,13 @@
+﻿.myControl
+{
+	margin:10px;
+	display:block;
+	width:230px;
+	height:100px;
+	background-color:#468259;
+	color:Maroon;
+}
+.myControl div 
+{
+	padding:40px;
+}

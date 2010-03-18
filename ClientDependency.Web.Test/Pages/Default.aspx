@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/Pages/Master.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ClientDependency.Core.Web.Test.Pages._Default" %>
+﻿<%@ Page Language="C#" MasterPageFile="~/Pages/Master.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ClientDependency.Web.Test.Pages._Default" %>
 
 <%@ Register Namespace="ClientDependency.Core.Controls" Assembly="ClientDependency.Core" TagPrefix="CD" %>
 <asp:Content runat="server" ContentPlaceHolderID="ContentPlaceHolder1">

@@ -8,7 +8,7 @@
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClientDependency.Core.Web.Test</RootNamespace>
+    <RootNamespace>ClientDependency.Web.Test</RootNamespace>
     <AssemblyName>ClientDependency.Web.Test</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <SccProjectName>SAK</SccProjectName>
@@ -69,7 +69,6 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="Controls\DynamicPanel.cs" />
     <Compile Include="Controls\Footer.ascx.cs">
       <DependentUpon>Footer.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -84,13 +83,7 @@
     <Compile Include="Controls\Header.ascx.designer.cs">
       <DependentUpon>Header.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ServiceControl.ascx.cs">
-      <DependentUpon>ServiceControl.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Controls\ServiceControl.ascx.designer.cs">
-      <DependentUpon>ServiceControl.ascx</DependentUpon>
-    </Compile>
+    <Compile Include="Controls\MyCustomControl.cs" />
     <Compile Include="Controls\Sidebar.ascx.cs">
       <DependentUpon>Sidebar.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -126,22 +119,11 @@
     <Compile Include="Pages\Master.Master.designer.cs">
       <DependentUpon>Master.Master</DependentUpon>
     </Compile>
-    <Compile Include="Pages\TEMP.aspx.cs">
-      <DependentUpon>TEMP.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\TEMP.aspx.designer.cs">
-      <DependentUpon>TEMP.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\TestService.asmx.cs">
-      <DependentUpon>TestService.asmx</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Controls\ServiceControl.ascx" />
     <Content Include="Css\Content.css" />
+    <Content Include="Css\CustomControl.css" />
     <Content Include="Css\OverrideStyles.css" />
     <Content Include="Css\Test.css" />
     <Content Include="Js\AnotherTest.js" />
@@ -151,8 +133,6 @@
     <Content Include="Pages\ForcedProviders.aspx" />
     <Content Include="Pages\LazyLoadProviderTest.aspx" />
     <Content Include="Pages\Master.Master" />
-    <Content Include="Pages\TEMP.aspx" />
-    <Content Include="Services\TestService.asmx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ASP.Net Client Dependency\ClientDependency.Core.csproj">

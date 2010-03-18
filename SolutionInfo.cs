@@ -2,7 +2,7 @@
 [assembly: AssemblyCompany("TheFARM")]
 [assembly: AssemblyCopyright("Copyright © TheFARM 2010")]
 [assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("en-AU")]
+[assembly: AssemblyCulture("")]
 
 
 // Version information for an assembly consists of the following four values:

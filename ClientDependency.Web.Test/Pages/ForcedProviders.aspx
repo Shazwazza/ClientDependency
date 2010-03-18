@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Pages/Master.Master" AutoEventWireup="true" CodeBehind="ForcedProviders.aspx.cs" Inherits="ClientDependency.Core.Web.Test.Pages.FocedProviders" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Pages/Master.Master" AutoEventWireup="true" CodeBehind="ForcedProviders.aspx.cs" Inherits="ClientDependency.Web.Test.Pages.FocedProviders" %>
 <%@ Register Namespace="ClientDependency.Core.Controls" Assembly="ClientDependency.Core" TagPrefix="CD" %>
 
 <asp:Content ID="Content1" runat="server" ContentPlaceHolderID="ContentPlaceHolder1">

@@ -1,9 +1,9 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Master.master.cs" Inherits="ClientDependency.Core.Web.Test.Pages.Master" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Master.master.cs" Inherits="ClientDependency.Web.Test.Pages.Master" %>
 <%@ Register Namespace="ClientDependency.Core.Controls" Assembly="ClientDependency.Core" TagPrefix="CD" %>
 
-<%@ Register src="../Controls/Header.ascx" tagname="Header" tagprefix="uc1" %>
-<%@ Register src="../Controls/Sidebar.ascx" tagname="Sidebar" tagprefix="uc2" %>
-<%@ Register src="../Controls/Footer.ascx" tagname="Footer" tagprefix="uc3" %>
+<%@ Register Src="../Controls/Header.ascx" TagName="Header"  TagPrefix="uc1" %>
+<%@ Register Src="../Controls/Sidebar.ascx" TagName="Sidebar" TagPrefix="uc2" %>
+<%@ Register Src="../Controls/Footer.ascx"  TagName="Footer" TagPrefix="uc3" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 

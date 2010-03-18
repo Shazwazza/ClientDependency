@@ -9,7 +9,8 @@ namespace ClientDependency.Core.FileRegistration.Providers
 {
 	public class LoaderControlProvider : BaseFileRegistrationProvider
 	{
-		public const string DefaultName = "LoaderControlProvider";
+		
+        public const string DefaultName = "LoaderControlProvider";
 
 		public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
 		{

@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace ClientDependency.Core.Web.Test.Controls
+namespace ClientDependency.Web.Test.Controls
 {
     public partial class Footer : System.Web.UI.UserControl
     {

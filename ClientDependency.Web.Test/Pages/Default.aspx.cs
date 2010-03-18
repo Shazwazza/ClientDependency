@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace ClientDependency.Core.Web.Test.Pages
+namespace ClientDependency.Web.Test.Pages
 {
     public partial class _Default : System.Web.UI.Page
     {

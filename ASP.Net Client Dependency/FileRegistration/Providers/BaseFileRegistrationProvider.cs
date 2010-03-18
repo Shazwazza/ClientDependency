@@ -29,11 +29,13 @@ namespace ClientDependency.Core.FileRegistration.Providers
         /// </summary>
         public bool IsDebugMode { get; set; }
 
-        #region Abstract methods
+        #region Abstract methods/properties
+
         protected abstract void RegisterJsFiles(List<IClientDependencyFile> jsDependencies);
         protected abstract void RegisterCssFiles(List<IClientDependencyFile> cssDependencies);
         protected abstract void ProcessSingleJsFile(string js);
         protected abstract void ProcessSingleCssFile(string css); 
+        
         #endregion
         
         #region Provider Initialization

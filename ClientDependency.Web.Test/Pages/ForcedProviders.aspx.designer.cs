@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClientDependency.Core.Web.Test.Pages {
+namespace ClientDependency.Web.Test.Pages {
     
     
     public partial class FocedProviders {
