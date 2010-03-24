@@ -100,28 +100,10 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 			//if it is a CSS file we need to parse the URLs
 			if (type == ClientDependencyType.Css)
 			{
-
-				fileContents = CssFileUrlFormatter.TransformCssFile(fileContents, MakeUri(url));
+                Uri uri = new Uri(url, UriKind.RelativeOrAbsolute);
+                fileContents = CssFileUrlFormatter.TransformCssFile(fileContents, uri.MakeAbsoluteUri());
 			}
 			return fileContents;
-		}
-
-		/// <summary>
-		/// Checks if the url is a local/relative uri, if it is, it makes it absolute based on the 
-		/// current request uri.
-		/// </summary>
-		/// <param name="url"></param>
-		/// <returns></returns>
-		protected Uri MakeUri(string url)
-		{
-			Uri uri = new Uri(url, UriKind.RelativeOrAbsolute);
-			if (!uri.IsAbsoluteUri)
-			{
-				string http = HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority);
-				Uri absoluteUrl = new Uri(new Uri(http), uri);
-				return absoluteUrl;
-			}
-			return uri;
 		}
 
 		/// <summary>

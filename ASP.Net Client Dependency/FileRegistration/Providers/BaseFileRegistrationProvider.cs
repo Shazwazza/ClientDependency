@@ -61,6 +61,29 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         #endregion
 
+        #region Static Methods
+        /// <summary>
+        /// Returns the url for the composite file handler for the filePath specified.
+        /// </summary>
+        /// <param name="filePath">The file path is a semi-colon delimited string of file paths</param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static string GetCompositeFileUrl(string filePaths, ClientDependencyType type)
+        {
+            //build the combined composite list url
+            string handler = "{0}?s={1}&t={2}";
+            string combinedurl = string.Format(handler, ClientDependencySettings.Instance.CompositeFileHandlerPath, HttpContext.Current.Server.UrlEncode(EncodeTo64(filePaths)), type.ToString());
+            return combinedurl;
+        }
+
+        private static string EncodeTo64(string toEncode)
+        {
+            byte[] toEncodeAsBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(toEncode);
+            string returnValue = System.Convert.ToBase64String(toEncodeAsBytes);
+            return returnValue;
+        } 
+        #endregion
+
         #region Public Methods
         public void RegisterDependencies(Control dependantControl, ClientDependencyCollection dependencies, HashSet<IClientDependencyPath> paths)
         {
@@ -91,7 +114,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
         /// Returns a URL used to return a compbined/compressed/optimized version of all dependencies.
         /// <remarks>
         /// The full url with the encoded query strings for the handler which will process the composite list
-        /// of dependencies. The handler will compbine, compress, minify (if JS), and output cache the results
+        /// of dependencies. The handler will compbine, compress, minify, and output cache the results
         /// based on a hash key of the base64 encoded string.
         /// </remarks>        
         /// </summary>
@@ -104,14 +127,13 @@ namespace ClientDependency.Core.FileRegistration.Providers
             if (dependencies.Count == 0)
                 return "";
 
-            //build the combined composite list url
-            string handler = "{0}?s={1}&t={2}";
+            //build the combined composite list url            
             StringBuilder files = new StringBuilder();
             foreach (IClientDependencyFile a in dependencies)
             {
                 files.Append(a.FilePath + ";");
             }
-            string combinedurl = string.Format(handler, ClientDependencySettings.Instance.CompositeFileHandlerPath, HttpContext.Current.Server.UrlEncode(EncodeTo64(files.ToString())), type.ToString());
+            string combinedurl = GetCompositeFileUrl(files.ToString(), type);
             rVal = AppendVersionQueryString(combinedurl); //append our version to the combined url            		
 
             //if (url.Length > CompositeDependencyHandler.MaxHandlerUrlLength)
@@ -120,13 +142,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
         } 
         #endregion
 
-        #region Private Methods
-        private string EncodeTo64(string toEncode)
-        {
-            byte[] toEncodeAsBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(toEncode);
-            string returnValue = System.Convert.ToBase64String(toEncodeAsBytes);
-            return returnValue;
-        }
+        #region Private Methods        
 
         /// <summary>
         /// Ensures the correctly resolved file path is set for each dependency (i.e. so that ~ are taken care of) and also

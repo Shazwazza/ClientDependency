@@ -40,9 +40,7 @@ namespace ClientDependency.Core.Config
         private FileRegistrationProviderCollection m_FileRegisterProviders = null;
 
         private BaseCompositeFileProcessingProvider m_CompositeFileProvider = null;
-        private CompositeFileProcessingProviderCollection m_CompositeFileProviders = null;
-
-        public const string ConfigurationSectionName = "clientDependency";
+        private CompositeFileProcessingProviderCollection m_CompositeFileProviders = null;       
 
         /// <summary>
         /// The file extensions of Client Dependencies that are file based as opposed to request based.
@@ -102,7 +100,8 @@ namespace ClientDependency.Core.Config
 
         //public DirectoryInfo CompositeFilePath { get; set; }
         public string CompositeFileHandlerPath { get; set; }
-
+        public bool ProcessRogueJSFiles { get; set; }
+        public bool ProcessRogueCSSFiles { get; set; }
 
 
         private void LoadProviders()
@@ -159,11 +158,13 @@ namespace ClientDependency.Core.Config
                             throw new ProviderException("Unable to load default composite file provider");
 
                         CompositeFileHandlerPath = section.CompositeFileElement.CompositeFileHandlerPath;
-                        //IsDebugMode = section.IsDebugMode;
+                        ProcessRogueCSSFiles = section.CompositeFileElement.ProcessRogueCSSFiles;
+                        ProcessRogueJSFiles = section.CompositeFileElement.ProcessRogueJSFiles;
+
                         this.Version = section.Version;
-                        //EnableCompositeFiles = section.FileRegistrationElement.EnableCompositeFiles;
+                        
                         FileBasedDependencyExtensionList = section.FileRegistrationElement.FileBasedDependencyExtensionList.ToList();
-                        //CompositeFilePath = new DirectoryInfo(HttpContext.Current.Server.MapPath(section.CompositeFileElement.CompositeFilePath));
+                        
 
                         if (string.IsNullOrEmpty(section.LoggerType))
                         {
