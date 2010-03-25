@@ -35,6 +35,7 @@ namespace ClientDependency.Core.Module
         private long m_Position;
         private StringBuilder m_ResponseHtml;
         private string m_MatchScript = "<script(?:(?:.*(?<src>(?<=src=\")[^\"]*(?=\"))[^>]*)|[^>]*)>(?<content>(?:(?:\n|.)(?!(?:\n|.)<script))*)</script>";
+        private string m_MatchLink = "<link\\s+[^>]*(href\\s*=\\s*(['\"])(?<href>.*?)\\2)";
 
         #endregion
 
@@ -130,6 +131,7 @@ namespace ClientDependency.Core.Module
             var output = m_ResponseHtml.ToString();
 
             output = ReplaceScripts(output);
+            output = ReplaceStyles(output);
 
             byte[] outputBytes = System.Text.Encoding.Default.GetBytes(output);
             m_ResponseStream.Write(outputBytes, 0, outputBytes.GetLength(0));
@@ -150,40 +152,66 @@ namespace ClientDependency.Core.Module
             //check if we should be processing!
             if (ClientDependencySettings.Instance.ProcessRogueJSFiles)
             {
-                html = Regex.Replace(html, m_MatchScript,
-                    (m) =>
-                    {
-                        var src = m.Groups["src"];
+                return ReplaceContent(html, "src", ".js", ClientDependencyType.Javascript, m_MatchScript);
+            }            
+            return html;
+        }
 
-                        //if there is no src group name or it doesn't end with a js extension or it's already using the composite handler,
-                        //the return the existing string.
-                        if (src == null
-                            || string.IsNullOrEmpty(src.ToString())
-                            || !src.ToString().EndsWith(".js")
-                            || src.ToString().StartsWith(ClientDependencySettings.Instance.CompositeFileHandlerPath))
-                            return m.ToString();
-
-                        //make sure that it's an internal request, though we can deal with external 
-                        //requests, we'll leave that up to the developer to register an external request
-                        //explicitly if they want to include in the composite scripts.
-                        try
-                        {
-                            var url = new Uri(src.ToString(), UriKind.RelativeOrAbsolute);
-                            if (!url.IsLocalUri())
-                                return m.ToString(); //not a local uri                       
-                        }
-                        catch (UriFormatException)
-                        {
-                            //malformed url, let's exit
-                            return m.ToString();
-                        }
-
-                        return m.ToString().Replace(src.ToString(),
-                            BaseFileRegistrationProvider.GetCompositeFileUrl(src.ToString(), ClientDependencyType.Javascript));
-                    },
-                    RegexOptions.Compiled);
+        /// <summary>
+        /// Replaces all href attribute values for a link tag with their corresponding 
+        /// URLs as a composite style.
+        /// </summary>
+        /// <param name="html"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// TODO: Need to add caching to the src match found and what we returned for it so this doesn't
+        /// get processed every request.
+        /// </remarks>
+        private string ReplaceStyles(string html)
+        {
+            //check if we should be processing!
+            if (ClientDependencySettings.Instance.ProcessRogueCSSFiles)
+            {
+                return ReplaceContent(html, "href", ".css", ClientDependencyType.Css, m_MatchLink);
             }
-            
+            return html;
+        }
+
+        private string ReplaceContent(string html, string namedGroup, string extension, ClientDependencyType type, string regex)
+        {
+            html = Regex.Replace(html, regex,
+                (m) =>
+                {
+                    var grp = m.Groups[namedGroup];
+
+                    //if there is no namedGroup group name or it doesn't end with a js/css extension or it's already using the composite handler,
+                    //the return the existing string.
+                    if (grp == null
+                        || string.IsNullOrEmpty(grp.ToString())
+                        || !grp.ToString().ToUpper().EndsWith(extension.ToUpper())
+                        || grp.ToString().StartsWith(ClientDependencySettings.Instance.CompositeFileHandlerPath))
+                        return m.ToString();
+
+                    //make sure that it's an internal request, though we can deal with external 
+                    //requests, we'll leave that up to the developer to register an external request
+                    //explicitly if they want to include in the composite scripts.
+                    try
+                    {
+                        var url = new Uri(grp.ToString(), UriKind.RelativeOrAbsolute);
+                        if (!url.IsLocalUri())
+                            return m.ToString(); //not a local uri                       
+                    }
+                    catch (UriFormatException)
+                    {
+                        //malformed url, let's exit
+                        return m.ToString();
+                    }
+
+                    return m.ToString().Replace(grp.ToString(),
+                        BaseFileRegistrationProvider.GetCompositeFileUrl(grp.ToString(), type));
+                },
+                RegexOptions.Compiled);
+
             return html;
         }
 
