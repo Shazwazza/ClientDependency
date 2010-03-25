@@ -8,7 +8,7 @@
 <!-- Demonstrates the use of using the PathNameAlias //-->
 <CD:CssInclude ID="CssInclude2" runat="server" FilePath="Controls.css" PathNameAlias="Styles" />
 
-<div class="control sidebar">
+<div class="control sidebar bg-primary-3 white">
 	This is a side bar
 	<Web:MyCustomControl runat="server" id="MyControl"></Web:MyCustomControl>
 </div>

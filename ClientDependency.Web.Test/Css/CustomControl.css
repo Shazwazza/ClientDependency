@@ -4,8 +4,7 @@
 	display:block;
 	width:230px;
 	height:100px;
-	background-color:#468259;
-	color:Maroon;
+	border:dashed 1px white;
 }
 .myControl div 
 {

@@ -24,8 +24,9 @@
 	</CD:ClientDependencyLoader>
 	
 	<CD:CssInclude ID="CssInclude1" runat="server" FilePath="Site.css" PathNameAlias="Styles" />
+	<CD:CssInclude ID="CssInclude2" runat="server" FilePath="ColorScheme.css" PathNameAlias="Styles" />
 
-    <form id="form1" runat="server">
+    
     
     
     
@@ -35,6 +36,6 @@
         <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server"></asp:ContentPlaceHolder>
     </div>
 	<uc3:Footer ID="Footer1" runat="server" />
-    </form>
+
 </body>
 </html>

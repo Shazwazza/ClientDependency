@@ -1,8 +1,6 @@
 ﻿body
 {
-    background-color:#F0F0F0;
-    color:#468259;
-    font-family:Tahoma, Arial;
+    font-family:Calibri, Tahoma, Arial;
     margin:0;
     padding:0;
 }
@@ -29,12 +27,14 @@ html[xmlns] .clearfix {
 }
 
 a 
-{
-    color:#525150;
-    font-size:12px;
+{    
+    font-size:12pt;
     text-decoration:none;
 }
 a:hover 
 {
     text-decoration:underline;
 }
+
+
+

@@ -7,6 +7,6 @@
 <!-- Demonstrates the use of using the PathNameAlias //-->
 <CD:CssInclude ID="CssInclude1" runat="server" FilePath="Controls.css" PathNameAlias="Styles" />
 
-<div class="control footer">
+<div class="control footer bg-complement-1">
 	This is a footer
 </div>
