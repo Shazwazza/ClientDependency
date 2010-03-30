@@ -7,9 +7,9 @@ namespace ClientDependency.Core.FileRegistration.Providers
 {
 	public class FileRegistrationProviderCollection : ProviderCollection
 	{
-		public new BaseFileRegistrationProvider this[string name]
+        public new WebFormsFileRegistrationProvider this[string name]
 		{
-			get { return (BaseFileRegistrationProvider)base[name]; }
+            get { return (WebFormsFileRegistrationProvider)base[name]; }
 		}
 
 		public override void Add(ProviderBase provider)
@@ -17,7 +17,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 			if (provider == null)
 				throw new ArgumentNullException("provider");
 
-			if (!(provider is BaseFileRegistrationProvider))
+            if (!(provider is WebFormsFileRegistrationProvider))
 				throw new ArgumentException("Invalid provider type", "provider");
 
 			base.Add(provider);

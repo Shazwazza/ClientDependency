@@ -7,7 +7,7 @@ using ClientDependency.Core.Controls;
 
 namespace ClientDependency.Core.FileRegistration.Providers
 {
-	public class LoaderControlProvider : BaseFileRegistrationProvider
+    public class LoaderControlProvider : WebFormsFileRegistrationProvider
 	{
 		
         public const string DefaultName = "LoaderControlProvider";

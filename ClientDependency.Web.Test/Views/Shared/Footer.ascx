@@ -1,10 +1,11 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl" %>
+<%@ Import Namespace="ClientDependency.Core.Mvc" %>
 
-<%--<CD:JsInclude ID="JsInclude1" runat="server" FilePath="~/Js/jquery-1.3.2.min.js" Priority="1" />
-<CD:JsInclude ID="JsInclude2" runat="server" FilePath="~/Js/FooterScript.js" Priority="200" />--%>
+<% Html.RequiresJs("/Js/jquery-1.3.2.min.js", 1); %>
+<% Html.RequiresJs("/FooterScript.js", "Scripts", 200); %>
 
-<!-- Demonstrates the use of using the PathNameAlias //-->
-<%--<CD:CssInclude ID="CssInclude1" runat="server" FilePath="Controls.css" PathNameAlias="Styles" />--%>
+<%--Demonstrates the use of using the PathNameAlias--%>
+<% Html.RequiresCss("/Css/Controls.css", "Styles"); %>
 
 <div class="control footer bg-complement-1">
 	This is a footer

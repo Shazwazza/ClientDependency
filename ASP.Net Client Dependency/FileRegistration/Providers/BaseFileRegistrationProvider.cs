@@ -20,9 +20,9 @@ namespace ClientDependency.Core.FileRegistration.Providers
             IsDebugMode = false;
         }
 
-		protected Control DependantControl { get; private set; }
-		protected HashSet<IClientDependencyPath> FolderPaths { get; private set; }
-        protected List<IClientDependencyFile> AllDependencies { get; private set; }
+		
+		protected HashSet<IClientDependencyPath> FolderPaths { get; set; }
+        protected List<IClientDependencyFile> AllDependencies { get; set; }
 
         /// <summary>
         /// Set to true to disable composite scripts so all scripts/css comes through as individual files.
@@ -84,31 +84,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
         } 
         #endregion
 
-        #region Public Methods
-        public void RegisterDependencies(Control dependantControl, ClientDependencyCollection dependencies, HashSet<IClientDependencyPath> paths)
-        {
-            DependantControl = dependantControl;
-            AllDependencies = new List<IClientDependencyFile>(dependencies);
-            FolderPaths = paths;
-
-            UpdateFilePaths();
-
-            List<IClientDependencyFile> jsDependencies = AllDependencies
-                .Where(x => x.DependencyType == ClientDependencyType.Javascript)
-                .ToList();
-
-            List<IClientDependencyFile> cssDependencies = AllDependencies
-                .Where(x => x.DependencyType == ClientDependencyType.Css)
-                .ToList();
-
-            // sort by priority
-            jsDependencies.Sort((a, b) => a.Priority.CompareTo(b.Priority));
-            cssDependencies.Sort((a, b) => a.Priority.CompareTo(b.Priority));
-
-            RegisterCssFiles(cssDependencies.ConvertAll<IClientDependencyFile>(a => { return (IClientDependencyFile)a; }));
-            RegisterJsFiles(jsDependencies.ConvertAll<IClientDependencyFile>(a => { return (IClientDependencyFile)a; }));
-
-        }
+        #region Public Methods        
 
         /// <summary>
         /// Returns a URL used to return a compbined/compressed/optimized version of all dependencies.
@@ -151,7 +127,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
         /// <param name="dependencies"></param>
         /// <param name="paths"></param>
         /// <param name="control"></param>
-        private void UpdateFilePaths()
+        protected void UpdateFilePaths()
         {
             foreach (IClientDependencyFile dependency in AllDependencies)
             {
@@ -173,7 +149,8 @@ namespace ClientDependency.Core.FileRegistration.Providers
                 }
                 else
                 {
-                    dependency.FilePath = DependantControl.ResolveUrl(dependency.FilePath);
+                    //dependency.FilePath = DependantControl.ResolveUrl(dependency.FilePath);
+                    dependency.FilePath = VirtualPathUtility.ToAbsolute(dependency.FilePath);
                 }
 
                 //append query strings to each file if we are in debug mode

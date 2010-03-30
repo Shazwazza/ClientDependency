@@ -39,6 +39,15 @@ namespace ClientDependency.Core.Config
 			}
 		}
 
+        [ConfigurationProperty("mvc", IsRequired = true)]
+        public MvcSection MvcElement
+        {
+            get
+            {
+                return (MvcSection)this["mvc"];
+            }
+        }
+
         [ConfigurationProperty("loggerType", IsRequired = false)]
         public string LoggerType
         {

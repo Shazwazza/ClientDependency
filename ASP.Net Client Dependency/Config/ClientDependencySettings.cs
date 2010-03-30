@@ -11,6 +11,7 @@ using ClientDependency.Core.CompositeFiles;
 using ClientDependency.Core.FileRegistration.Providers;
 using ClientDependency.Core.CompositeFiles.Providers;
 using ClientDependency.Core.Logging;
+using ClientDependency.Core.Mvc.Providers;
 
 namespace ClientDependency.Core.Config
 {
@@ -36,11 +37,14 @@ namespace ClientDependency.Core.Config
         private static readonly ClientDependencySettings m_Settings = new ClientDependencySettings();
 
         private object m_Lock = new object();
-        private BaseFileRegistrationProvider m_FileRegisterProvider = null;
+        private WebFormsFileRegistrationProvider m_FileRegisterProvider = null;
         private FileRegistrationProviderCollection m_FileRegisterProviders = null;
 
         private BaseCompositeFileProcessingProvider m_CompositeFileProvider = null;
-        private CompositeFileProcessingProviderCollection m_CompositeFileProviders = null;       
+        private CompositeFileProcessingProviderCollection m_CompositeFileProviders = null;
+
+        private BaseRenderer m_MvcRenderer = null;
+        private MvcRendererCollection m_MvcRenderers = null; 
 
         /// <summary>
         /// The file extensions of Client Dependencies that are file based as opposed to request based.
@@ -68,8 +72,21 @@ namespace ClientDependency.Core.Config
                 return _logger;
             }
         }
-
-        public BaseFileRegistrationProvider DefaultFileRegistrationProvider
+        public BaseRenderer DefaultMvcRenderer
+        {
+            get
+            {
+                return m_MvcRenderer;
+            }
+        }
+        public MvcRendererCollection MvcRendererCollection
+        {
+            get
+            {
+                return m_MvcRenderers;
+            }
+        }
+        public WebFormsFileRegistrationProvider DefaultFileRegistrationProvider
         {
             get
             {
@@ -117,6 +134,7 @@ namespace ClientDependency.Core.Config
 
                         m_FileRegisterProviders = new FileRegistrationProviderCollection();
                         m_CompositeFileProviders = new CompositeFileProcessingProviderCollection();
+                        m_MvcRenderers = new MvcRendererCollection();
 
                         // if there is no section found, then add the standard providers to the collection with the standard 
                         // default provider
@@ -125,6 +143,7 @@ namespace ClientDependency.Core.Config
                             // Load registered providers and point _provider to the default provider	
                             ProvidersHelper.InstantiateProviders(section.FileRegistrationElement.Providers, m_FileRegisterProviders, typeof(BaseFileRegistrationProvider));
                             ProvidersHelper.InstantiateProviders(section.CompositeFileElement.Providers, m_CompositeFileProviders, typeof(BaseCompositeFileProcessingProvider));
+                            ProvidersHelper.InstantiateProviders(section.MvcElement.Renderers, m_MvcRenderers, typeof(BaseRenderer));
                         }
                         else
                         {
@@ -144,6 +163,10 @@ namespace ClientDependency.Core.Config
                             cfpp.Initialize(CompositeFileProcessingProvider.DefaultName, null);
                             m_CompositeFileProviders.Add(cfpp);
 
+                            var mvc = new StandardRenderer();
+                            mvc.Initialize(StandardRenderer.DefaultName, null);
+                            m_MvcRenderers.Add(mvc);
+
                         }
 
 
@@ -156,6 +179,10 @@ namespace ClientDependency.Core.Config
                         m_CompositeFileProvider = m_CompositeFileProviders[section.CompositeFileElement.DefaultProvider];
                         if (m_CompositeFileProvider == null)
                             throw new ProviderException("Unable to load default composite file provider");
+
+                        m_MvcRenderer = m_MvcRenderers[section.MvcElement.DefaultRenderer];
+                        if (m_MvcRenderer == null)
+                            throw new ProviderException("Unable to load default mvc renderer");
 
                         CompositeFileHandlerPath = section.CompositeFileElement.CompositeFileHandlerPath;
                         ProcessRogueCSSFiles = section.CompositeFileElement.ProcessRogueCSSFiles;

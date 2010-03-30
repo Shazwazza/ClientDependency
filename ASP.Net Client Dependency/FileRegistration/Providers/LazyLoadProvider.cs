@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace ClientDependency.Core.FileRegistration.Providers
 {
-	public class LazyLoadProvider : BaseFileRegistrationProvider
+    public class LazyLoadProvider : WebFormsFileRegistrationProvider
 	{
 
 		public const string DefaultName = "LazyLoadProvider";

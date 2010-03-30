@@ -1,7 +1,7 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl" %>
+<%@ Import Namespace="ClientDependency.Core.Mvc" %>
 
-<%--<CD:CssInclude ID="CssInclude2" runat="server" FilePath="CustomControl.css" PathNameAlias="Styles" />--%>
-
+<% Html.RequiresCss("/Css/Controls.css", "Styles"); %>
 
 
 <div class="myControl">My Custom Control</div>

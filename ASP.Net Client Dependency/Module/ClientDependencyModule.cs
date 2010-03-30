@@ -54,7 +54,7 @@ namespace ClientDependency.Core.Module
 
             if (handler != null)
             {
-                app.Response.Filter = new RogueFileFilter(app.Response.Filter);
+                app.Response.Filter = new ResponseFilter(app.Response.Filter, new HttpContextWrapper(app.Context));
             }
         }
 

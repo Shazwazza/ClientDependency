@@ -16,7 +16,7 @@ namespace ClientDependency.Core.Config
 		}
 
 		[StringValidator(MinLength = 1)]
-		[ConfigurationProperty("defaultProvider", DefaultValue = "PageHeaderProvider")]
+        [ConfigurationProperty("defaultProvider", DefaultValue = "CompositeFileProcessor")]
 		public string DefaultProvider
 		{
 			get { return (string)base["defaultProvider"]; }

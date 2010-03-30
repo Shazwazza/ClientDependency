@@ -20,122 +20,39 @@ namespace ClientDependency.Core.Module
     /// Used as an http response filter to modify the contents of the output html.
     /// This filter is used to intercept js and css rogue registrations on the html page.
     /// </summary>
-    internal class RogueFileFilter : Stream
+    public class RogueFileFilter : IFilter
     {
-
-        public RogueFileFilter(Stream inputStream)
+        public RogueFileFilter(HttpContextBase ctx)
         {
-            m_ResponseStream = inputStream;
-            m_ResponseHtml = new StringBuilder();
+            CurrentContext = ctx;
         }
 
         #region Private members
-
-        private Stream m_ResponseStream;
-        private long m_Position;
-        private StringBuilder m_ResponseHtml;
+        
         private string m_MatchScript = "<script(?:(?:.*(?<src>(?<=src=\")[^\"]*(?=\"))[^>]*)|[^>]*)>(?<content>(?:(?:\n|.)(?!(?:\n|.)<script))*)</script>";
         private string m_MatchLink = "<link\\s+[^>]*(href\\s*=\\s*(['\"])(?<href>.*?)\\2)";
 
         #endregion
 
-        #region Basic Stream implementation overrides
-        public override bool CanRead
-        {
-            get { return true; }
-        }
-
-        public override bool CanSeek
-        {
-            get { return true; }
-        }
-
-        public override bool CanWrite
-        {
-            get { return true; }
-        }
-
-        public override long Length
-        {
-            get { return 0; }
-        }
-        #endregion
-
-        #region Stream wrapper implementation
-        public override void Close()
-        {
-            m_ResponseStream.Close();
-        }
-
-        public override long Position
-        {
-            get { return m_Position; }
-            set { m_Position = value; }
-        }
-
-        public override long Seek(long offset, SeekOrigin origin)
-        {
-            return m_ResponseStream.Seek(offset, origin);
-        }
-
-        public override void SetLength(long length)
-        {
-            m_ResponseStream.SetLength(length);
-        }
-
-        public override int Read(byte[] buffer, int offset, int count)
-        {
-            return m_ResponseStream.Read(buffer, offset, count);
-        }
-        #endregion
-
-        #region Stream implemenation that does stuff
+        #region IFilter Members
 
         /// <summary>
-        /// Appends the bytes written to our string builder
+        /// Replaces any rogue script tag's with calls to the compression handler instead 
+        /// of just the script.
         /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="offset"></param>
-        /// <param name="count"></param>
-        public override void Write(byte[] buffer, int offset, int count)
+        public string UpdateOutputHtml(string html)
         {
-            byte[] data = new byte[count];
-            Buffer.BlockCopy(buffer, offset, data, 0, count);
-            m_ResponseHtml.Append(System.Text.Encoding.Default.GetString(buffer));
+            html = ReplaceScripts(html);
+            html = ReplaceStyles(html);
+            return html;
         }
 
-        /// <summary>
-        /// Before the contents are flushed to the stream, the output is inspected and altered
-        /// and then written to the stream.
-        /// </summary>
-        public override void Flush()
-        {
-            UpdateOutputHtml();
-            m_ResponseStream.Flush();
-        }
+        public HttpContextBase CurrentContext { get; private set; }
 
         #endregion
 
         #region Private methods
 
-        /// <summary>
-        /// Modifies the output html content:
-        /// 
-        /// 1.
-        /// Replaces any rogue script tag's with calls to the compression handler instead 
-        /// of just the script.
-        /// 
-        /// </summary>
-        private void UpdateOutputHtml()
-        {
-            var output = m_ResponseHtml.ToString();
-
-            output = ReplaceScripts(output);
-            output = ReplaceStyles(output);
-
-            byte[] outputBytes = System.Text.Encoding.Default.GetBytes(output);
-            m_ResponseStream.Write(outputBytes, 0, outputBytes.GetLength(0));
-        }
 
         /// <summary>
         /// Replaces all src attribute values for a script tag with their corresponding 

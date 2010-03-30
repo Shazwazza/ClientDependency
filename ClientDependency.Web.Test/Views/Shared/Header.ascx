@@ -1,13 +1,10 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl" %>
 <%@ Import Namespace="ClientDependency.Core.Mvc" %>
 
-<%--<CD:JsInclude ID="JsInclude1" runat="server" FilePath="~/Js/jquery-1.3.2.min.js" />--%>
+<% Html.RequiresJs("/Js/jquery-1.3.2.min.js"); %>
 
-<!-- Demonstrates the use of using the PathNameAlias //-->
-<%--<CD:CssInclude ID="CssInclude1" runat="server" FilePath="Controls.css" PathNameAlias="Styles" />--%>
-
-<%= Requires.Css("/Css/Controls.css")%>
-<%= Requires.Js("/Js/jquery-1.3.2.min.js") %>
+<%--Demonstrates the use of using the PathNameAlias--%>
+<% Html.RequiresCss("/Css/Controls.css", "Styles"); %>
 
 <div class="control white bg-complement-2">
     <a href="/" class="f-primary-4 bg-complement-2">Return to landing page</a>

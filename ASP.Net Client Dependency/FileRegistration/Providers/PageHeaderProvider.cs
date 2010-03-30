@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace ClientDependency.Core.FileRegistration.Providers
 {
-	public class PageHeaderProvider : BaseFileRegistrationProvider
+    public class PageHeaderProvider : WebFormsFileRegistrationProvider
 	{		
 
 		public const string DefaultName = "PageHeaderProvider";
