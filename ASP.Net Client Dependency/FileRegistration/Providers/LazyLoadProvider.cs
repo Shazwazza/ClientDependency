@@ -39,7 +39,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 			}
 			else
 			{
-                sb.Append(RenderSingleJsFile(ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript)));
+                sb.Append(RenderSingleJsFile(string.Format("'{0}','{1}'", ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript), string.Empty)));
 			}
 
             return sb.ToString();
