@@ -4,7 +4,7 @@
 <% Html.RequiresJs("/Js/jquery-1.3.2.min.js"); %>
 
 <%--Demonstrates the use of using the PathNameAlias--%>
-<% Html.RequiresCss("/Css/Controls.css", "Styles"); %>
+<% Html.RequiresCss("Controls.css", "Styles"); %>
 
 <div class="control sidebar bg-primary-3 white">
 	This is a side bar

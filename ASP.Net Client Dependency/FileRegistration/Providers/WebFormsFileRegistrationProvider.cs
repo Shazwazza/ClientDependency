@@ -12,19 +12,35 @@ namespace ClientDependency.Core.FileRegistration.Providers
 {
     public abstract class WebFormsFileRegistrationProvider : BaseFileRegistrationProvider
     {
+
+        /// <summary>
+        /// Called to register the js and css into the page/control/output.
+        /// </summary>
+        /// <param name="dependantControl"></param>
+        /// <param name="js"></param>
+        /// <param name="css"></param>
+        protected abstract void RegisterDependencies(Control dependantControl, string js, string css);
+
+        /// <summary>
+        /// Called to register the dependencies into the page/control/output
+        /// </summary>
+        /// <param name="dependantControl"></param>
+        /// <param name="dependencies"></param>
+        /// <param name="paths"></param>
         public void RegisterDependencies(Control dependantControl, ClientDependencyCollection dependencies, HashSet<IClientDependencyPath> paths)
         {
-            DependantControl = dependantControl;
-            AllDependencies = new List<IClientDependencyFile>(dependencies);
-            FolderPaths = paths;
+            var ctl = dependantControl;
+            var allDependencies = new List<IClientDependencyFile>(dependencies);
+            var folderPaths = paths;
 
-            UpdateFilePaths();
+            UpdateFilePaths(allDependencies, folderPaths);
+            EnsureNoDuplicates(allDependencies, folderPaths);
 
-            List<IClientDependencyFile> jsDependencies = AllDependencies
+            List<IClientDependencyFile> jsDependencies = allDependencies
                 .Where(x => x.DependencyType == ClientDependencyType.Javascript)
                 .ToList();
 
-            List<IClientDependencyFile> cssDependencies = AllDependencies
+            List<IClientDependencyFile> cssDependencies = allDependencies
                 .Where(x => x.DependencyType == ClientDependencyType.Css)
                 .ToList();
 
@@ -32,11 +48,10 @@ namespace ClientDependency.Core.FileRegistration.Providers
             jsDependencies.Sort((a, b) => a.Priority.CompareTo(b.Priority));
             cssDependencies.Sort((a, b) => a.Priority.CompareTo(b.Priority));
 
-            RegisterCssFiles(cssDependencies.ConvertAll<IClientDependencyFile>(a => { return (IClientDependencyFile)a; }));
-            RegisterJsFiles(jsDependencies.ConvertAll<IClientDependencyFile>(a => { return (IClientDependencyFile)a; }));
+            string cssOutput = RenderCssDependencies(cssDependencies.ConvertAll<IClientDependencyFile>(a => { return (IClientDependencyFile)a; }));
+            string jsOutput = RenderJsDependencies(jsDependencies.ConvertAll<IClientDependencyFile>(a => { return (IClientDependencyFile)a; }));
 
-        }
-
-        protected Control DependantControl { get; set; }
+            RegisterDependencies(dependantControl, jsOutput, cssOutput);
+        }        
     }
 }

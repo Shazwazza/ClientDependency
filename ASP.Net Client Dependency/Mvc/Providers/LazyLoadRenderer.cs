@@ -7,22 +7,22 @@ namespace ClientDependency.Core.Mvc.Providers
 {
     public class LazyLoadRenderer : BaseRenderer
     {
-        protected override void RegisterJsFiles(List<IClientDependencyFile> jsDependencies)
+        protected override string RenderJsDependencies(List<IClientDependencyFile> jsDependencies)
         {
             throw new NotImplementedException();
         }
 
-        protected override void RegisterCssFiles(List<IClientDependencyFile> cssDependencies)
+        protected override string RenderCssDependencies(List<IClientDependencyFile> cssDependencies)
         {
             throw new NotImplementedException();
         }
 
-        protected override void ProcessSingleJsFile(string js)
+        protected override string RenderSingleJsFile(string js)
         {
             throw new NotImplementedException();
         }
 
-        protected override void ProcessSingleCssFile(string css)
+        protected override string RenderSingleCssFile(string css)
         {
             throw new NotImplementedException();
         }

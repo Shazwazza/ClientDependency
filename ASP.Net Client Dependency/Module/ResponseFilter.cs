@@ -130,9 +130,9 @@ namespace ClientDependency.Core.Module
         private void UpdateOutputHtml()
         {
             var output = m_ResponseHtml.ToString();
-
-            output = m_MvcFilter.UpdateOutputHtml(output);
+            
             output = m_RogueFileFilter.UpdateOutputHtml(output);
+            output = m_MvcFilter.UpdateOutputHtml(output);
             
             byte[] outputBytes = System.Text.Encoding.Default.GetBytes(output);
             m_ResponseStream.Write(outputBytes, 0, outputBytes.GetLength(0));

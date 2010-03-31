@@ -1,7 +1,8 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl" %>
 <%@ Import Namespace="ClientDependency.Core.Mvc" %>
 
-<% Html.RequiresCss("/Css/Controls.css", "Styles"); %>
+<% Html.RequiresCss("/Css/CustomControl.css"); %>
 
-
-<div class="myControl">My Custom Control</div>
+<div id="myControl" class="myControl">
+    <div>My Custom Control</div>
+</div>

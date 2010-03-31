@@ -13,7 +13,8 @@
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
 </head>
-<body>
+<body>	
+	<form runat="server">
 	
 	<CD:ClientDependencyLoader runat="server" id="Loader" >
 		<Paths>
@@ -37,5 +38,6 @@
     </div>
 	<uc3:Footer ID="Footer1" runat="server" />
 
+    </form>
 </body>
 </html>

@@ -21,8 +21,8 @@ namespace ClientDependency.Core.FileRegistration.Providers
         }
 
 		
-		protected HashSet<IClientDependencyPath> FolderPaths { get; set; }
-        protected List<IClientDependencyFile> AllDependencies { get; set; }
+        //protected HashSet<IClientDependencyPath> FolderPaths { get; set; }
+        //protected List<IClientDependencyFile> AllDependencies { get; set; }
 
         /// <summary>
         /// Set to true to disable composite scripts so all scripts/css comes through as individual files.
@@ -31,10 +31,10 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         #region Abstract methods/properties
 
-        protected abstract void RegisterJsFiles(List<IClientDependencyFile> jsDependencies);
-        protected abstract void RegisterCssFiles(List<IClientDependencyFile> cssDependencies);
-        protected abstract void ProcessSingleJsFile(string js);
-        protected abstract void ProcessSingleCssFile(string css); 
+        protected abstract string RenderJsDependencies(List<IClientDependencyFile> jsDependencies);
+        protected abstract string RenderCssDependencies(List<IClientDependencyFile> cssDependencies);
+        protected abstract string RenderSingleJsFile(string js);
+        protected abstract string RenderSingleCssFile(string css); 
         
         #endregion
         
@@ -116,26 +116,27 @@ namespace ClientDependency.Core.FileRegistration.Providers
             //    throw new ArgumentOutOfRangeException("The number of files in the composite group " + groupName + " creates a url handler address that exceeds the CompositeDependencyHandler MaxHandlerUrlLength. Reducing the amount of files in this composite group should fix the issue");
             return rVal;
         } 
+
         #endregion
 
-        #region Private Methods        
+        #region Protected Methods
 
         /// <summary>
         /// Ensures the correctly resolved file path is set for each dependency (i.e. so that ~ are taken care of) and also
         /// prefixes the file path with the correct base path specified for the PathNameAlias if specified.
         /// </summary>
-        /// <param name="dependencies"></param>
-        /// <param name="paths"></param>
-        /// <param name="control"></param>
-        protected void UpdateFilePaths()
+        /// <param name="dependencies">The dependencies list for which file paths will be updated</param>
+        /// <param name="folderPaths"></param>
+        protected void UpdateFilePaths(IEnumerable<IClientDependencyFile> dependencies
+            , HashSet<IClientDependencyPath> folderPaths)
         {
-            foreach (IClientDependencyFile dependency in AllDependencies)
+            foreach (IClientDependencyFile dependency in dependencies)
             {
                 if (!string.IsNullOrEmpty(dependency.PathNameAlias))
                 {
-                    List<IClientDependencyPath> paths = FolderPaths.ToList();
+                    List<IClientDependencyPath> paths = folderPaths.ToList();
                     IClientDependencyPath path = paths.Find(
-                        delegate(IClientDependencyPath p)
+                        (p) =>
                         {
                             return p.Name == dependency.PathNameAlias;
                         }
@@ -160,6 +161,74 @@ namespace ClientDependency.Core.FileRegistration.Providers
                 }
             }
         }
+
+        /// <summary>
+        /// This will ensure that no duplicates have made it into the collection.
+        /// Duplicates WILL occur if the same dependency is registered in 2 different ways: 
+        /// one with a global path and one with a full path. This is because paths may not be defined
+        /// until we render so we cannot de-duplicate at the time of registration.
+        /// De-duplication will remove the dependency with a lower priority or later in the list.
+        /// This also must be called after UpdatePaths are called since we need to full path filled in.
+        /// </summary>
+        /// <param name="dependencies">The dependencies list for which duplicates will be removed</param>
+        /// <param name="folderPaths"></param>
+        protected void EnsureNoDuplicates(List<IClientDependencyFile> dependencies
+            , HashSet<IClientDependencyPath> folderPaths)
+        {
+            var dupPaths = dependencies
+                .Select(x => x.FilePath) //Project each element to its uniqueID property
+                .GroupBy(x => x) //Project each element to its uniqueID property
+                .Where(x => x.Skip(1).Any()) //Filter the groups by groups that have more than 1 element
+                .Select(x => x.Key) //Project each group to the group's key (back to uniqueID)
+                .ToList();
+
+            var toKeep = new List<IClientDependencyFile>();
+
+            foreach (var d in dupPaths)
+            {
+                //find the dups and return an object with the associated index
+                var dups = dependencies
+                    .Where(x => x.FilePath == d)
+                    .Select(x => new { Index = dependencies.IndexOf(x), File = x })
+                    .ToList();
+
+                var priorities = dups.Select(x => x.File.Priority).Distinct().ToList();
+                //if there's more than 1 priority defined, we know we need to remove by priority
+                //instead of by index
+                if (priorities.Count() > 1)
+                {
+                    toKeep.Add(dups
+                        .Where(x => x.File.Priority == priorities
+                            .Min())
+                        .First().File);
+                }
+                else
+                {
+                    //if not by priority, we just need to keep the first on in the list
+                    toKeep.Add(dups
+                        .Where(x => x.Index == dups
+                            .Select(p => p.Index)
+                            .Min())
+                        .First().File);
+                }
+            }
+
+            //now we need to remove the dups that don't exist in our to keep list
+            var toRemove = dependencies
+                .Where(x => dupPaths.Contains(x.FilePath)) //find files that match our dup file paths
+                .Where(x => !toKeep.Contains(x)) //exlude the to keeps
+                .ToList();
+
+            foreach (var r in toRemove)
+            {
+                dependencies.Remove(r);
+            }
+
+        }
+
+        #endregion
+
+        #region Private Methods
 
         private string AppendVersionQueryString(string url)
         {

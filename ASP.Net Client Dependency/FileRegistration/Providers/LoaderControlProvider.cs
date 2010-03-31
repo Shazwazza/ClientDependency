@@ -21,84 +21,71 @@ namespace ClientDependency.Core.FileRegistration.Providers
 			base.Initialize(name, config);
 		}
 
-
-
-		protected override void RegisterJsFiles(List<IClientDependencyFile> jsDependencies)
+		protected override string RenderJsDependencies(List<IClientDependencyFile> jsDependencies)
 		{
 			if (jsDependencies.Count == 0)
-				return;
+				return string.Empty;
+
+            StringBuilder sb = new StringBuilder();
 
 			if (IsDebugMode)
 			{
 				foreach (IClientDependencyFile dependency in jsDependencies)
 				{
-					ProcessSingleJsFile(dependency.FilePath);
+                    sb.Append(RenderSingleJsFile(dependency.FilePath));
 				}
 			}
 			else
 			{
-				string js = ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript);
-
-                DependantControl.Page.Trace.Write("ClientDependency", string.Format("Processed composite list: {0}", js));
-
-                ProcessSingleJsFile(js);				
+                sb.Append(RenderSingleJsFile(ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript)));
 			}
+
+            return sb.ToString();
 		}
 
-		protected override void RegisterCssFiles(List<IClientDependencyFile> cssDependencies)
+        protected override string RenderCssDependencies(List<IClientDependencyFile> cssDependencies)
 		{
-			if (cssDependencies.Count == 0)
-				return;
+            if (cssDependencies.Count == 0)
+                return string.Empty;
+
+            StringBuilder sb = new StringBuilder();
 
 			if (IsDebugMode)
 			{
 				foreach (IClientDependencyFile dependency in cssDependencies)
 				{
-					ProcessSingleCssFile(dependency.FilePath);
+                    sb.Append(RenderSingleCssFile(dependency.FilePath));
 				}
 			}
 			else
 			{
-				string css = ProcessCompositeList(cssDependencies, ClientDependencyType.Css);				
-				
-				DependantControl.Page.Trace.Write("ClientDependency", string.Format("Processed composite list: {0}", css));				
-				
-				ProcessSingleCssFile(css);
+                sb.Append(RenderSingleCssFile(ProcessCompositeList(cssDependencies, ClientDependencyType.Css)));
 			}
+
+            return sb.ToString();
 		}
 
-		protected override void ProcessSingleJsFile(string js)
+        protected override string RenderSingleJsFile(string js)
 		{
-			DependantControl.Page.Trace.Write("ClientDependency", string.Format("Registering: {0}", js));
-			AddToControl(string.Format(HtmlEmbedContants.ScriptEmbed, js));
+            return string.Format(HtmlEmbedContants.ScriptEmbed, js);
 		}
 
-		protected override void ProcessSingleCssFile(string css)
+        protected override string RenderSingleCssFile(string css)
 		{
-			DependantControl.Page.Trace.Write("ClientDependency", string.Format("Registering: {0}", css));
-			AddToControl(string.Format(HtmlEmbedContants.CssEmbed, css));
+            return string.Format(HtmlEmbedContants.CssEmbed, css);
 		}
 
-		private void AddToControl(string literal)
+        protected override void RegisterDependencies(Control dependantControl, string js, string css)
+        {
+            AddToControl(dependantControl, css);
+            AddToControl(dependantControl, js);
+        }
+
+		private void AddToControl(Control dependantControl, string literal)
 		{
-			List<int> indexes = new List<int>();
-			Type iDependency = typeof(IClientDependencyFile);
-			foreach (Control ctl in ClientDependencyLoader.Instance.Controls)
-			{
-				if (ctl.ID != null && ctl.ID.StartsWith("CD_"))
-					indexes.Add(DependantControl.Page.Header.Controls.IndexOf(ctl));
-			}
-			//now that we have all of the indexes of the client dependencies, we need to insert
-			//the next one after the largest index
-			int newIndex = indexes.Count == 0 ? 0 : indexes.Max() + 1;
+          
 			LiteralControl dCtl = new LiteralControl(literal);
-			dCtl.ID = "CD_" + newIndex.ToString();
-            if (newIndex >= ClientDependencyLoader.Instance.Controls.Count)
-				ClientDependencyLoader.Instance.Controls.Add(dCtl);
-			else
-				ClientDependencyLoader.Instance.Controls.AddAt(newIndex, dCtl);
-
-
+          	ClientDependencyLoader.Instance.Controls.Add(dCtl);           
 		}
 	}
 }

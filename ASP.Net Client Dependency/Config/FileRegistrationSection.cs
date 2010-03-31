@@ -66,7 +66,7 @@ namespace ClientDependency.Core.Config
 			get
 			{
 				return FileBasedDepdendenyExtensions.Split(',')
-					.Select(x => x.Trim().ToLower());
+					.Select(x => x.Trim().ToUpper());
 			}
 		}
 	}

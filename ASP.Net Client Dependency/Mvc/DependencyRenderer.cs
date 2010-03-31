@@ -80,10 +80,17 @@ namespace ClientDependency.Core.Mvc
         #endregion
 
         #region Internal Methods
-
+        
+        /// <summary>
+        /// This replaces the HTML placeholders that we're rendered into the html
+        /// markup before the module calls this method to update the placeholders with 
+        /// the real dependencies.
+        /// </summary>
+        /// <param name="html"></param>
+        /// <returns></returns>
         internal string ParseHtmlPlaceholders(string html)
         {
-            GenerateOutput(m_Paths);
+            GenerateOutput();
 
             html = Regex.Replace(html, JsMarkupRegex,
                 (m) =>
@@ -149,10 +156,8 @@ namespace ClientDependency.Core.Mvc
         private List<RendererOutput> m_Output = new List<RendererOutput>();
 
 
-        private void GenerateOutput(IEnumerable<IClientDependencyPath> paths)
+        private void GenerateOutput()
         {
-            m_Paths.UnionWith(paths);
-
             //Loop through each object and
             //get the output for both js and css from each provider in the list
             //based on each list items dependencies.
@@ -160,15 +165,16 @@ namespace ClientDependency.Core.Mvc
                 .ToList()
                 .ForEach(x =>
                 {
-                    var renderer = ((BaseRenderer)x.Provider);                    
-                    renderer.RegisterDependencies(x.Dependencies, m_Paths);
+                    var renderer = ((BaseRenderer)x.Provider);
+                    string js, css;
+                    renderer.RegisterDependencies(x.Dependencies, m_Paths, out js, out css);
 
                     //store the output in a new output object
                     m_Output.Add(new RendererOutput()
                     {
                         Name = x.Provider.Name,
-                        OutputCss = renderer.CssOutput.ToString(),
-                        OutputJs = renderer.JsOutput.ToString()
+                        OutputCss = css,
+                        OutputJs = js
                     });
                 });                       
 
@@ -180,21 +186,6 @@ namespace ClientDependency.Core.Mvc
             public string OutputJs { get; set; }
             public string OutputCss { get; set; }
         }
-
-        //public string RenderDependencies(string rendererName)
-        //{
-        //    return RenderDependencies(rendererName, new List<IClientDependencyPath>());
-        //}
-
-        //public string RenderDependencies(IEnumerable<IClientDependencyPath> paths)
-        //{
-        //    return RenderDependencies(Provider.Name, paths);
-        //}
-
-        //public string RenderDependencies()
-        //{
-        //    return RenderDependencies(new List<IClientDependencyPath>());
-        //}
 
         
     }

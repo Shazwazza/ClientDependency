@@ -22,6 +22,7 @@
 			
 		</p>
 		<p>
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sed lorem viverra magna molestie vestibulum ac non risus. Sed sed leo quam, eu eleifend neque. Curabitur ultricies metus a lectus aliquam tempus. Integer in metus a nibh tincidunt fermentum. In nec purus vitae nunc rhoncus eleifend. Etiam placerat consectetur enim ac pharetra. Etiam et nisi orci, lobortis eleifend erat. Praesent ac metus metus, id luctus neque. Mauris dictum ultricies nisi vel sodales. Nunc vestibulum quam vel eros egestas dapibus. Ut aliquet turpis metus. Curabitur libero ligula, ullamcorper in volutpat non, gravida ac erat. Praesent sed nibh at tortor mattis commodo vitae vitae tortor. </p>
+			An example of how to force a provider with the JsInclude control:<br />
+			&lt;CD:JsInclude ID="JsInclude2" runat="server" FilePath="~/Js/SomeLazyLoadScript.js" ForceProvider="LazyLoadProvider" /&gt; </p>
 	</div>
 </asp:Content>

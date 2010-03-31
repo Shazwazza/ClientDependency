@@ -41,7 +41,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 			FileInfo fi = new FileInfo(
                 Path.Combine(ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CompositeFilePath.FullName,
 					ClientDependencySettings.Instance.Version.ToString() + "_" 
-                        + fileContents.GetHashCode().ToString() + ".cd" + type.ToString().Substring(0, 1).ToLower()));
+                        + fileContents.GetHashCode().ToString() + ".cd" + type.ToString().Substring(0, 1).ToUpper()));
 			if (fi.Exists)
 				fi.Delete();
 			FileStream fs = fi.Create();
@@ -70,7 +70,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 					try
 					{
 						FileInfo fi = new FileInfo(context.Server.MapPath(s));
-						if (ClientDependencySettings.Instance.FileBasedDependencyExtensionList.Contains(fi.Extension.ToLower().Replace(".", "")))
+						if (ClientDependencySettings.Instance.FileBasedDependencyExtensionList.Contains(fi.Extension.ToUpper().Replace(".", "")))
 						{
 							//if the file doesn't exist, then we'll assume it is a URI external request
 							if (!fi.Exists)

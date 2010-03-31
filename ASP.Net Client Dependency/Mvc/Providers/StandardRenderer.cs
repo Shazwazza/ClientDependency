@@ -11,52 +11,58 @@ namespace ClientDependency.Core.Mvc.Providers
 
         public const string DefaultName = "StandardRenderer";
 
-        protected override void RegisterJsFiles(List<IClientDependencyFile> jsDependencies)
+        protected override string RenderJsDependencies(List<IClientDependencyFile> jsDependencies)
         {
             if (jsDependencies.Count == 0)
-                return;
+                return string.Empty;
+
+            StringBuilder sb = new StringBuilder();
 
             if (IsDebugMode)
             {
                 foreach (IClientDependencyFile dependency in jsDependencies)
                 {
-                    ProcessSingleJsFile(dependency.FilePath);
+                    sb.Append(RenderSingleJsFile(dependency.FilePath));
                 }
             }
             else
             {
-                string js = ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript);
-                ProcessSingleJsFile(js);
+                sb.Append(RenderSingleJsFile(ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript)));
             }
+
+            return sb.ToString();
         }
 
-        protected override void RegisterCssFiles(List<IClientDependencyFile> cssDependencies)
+        protected override string RenderCssDependencies(List<IClientDependencyFile> cssDependencies)
         {
             if (cssDependencies.Count == 0)
-                return;
+                return string.Empty;
+
+            StringBuilder sb = new StringBuilder();
 
             if (IsDebugMode)
             {
                 foreach (IClientDependencyFile dependency in cssDependencies)
                 {
-                    ProcessSingleCssFile(dependency.FilePath);
+                    sb.Append(RenderSingleCssFile(dependency.FilePath));
                 }
             }
             else
             {
-                string css = ProcessCompositeList(cssDependencies, ClientDependencyType.Css);
-                ProcessSingleCssFile(css);
+                sb.Append(RenderSingleCssFile(ProcessCompositeList(cssDependencies, ClientDependencyType.Css)));                
             }
+
+            return sb.ToString();
         }
 
-        protected override void ProcessSingleJsFile(string js)
+        protected override string RenderSingleJsFile(string js)
         {
-            JsOutput.Append(string.Format(HtmlEmbedContants.ScriptEmbed, js));
+            return string.Format(HtmlEmbedContants.ScriptEmbed, js);
         }
 
-        protected override void ProcessSingleCssFile(string css)
+        protected override string RenderSingleCssFile(string css)
         {
-            CssOutput.Append(string.Format(HtmlEmbedContants.CssEmbed, css));
+            return string.Format(HtmlEmbedContants.CssEmbed, css);
         }
 
     }

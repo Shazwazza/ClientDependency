@@ -27,13 +27,13 @@ namespace ClientDependency.Core
 			/// <returns></returns>
 			public bool Equals(IClientDependencyFile x, IClientDependencyFile y)
 			{
-				return (x.FilePath.ToLower().Trim() + x.DependencyType.ToString().ToLower() + x.PathNameAlias.ToLower().Trim() ==
-					y.FilePath.ToLower().Trim() + y.DependencyType.ToString().ToLower() + y.PathNameAlias.ToLower().Trim());
+				return (x.FilePath.ToUpper().Trim() + x.DependencyType.ToString().ToUpper() + x.PathNameAlias.ToUpper().Trim() ==
+					y.FilePath.ToUpper().Trim() + y.DependencyType.ToString().ToUpper() + y.PathNameAlias.ToUpper().Trim());
 			}
 
 			public int GetHashCode(IClientDependencyFile obj)
 			{
-				return (obj.FilePath.ToLower().Trim() + obj.DependencyType.ToString().ToLower() + obj.PathNameAlias.ToLower().Trim())
+                return (obj.FilePath.ToUpper().Trim() + obj.DependencyType.ToString().ToUpper() + obj.PathNameAlias.ToUpper().Trim())
 					.GetHashCode();
 			}
 

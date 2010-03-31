@@ -6,6 +6,12 @@
 		<h2>
 			Using the Lazy Load Provider and dynamically registering my css file in the code behind.</h2>
 		<p>
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sed lorem viverra magna molestie vestibulum ac non risus. Sed sed leo quam, eu eleifend neque. Curabitur ultricies metus a lectus aliquam tempus. Integer in metus a nibh tincidunt fermentum. In nec purus vitae nunc rhoncus eleifend. Etiam placerat consectetur enim ac pharetra. Etiam et nisi orci, lobortis eleifend erat. Praesent ac metus metus, id luctus neque. Mauris dictum ultricies nisi vel sodales. Nunc vestibulum quam vel eros egestas dapibus. Ut aliquet turpis metus. Curabitur libero ligula, ullamcorper in volutpat non, gravida ac erat. Praesent sed nibh at tortor mattis commodo vitae vitae tortor. </p>
+			This example actually changes the current request's ClientDependencyLoader's default provider at runtime to the LazyLoadProvider</p>
+		<p>
+		    //Changes the provider to be used at runtime in the code behind<br />
+            ClientDependencyLoader.Instance.ProviderName = LazyLoadProvider.DefaultName;</p>
+        <p>
+            //dynamically register the dependency in the code behind<br />
+            ClientDependencyLoader.Instance.RegisterDependency("Content.css", "Styles", ClientDependencyType.Css);</p>
 	</div>
 </asp:Content>

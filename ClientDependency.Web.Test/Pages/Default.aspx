@@ -7,6 +7,8 @@
 		<h2>
 			Using the default provider specified in the web.config</h2>
 		<p>
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sed lorem viverra magna molestie vestibulum ac non risus. Sed sed leo quam, eu eleifend neque. Curabitur ultricies metus a lectus aliquam tempus. Integer in metus a nibh tincidunt fermentum. In nec purus vitae nunc rhoncus eleifend. Etiam placerat consectetur enim ac pharetra. Etiam et nisi orci, lobortis eleifend erat. Praesent ac metus metus, id luctus neque. Mauris dictum ultricies nisi vel sodales. Nunc vestibulum quam vel eros egestas dapibus. Ut aliquet turpis metus. Curabitur libero ligula, ullamcorper in volutpat non, gravida ac erat. Praesent sed nibh at tortor mattis commodo vitae vitae tortor. </p>
+			Nothing fancy here, just rendering the script and style blocks using the default provider. 
+			This library ships with the LoaderControlProvider set to the default
+			provider which will render the script/style blocks where the ClientDependencyLoader is placed in page/control markup.</p>
 	</div>
 </asp:Content>

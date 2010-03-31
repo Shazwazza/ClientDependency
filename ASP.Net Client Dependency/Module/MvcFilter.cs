@@ -15,8 +15,6 @@ namespace ClientDependency.Core.Module
             CurrentContext = ctx;
         }
 
-        private IHttpHandler m_Handler;
-
         #region IFilter Members
 
         public string UpdateOutputHtml(string html)

@@ -10,24 +10,24 @@ namespace ClientDependency.Core.Mvc.Providers
 {
     public abstract class BaseRenderer : BaseFileRegistrationProvider
     {
-        public BaseRenderer()
+        
+
+        public void RegisterDependencies(ClientDependencyCollection dependencies, 
+            HashSet<IClientDependencyPath> paths,
+            out string jsOutput,
+            out string cssOutput)
         {
-            JsOutput = new StringBuilder();
-            CssOutput = new StringBuilder();
-        }
+            var allDependencies = new List<IClientDependencyFile>(dependencies);
+            var folderPaths = paths;
 
-        public void RegisterDependencies(ClientDependencyCollection dependencies, HashSet<IClientDependencyPath> paths)
-        {
-            AllDependencies = new List<IClientDependencyFile>(dependencies);
-            FolderPaths = paths;
+            UpdateFilePaths(allDependencies, folderPaths);
+            EnsureNoDuplicates(allDependencies, folderPaths);
 
-            UpdateFilePaths();
-
-            List<IClientDependencyFile> jsDependencies = AllDependencies
+            List<IClientDependencyFile> jsDependencies = allDependencies
                 .Where(x => x.DependencyType == ClientDependencyType.Javascript)
                 .ToList();
 
-            List<IClientDependencyFile> cssDependencies = AllDependencies
+            List<IClientDependencyFile> cssDependencies = allDependencies
                 .Where(x => x.DependencyType == ClientDependencyType.Css)
                 .ToList();
 
@@ -35,16 +35,9 @@ namespace ClientDependency.Core.Mvc.Providers
             jsDependencies.Sort((a, b) => a.Priority.CompareTo(b.Priority));
             cssDependencies.Sort((a, b) => a.Priority.CompareTo(b.Priority));
 
-            RegisterCssFiles(cssDependencies.ConvertAll<IClientDependencyFile>(a => { return (IClientDependencyFile)a; }));
-            RegisterJsFiles(jsDependencies.ConvertAll<IClientDependencyFile>(a => { return (IClientDependencyFile)a; }));
-           
+            cssOutput = RenderCssDependencies(cssDependencies.ConvertAll<IClientDependencyFile>(a => { return (IClientDependencyFile)a; }));
+            jsOutput = RenderJsDependencies(jsDependencies.ConvertAll<IClientDependencyFile>(a => { return (IClientDependencyFile)a; }));         
         }
-
-        public StringBuilder JsOutput { get; protected set; }
-        public StringBuilder CssOutput { get; protected set; }
-        
-
-
     }
 }
 

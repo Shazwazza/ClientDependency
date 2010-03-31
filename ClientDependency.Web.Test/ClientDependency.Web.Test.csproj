@@ -79,7 +79,7 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controls\Footer.ascx.cs">
       <DependentUpon>Footer.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -112,7 +112,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\TestModel.cs" />
     <Compile Include="Pages\ForcedProviders.aspx.cs">
       <DependentUpon>ForcedProviders.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -166,9 +166,8 @@
     <Content Include="Pages\LazyLoadProviderTest.aspx" />
     <Content Include="Pages\Master.Master" />
     <Content Include="Pages\RogueScriptDetectionTest.aspx" />
-    <Content Include="Views\Home\About.aspx" />
-    <Content Include="Views\Home\Index.aspx" />
-    <Content Include="Views\Shared\Error.aspx" />
+    <Content Include="Views\Test\RogueDependencies.aspx" />
+    <Content Include="Views\Test\Default.aspx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ASP.Net Client Dependency\ClientDependency.Core.csproj">
