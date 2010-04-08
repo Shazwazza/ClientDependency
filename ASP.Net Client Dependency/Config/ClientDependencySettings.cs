@@ -37,6 +37,7 @@ namespace ClientDependency.Core.Config
         private static readonly ClientDependencySettings m_Settings = new ClientDependencySettings();
 
         private object m_Lock = new object();
+
         private WebFormsFileRegistrationProvider m_FileRegisterProvider = null;
         private FileRegistrationProviderCollection m_FileRegisterProviders = null;
 
@@ -136,39 +137,17 @@ namespace ClientDependency.Core.Config
                         m_CompositeFileProviders = new CompositeFileProcessingProviderCollection();
                         m_MvcRenderers = new MvcRendererCollection();
 
-                        // if there is no section found, then add the standard providers to the collection with the standard 
-                        // default provider
-                        if (section != null)
-                        {
-                            // Load registered providers and point _provider to the default provider	
-                            ProvidersHelper.InstantiateProviders(section.FileRegistrationElement.Providers, m_FileRegisterProviders, typeof(BaseFileRegistrationProvider));
-                            ProvidersHelper.InstantiateProviders(section.CompositeFileElement.Providers, m_CompositeFileProviders, typeof(BaseCompositeFileProcessingProvider));
-                            ProvidersHelper.InstantiateProviders(section.MvcElement.Renderers, m_MvcRenderers, typeof(BaseRenderer));
-                        }
-                        else
+                        // if there is no section found, then create one
+                        if (section == null)
                         {
                             //create a new section with the default settings
-                            section = new ClientDependencySection();
-
-                            //create new providers
-                            PageHeaderProvider php = new PageHeaderProvider();
-                            php.Initialize(PageHeaderProvider.DefaultName, null);
-                            m_FileRegisterProviders.Add(php);
-
-                            LazyLoadProvider csrp = new LazyLoadProvider();
-                            csrp.Initialize(LazyLoadProvider.DefaultName, null);
-                            m_FileRegisterProviders.Add(csrp);
-
-                            CompositeFileProcessingProvider cfpp = new CompositeFileProcessingProvider();
-                            cfpp.Initialize(CompositeFileProcessingProvider.DefaultName, null);
-                            m_CompositeFileProviders.Add(cfpp);
-
-                            var mvc = new StandardRenderer();
-                            mvc.Initialize(StandardRenderer.DefaultName, null);
-                            m_MvcRenderers.Add(mvc);
-
+                            section = new ClientDependencySection();                            
                         }
 
+                        //load the providers from the config, if there isn't config sections then add default providers
+                        LoadDefaultCompositeFileConfig(section);
+                        LoadDefaultMvcFileConfig(section);
+                        LoadDefaultFileRegConfig(section);
 
                         //set the defaults
 
@@ -210,6 +189,60 @@ namespace ClientDependency.Core.Config
                     }
                 }
             }
+        }
+
+        private void LoadDefaultFileRegConfig(ClientDependencySection section)
+        {
+            if (section.CompositeFileElement.Providers.Count == 0)
+            {
+                //create new providers
+                PageHeaderProvider php = new PageHeaderProvider();
+                php.Initialize(PageHeaderProvider.DefaultName, null);
+                m_FileRegisterProviders.Add(php);
+
+                LazyLoadProvider csrp = new LazyLoadProvider();
+                csrp.Initialize(LazyLoadProvider.DefaultName, null);
+                m_FileRegisterProviders.Add(csrp);
+
+                LoaderControlProvider lcp = new LoaderControlProvider();
+                lcp.Initialize(LoaderControlProvider.DefaultName, null);
+                m_FileRegisterProviders.Add(lcp);
+            }
+            else
+            {
+                ProvidersHelper.InstantiateProviders(section.FileRegistrationElement.Providers, m_FileRegisterProviders, typeof(BaseFileRegistrationProvider));
+            }
+
+        }
+
+        private void LoadDefaultCompositeFileConfig(ClientDependencySection section)
+        {
+            if (section.CompositeFileElement.Providers.Count == 0)
+            {
+                CompositeFileProcessingProvider cfpp = new CompositeFileProcessingProvider();
+                cfpp.Initialize(CompositeFileProcessingProvider.DefaultName, null);
+                m_CompositeFileProviders.Add(cfpp);
+            }
+            else
+            {
+                ProvidersHelper.InstantiateProviders(section.CompositeFileElement.Providers, m_CompositeFileProviders, typeof(BaseCompositeFileProcessingProvider));
+            }
+            
+        }
+
+        private void LoadDefaultMvcFileConfig(ClientDependencySection section)
+        {
+            if (section.MvcElement.Renderers.Count == 0)
+            {
+                var mvc = new StandardRenderer();
+                mvc.Initialize(StandardRenderer.DefaultName, null);
+                m_MvcRenderers.Add(mvc);
+            }
+            else
+            {
+                ProvidersHelper.InstantiateProviders(section.MvcElement.Renderers, m_MvcRenderers, typeof(BaseRenderer));
+            }
+
         }
     }
 }

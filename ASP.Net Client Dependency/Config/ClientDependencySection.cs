@@ -9,6 +9,10 @@ namespace ClientDependency.Core.Config
 {
     public class ClientDependencySection : ConfigurationSection
 	{
+        private CompositeFileSection m_CompositeFiles = new CompositeFileSection();
+        private FileRegistrationSection m_FileRego = new FileRegistrationSection();
+        private MvcSection m_Mvc = new MvcSection();
+
         /// <summary>
         /// Set the version for the files, this will reset all composite file caching, and if
         /// composite files are disabled will add a query string to each request so that 
@@ -21,16 +25,20 @@ namespace ClientDependency.Core.Config
             set { base["version"] = value; }
         }
        
-		[ConfigurationProperty("compositeFiles", IsRequired = true)]
+		[ConfigurationProperty("compositeFiles")]
 		public CompositeFileSection CompositeFileElement
 		{
 		    get
 		    {
+                if (this["compositeFiles"] == null)
+                {
+                    return m_CompositeFiles;
+                }
 				return (CompositeFileSection)this["compositeFiles"];
 		    }
 		}
 
-		[ConfigurationProperty("fileRegistration", IsRequired = true)]
+		[ConfigurationProperty("fileRegistration")]
 		public FileRegistrationSection FileRegistrationElement
 		{
 			get
@@ -39,7 +47,7 @@ namespace ClientDependency.Core.Config
 			}
 		}
 
-        [ConfigurationProperty("mvc", IsRequired = true)]
+        [ConfigurationProperty("mvc")]
         public MvcSection MvcElement
         {
             get
@@ -48,7 +56,7 @@ namespace ClientDependency.Core.Config
             }
         }
 
-        [ConfigurationProperty("loggerType", IsRequired = false)]
+        [ConfigurationProperty("loggerType")]
         public string LoggerType
         {
             get
