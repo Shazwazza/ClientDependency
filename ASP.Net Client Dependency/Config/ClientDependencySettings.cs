@@ -116,6 +116,8 @@ namespace ClientDependency.Core.Config
             }
         }
 
+        public ClientDependencySection ConfigSection { get; private set; }
+
         //public DirectoryInfo CompositeFilePath { get; set; }
         public string CompositeFileHandlerPath { get; set; }
         public bool ProcessRogueJSFiles { get; set; }
@@ -131,57 +133,57 @@ namespace ClientDependency.Core.Config
                     // Do this again to make sure _provider is still null
                     if (m_FileRegisterProvider == null)
                     {
-                        ClientDependencySection section = (ClientDependencySection)ConfigurationManager.GetSection("clientDependency");
+                        ConfigSection = (ClientDependencySection)ConfigurationManager.GetSection("clientDependency");
 
                         m_FileRegisterProviders = new FileRegistrationProviderCollection();
                         m_CompositeFileProviders = new CompositeFileProcessingProviderCollection();
                         m_MvcRenderers = new MvcRendererCollection();
 
                         // if there is no section found, then create one
-                        if (section == null)
+                        if (ConfigSection == null)
                         {
                             //create a new section with the default settings
-                            section = new ClientDependencySection();                            
+                            ConfigSection = new ClientDependencySection();                            
                         }
 
                         //load the providers from the config, if there isn't config sections then add default providers
-                        LoadDefaultCompositeFileConfig(section);
-                        LoadDefaultMvcFileConfig(section);
-                        LoadDefaultFileRegConfig(section);
+                        LoadDefaultCompositeFileConfig(ConfigSection);
+                        LoadDefaultMvcFileConfig(ConfigSection);
+                        LoadDefaultFileRegConfig(ConfigSection);
 
                         //set the defaults
 
-                        m_FileRegisterProvider = m_FileRegisterProviders[section.FileRegistrationElement.DefaultProvider];
+                        m_FileRegisterProvider = m_FileRegisterProviders[ConfigSection.FileRegistrationElement.DefaultProvider];
                         if (m_FileRegisterProvider == null)
                             throw new ProviderException("Unable to load default file registration provider");
 
-                        m_CompositeFileProvider = m_CompositeFileProviders[section.CompositeFileElement.DefaultProvider];
+                        m_CompositeFileProvider = m_CompositeFileProviders[ConfigSection.CompositeFileElement.DefaultProvider];
                         if (m_CompositeFileProvider == null)
                             throw new ProviderException("Unable to load default composite file provider");
 
-                        m_MvcRenderer = m_MvcRenderers[section.MvcElement.DefaultRenderer];
+                        m_MvcRenderer = m_MvcRenderers[ConfigSection.MvcElement.DefaultRenderer];
                         if (m_MvcRenderer == null)
                             throw new ProviderException("Unable to load default mvc renderer");
 
-                        CompositeFileHandlerPath = section.CompositeFileElement.CompositeFileHandlerPath;
-                        ProcessRogueCSSFiles = section.CompositeFileElement.ProcessRogueCSSFiles;
-                        ProcessRogueJSFiles = section.CompositeFileElement.ProcessRogueJSFiles;
+                        CompositeFileHandlerPath = ConfigSection.CompositeFileElement.CompositeFileHandlerPath;
+                        ProcessRogueCSSFiles = ConfigSection.CompositeFileElement.ProcessRogueCSSFiles;
+                        ProcessRogueJSFiles = ConfigSection.CompositeFileElement.ProcessRogueJSFiles;
 
-                        this.Version = section.Version;
-                        
-                        FileBasedDependencyExtensionList = section.FileRegistrationElement.FileBasedDependencyExtensionList.ToList();
-                        
+                        this.Version = ConfigSection.Version;
 
-                        if (string.IsNullOrEmpty(section.LoggerType))
+                        FileBasedDependencyExtensionList = ConfigSection.FileRegistrationElement.FileBasedDependencyExtensionList.ToList();
+
+
+                        if (string.IsNullOrEmpty(ConfigSection.LoggerType))
                         {
                             _logger = new NullLogger();
                         }
                         else
                         {
-                            var t = Type.GetType(section.LoggerType);
+                            var t = Type.GetType(ConfigSection.LoggerType);
                             if (!typeof(ILogger).IsAssignableFrom(t))
                             {
-                                throw new ArgumentException("The loggerType '" + section.LoggerType + "' does not inherit from ClientDependency.Core.Logging.ILogger");
+                                throw new ArgumentException("The loggerType '" + ConfigSection.LoggerType + "' does not inherit from ClientDependency.Core.Logging.ILogger");
                             }
 
                             _logger = (ILogger)Activator.CreateInstance(t);

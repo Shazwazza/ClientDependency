@@ -149,6 +149,10 @@
       <DependentUpon>RogueScriptDetectionTest.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\MessageService.asmx.cs">
+      <DependentUpon>MessageService.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Css\Content.css" />
@@ -179,6 +183,8 @@
     <Content Include="Css\ColorScheme.css" />
     <Content Include="Css\Default.css" />
     <Content Include="Default.aspx" />
+    <Content Include="Js\MessageService.js" />
+    <Content Include="Services\MessageService.asmx" />
     <Content Include="Views\Shared\CustomControl.ascx" />
     <Content Include="Views\Shared\Footer.ascx" />
     <Content Include="Views\Shared\Header.ascx" />

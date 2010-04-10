@@ -6,29 +6,30 @@ using System.Configuration;
 
 namespace ClientDependency.Core.Config
 {
-	public class CompositeFileSection : ConfigurationElement
-	{
+    public class CompositeFileSection : ConfigurationElement
+    {
+       
 
-		[ConfigurationProperty("providers")]
-		public ProviderSettingsCollection Providers
-		{
-			get { return (ProviderSettingsCollection)base["providers"]; }
-		}
+        [ConfigurationProperty("providers")]
+        public ProviderSettingsCollection Providers
+        {
+            get { return (ProviderSettingsCollection)base["providers"]; }
+        }
 
-		[StringValidator(MinLength = 1)]
+        [StringValidator(MinLength = 1)]
         [ConfigurationProperty("defaultProvider", DefaultValue = "CompositeFileProcessor")]
-		public string DefaultProvider
-		{
-			get { return (string)base["defaultProvider"]; }
-			set { base["defaultProvider"] = value; }
-		}		
+        public string DefaultProvider
+        {
+            get { return (string)base["defaultProvider"]; }
+            set { base["defaultProvider"] = value; }
+        }
 
-		[ConfigurationProperty("compositeFileHandlerPath", DefaultValue = "DependencyHandler.axd")]
-		public string CompositeFileHandlerPath
-		{
-			get { return (string)base["compositeFileHandlerPath"]; }
-			set { base["compositeFileHandlerPath"] = value; }
-		}
+        [ConfigurationProperty("compositeFileHandlerPath", DefaultValue = "DependencyHandler.axd")]
+        public string CompositeFileHandlerPath
+        {
+            get { return (string)base["compositeFileHandlerPath"]; }
+            set { base["compositeFileHandlerPath"] = value; }
+        }
 
         /// <summary>
         /// Flag to determine if the module should process rogue js files
@@ -49,5 +50,14 @@ namespace ClientDependency.Core.Config
             get { return (bool)base["processRogueCSSFiles"]; }
             set { base["processRogueCSSFiles"] = value; }
         }
-	}
+
+        [ConfigurationProperty("mimeTypeCompression")]
+        public NameValueConfigurationCollection MimeTypeCompression
+        {
+            get
+            {
+                return (NameValueConfigurationCollection)base["mimeTypeCompression"];
+            }
+        }
+    }
 }

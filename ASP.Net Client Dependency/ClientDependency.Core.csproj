@@ -67,9 +67,11 @@
     <Compile Include="CompositeFiles\JSMin.cs" />
     <Compile Include="CompositeFiles\Providers\BaseCompositeFileProcessingProvider.cs" />
     <Compile Include="CompositeFiles\CompositeFileDefinition.cs" />
-    <Compile Include="CompositeFiles\CompressionType.cs" />
+    <Compile Include="CompressionType.cs" />
+    <Compile Include="Config\ConfigurationManagerExtensions.cs" />
     <Compile Include="Config\MvcSection.cs" />
     <Compile Include="FileRegistration\Providers\WebFormsFileRegistrationProvider.cs" />
+    <Compile Include="HttpContextExtensions.cs" />
     <Compile Include="Module\ClientDependencyModule.cs" />
     <Compile Include="Config\CompositeFileSection.cs" />
     <Compile Include="Config\FileRegistrationSection.cs" />

@@ -17,17 +17,10 @@ namespace ClientDependency.Core.FileRegistration.Providers
         /// </summary>
         public BaseFileRegistrationProvider()
         {
-            IsDebugMode = false;
         }
-
 		
         //protected HashSet<IClientDependencyPath> FolderPaths { get; set; }
         //protected List<IClientDependencyFile> AllDependencies { get; set; }
-
-        /// <summary>
-        /// Set to true to disable composite scripts so all scripts/css comes through as individual files.
-        /// </summary>
-        public bool IsDebugMode { get; set; }
 
         #region Abstract methods/properties
 
@@ -41,20 +34,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
         #region Provider Initialization
 
         public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
-        {
-          
-            if (config != null && config["isDebug"] != null)
-            {
-                bool isDebug;
-                if (bool.TryParse(config["isDebug"], out isDebug))
-                {
-                    IsDebugMode = isDebug;
-                }
-                else
-                {
-                    throw new ArgumentException("The isDebug parameter value specified for the provider named " + this.Name + " is invalid");
-                }                    
-            }
+        {          
 
             base.Initialize(name, config);
         }
@@ -155,7 +135,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
                 }
 
                 //append query strings to each file if we are in debug mode
-                if (this.IsDebugMode)
+                if (ConfigurationHelper.IsCompilationDebug)
                 {
                     dependency.FilePath = AppendVersionQueryString(dependency.FilePath);
                 }

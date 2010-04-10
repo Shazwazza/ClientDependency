@@ -75,14 +75,14 @@ namespace ClientDependency.Core.CompositeFiles
                 outputBytes = GetCombinedFiles(context, fileset, type, out fDefs);
             }
 
-            context.Response.ContentType = type == ClientDependencyType.Javascript ? "text/javascript" : "text/css";
+            context.Response.ContentType = type == ClientDependencyType.Javascript ? "application/x-javascript" : "text/css";
             context.Response.OutputStream.Write(outputBytes, 0, outputBytes.Length);
         }
 
         internal byte[] ProcessRequestInternal(HttpContext context, string fileset, ClientDependencyType type, int version, byte[] outputBytes)
         {
             //get the compression type supported
-            CompressionType cType = GetCompression(context); 
+            CompressionType cType = context.GetClientCompression(); 
 
             //get the map to the composite file for this file set, if it exists.
             CompositeFileMap map = CompositeFileXmlMapper.Instance.GetCompositeFile(fileset, version, cType.ToString());
@@ -107,7 +107,7 @@ namespace ClientDependency.Core.CompositeFiles
                         byte[] fileBytes = GetCombinedFiles(context, fileset, type, out fDefs);
                         //compress data                        
                         outputBytes = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CompressBytes(cType, fileBytes);
-                        SetContentEncodingHeaders(context, cType);
+                        context.AddCompressionResponseHeader(cType);
                         //save combined file
                         FileInfo compositeFile = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.SaveCompositeFile(outputBytes, type);
                         compositeFileName = compositeFile.FullName;
@@ -152,7 +152,7 @@ namespace ClientDependency.Core.CompositeFiles
             outputBytes = map.GetCompositeFileBytes();
             compositeFileName = map.CompositeFileName;
             CompressionType cType = (CompressionType)Enum.Parse(typeof(CompressionType), map.CompressionType);
-            SetContentEncodingHeaders(context, cType);
+            context.AddCompressionResponseHeader(cType);
         }
 
         /// <summary>
@@ -194,56 +194,7 @@ namespace ClientDependency.Core.CompositeFiles
             //make this output cache dependent on the file if there is one.
             if (!string.IsNullOrEmpty(fileName))
                 context.Response.AddFileDependency(fileName);
-        }
-
-        /// <summary>
-        /// Sets the content encoding headers based on compressions
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="type"></param>
-        private void SetContentEncodingHeaders(HttpContext context, CompressionType type)
-        {
-            if (type == CompressionType.deflate)
-            {
-                context.Response.AddHeader("Content-encoding", "deflate");
-            }
-            else if (type == CompressionType.gzip)
-            {
-                context.Response.AddHeader("Content-encoding", "gzip");
-            }
-        }
-
-        /// <summary>
-        /// Check what kind of compression to use. Need to select the first available compression 
-        /// from the header value as this is how .Net performs caching by compression so we need to follow
-        /// this process.
-        /// </summary>
-        private CompressionType GetCompression(HttpContext context)
-        {
-            CompressionType type = CompressionType.none;
-            string acceptEncoding = context.Request.Headers["Accept-Encoding"];
-
-            if (!string.IsNullOrEmpty(acceptEncoding))
-            {
-                string[] supported = acceptEncoding.Split(',');
-                //get the first type that we support
-                for (var i = 0; i < supported.Length; i++)
-                {
-                    if (supported[i] == "deflate")
-                    {
-                        type = CompressionType.deflate;
-                        break;
-                    }
-                    else if (supported[i] == "gzip")
-                    {
-                        type = CompressionType.gzip;
-                        break;
-                    }
-                }
-            }
-
-            return type;
-        }
+        }       
 
         private string DecodeFrom64(string toDecode)
         {

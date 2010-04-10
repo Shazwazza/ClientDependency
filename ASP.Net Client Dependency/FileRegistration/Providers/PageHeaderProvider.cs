@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Web.UI;
 using System.Linq;
+using ClientDependency.Core.Config;
 
 namespace ClientDependency.Core.FileRegistration.Providers
 {
@@ -28,7 +29,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
             StringBuilder sb = new StringBuilder();
 
-			if (IsDebugMode)
+            if (ConfigurationHelper.IsCompilationDebug)
 			{
 				foreach (IClientDependencyFile dependency in jsDependencies)
 				{
@@ -55,7 +56,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
             StringBuilder sb = new StringBuilder();
 
-			if (IsDebugMode)
+            if (ConfigurationHelper.IsCompilationDebug)
 			{
 				foreach (IClientDependencyFile dependency in cssDependencies)
 				{
