@@ -5,6 +5,7 @@ using System.Reflection;
 using System.IO;
 using System.Linq;
 using ClientDependency.Core.Config;
+using System.Text;
 
 namespace ClientDependency.Core.CompositeFiles
 {
@@ -12,6 +13,7 @@ namespace ClientDependency.Core.CompositeFiles
     {
         static CompositeDependencyHandler()
         {
+
         }
 
         private static readonly string _versionNo = string.Empty;
@@ -26,7 +28,7 @@ namespace ClientDependency.Core.CompositeFiles
         /// <remarks>
         /// If this handler path needs to change, it can be change by setting it in the global.asax on application start
         /// </remarks>
-        public static int MaxHandlerUrlLength { get; set; }
+        public const int MaxHandlerUrlLength = 2048;
 
         bool IHttpHandler.IsReusable
         {
@@ -110,16 +112,19 @@ namespace ClientDependency.Core.CompositeFiles
                         context.AddCompressionResponseHeader(cType);
                         //save combined file
                         FileInfo compositeFile = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.SaveCompositeFile(outputBytes, type);
-                        compositeFileName = compositeFile.FullName;
-                        if (!string.IsNullOrEmpty(compositeFileName))
+                        if (compositeFile != null)
                         {
-                            //Update the XML file map
-                            CompositeFileXmlMapper.Instance.CreateMap(fileset, cType.ToString(),
-                                fDefs
-                                    .Where(f => f.IsLocalFile)
-                                    .Select(x => new FileInfo(context.Server.MapPath(x.Uri))).ToList(), compositeFileName,
-                                    ClientDependencySettings.Instance.Version);
-                        }
+                            compositeFileName = compositeFile.FullName;
+                            if (!string.IsNullOrEmpty(compositeFileName))
+                            {
+                                //Update the XML file map
+                                CompositeFileXmlMapper.Instance.CreateMap(fileset, cType.ToString(),
+                                    fDefs
+                                        .Where(f => f.IsLocalFile)
+                                        .Select(x => new FileInfo(context.Server.MapPath(x.Uri))).ToList(), compositeFileName,
+                                        ClientDependencySettings.Instance.Version);
+                            }
+                        }                        
                     }
                     else
                     {
@@ -199,7 +204,7 @@ namespace ClientDependency.Core.CompositeFiles
         private string DecodeFrom64(string toDecode)
         {
             byte[] toDecodeAsBytes = System.Convert.FromBase64String(toDecode);
-            return System.Text.ASCIIEncoding.ASCII.GetString(toDecodeAsBytes);
+            return Encoding.UTF8.GetString(toDecodeAsBytes);
         }
     }
 }

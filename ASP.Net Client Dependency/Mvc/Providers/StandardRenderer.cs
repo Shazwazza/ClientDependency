@@ -28,7 +28,11 @@ namespace ClientDependency.Core.Mvc.Providers
             }
             else
             {
-                sb.Append(RenderSingleJsFile(ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript)));
+                var comp = ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript);
+                foreach (var s in comp)
+                {
+                    sb.Append(RenderSingleJsFile(s));
+                }                
             }
 
             return sb.ToString();
@@ -50,7 +54,11 @@ namespace ClientDependency.Core.Mvc.Providers
             }
             else
             {
-                sb.Append(RenderSingleCssFile(ProcessCompositeList(cssDependencies, ClientDependencyType.Css)));                
+                var comp = ProcessCompositeList(cssDependencies, ClientDependencyType.Css);
+                foreach (var s in comp)
+                {
+                    sb.Append(RenderSingleCssFile(s));
+                }    
             }
 
             return sb.ToString();

@@ -8,6 +8,7 @@ using System.Linq;
 using ClientDependency.Core.Controls;
 using ClientDependency.Core.Config;
 using ClientDependency.Core;
+using ClientDependency.Core.CompositeFiles;
 
 namespace ClientDependency.Core.FileRegistration.Providers
 {
@@ -59,7 +60,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         private static string EncodeTo64(string toEncode)
         {
-            byte[] toEncodeAsBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(toEncode);
+            byte[] toEncodeAsBytes = Encoding.UTF8.GetBytes(toEncode);
             string returnValue = System.Convert.ToBase64String(toEncodeAsBytes);
             return returnValue;
         } 
@@ -72,30 +73,54 @@ namespace ClientDependency.Core.FileRegistration.Providers
         /// <remarks>
         /// The full url with the encoded query strings for the handler which will process the composite list
         /// of dependencies. The handler will compbine, compress, minify, and output cache the results
-        /// based on a hash key of the base64 encoded string.
+        /// on the base64 encoded string.
         /// </remarks>        
         /// </summary>
         /// <param name="dependencies"></param>
         /// <param name="groupName"></param>
-        /// <returns></returns>
-        public string ProcessCompositeList(List<IClientDependencyFile> dependencies, ClientDependencyType type)
+        /// <returns>An array containing the list of composite file URLs. This will generally only contain 1 value unless
+        /// the number of files registered exceeds the maximum length, then it will return more than one file.</returns>
+        public string[] ProcessCompositeList(List<IClientDependencyFile> dependencies, ClientDependencyType type)
         {
-            string rVal;
             if (dependencies.Count == 0)
-                return "";
+                return new string[] { };
 
-            //build the combined composite list url            
-            StringBuilder files = new StringBuilder();
+            //build the combined composite list urls          
+            var files = new List<string>();
+            var currBuilder = new StringBuilder();
+            var builderCount = 1;
+            var stringType = type.ToString();
             foreach (IClientDependencyFile a in dependencies)
             {
-                files.Append(a.FilePath + ";");
-            }
-            string combinedurl = GetCompositeFileUrl(files.ToString(), type);
-            rVal = AppendVersionQueryString(combinedurl); //append our version to the combined url            		
+                //if the addition of this file is going to exceed 75% of the max length (since we'll be base64 encoding), we'll need to split
+                if ((currBuilder.Length + 
+                    a.FilePath.Length + 
+                    ClientDependencySettings.Instance.CompositeFileHandlerPath.Length +
+                    stringType.Length + 10) >= (CompositeDependencyHandler.MaxHandlerUrlLength * 0.75))
+                {
+                    //add the current output to the array
+                    files.Add(currBuilder.ToString());
+                    //create some new output
+                    currBuilder = new StringBuilder();
+                    builderCount++;
+                }
 
-            //if (url.Length > CompositeDependencyHandler.MaxHandlerUrlLength)
-            //    throw new ArgumentOutOfRangeException("The number of files in the composite group " + groupName + " creates a url handler address that exceeds the CompositeDependencyHandler MaxHandlerUrlLength. Reducing the amount of files in this composite group should fix the issue");
-            return rVal;
+                currBuilder.Append(a.FilePath + ";");
+            }
+
+            if (builderCount > files.Count)
+            {
+                files.Add(currBuilder.ToString());
+            }
+
+            //now, compress each url
+            for (int i = 0; i < files.Count; i++)
+            {
+                //append our version to the combined url 
+                files[i] = AppendVersionQueryString(GetCompositeFileUrl(files[i], type));
+            }
+
+            return files.ToArray();
         } 
 
         #endregion

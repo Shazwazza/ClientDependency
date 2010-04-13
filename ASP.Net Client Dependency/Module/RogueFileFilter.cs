@@ -83,7 +83,7 @@ namespace ClientDependency.Core.Module
             //check if we should be processing!            
             if (m_FoundPath != null && m_FoundPath.CompressJs)
             {
-                return ReplaceContent(html, "src", ".js", ClientDependencyType.Javascript, m_MatchScript);
+                return ReplaceContent(html, "src", m_FoundPath.JsRequestExtension.Split(','), ClientDependencyType.Javascript, m_MatchScript);
             }            
             return html;
         }
@@ -99,12 +99,12 @@ namespace ClientDependency.Core.Module
             //check if we should be processing!            
             if (m_FoundPath != null && m_FoundPath.CompressCss)
             {
-                return ReplaceContent(html, "href", ".css", ClientDependencyType.Css, m_MatchLink);
+                return ReplaceContent(html, "href", m_FoundPath.CssRequestExtension.Split(','), ClientDependencyType.Css, m_MatchLink);
             }
             return html;
         }
 
-        private string ReplaceContent(string html, string namedGroup, string extension, ClientDependencyType type, string regex)
+        private string ReplaceContent(string html, string namedGroup, string[] extensions, ClientDependencyType type, string regex)
         {
             html = Regex.Replace(html, regex,
                 (m) =>
@@ -115,7 +115,7 @@ namespace ClientDependency.Core.Module
                     //the return the existing string.
                     if (grp == null
                         || string.IsNullOrEmpty(grp.ToString())
-                        || !grp.ToString().ToUpper().EndsWith(extension.ToUpper())
+                        || !grp.ToString().EndsWithOneOf(extensions)
                         || grp.ToString().StartsWith(ClientDependencySettings.Instance.CompositeFileHandlerPath))
                         return m.ToString();
 
@@ -134,8 +134,10 @@ namespace ClientDependency.Core.Module
                         return m.ToString();
                     }
 
+                    var dependency = new BasicFile(type) { FilePath = grp.ToString() };
+                    var resolved = BaseFileRegistrationProvider.GetCompositeFileUrl(dependency.ResolveFilePath(), type);
                     return m.ToString().Replace(grp.ToString(),
-                        BaseFileRegistrationProvider.GetCompositeFileUrl(grp.ToString(), type));
+                        resolved);
                 },
                 RegexOptions.Compiled);
 

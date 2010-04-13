@@ -62,7 +62,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 			List<CompositeFileDefinition> fDefs = new List<CompositeFileDefinition>();
 
 			MemoryStream ms = new MemoryStream(5000);
-			StreamWriter sw = new StreamWriter(ms);
+			StreamWriter sw = new StreamWriter(ms, Encoding.UTF8);
 			foreach (string s in strFiles)
 			{
 				if (!string.IsNullOrEmpty(s))
@@ -70,7 +70,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 					try
 					{
 						FileInfo fi = new FileInfo(context.Server.MapPath(s));
-						if (ClientDependencySettings.Instance.FileBasedDependencyExtensionList.Contains(fi.Extension.ToUpper().Replace(".", "")))
+						if (ClientDependencySettings.Instance.FileBasedDependencyExtensionList.Contains(fi.Extension.ToUpper()))
 						{
 							//if the file doesn't exist, then we'll assume it is a URI external request
 							if (!fi.Exists)
@@ -125,30 +125,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 		/// </summary>
 		public override byte[] CompressBytes(CompressionType type, byte[] fileBytes)
 		{
-			MemoryStream ms = new MemoryStream();
-			Stream compressedStream = null;
-
-			if (type == CompressionType.deflate)
-			{
-				compressedStream = new DeflateStream(ms, CompressionMode.Compress, true);
-			}
-			else if (type == CompressionType.gzip)
-			{
-				compressedStream = new GZipStream(ms, CompressionMode.Compress, true);
-			}
-
-			if (type != CompressionType.none)
-			{
-				//write the bytes to the compressed stream
-				compressedStream.Write(fileBytes, 0, fileBytes.Length);
-				compressedStream.Close();
-				byte[] output = ms.ToArray();
-				ms.Close();
-				return output;
-			}
-
-			//not compressed
-			return fileBytes;
+            return SimpleCompressor.CompressBytes(type, fileBytes);
 		}
 
 		/// <summary>

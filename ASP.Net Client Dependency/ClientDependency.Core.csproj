@@ -123,6 +123,8 @@
     <Compile Include="CompositeFiles\CompositeDependencyHandler.cs" />
     <Compile Include="CompositeFiles\Providers\CompositeFileProcessingProviderCollection.cs" />
     <Compile Include="FileRegistration\Providers\PageHeaderProvider.cs" />
+    <Compile Include="SimpleCompressor.cs" />
+    <Compile Include="StringExtensions.cs" />
     <Compile Include="UriExtensions.cs" />
   </ItemGroup>
   <ItemGroup>

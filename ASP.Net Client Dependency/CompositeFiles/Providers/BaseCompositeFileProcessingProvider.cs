@@ -122,35 +122,45 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 			Uri uri;
 			if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out uri))
 			{
-				if (uri.IsAbsoluteUri)
+                
+                //if its a relative path, and it's an aspx page, then execute it, 
+                //otherwise change it to an absolute path and try to request it.
+                if (!uri.IsAbsoluteUri)
+                {
+                    if (uri.ToString().ToUpper().EndsWith(".ASPX"))
+                    {
+                        //its a relative path so use the execute method
+                        StringWriter sw = new StringWriter();
+                        try
+                        {
+                            HttpContext.Current.Server.Execute(url, sw);
+                            requestContents = sw.ToString();
+                            sw.Close();
+                            return true;
+                        }
+                        catch (Exception ex)
+                        {
+                            ClientDependencySettings.Instance.Logger.Error(string.Format("Could not load file contents from {0}. EXCEPTION: {1}", url, ex.Message), ex);
+                        }
+                    }
+                    else
+                    {
+                        uri = uri.MakeAbsoluteUri();
+                    }                    
+                }
+
+				WebClient client = new WebClient();
+                client.Encoding = Encoding.UTF8;
+				try
 				{
-					WebClient client = new WebClient();
-					try
-					{
-						requestContents = client.DownloadString(uri.AbsoluteUri);
-						return true;
-					}
-					catch (Exception ex)
-					{
-                        ClientDependencySettings.Instance.Logger.Error(string.Format("Could not load file contents from {0}. EXCEPTION: {1}", url, ex.Message), ex);
-					}
+					requestContents = client.DownloadString(uri.AbsoluteUri);
+					return true;
 				}
-				else
+				catch (Exception ex)
 				{
-					//its a relative path so use the execute method
-					StringWriter sw = new StringWriter();
-					try
-					{
-						HttpContext.Current.Server.Execute(url, sw);
-						requestContents = sw.ToString();
-						sw.Close();
-						return true;
-					}
-					catch (Exception ex)
-					{
-                        ClientDependencySettings.Instance.Logger.Error(string.Format("Could not load file contents from {0}. EXCEPTION: {1}", url, ex.Message), ex);
-					}
+                    ClientDependencySettings.Instance.Logger.Error(string.Format("Could not load file contents from {0}. EXCEPTION: {1}", url, ex.Message), ex);
 				}
+				
 
 			}
 			requestContents = "";

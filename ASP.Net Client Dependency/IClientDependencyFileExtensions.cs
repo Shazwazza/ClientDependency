@@ -19,6 +19,12 @@ namespace ClientDependency.Core
             {
                 return VirtualPathUtility.ToAbsolute(file.FilePath, HttpContext.Current.Request.ApplicationPath);
             }
+            else if (!VirtualPathUtility.IsAbsolute(file.FilePath))
+            {
+                //get the relative path
+                var path = HttpContext.Current.Request.AppRelativeCurrentExecutionFilePath.Substring(0, HttpContext.Current.Request.AppRelativeCurrentExecutionFilePath.LastIndexOf('/') + 1);
+                return VirtualPathUtility.ToAbsolute(path + file.FilePath, HttpContext.Current.Request.ApplicationPath);
+            }
             return file.FilePath;
         }
 

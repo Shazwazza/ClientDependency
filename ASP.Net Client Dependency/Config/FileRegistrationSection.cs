@@ -43,7 +43,7 @@ namespace ClientDependency.Core.Config
 		/// <remarks>
 		/// If this is not explicitly set, then the extensions 'js' and 'css' are the defaults.
 		/// </remarks>
-		[ConfigurationProperty("fileDependencyExtensions", DefaultValue = "js,css")]
+		[ConfigurationProperty("fileDependencyExtensions", DefaultValue = ".js,.css")]
 		protected string FileBasedDepdendenyExtensions
 		{
 			get { return (string)base["fileDependencyExtensions"]; }
@@ -57,6 +57,7 @@ namespace ClientDependency.Core.Config
 		/// </summary>
 		/// <example>
 		/// A request based JavaScript file may be  a .ashx that dynamically creates JavaScript server side.
+        /// Or an asmx/js request based on the proxied javascript created by web services.
 		/// </example>
 		/// <remarks>
 		/// If this is not explicitly set, then the extensions 'js' and 'css' are the defaults.

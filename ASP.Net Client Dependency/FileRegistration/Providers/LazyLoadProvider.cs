@@ -40,7 +40,11 @@ namespace ClientDependency.Core.FileRegistration.Providers
 			}
 			else
 			{
-                sb.Append(RenderSingleJsFile(string.Format("'{0}','{1}'", ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript), string.Empty)));
+                var comp = ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript);
+                foreach (var s in comp)
+                {
+                    sb.Append(RenderSingleJsFile(string.Format("'{0}','{1}'", s, string.Empty)));
+                }   
 			}
 
             return sb.ToString();
@@ -70,7 +74,11 @@ namespace ClientDependency.Core.FileRegistration.Providers
 			}
 			else
 			{
-                sb.Append(RenderSingleCssFile(ProcessCompositeList(cssDependencies, ClientDependencyType.Css)));
+                var comp = ProcessCompositeList(cssDependencies, ClientDependencyType.Css);
+                foreach (var s in comp)
+                {
+                    sb.Append(RenderSingleCssFile(s));
+                }    
 			}
 
             return sb.ToString();
