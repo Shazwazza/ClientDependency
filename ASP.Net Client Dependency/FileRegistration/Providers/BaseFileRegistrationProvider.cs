@@ -7,6 +7,7 @@ using System.Web;
 using System.Linq;
 using ClientDependency.Core.Controls;
 using ClientDependency.Core.Config;
+using ClientDependency.Core;
 
 namespace ClientDependency.Core.FileRegistration.Providers
 {
@@ -125,13 +126,13 @@ namespace ClientDependency.Core.FileRegistration.Providers
                     {
                         throw new NullReferenceException("The PathNameAlias specified for dependency " + dependency.FilePath + " does not exist in the ClientDependencyPathCollection");
                     }
-                    string basePath = path.ResolvedPath.EndsWith("/") ? path.ResolvedPath : path.ResolvedPath + "/";
+                    var resolvedPath = path.ResolvePath();
+                    string basePath = resolvedPath.EndsWith("/") ? resolvedPath : resolvedPath + "/";
                     dependency.FilePath = basePath + dependency.FilePath;
                 }
                 else
                 {
-                    //dependency.FilePath = DependantControl.ResolveUrl(dependency.FilePath);
-                    dependency.FilePath = VirtualPathUtility.ToAbsolute(dependency.FilePath);
+                    dependency.FilePath = dependency.ResolveFilePath();
                 }
 
                 //append query strings to each file if we are in debug mode

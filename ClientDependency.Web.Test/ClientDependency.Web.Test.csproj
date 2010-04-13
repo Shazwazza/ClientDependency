@@ -192,6 +192,7 @@
     <Content Include="Default.aspx" />
     <Content Include="Js\MessageService.js" />
     <Content Include="Pages\JSONCompressionTest.aspx" />
+    <Content Include="Pages\relative.css" />
     <Content Include="Services\MessageService.asmx" />
     <Content Include="Views\Shared\CustomControl.ascx" />
     <Content Include="Views\Shared\Footer.ascx" />

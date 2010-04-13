@@ -19,14 +19,7 @@ namespace ClientDependency.Core
 
 		public string Name { get; set; }
 		public string Path { get; set; }
-		public string ResolvedPath
-		{
-			get
-			{
-                //return (HttpContext.Current.CurrentHandler as Page).ResolveUrl(Path);
-                return VirtualPathUtility.ToAbsolute(Path);
-			}
-		}
+		
 	}
 }
 

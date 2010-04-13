@@ -77,6 +77,8 @@
     <Compile Include="ControlExtensions.cs" />
     <Compile Include="FileRegistration\Providers\WebFormsFileRegistrationProvider.cs" />
     <Compile Include="HttpContextExtensions.cs" />
+    <Compile Include="IClientDependencyFileExtensions.cs" />
+    <Compile Include="IClientDependencyPathExtensions.cs" />
     <Compile Include="Module\ClientDependencyModule.cs" />
     <Compile Include="Config\CompositeFileSection.cs" />
     <Compile Include="Config\FileRegistrationSection.cs" />

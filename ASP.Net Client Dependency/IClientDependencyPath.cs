@@ -10,6 +10,6 @@ namespace ClientDependency.Core
 
 		string Name { get; set; }
 		string Path { get; set; }
-		string ResolvedPath { get; }
+
 	}
 }
