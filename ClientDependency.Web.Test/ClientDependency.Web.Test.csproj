@@ -127,6 +127,13 @@
     <Compile Include="Pages\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\JSONCompressionTest.aspx.cs">
+      <DependentUpon>JSONCompressionTest.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\JSONCompressionTest.aspx.designer.cs">
+      <DependentUpon>JSONCompressionTest.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\LazyLoadProviderTest.aspx.cs">
       <DependentUpon>LazyLoadProviderTest.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -184,6 +191,7 @@
     <Content Include="Css\Default.css" />
     <Content Include="Default.aspx" />
     <Content Include="Js\MessageService.js" />
+    <Content Include="Pages\JSONCompressionTest.aspx" />
     <Content Include="Services\MessageService.asmx" />
     <Content Include="Views\Shared\CustomControl.ascx" />
     <Content Include="Views\Shared\Footer.ascx" />

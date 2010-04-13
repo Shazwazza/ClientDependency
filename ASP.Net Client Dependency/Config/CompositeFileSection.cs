@@ -31,32 +31,21 @@ namespace ClientDependency.Core.Config
             set { base["compositeFileHandlerPath"] = value; }
         }
 
-        /// <summary>
-        /// Flag to determine if the module should process rogue js files
-        /// </summary>
-        [ConfigurationProperty("processRogueJSFiles", DefaultValue = true)]
-        public bool ProcessRogueJSFiles
-        {
-            get { return (bool)base["processRogueJSFiles"]; }
-            set { base["processRogueJSFiles"] = value; }
-        }
-
-        /// <summary>
-        /// Flag to determine if the module should process rogue css files
-        /// </summary>
-        [ConfigurationProperty("processRogueCSSFiles", DefaultValue = true)]
-        public bool ProcessRogueCSSFiles
-        {
-            get { return (bool)base["processRogueCSSFiles"]; }
-            set { base["processRogueCSSFiles"] = value; }
-        }
-
         [ConfigurationProperty("mimeTypeCompression")]
-        public NameValueConfigurationCollection MimeTypeCompression
+        public MimeTypeCompressionCollection MimeTypeCompression
         {
             get
             {
-                return (NameValueConfigurationCollection)base["mimeTypeCompression"];
+                return (MimeTypeCompressionCollection)base["mimeTypeCompression"];
+            }
+        }
+
+        [ConfigurationProperty("rogueFileCompression")]
+        public RogueFileCompressionCollection RogueFileCompression
+        {
+            get
+            {
+                return (RogueFileCompressionCollection)base["rogueFileCompression"];
             }
         }
     }

@@ -80,32 +80,12 @@ namespace ClientDependency.Core.Module
         void app_PreRequestHandlerExecute(object sender, EventArgs e)
         {
             HttpApplication app = (HttpApplication)sender;
-            HttpRequest request = app.Request;
-            HttpResponse response = app.Response;
-
+            
             //if debug is on, then don't compress
             if (!ConfigurationHelper.IsCompilationDebug)
             {
-                //check if this request should be compressed based on the mime type
-                var isSupportedMime = ClientDependencySettings.Instance.ConfigSection.CompositeFileElement.MimeTypeCompression
-                    .Cast<NameValueConfigurationElement>()
-                    .Where(x => request.ContentType.ToUpper().Split(';').Contains(x.Name.ToUpper())
-                        && (x.Value.ToUpper() == "TRUE" || string.IsNullOrEmpty(x.Value)))
-                    .Count() > 0;
-
-                if (isSupportedMime)
-                {
-                    var cType = app.Context.GetClientCompression();
-                    app.Context.AddCompressionResponseHeader(cType);
-                    if (cType == CompressionType.deflate)
-                    {
-                        response.Filter = new DeflateStream(response.Filter, CompressionMode.Compress);
-                    }
-                    else if (cType == CompressionType.gzip)
-                    {
-                        response.Filter = new GZipStream(response.Filter, CompressionMode.Compress);
-                    }                      
-                }
+                MimeTypeCompressor c = new MimeTypeCompressor(app.Context);
+                c.AddCompression();
             }
         }
         

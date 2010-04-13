@@ -69,14 +69,18 @@
     <Compile Include="CompositeFiles\CompositeFileDefinition.cs" />
     <Compile Include="CompressionType.cs" />
     <Compile Include="Config\ConfigurationManagerExtensions.cs" />
+    <Compile Include="Config\MimeTypeCompressionCollection.cs" />
+    <Compile Include="Config\MimeTypeCompressionElement.cs" />
     <Compile Include="Config\MvcSection.cs" />
+    <Compile Include="Config\RogueFileCompressionCollection.cs" />
+    <Compile Include="Config\RogueFileCompressionElement.cs" />
+    <Compile Include="ControlExtensions.cs" />
     <Compile Include="FileRegistration\Providers\WebFormsFileRegistrationProvider.cs" />
     <Compile Include="HttpContextExtensions.cs" />
     <Compile Include="Module\ClientDependencyModule.cs" />
     <Compile Include="Config\CompositeFileSection.cs" />
     <Compile Include="Config\FileRegistrationSection.cs" />
     <Compile Include="Controls\ClientDependencyInclude.cs" />
-    <Compile Include="ClientDependencyCollection.cs" />
     <Compile Include="ClientDependencyType.cs" />
     <Compile Include="CompositeFiles\CompositeFileMap.cs" />
     <Compile Include="CompositeFiles\Providers\CompositeFileProcessingProvider.cs" />
@@ -92,6 +96,7 @@
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\NullLogger.cs" />
     <Compile Include="Module\IFilter.cs" />
+    <Compile Include="Module\MimeTypeCompressor.cs" />
     <Compile Include="Module\MvcFilter.cs" />
     <Compile Include="Module\ResponseFilter.cs" />
     <Compile Include="Module\RogueFileFilter.cs" />

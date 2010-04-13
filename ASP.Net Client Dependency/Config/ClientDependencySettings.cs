@@ -117,13 +117,9 @@ namespace ClientDependency.Core.Config
         }
 
         public ClientDependencySection ConfigSection { get; private set; }
-
-        //public DirectoryInfo CompositeFilePath { get; set; }
+       
         public string CompositeFileHandlerPath { get; set; }
-        public bool ProcessRogueJSFiles { get; set; }
-        public bool ProcessRogueCSSFiles { get; set; }
-
-
+       
         private void LoadProviders()
         {
             if (m_FileRegisterProvider == null)
@@ -165,9 +161,7 @@ namespace ClientDependency.Core.Config
                         if (m_MvcRenderer == null)
                             throw new ProviderException("Unable to load default mvc renderer");
 
-                        CompositeFileHandlerPath = ConfigSection.CompositeFileElement.CompositeFileHandlerPath;
-                        ProcessRogueCSSFiles = ConfigSection.CompositeFileElement.ProcessRogueCSSFiles;
-                        ProcessRogueJSFiles = ConfigSection.CompositeFileElement.ProcessRogueJSFiles;
+                        CompositeFileHandlerPath = ConfigSection.CompositeFileElement.CompositeFileHandlerPath;                        
 
                         this.Version = ConfigSection.Version;
 

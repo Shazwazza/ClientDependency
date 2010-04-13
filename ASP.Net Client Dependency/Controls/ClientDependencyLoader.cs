@@ -244,7 +244,7 @@ namespace ClientDependency.Core.Controls
 
 		public void RegisterClientDependencies(WebFormsFileRegistrationProvider provider, Control control, IEnumerable<IClientDependencyPath> paths)
 		{
-			ClientDependencyCollection dependencies = FindDependencies(control);
+            IEnumerable<IClientDependencyFile> dependencies = FindDependencies(control);
             m_Base.RegisterClientDependencies(provider, dependencies, paths, ClientDependencySettings.Instance.FileRegistrationProviderCollection);
 		}
 
@@ -253,33 +253,34 @@ namespace ClientDependency.Core.Controls
 		/// </summary>
 		/// <param name="control"></param>
 		/// <returns></returns>
-		private ClientDependencyCollection FindDependencies(Control control)
+        private IEnumerable<IClientDependencyFile> FindDependencies(Control control)
 		{
-			// find dependencies
-			Type controlType = control.GetType();
-			ClientDependencyCollection dependencies = new ClientDependencyCollection();
-			foreach (Attribute attribute in Attribute.GetCustomAttributes(controlType))
-			{
-				if (attribute is ClientDependencyAttribute)
-				{
-					dependencies.Add((ClientDependencyAttribute)attribute);
-				}
-			}
-
-			// add child dependencies
+            var ctls = new List<Control>(control.FlattenChildren());
+            ctls.Add(control);
+            
+            List<IClientDependencyFile> dependencies = new List<IClientDependencyFile>();
+			
+            // add child dependencies
 			Type iClientDependency = typeof(IClientDependencyFile);
-			foreach (Control child in control.Controls)
+            foreach (Control ctl in ctls)
 			{
-				if (iClientDependency.IsAssignableFrom(child.GetType()))
-				{
-					IClientDependencyFile include = (IClientDependencyFile)child;
-					dependencies.Add(include);
-				}
-				else
-				{
-					//recurse and de-duplicate!
-					dependencies.UnionWith(FindDependencies(child));
-				}
+                // find dependencies
+                Type controlType = ctl.GetType();
+                
+                foreach (Attribute attribute in Attribute.GetCustomAttributes(controlType))
+                {
+                    if (attribute is ClientDependencyAttribute)
+                    {
+                        dependencies.Add((ClientDependencyAttribute)attribute);
+                    }
+                }
+
+                if (iClientDependency.IsAssignableFrom(ctl.GetType()))
+                {
+                    IClientDependencyFile include = (IClientDependencyFile)ctl;
+                    dependencies.Add(include);
+                }
+                
 			}
 
 			return dependencies;

@@ -39,7 +39,7 @@ namespace ClientDependency.Core
         /// <remarks>
         /// This is the top most overloaded method
         /// </remarks>
-        public void RegisterClientDependencies(BaseFileRegistrationProvider provider, ClientDependencyCollection dependencies, IEnumerable<IClientDependencyPath> paths, ProviderCollection currProviders)
+        public void RegisterClientDependencies(BaseFileRegistrationProvider provider, IEnumerable<IClientDependencyFile> dependencies, IEnumerable<IClientDependencyPath> paths, ProviderCollection currProviders)
         {
             //find or create the ProviderDependencyList for the provider
             ProviderDependencyList currList = m_Dependencies
@@ -85,7 +85,7 @@ namespace ClientDependency.Core
             m_Paths.UnionWith(paths);
         }
 
-        public void RegisterClientDependencies(ClientDependencyCollection dependencies, IEnumerable<IClientDependencyPath> paths)
+        public void RegisterClientDependencies(List<IClientDependencyFile> dependencies, IEnumerable<IClientDependencyPath> paths)
         {
             RegisterClientDependencies(Provider, dependencies, paths, ClientDependencySettings.Instance.MvcRendererCollection);
         }
@@ -117,7 +117,7 @@ namespace ClientDependency.Core
             file.Priority = priority;
             file.FilePath = filePath;
             file.PathNameAlias = pathNameAlias;
-            RegisterClientDependencies(new ClientDependencyCollection() { file }, new List<IClientDependencyPath>()); //send an empty paths collection
+            RegisterClientDependencies(new List<IClientDependencyFile>() { file }, new List<IClientDependencyPath>()); //send an empty paths collection
         }
 
 

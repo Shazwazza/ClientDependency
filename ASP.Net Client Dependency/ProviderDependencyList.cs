@@ -12,7 +12,7 @@ namespace ClientDependency.Core
 		internal ProviderDependencyList(BaseFileRegistrationProvider provider)
 		{
 			Provider = provider;
-			Dependencies = new ClientDependencyCollection();
+            Dependencies = new List<IClientDependencyFile>();
 		}
 
 		internal bool Contains(BaseFileRegistrationProvider provider)
@@ -22,7 +22,7 @@ namespace ClientDependency.Core
 
 		internal void AddDependencies(IEnumerable<IClientDependencyFile> list)
 		{
-			Dependencies.UnionWith(list);
+			Dependencies.AddRange(list);
 		}
 
 		internal void AddDependency(IClientDependencyFile file)
@@ -30,7 +30,7 @@ namespace ClientDependency.Core
 			Dependencies.Add(file);
 		}
 
-		internal ClientDependencyCollection Dependencies { get; private set; }
+        internal List<IClientDependencyFile> Dependencies { get; private set; }
 		internal BaseFileRegistrationProvider Provider { get; private set; }
 	}
 }

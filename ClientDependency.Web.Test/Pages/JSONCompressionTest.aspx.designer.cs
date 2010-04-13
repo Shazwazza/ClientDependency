@@ -8,10 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClientDependency.Web.Test.Controls {
+namespace ClientDependency.Web.Test.Pages {
     
     
-    public partial class Header {
+    public partial class JSONCompressionTest {
         
         /// <summary>
         /// CssInclude1 control.
@@ -21,5 +21,23 @@ namespace ClientDependency.Web.Test.Controls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClientDependency.Core.Controls.CssInclude CssInclude1;
+        
+        /// <summary>
+        /// JsInclude2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClientDependency.Core.Controls.JsInclude JsInclude2;
+        
+        /// <summary>
+        /// JsInclude1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClientDependency.Core.Controls.JsInclude JsInclude1;
     }
 }

@@ -10,14 +10,13 @@ namespace ClientDependency.Core.Mvc.Providers
 {
     public abstract class BaseRenderer : BaseFileRegistrationProvider
     {
-        
 
-        public void RegisterDependencies(ClientDependencyCollection dependencies, 
+
+        public void RegisterDependencies(List<IClientDependencyFile> allDependencies, 
             HashSet<IClientDependencyPath> paths,
             out string jsOutput,
             out string cssOutput)
-        {
-            var allDependencies = new List<IClientDependencyFile>(dependencies);
+        {            
             var folderPaths = paths;
 
             UpdateFilePaths(allDependencies, folderPaths);

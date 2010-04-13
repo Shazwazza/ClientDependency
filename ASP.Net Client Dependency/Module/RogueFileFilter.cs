@@ -25,12 +25,15 @@ namespace ClientDependency.Core.Module
         public RogueFileFilter(HttpContextBase ctx)
         {
             CurrentContext = ctx;
+            m_FoundPath = GetSupportedPath();
         }
 
         #region Private members
         
         private string m_MatchScript = "<script(?:(?:.*(?<src>(?<=src=\")[^\"]*(?=\"))[^>]*)|[^>]*)>(?<content>(?:(?:\n|.)(?!(?:\n|.)<script))*)</script>";
         private string m_MatchLink = "<link\\s+[^>]*(href\\s*=\\s*(['\"])(?<href>.*?)\\2)";
+
+        private RogueFileCompressionElement m_FoundPath = null;
 
         #endregion
 
@@ -53,6 +56,21 @@ namespace ClientDependency.Core.Module
 
         #region Private methods
 
+        private RogueFileCompressionElement GetSupportedPath()
+        {
+            foreach (var m in ClientDependencySettings.Instance
+                .ConfigSection
+                .CompositeFileElement
+                .RogueFileCompression
+                .Cast<RogueFileCompressionElement>())
+            {
+                //if it is only "*" then convert it to proper regex
+                var reg = m.FilePath == "*" ? ".*" : m.FilePath;
+                var matched = Regex.IsMatch(CurrentContext.Request.RawUrl, reg, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                if (matched) return m;
+            }
+            return null;
+        }
 
         /// <summary>
         /// Replaces all src attribute values for a script tag with their corresponding 
@@ -60,14 +78,10 @@ namespace ClientDependency.Core.Module
         /// </summary>
         /// <param name="html"></param>
         /// <returns></returns>
-        /// <remarks>
-        /// TODO: Need to add caching to the src match found and what we returned for it so this doesn't
-        /// get processed every request.
-        /// </remarks>
         private string ReplaceScripts(string html)
         {
-            //check if we should be processing!
-            if (ClientDependencySettings.Instance.ProcessRogueJSFiles)
+            //check if we should be processing!            
+            if (m_FoundPath != null && m_FoundPath.CompressJs)
             {
                 return ReplaceContent(html, "src", ".js", ClientDependencyType.Javascript, m_MatchScript);
             }            
@@ -80,14 +94,10 @@ namespace ClientDependency.Core.Module
         /// </summary>
         /// <param name="html"></param>
         /// <returns></returns>
-        /// <remarks>
-        /// TODO: Need to add caching to the src match found and what we returned for it so this doesn't
-        /// get processed every request.
-        /// </remarks>
         private string ReplaceStyles(string html)
         {
-            //check if we should be processing!
-            if (ClientDependencySettings.Instance.ProcessRogueCSSFiles)
+            //check if we should be processing!            
+            if (m_FoundPath != null && m_FoundPath.CompressCss)
             {
                 return ReplaceContent(html, "href", ".css", ClientDependencyType.Css, m_MatchLink);
             }

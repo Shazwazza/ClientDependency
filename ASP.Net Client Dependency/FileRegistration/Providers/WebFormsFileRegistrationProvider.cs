@@ -27,10 +27,10 @@ namespace ClientDependency.Core.FileRegistration.Providers
         /// <param name="dependantControl"></param>
         /// <param name="dependencies"></param>
         /// <param name="paths"></param>
-        public void RegisterDependencies(Control dependantControl, ClientDependencyCollection dependencies, HashSet<IClientDependencyPath> paths)
+        public void RegisterDependencies(Control dependantControl, List<IClientDependencyFile> allDependencies, HashSet<IClientDependencyPath> paths)
         {
             var ctl = dependantControl;
-            var allDependencies = new List<IClientDependencyFile>(dependencies);
+            
             var folderPaths = paths;
 
             UpdateFilePaths(allDependencies, folderPaths);
