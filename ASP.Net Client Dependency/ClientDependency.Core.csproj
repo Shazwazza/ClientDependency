@@ -74,6 +74,8 @@
     <Compile Include="Config\MvcSection.cs" />
     <Compile Include="Config\RogueFileCompressionCollection.cs" />
     <Compile Include="Config\RogueFileCompressionElement.cs" />
+    <Compile Include="Config\RogueFileCompressionExcludeCollection.cs" />
+    <Compile Include="Config\RogueFileCompressionExcludeElement.cs" />
     <Compile Include="ControlExtensions.cs" />
     <Compile Include="FileRegistration\Providers\WebFormsFileRegistrationProvider.cs" />
     <Compile Include="HttpContextExtensions.cs" />
@@ -100,7 +102,7 @@
     <Compile Include="Module\IFilter.cs" />
     <Compile Include="Module\MimeTypeCompressor.cs" />
     <Compile Include="Module\MvcFilter.cs" />
-    <Compile Include="Module\ResponseFilter.cs" />
+    <Compile Include="Module\ResponseFilterStream.cs" />
     <Compile Include="Module\RogueFileFilter.cs" />
     <Compile Include="Mvc\DependencyRenderer.cs">
     </Compile>

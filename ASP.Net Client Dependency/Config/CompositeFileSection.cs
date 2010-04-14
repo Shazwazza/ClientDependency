@@ -48,5 +48,7 @@ namespace ClientDependency.Core.Config
                 return (RogueFileCompressionCollection)base["rogueFileCompression"];
             }
         }
+
+       
     }
 }

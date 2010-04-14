@@ -61,6 +61,15 @@ namespace ClientDependency.Core.Config
             }
         }
 
+        [ConfigurationProperty("exclusions")]
+        public RogueFileCompressionExcludeCollection ExcludePaths
+        {
+            get
+            {
+                return (RogueFileCompressionExcludeCollection)base["exclusions"];
+            }
+        }       
+
         public override int GetHashCode()
         {
             return this.FilePath.GetHashCode();

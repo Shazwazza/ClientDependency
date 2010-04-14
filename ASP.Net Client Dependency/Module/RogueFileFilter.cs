@@ -28,8 +28,21 @@ namespace ClientDependency.Core.Module
             m_FoundPath = GetSupportedPath();
         }
 
+        public bool IsRunnable
+        {
+            get
+            {
+                if (!m_Runnable.HasValue)
+                {
+                    m_Runnable = (m_FoundPath != null);
+                }
+                return m_Runnable.Value;
+            }
+        }
+
         #region Private members
         
+        private bool? m_Runnable = null;
         private string m_MatchScript = "<script(?:(?:.*(?<src>(?<=src=\")[^\"]*(?=\"))[^>]*)|[^>]*)>(?<content>(?:(?:\n|.)(?!(?:\n|.)<script))*)</script>";
         private string m_MatchLink = "<link\\s+[^>]*(href\\s*=\\s*(['\"])(?<href>.*?)\\2)";
 
@@ -58,16 +71,32 @@ namespace ClientDependency.Core.Module
 
         private RogueFileCompressionElement GetSupportedPath()
         {
-            foreach (var m in ClientDependencySettings.Instance
+            var rogueFiles = ClientDependencySettings.Instance
                 .ConfigSection
                 .CompositeFileElement
-                .RogueFileCompression
-                .Cast<RogueFileCompressionElement>())
+                .RogueFileCompression;
+
+            foreach (var m in rogueFiles.Cast<RogueFileCompressionElement>())
             {
                 //if it is only "*" then convert it to proper regex
                 var reg = m.FilePath == "*" ? ".*" : m.FilePath;
                 var matched = Regex.IsMatch(CurrentContext.Request.RawUrl, reg, RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                if (matched) return m;
+                if (matched)
+                {
+                    bool isGood = true;
+                    //if we have a match, make sure there are no exclusions
+                    foreach (var e in m.ExcludePaths.Cast<RogueFileCompressionExcludeElement>())
+                    {
+                        var excluded = Regex.IsMatch(CurrentContext.Request.RawUrl, e.FilePath, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                        if (excluded)
+                        {
+                            isGood = false;
+                            break;
+                        }
+                    }
+
+                    if (isGood) return m;
+                }
             }
             return null;
         }
@@ -81,7 +110,7 @@ namespace ClientDependency.Core.Module
         private string ReplaceScripts(string html)
         {
             //check if we should be processing!            
-            if (m_FoundPath != null && m_FoundPath.CompressJs)
+            if (IsRunnable && m_FoundPath.CompressJs)
             {
                 return ReplaceContent(html, "src", m_FoundPath.JsRequestExtension.Split(','), ClientDependencyType.Javascript, m_MatchScript);
             }            
@@ -97,7 +126,7 @@ namespace ClientDependency.Core.Module
         private string ReplaceStyles(string html)
         {
             //check if we should be processing!            
-            if (m_FoundPath != null && m_FoundPath.CompressCss)
+            if (IsRunnable && m_FoundPath.CompressCss)
             {
                 return ReplaceContent(html, "href", m_FoundPath.CssRequestExtension.Split(','), ClientDependencyType.Css, m_MatchLink);
             }

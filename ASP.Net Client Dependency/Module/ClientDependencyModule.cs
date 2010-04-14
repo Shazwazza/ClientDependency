@@ -50,6 +50,19 @@ namespace ClientDependency.Core.Module
         /// <param name="e"></param>
         void app_PostMapRequestHandler(object sender, EventArgs e)
         {
+            
+
+            
+        }
+
+        /// <summary>
+        /// Checks if the request MIME type matches the list of mime types specified in the config,
+        /// if it does, then it compresses it.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void app_PreRequestHandlerExecute(object sender, EventArgs e)
+        {
             HttpApplication app = sender as HttpApplication;
 
             //if debug is on, then don't compress
@@ -64,22 +77,22 @@ namespace ClientDependency.Core.Module
 
                 if (handler != null)
                 {
-                    app.Response.Filter = new ResponseFilter(app.Response.Filter, new HttpContextWrapper(app.Context));
+                    ResponseFilterStream filter = new ResponseFilterStream(app.Response.Filter);
+
+                    var httpContext = new HttpContextWrapper(app.Context);
+                    RogueFileFilter rFilter = new RogueFileFilter(httpContext);
+                    if (rFilter.IsRunnable)
+                    {
+                        filter.TransformString += rFilter.UpdateOutputHtml;
+                    }
+                    if ((app.Context.CurrentHandler as MvcHandler) != null)
+                    {
+                        MvcFilter mFilter = new MvcFilter(httpContext);
+                        filter.TransformString += mFilter.UpdateOutputHtml;
+                    }
+                    app.Response.Filter = filter;
                 }
             }
-
-            
-        }
-
-        /// <summary>
-        /// Checks if the request MIME type matches the list of mime types specified in the config,
-        /// if it does, then it compresses it.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void app_PreRequestHandlerExecute(object sender, EventArgs e)
-        {
-            HttpApplication app = (HttpApplication)sender;
             
             //if debug is on, then don't compress
             if (!ConfigurationHelper.IsCompilationDebug)

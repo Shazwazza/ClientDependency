@@ -10,5 +10,6 @@ namespace ClientDependency.Core.Module
     {
         string UpdateOutputHtml(string html);
         HttpContextBase CurrentContext { get; }
+        //bool VerifyFilterAssignment();
     }
 }

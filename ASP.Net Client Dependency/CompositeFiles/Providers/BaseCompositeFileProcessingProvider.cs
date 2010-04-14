@@ -150,7 +150,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                 }
 
 				WebClient client = new WebClient();
-                client.Encoding = Encoding.UTF8;
+                client.Encoding = Encoding.Default;
 				try
 				{
 					requestContents = client.DownloadString(uri.AbsoluteUri);

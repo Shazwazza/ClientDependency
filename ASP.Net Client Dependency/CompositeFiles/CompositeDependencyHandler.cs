@@ -204,7 +204,7 @@ namespace ClientDependency.Core.CompositeFiles
         private string DecodeFrom64(string toDecode)
         {
             byte[] toDecodeAsBytes = System.Convert.FromBase64String(toDecode);
-            return Encoding.UTF8.GetString(toDecodeAsBytes);
+            return Encoding.Default.GetString(toDecodeAsBytes);
         }
     }
 }

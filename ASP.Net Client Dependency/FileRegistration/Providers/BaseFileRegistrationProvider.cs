@@ -60,7 +60,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         private static string EncodeTo64(string toEncode)
         {
-            byte[] toEncodeAsBytes = Encoding.UTF8.GetBytes(toEncode);
+            byte[] toEncodeAsBytes = Encoding.Default.GetBytes(toEncode);
             string returnValue = System.Convert.ToBase64String(toEncodeAsBytes);
             return returnValue;
         } 
