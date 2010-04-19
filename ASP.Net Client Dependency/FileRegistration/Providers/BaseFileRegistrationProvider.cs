@@ -168,6 +168,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
             }
         }
 
+      
         /// <summary>
         /// This will ensure that no duplicates have made it into the collection.
         /// Duplicates WILL occur if the same dependency is registered in 2 different ways: 
@@ -181,54 +182,53 @@ namespace ClientDependency.Core.FileRegistration.Providers
         protected void EnsureNoDuplicates(List<IClientDependencyFile> dependencies
             , HashSet<IClientDependencyPath> folderPaths)
         {
-            var dupPaths = dependencies
-                .Select(x => x.FilePath) //Project each element to its uniqueID property
-                .GroupBy(x => x) //Project each element to its uniqueID property
-                .Where(x => x.Skip(1).Any()) //Filter the groups by groups that have more than 1 element
-                .Select(x => x.Key) //Project each group to the group's key (back to uniqueID)
-                .ToList();
 
-            var toKeep = new List<IClientDependencyFile>();
 
-            foreach (var d in dupPaths)
+            var toKeep = new HashSet<IClientDependencyFile>();
+
+            foreach (var d in dependencies)
             {
-                //find the dups and return an object with the associated index
-                var dups = dependencies
-                    .Where(x => x.FilePath == d)
-                    .Select(x => new { Index = dependencies.IndexOf(x), File = x })
-                    .ToList();
-
-                var priorities = dups.Select(x => x.File.Priority).Distinct().ToList();
-                //if there's more than 1 priority defined, we know we need to remove by priority
-                //instead of by index
-                if (priorities.Count() > 1)
+                //check if it is a duplicate
+                if (dependencies.Where(x => x.FilePath.ToUpper().Trim().Equals(d.FilePath.ToUpper().Trim())).Count() > 1)
                 {
-                    toKeep.Add(dups
-                        .Where(x => x.File.Priority == priorities
-                            .Min())
-                        .First().File);
+                    //find the dups and return an object with the associated index
+                    var dups = dependencies
+                        .Where(x => x.FilePath.ToUpper().Trim().Equals(d.FilePath.ToUpper().Trim()))
+                        .Select((x, index) => new { Index = index, File = x })
+                        .ToList();
+
+                    var priorities = dups.Select(x => x.File.Priority).Distinct().ToList();
+                    
+                    //if there's more than 1 priority defined, we know we need to remove by priority
+                    //instead of by index
+                    if (priorities.Count() > 1)
+                    {
+                        toKeep.Add(dups
+                            .Where(x => x.File.Priority == priorities.Min())
+                            .First().File);
+                    }
+                    else
+                    {
+                        //if not by priority, we just need to keep the first on in the list
+                        toKeep.Add(dups
+                            .Where(x => x.Index == dups
+                                .Select(p => p.Index)
+                                .Min())
+                            .First().File);
+                    }
                 }
                 else
                 {
-                    //if not by priority, we just need to keep the first on in the list
-                    toKeep.Add(dups
-                        .Where(x => x.Index == dups
-                            .Select(p => p.Index)
-                            .Min())
-                        .First().File);
+                    //if there's only one found, then just add it to our output
+                    toKeep.Add(d);
                 }
+
+               
             }
 
-            //now we need to remove the dups that don't exist in our to keep list
-            var toRemove = dependencies
-                .Where(x => dupPaths.Contains(x.FilePath)) //find files that match our dup file paths
-                .Where(x => !toKeep.Contains(x)) //exlude the to keeps
-                .ToList();
+            dependencies.Clear();
+            dependencies.AddRange(toKeep);
 
-            foreach (var r in toRemove)
-            {
-                dependencies.Remove(r);
-            }
 
         }
 
