@@ -11,7 +11,6 @@ using ClientDependency.Core.CompositeFiles;
 using ClientDependency.Core.FileRegistration.Providers;
 using ClientDependency.Core.CompositeFiles.Providers;
 using ClientDependency.Core.Logging;
-using ClientDependency.Core.Mvc.Providers;
 
 namespace ClientDependency.Core.Config
 {
@@ -45,7 +44,7 @@ namespace ClientDependency.Core.Config
         private CompositeFileProcessingProviderCollection m_CompositeFileProviders = null;
 
         private BaseRenderer m_MvcRenderer = null;
-        private MvcRendererCollection m_MvcRenderers = null; 
+        private RendererCollection m_MvcRenderers = null; 
 
         /// <summary>
         /// The file extensions of Client Dependencies that are file based as opposed to request based.
@@ -80,7 +79,7 @@ namespace ClientDependency.Core.Config
                 return m_MvcRenderer;
             }
         }
-        public MvcRendererCollection MvcRendererCollection
+        public RendererCollection MvcRendererCollection
         {
             get
             {
@@ -133,7 +132,7 @@ namespace ClientDependency.Core.Config
 
                         m_FileRegisterProviders = new FileRegistrationProviderCollection();
                         m_CompositeFileProviders = new CompositeFileProcessingProviderCollection();
-                        m_MvcRenderers = new MvcRendererCollection();
+                        m_MvcRenderers = new RendererCollection();
 
                         // if there is no section found, then create one
                         if (ConfigSection == null)

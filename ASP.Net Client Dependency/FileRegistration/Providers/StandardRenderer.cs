@@ -5,7 +5,7 @@ using System.Text;
 using ClientDependency.Core.FileRegistration.Providers;
 using ClientDependency.Core.Config;
 
-namespace ClientDependency.Core.Mvc.Providers
+namespace ClientDependency.Core.FileRegistration.Providers
 {
     public class StandardRenderer : BaseRenderer
     {

@@ -6,7 +6,6 @@ using System.Web;
 using System.Linq;
 using ClientDependency.Core.Config;
 using ClientDependency.Core.FileRegistration.Providers;
-using System.Web.Mvc;
 
 namespace ClientDependency.Core.Controls
 {

@@ -6,7 +6,7 @@ using System.Configuration.Provider;
 using ClientDependency.Core.FileRegistration.Providers;
 using System.IO;
 
-namespace ClientDependency.Core.Mvc.Providers
+namespace ClientDependency.Core.FileRegistration.Providers
 {
     public abstract class BaseRenderer : BaseFileRegistrationProvider
     {

@@ -8,7 +8,6 @@ using ClientDependency.Core.Config;
 using ClientDependency.Core.FileRegistration.Providers;
 using System.Web.Mvc;
 using ClientDependency.Core.Controls;
-using ClientDependency.Core.Mvc.Providers;
 using System.IO;
 using System.Text.RegularExpressions;
 

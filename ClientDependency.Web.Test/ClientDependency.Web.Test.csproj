@@ -185,6 +185,10 @@
       <Project>{EA35B06D-0CC8-4830-A3F7-9BB3D36D0FAF}</Project>
       <Name>ClientDependency.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ClientDependency.Mvc\ClientDependency.Core.Mvc.csproj">
+      <Project>{5A8B1824-80CD-4187-B870-384D77892A77}</Project>
+      <Name>ClientDependency.Core.Mvc</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Css\ColorScheme.css" />

@@ -32,7 +32,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;MVC</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -50,7 +50,6 @@
     <Reference Include="System.Web.Extensions">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Web.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -77,6 +76,10 @@
     <Compile Include="Config\RogueFileCompressionExcludeCollection.cs" />
     <Compile Include="Config\RogueFileCompressionExcludeElement.cs" />
     <Compile Include="ControlExtensions.cs" />
+    <Compile Include="FileRegistration\Providers\BaseRenderer.cs" />
+    <Compile Include="FileRegistration\Providers\LazyLoadRenderer.cs" />
+    <Compile Include="FileRegistration\Providers\RendererCollection.cs" />
+    <Compile Include="FileRegistration\Providers\StandardRenderer.cs" />
     <Compile Include="FileRegistration\Providers\WebFormsFileRegistrationProvider.cs" />
     <Compile Include="HttpContextExtensions.cs" />
     <Compile Include="IClientDependencyFileExtensions.cs" />
@@ -101,17 +104,8 @@
     <Compile Include="Logging\NullLogger.cs" />
     <Compile Include="Module\IFilter.cs" />
     <Compile Include="Module\MimeTypeCompressor.cs" />
-    <Compile Include="Module\MvcFilter.cs" />
     <Compile Include="Module\ResponseFilterStream.cs" />
     <Compile Include="Module\RogueFileFilter.cs" />
-    <Compile Include="Mvc\DependencyRenderer.cs">
-    </Compile>
-    <Compile Include="Mvc\HtmlHelperExtensions.cs" />
-    <Compile Include="Mvc\Providers\BaseRenderer.cs" />
-    <Compile Include="Mvc\Providers\LazyLoadRenderer.cs" />
-    <Compile Include="Mvc\Providers\MvcRendererCollection.cs" />
-    <Compile Include="Mvc\Providers\StandardRenderer.cs" />
-    <Compile Include="Mvc\ViewContextExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProviderDependencyList.cs" />
     <Compile Include="FileRegistration\Providers\BaseFileRegistrationProvider.cs" />

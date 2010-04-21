@@ -5,7 +5,6 @@ using System.Text;
 using System.Web;
 using System.IO;
 using System.Web.UI;
-using System.Web.Mvc;
 using System.Text.RegularExpressions;
 using ClientDependency.Core.Controls;
 using ClientDependency.Core.FileRegistration.Providers;
@@ -22,24 +21,7 @@ namespace ClientDependency.Core.Module
     /// </summary>
     public class RogueFileFilter : IFilter
     {
-        public RogueFileFilter(HttpContextBase ctx)
-        {
-            CurrentContext = ctx;
-            m_FoundPath = GetSupportedPath();
-        }
-
-        public bool IsRunnable
-        {
-            get
-            {
-                if (!m_Runnable.HasValue)
-                {
-                    m_Runnable = (m_FoundPath != null);
-                }
-                return m_Runnable.Value;
-            }
-        }
-
+        
         #region Private members
         
         private bool? m_Runnable = null;
@@ -51,6 +33,42 @@ namespace ClientDependency.Core.Module
         #endregion
 
         #region IFilter Members
+
+        public void SetHttpContext(HttpContextWrapper ctx)
+        {
+            CurrentContext = ctx;
+            m_FoundPath = GetSupportedPath();
+        }
+
+        /// <summary>
+        /// This filter can only execute when it's a Page or MvcHandler
+        /// </summary>
+        /// <param name="app"></param>
+        /// <returns></returns>
+        public bool ValidateCurrentHandler()
+        {
+            IHttpHandler handler = CurrentContext.CurrentHandler as Page;
+            if (handler != null)
+            {
+                return true;
+            }
+            return false;
+        }
+       
+        /// <summary>
+        /// Returns true when this filter should be applied
+        /// </summary>
+        /// <param name="app"></param>
+        /// <returns></returns>
+        public bool CanExecute()
+        {
+            if (!m_Runnable.HasValue)
+            {
+                m_Runnable = (m_FoundPath != null);
+            }
+            return m_Runnable.Value;
+
+        }
 
         /// <summary>
         /// Replaces any rogue script tag's with calls to the compression handler instead 
@@ -110,7 +128,7 @@ namespace ClientDependency.Core.Module
         private string ReplaceScripts(string html)
         {
             //check if we should be processing!            
-            if (IsRunnable && m_FoundPath.CompressJs)
+            if (CanExecute() && m_FoundPath.CompressJs)
             {
                 return ReplaceContent(html, "src", m_FoundPath.JsRequestExtension.Split(','), ClientDependencyType.Javascript, m_MatchScript);
             }            
@@ -126,7 +144,7 @@ namespace ClientDependency.Core.Module
         private string ReplaceStyles(string html)
         {
             //check if we should be processing!            
-            if (IsRunnable && m_FoundPath.CompressCss)
+            if (CanExecute() && m_FoundPath.CompressCss)
             {
                 return ReplaceContent(html, "href", m_FoundPath.CssRequestExtension.Split(','), ClientDependencyType.Css, m_MatchLink);
             }

@@ -4,18 +4,29 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
-using ClientDependency.Core.Mvc;
+using ClientDependency.Core.Module;
 
-namespace ClientDependency.Core.Module
+namespace ClientDependency.Core.Mvc
 {
     public class MvcFilter : IFilter
     {
-        public MvcFilter(HttpContextBase ctx)
+
+        #region IFilter Members
+
+        public void SetHttpContext(HttpContextWrapper ctx)
         {
             CurrentContext = ctx;
         }
 
-        #region IFilter Members
+        public bool CanExecute()
+        {
+            return (CurrentContext.CurrentHandler is MvcHandler);
+        }
+
+        public bool ValidateCurrentHandler()
+        {
+            return (CurrentContext.CurrentHandler is MvcHandler);
+        }
 
         public string UpdateOutputHtml(string html)
         {
@@ -37,6 +48,5 @@ namespace ClientDependency.Core.Module
 
         #endregion
 
-       
     }
 }

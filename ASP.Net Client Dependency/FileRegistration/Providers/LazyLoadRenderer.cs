@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ClientDependency.Core.Mvc.Providers
+namespace ClientDependency.Core.FileRegistration.Providers
 {
     public class LazyLoadRenderer : BaseRenderer
     {

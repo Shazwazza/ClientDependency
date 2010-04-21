@@ -6,10 +6,12 @@ using System.Web;
 
 namespace ClientDependency.Core.Module
 {
-    internal interface IFilter
+    public interface IFilter
     {
+        void SetHttpContext(HttpContextWrapper ctx);
         string UpdateOutputHtml(string html);
         HttpContextBase CurrentContext { get; }
-        //bool VerifyFilterAssignment();
+        bool CanExecute();
+        bool ValidateCurrentHandler();
     }
 }

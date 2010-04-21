@@ -10,9 +10,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solutions Items", "Solution
 		SolutionInfo.cs = SolutionInfo.cs
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientDependency.Core.Mvc", "ClientDependency.Mvc\ClientDependency.Core.Mvc.csproj", "{5A8B1824-80CD-4187-B870-384D77892A77}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 3
+		SccNumberOfProjects = 4
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs04.codeplex.com/
 		SccLocalPath0 = .
@@ -22,6 +24,9 @@ Global
 		SccProjectUniqueName2 = ASP.Net\u0020Client\u0020Dependency\\ClientDependency.Core.csproj
 		SccProjectName2 = ASP.Net\u0020Client\u0020Dependency
 		SccLocalPath2 = ASP.Net\u0020Client\u0020Dependency
+		SccProjectUniqueName3 = ClientDependency.Mvc\\ClientDependency.Core.Mvc.csproj
+		SccProjectName3 = ClientDependency.Mvc
+		SccLocalPath3 = ClientDependency.Mvc
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +41,10 @@ Global
 		{D2DA8882-0CCE-4AE0-87BF-9947B0D19CC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2DA8882-0CCE-4AE0-87BF-9947B0D19CC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D2DA8882-0CCE-4AE0-87BF-9947B0D19CC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A8B1824-80CD-4187-B870-384D77892A77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A8B1824-80CD-4187-B870-384D77892A77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A8B1824-80CD-4187-B870-384D77892A77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A8B1824-80CD-4187-B870-384D77892A77}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

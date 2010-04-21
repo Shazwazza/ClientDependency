@@ -6,9 +6,14 @@ using ClientDependency.Core.Controls;
 using ClientDependency.Core.FileRegistration.Providers;
 using ClientDependency.Core.Config;
 using System.Configuration.Provider;
+using System.Runtime.CompilerServices;
+
+//Make a 'friend' to mvc app
+[assembly: InternalsVisibleTo("ClientDependency.Core.Mvc")]
 
 namespace ClientDependency.Core
 {
+    
     public class BaseLoader
     {
 

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Configuration.Provider;
 
-namespace ClientDependency.Core.Mvc.Providers
+namespace ClientDependency.Core.FileRegistration.Providers
 {
-    public class MvcRendererCollection : ProviderCollection
+    public class RendererCollection : ProviderCollection
     {
         public new BaseRenderer this[string name]
         {
