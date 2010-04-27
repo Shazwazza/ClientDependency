@@ -19,10 +19,17 @@ namespace ClientDependency.Core.FileRegistration.Providers
         /// </summary>
         public BaseFileRegistrationProvider()
         {
+            EnableCompositeFiles = true;
         }
 		
         //protected HashSet<IClientDependencyPath> FolderPaths { get; set; }
         //protected List<IClientDependencyFile> AllDependencies { get; set; }
+                
+        /// <summary>
+        /// By default this is true but can be overriden (in either config or code). 
+        /// Composite files are never enabled with compilation debug="true" however.
+        /// </summary>
+        protected bool EnableCompositeFiles { get; set; }
 
         #region Abstract methods/properties
 
@@ -37,8 +44,12 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
         {          
-
             base.Initialize(name, config);
+
+            if (config["enableCompositeFiles"] != null && !string.IsNullOrEmpty(config["enableCompositeFiles"]))
+            {
+                EnableCompositeFiles = bool.Parse(config["enableCompositeFiles"]);
+            }
         }
 
         #endregion
@@ -161,7 +172,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
                 }
 
                 //append query strings to each file if we are in debug mode
-                if (ConfigurationHelper.IsCompilationDebug)
+                if (ConfigurationHelper.IsCompilationDebug || !EnableCompositeFiles)
                 {
                     dependency.FilePath = AppendVersionQueryString(dependency.FilePath);
                 }

@@ -29,7 +29,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
             StringBuilder sb = new StringBuilder();
 
-            if (ConfigurationHelper.IsCompilationDebug)
+            if (ConfigurationHelper.IsCompilationDebug || !EnableCompositeFiles)
 			{
 				foreach (IClientDependencyFile dependency in jsDependencies)
 				{
@@ -55,7 +55,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
             StringBuilder sb = new StringBuilder();
 
-            if (ConfigurationHelper.IsCompilationDebug)
+            if (ConfigurationHelper.IsCompilationDebug || !EnableCompositeFiles)
 			{
 				foreach (IClientDependencyFile dependency in cssDependencies)
 				{

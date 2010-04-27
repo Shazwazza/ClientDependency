@@ -67,7 +67,7 @@
     <Compile Include="CompositeFiles\Providers\BaseCompositeFileProcessingProvider.cs" />
     <Compile Include="CompositeFiles\CompositeFileDefinition.cs" />
     <Compile Include="CompressionType.cs" />
-    <Compile Include="Config\ConfigurationManagerExtensions.cs" />
+    <Compile Include="Config\ConfigurationHelper.cs" />
     <Compile Include="Config\MimeTypeCompressionCollection.cs" />
     <Compile Include="Config\MimeTypeCompressionElement.cs" />
     <Compile Include="Config\MvcSection.cs" />
