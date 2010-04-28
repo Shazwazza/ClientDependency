@@ -49,8 +49,11 @@ namespace ClientDependency.Core.Module
         {
             foreach (var f in ClientDependencySettings.Instance.ConfigSection.Filters.Cast<ProviderSettings>())
             {
-                var t = BuildManager.GetType(f.Type, true, true);
-                m_FilterTypes.Add(t);
+                var t = BuildManager.GetType(f.Type, false, true);
+                if (t != null)
+                {
+                    m_FilterTypes.Add(t);
+                }                
             }
         }
 

@@ -161,9 +161,27 @@ namespace ClientDependency.Core.Controls
 		/// <param name="type"></param>
 		public ClientDependencyLoader RegisterDependency(string filePath, ClientDependencyType type)
 		{
-			RegisterDependency(filePath, "", type);
+            m_Base.RegisterDependency(filePath, type);
 			return this;
 		}
+
+        /// <summary>
+        /// Registers a file dependency
+        /// </summary>
+        public ClientDependencyLoader RegisterDependency(int priority, string filePath, ClientDependencyType type)
+        {
+            m_Base.RegisterDependency(priority, filePath, type);
+            return this;
+        }
+
+        /// <summary>
+        /// Registers a file dependency
+        /// </summary>
+        public ClientDependencyLoader RegisterDependency(int priority, string filePath, string pathNameAlias, ClientDependencyType type)
+        {
+            m_Base.RegisterDependency(priority, filePath, pathNameAlias, type);
+            return this;
+        }
 
 		/// <summary>
 		/// Registers a file dependency 
@@ -248,7 +266,7 @@ namespace ClientDependency.Core.Controls
 		}
 
 		/// <summary>
-		/// Recursively find all dependencies of this control and it's entire child control heirarchy.
+		/// Find all dependencies of this control and it's entire child control heirarchy.
 		/// </summary>
 		/// <param name="control"></param>
 		/// <returns></returns>
