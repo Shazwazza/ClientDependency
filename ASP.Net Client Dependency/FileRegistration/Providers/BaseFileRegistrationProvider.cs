@@ -46,7 +46,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
         {          
             base.Initialize(name, config);
 
-            if (config["enableCompositeFiles"] != null && !string.IsNullOrEmpty(config["enableCompositeFiles"]))
+            if (config != null && config["enableCompositeFiles"] != null && !string.IsNullOrEmpty(config["enableCompositeFiles"]))
             {
                 EnableCompositeFiles = bool.Parse(config["enableCompositeFiles"]);
             }
