@@ -7,6 +7,7 @@ namespace ClientDependency.Core.Controls
 {
 	public class CssInclude : ClientDependencyInclude
 	{
+        internal bool EncodeImages { get; set; }
 
 		public CssInclude()
 		{
