@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Configuration;
 using System.Web.Configuration;
+using System.Web;
 
 namespace ClientDependency.Core.Config
 {
@@ -14,12 +15,13 @@ namespace ClientDependency.Core.Config
         {
             get
             {
-                CompilationSection compilation = ConfigurationManager.GetSection("system.web/compilation") as CompilationSection;
-                if (compilation != null)
-                {
-                    return compilation.Debug;
-                }
-                return false; //by default, return false!
+                return HttpContext.Current.IsDebuggingEnabled;
+                //CompilationSection compilation = ConfigurationManager.GetSection("system.web/compilation") as CompilationSection;
+                //if (compilation != null)
+                //{
+                //    return compilation.Debug;
+                //}
+                //return false; //by default, return false!
             }
         }
 
