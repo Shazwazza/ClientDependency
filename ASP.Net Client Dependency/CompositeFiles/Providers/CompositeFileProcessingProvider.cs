@@ -61,8 +61,9 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 
 			List<CompositeFileDefinition> fDefs = new List<CompositeFileDefinition>();
 
-			MemoryStream ms = new MemoryStream(5000);
+			MemoryStream ms = new MemoryStream(5000);            
             StreamWriter sw = new StreamWriter(ms, Encoding.UTF8);
+
 			foreach (string s in strFiles)
 			{
 				if (!string.IsNullOrEmpty(s))
@@ -152,8 +153,9 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 		{
 			try
 			{
-				//if it is a file based dependency then read it
-				string fileContents = File.ReadAllText(fi.FullName);
+				//if it is a file based dependency then read it				
+                string fileContents = File.ReadAllText(fi.FullName, Encoding.UTF8); //read as utf 8
+
                 sw.WriteLine(MinifyFile(ParseCssFilePaths(fileContents, type, origUrl), type));
 				fileDefs.Add(new CompositeFileDefinition(origUrl, true));
 				return true;
@@ -162,9 +164,8 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 			{
                 ClientDependencySettings.Instance.Logger.Error(string.Format("Could not write file {0} contents to stream. EXCEPTION: {1}", fi.FullName, ex.Message), ex);
 				return false;
-			}			
-		}		
+			}
+		}
 
-		
 	}
 }

@@ -16,5 +16,6 @@
 		<li><a class="white" href="/Pages/LazyLoadProviderTest.aspx">Lazy Load Provider with dynamic registration</a></li>
 		<li><a class="white" href="/Pages/ForcedProviders.aspx">Default Provider with a Forced providers on certain dependencies</a></li>
 		<li><a class="white" href="/Pages/RogueScriptDetectionTest.aspx">Rogue script detection test</a></li>
+        <li><a class="white" href="/Pages/EncodingTest.aspx">File Encoding test</a></li>
 	</ul>
 </div>

@@ -79,7 +79,12 @@
     <Content Include="Controls\Sidebar.ascx" />
     <Content Include="Css\Controls.css" />
     <Content Include="Css\Site.css" />
+    <Content Include="Js\EncodingTestANSI.js" />
+    <Content Include="Js\EncodingTestUCS2BigEndian.js" />
+    <Content Include="Js\EncodingTestUCS2LittleEndian.js" />
+    <Content Include="Js\EncodingTestUTF8WithoutBOM.js" />
     <Content Include="Pages\Default.aspx" />
+    <Content Include="Pages\EncodingTest.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -120,6 +125,13 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\TestModel.cs" />
+    <Compile Include="Pages\EncodingTest.aspx.cs">
+      <DependentUpon>EncodingTest.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\EncodingTest.aspx.designer.cs">
+      <DependentUpon>EncodingTest.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\ForcedProviders.aspx.cs">
       <DependentUpon>ForcedProviders.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -214,6 +226,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Js\EncodingTestUTF8.js" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
