@@ -44,7 +44,11 @@ namespace ClientDependency.Core.Mvc
             html.ViewContext.GetLoader().RegisterDependency(priority, filePath, ClientDependencyType.Css);
         }
 
-
+        public static string RenderJsHere(this HtmlHelper html)
+        {
+            return html.ViewContext.GetLoader().RenderPlaceholder(
+                ClientDependencyType.Javascript, new List<IClientDependencyPath>());
+        }
         public static string RenderJsHere(this HtmlHelper html, IClientDependencyPath path)
         {
             return html.ViewContext.GetLoader().RenderPlaceholder(
@@ -61,6 +65,12 @@ namespace ClientDependency.Core.Mvc
                 ClientDependencyType.Javascript, rendererName, paths);
         }
 
+
+        public static string RenderCssHere(this HtmlHelper html)
+        {
+            return html.ViewContext.GetLoader().RenderPlaceholder(
+                ClientDependencyType.Css, new List<IClientDependencyPath>());
+        }
         public static string RenderCssHere(this HtmlHelper html, IClientDependencyPath path)
         {
             return html.ViewContext.GetLoader().RenderPlaceholder(
