@@ -51,12 +51,14 @@ namespace ClientDependency.Core
                 .Where(x => x.Contains(provider))
                 .DefaultIfEmpty(new ProviderDependencyList(provider))
                 .SingleOrDefault();
+            
             //add the dependencies that don't have a provider specified
             currList.AddDependencies(dependencies
                 .Where(x => string.IsNullOrEmpty(x.ForceProvider)));
+            
             //add the list if it is new
-            if (!m_Dependencies.Contains(currList))
-                m_Dependencies.Add(currList);
+            if (!m_Dependencies.Contains(currList) && currList.Dependencies.Count > 0)
+                m_Dependencies.Add(currList); 
 
             //we need to look up all of the dependencies that have forced providers, 
             //check if we've got a provider list for it, create one if not and add the dependencies
