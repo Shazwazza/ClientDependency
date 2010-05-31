@@ -22,7 +22,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 		}
 
 		/// <summary>Path to the dependency loader we need for adding control dependencies.</summary>
-        protected const string DependencyLoaderResourceName = "ClientDependency.Core.Resources.LazyLoader.js";		
+        protected const string DependencyLoaderResourceName = "ClientDependency.Core.Resources.LazyLoader.js";
 
 		protected override string RenderJsDependencies(List<IClientDependencyFile> jsDependencies)
 		{
@@ -95,6 +95,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
         protected override void RegisterDependencies(Control dependantControl, string js, string css)
         {
             dependantControl.Page.ClientScript.RegisterClientScriptResource(typeof(LazyLoadProvider), DependencyLoaderResourceName);
+
             RegisterScript(js, dependantControl);
             RegisterScript(css, dependantControl);
         }		

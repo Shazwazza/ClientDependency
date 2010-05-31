@@ -76,12 +76,12 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         protected override string RenderSingleJsFile(string js)
 		{
-            return string.Format(HtmlEmbedContants.ScriptEmbed, js);
+            return string.Format(HtmlEmbedContants.ScriptEmbedWithSource, js);
 		}
 
         protected override string RenderSingleCssFile(string css)
 		{
-            return string.Format(HtmlEmbedContants.CssEmbed, css);
+            return string.Format(HtmlEmbedContants.CssEmbedWithSource, css);
 		}
 
         protected override void RegisterDependencies(Control dependantControl, string js, string css)

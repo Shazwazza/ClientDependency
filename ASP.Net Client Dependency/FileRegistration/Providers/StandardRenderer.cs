@@ -12,6 +12,15 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         public const string DefaultName = "StandardRenderer";
 
+        public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
+        {
+            // Assign the provider a default name if it doesn't have one
+            if (string.IsNullOrEmpty(name))
+                name = DefaultName;
+
+            base.Initialize(name, config);
+        }
+
         protected override string RenderJsDependencies(List<IClientDependencyFile> jsDependencies)
         {
             if (jsDependencies.Count == 0)
@@ -66,12 +75,12 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         protected override string RenderSingleJsFile(string js)
         {
-            return string.Format(HtmlEmbedContants.ScriptEmbed, js);
+            return string.Format(HtmlEmbedContants.ScriptEmbedWithSource, js);
         }
 
         protected override string RenderSingleCssFile(string css)
         {
-            return string.Format(HtmlEmbedContants.CssEmbed, css);
+            return string.Format(HtmlEmbedContants.CssEmbedWithSource, css);
         }
 
     }
