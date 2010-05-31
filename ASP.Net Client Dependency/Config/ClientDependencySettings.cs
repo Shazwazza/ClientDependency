@@ -37,6 +37,11 @@ namespace ClientDependency.Core.Config
 
         private object m_Lock = new object();
 
+        /// <summary>
+        /// Used to determine initialization in a double check locking pattern
+        /// </summary>
+        private volatile bool m_IsInitialized = false;
+
         private WebFormsFileRegistrationProvider m_FileRegisterProvider = null;
         private FileRegistrationProviderCollection m_FileRegisterProviders = null;
 
@@ -121,12 +126,12 @@ namespace ClientDependency.Core.Config
        
         private void LoadProviders()
         {
-            if (m_FileRegisterProvider == null)
+            if (!m_IsInitialized)
             {
                 lock (m_Lock)
                 {
-                    // Do this again to make sure _provider is still null
-                    if (m_FileRegisterProvider == null)
+                    // Do this again to make sure we're still not initialized (double check locking)
+                    if (!m_IsInitialized)
                     {
                         ConfigSection = (ClientDependencySection)ConfigurationManager.GetSection("clientDependency");
 

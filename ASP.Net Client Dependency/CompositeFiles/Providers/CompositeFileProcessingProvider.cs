@@ -62,7 +62,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 			List<CompositeFileDefinition> fDefs = new List<CompositeFileDefinition>();
 
 			MemoryStream ms = new MemoryStream(5000);
-            StreamWriter sw = new StreamWriter(ms, Encoding.Default);
+            StreamWriter sw = new StreamWriter(ms, Encoding.UTF8);
 			foreach (string s in strFiles)
 			{
 				if (!string.IsNullOrEmpty(s))

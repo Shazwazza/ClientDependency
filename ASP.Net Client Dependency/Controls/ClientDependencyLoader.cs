@@ -31,19 +31,32 @@ namespace ClientDependency.Core.Controls
             //add this object to the context and validate the context type
             if (this.Context != null)
             {
-                if (this.Context.Items.Contains(ContextKey))
+                if (!this.Context.Items.Contains(ContextKey))
+                {
+                    lock (m_Locker)
+                    {
+                        if (!this.Context.Items.Contains(ContextKey))
+                        {
+                            //The context needs to be a page
+                            Page page = this.Context.Handler as Page;
+                            if (page == null)
+                                throw new InvalidOperationException("ClientDependencyLoader only works with Page based handlers.");
+                            this.Context.Items[ContextKey] = this;
+                        }                        
+                    }                    
+                }
+                else
+                {
                     throw new InvalidOperationException("Only one ClientDependencyLoader may exist on a page");
-                //The context needs to be a page
-                Page page = this.Context.Handler as Page;
-                if (page == null)
-                    throw new InvalidOperationException("ClientDependencyLoader only works with Page based handlers.");
-                this.Context.Items[ContextKey] = this;
+                }                               
             }
             else
                 throw new InvalidOperationException("ClientDependencyLoader requires an HttpContext");
         }
 
 		public const string ContextKey = "ClientDependencyLoader";
+
+        private static object m_Locker = new object();
 
         public string ProviderName
         {

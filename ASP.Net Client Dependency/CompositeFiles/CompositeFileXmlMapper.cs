@@ -81,8 +81,10 @@ namespace ClientDependency.Core.CompositeFiles
             if (!ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.PersistCompositeFiles)
                 return;
 
-			if (m_XmlFile.Exists)
-				m_XmlFile.Delete();
+            if (File.Exists(m_XmlFile.FullName))
+            {
+                File.Delete(m_XmlFile.FullName);
+            }
 
 			m_Doc = new XDocument(new XDeclaration("1.0", "UTF-8", "yes"),
 											new XElement("map"));
@@ -91,12 +93,12 @@ namespace ClientDependency.Core.CompositeFiles
 
 		private void EnsureXmlFile()
 		{
-			if (!m_XmlFile.Exists)
+            if (!File.Exists(m_XmlFile.FullName))
 			{
 				lock (m_Lock)
 				{
 					//double check
-					if (!m_XmlFile.Exists)
+                    if (!File.Exists(m_XmlFile.FullName))
 					{
 						if (!ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CompositeFilePath.Exists)
                             ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CompositeFilePath.Create();
