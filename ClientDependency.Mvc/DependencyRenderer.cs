@@ -40,6 +40,11 @@ namespace ClientDependency.Core.Mvc
         #region Static methods
 
         /// <summary>
+        /// used for locking
+        /// </summary>
+        private static readonly object m_Locker = new object();
+
+        /// <summary>
         /// Singleton per request instance.
         /// </summary>
         /// <exception cref="NullReferenceException">
@@ -64,15 +69,21 @@ namespace ClientDependency.Core.Mvc
         {
             if (DependencyRenderer.Instance(ctx) == null)
             {
-                DependencyRenderer loader = new DependencyRenderer(ctx);                
-                isNew = true;
-                return loader;
+                lock (m_Locker)
+                {
+                    //double check
+                    if (DependencyRenderer.Instance(ctx) == null)
+                    {
+                        DependencyRenderer loader = new DependencyRenderer(ctx);
+                        isNew = true;
+                        return loader;
+                    }                    
+                }
+                
             }
-            else
-            {
-                isNew = false;
-                return DependencyRenderer.Instance(ctx);
-            }
+           
+            isNew = false;
+            return DependencyRenderer.Instance(ctx);       
 
         }
 
