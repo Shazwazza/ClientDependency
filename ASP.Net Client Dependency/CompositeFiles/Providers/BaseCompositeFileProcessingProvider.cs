@@ -24,6 +24,8 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             CompositeFilePath = new DirectoryInfo(HttpContext.Current.Server.MapPath("~/App_Data/ClientDependency"));
         }
 
+        private readonly string m_ByteOrderMarkUtf8 = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
+
 		#region Provider Members
 
 		public abstract FileInfo SaveCompositeFile(byte[] fileContents, ClientDependencyType type);
@@ -149,11 +151,9 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                     }                    
                 }
 
-				WebClient client = new WebClient();
-                client.Encoding = new UTF8Encoding(false);
 				try
 				{
-					requestContents = client.DownloadString(uri.AbsoluteUri);
+                    requestContents = GetXmlResponse(uri);
 					return true;
 				}
 				catch (Exception ex)
@@ -166,5 +166,29 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 			requestContents = "";
 			return false;
 		}
+
+        /// <summary>
+        /// Gets the web response and ensures that the BOM is not present not matter what encoding is specified.
+        /// </summary>
+        /// <param name="resource"></param>
+        /// <returns></returns>
+        private string GetXmlResponse(Uri resource)
+        {
+            string xml;
+
+            using (var client = new WebClient())
+            {
+                client.Encoding = Encoding.UTF8;
+                xml = client.DownloadString(resource);
+            }
+
+            if (xml.StartsWith(m_ByteOrderMarkUtf8))
+            {
+                xml = xml.Remove(0, m_ByteOrderMarkUtf8.Length);
+            }
+
+            return xml;
+        }
+
 	}
 }
