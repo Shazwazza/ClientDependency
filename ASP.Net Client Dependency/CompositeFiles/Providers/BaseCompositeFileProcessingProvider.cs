@@ -184,7 +184,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 
             if (xml.StartsWith(m_ByteOrderMarkUtf8))
             {
-                xml = xml.Remove(0, m_ByteOrderMarkUtf8.Length);
+                xml = xml.Remove(0, m_ByteOrderMarkUtf8.Length - 1);
             }
 
             return xml;
