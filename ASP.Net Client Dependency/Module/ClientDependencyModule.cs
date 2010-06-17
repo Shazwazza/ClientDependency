@@ -79,7 +79,6 @@ namespace ClientDependency.Core.Module
 
         /// <summary>
         /// Ensure the current running handler is valid in order to proceed with the module filter.
-        /// This Ensure that the current handlers is of type 'Page'
         /// </summary>
         /// <param name="app"></param>
         /// <returns></returns>
@@ -120,15 +119,11 @@ namespace ClientDependency.Core.Module
         {
             HttpApplication app = sender as HttpApplication;
 
-            //if debug is on, then don't compress
-            if (!ConfigurationHelper.IsCompilationDebug)
-            {
-                var filters = LoadFilters(app);
+            var filters = LoadFilters(app);
 
-                if (ValidateCurrentHandler(app, filters))
-                {
-                    ExecuteFilter(app, filters);
-                }
+            if (ValidateCurrentHandler(app, filters))
+            {
+                ExecuteFilter(app, filters);
             }
             
             //if debug is on, then don't compress

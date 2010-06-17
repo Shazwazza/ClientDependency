@@ -47,6 +47,10 @@ namespace ClientDependency.Core.Module
         /// <returns></returns>
         public bool ValidateCurrentHandler()
         {
+            //don't filter if we're in debug mode
+            if (ConfigurationHelper.IsCompilationDebug)
+                return false;
+
             IHttpHandler handler = CurrentContext.CurrentHandler as Page;
             if (handler != null)
             {
