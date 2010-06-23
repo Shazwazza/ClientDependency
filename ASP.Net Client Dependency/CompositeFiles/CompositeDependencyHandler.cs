@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using ClientDependency.Core.Config;
 using System.Text;
+using System.Web.Security;
 
 namespace ClientDependency.Core.CompositeFiles
 {
@@ -177,7 +178,7 @@ namespace ClientDependency.Core.CompositeFiles
             cache.SetValidUntilExpires(true);
             cache.SetLastModified(DateTime.Now);
             
-            cache.SetETagFromFileDependencies();
+            cache.SetETag(FormsAuthentication.HashPasswordForStoringInConfigFile(fileName, "MD5"));
             
             //set server OutputCache to vary by our params
             cache.VaryByParams["t"] = true;
