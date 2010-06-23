@@ -167,6 +167,12 @@ namespace ClientDependency.Core.CompositeFiles
         /// <param name="context"></param>
         private void SetCaching(HttpContext context, string fileName)
         {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                ClientDependencySettings.Instance.Logger.Error("ClientDependency handler path is null", new Exception());
+                return;
+            }
+
             //This ensures OutputCaching is set for this handler and also controls
             //client side caching on the browser side. Default is 10 days.
             TimeSpan duration = TimeSpan.FromDays(10);
