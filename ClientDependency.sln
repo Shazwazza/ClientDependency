@@ -12,11 +12,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientDependency.Web.Test",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientDependency.Core.Mvc", "ClientDependency.Mvc\ClientDependency.Core.Mvc.csproj", "{5A8B1824-80CD-4187-B870-384D77892A77}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RELEASES", "RELEASES", "{6AFC27C7-1F6B-42E5-AC52-120AD3ACA8BA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "v1.0", "v1.0", "{DD8BA6D3-CF54-4F1A-8555-46D733FDC296}"
+	ProjectSection(SolutionItems) = preProject
+		RELEASE\v1.0\ClientDependency.zip = RELEASE\v1.0\ClientDependency.zip
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 4
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://tfs04.codeplex.com/
+		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs04
 		SccLocalPath0 = .
 		SccProjectUniqueName1 = ClientDependency.Web.Test\\ClientDependency.Web.Test.csproj
 		SccProjectName1 = ClientDependency.Web.Test
@@ -48,5 +55,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DD8BA6D3-CF54-4F1A-8555-46D733FDC296} = {6AFC27C7-1F6B-42E5-AC52-120AD3ACA8BA}
 	EndGlobalSection
 EndGlobal
