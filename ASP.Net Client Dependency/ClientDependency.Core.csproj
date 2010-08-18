@@ -41,6 +41,9 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>..\Library\HtmlAgilityPack\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
@@ -80,6 +83,7 @@
     <Compile Include="Config\RogueFileCompressionExcludeCollection.cs" />
     <Compile Include="Config\RogueFileCompressionExcludeElement.cs" />
     <Compile Include="ControlExtensions.cs" />
+    <Compile Include="Controls\HtmlInclude.cs" />
     <Compile Include="FileRegistration\Providers\BaseRenderer.cs" />
     <Compile Include="FileRegistration\Providers\LazyLoadRenderer.cs" />
     <Compile Include="FileRegistration\Providers\RendererCollection.cs" />
