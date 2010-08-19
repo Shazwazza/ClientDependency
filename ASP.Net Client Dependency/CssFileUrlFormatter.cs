@@ -27,7 +27,7 @@ namespace ClientDependency.Core
 						{
 							string match = m.Groups[1].Value.Trim('\'', '"');
 							return string.Format(@"url(""{0}"")", 
-								match.StartsWith("http") ? match : new Uri(cssLocation, match).ToString());
+								match.StartsWith("http") ? match : new Uri(cssLocation, match).AbsolutePath);
 						}
 						return m.Value;
 					})

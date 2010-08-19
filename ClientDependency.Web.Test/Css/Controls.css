@@ -11,6 +11,7 @@
     display:block;
     height:150px;
     width:968px;
+    background: transparent url(../Images/header.gif) repeat top left;
 }
 
 .control.footer 
