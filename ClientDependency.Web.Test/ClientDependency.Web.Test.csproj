@@ -79,10 +79,13 @@
     <Content Include="Controls\Sidebar.ascx" />
     <Content Include="Css\Controls.css" />
     <Content Include="Css\Site.css" />
+    <Content Include="Js\HtmlIncludeTest2.js" />
     <Content Include="Js\EncodingTestANSI.js" />
     <Content Include="Js\EncodingTestUCS2BigEndian.js" />
     <Content Include="Js\EncodingTestUCS2LittleEndian.js" />
     <Content Include="Js\EncodingTestUTF8WithoutBOM.js" />
+    <Content Include="Js\HtmlIncludeTest1.js" />
+    <Content Include="Pages\HtmlIncludeTest.aspx" />
     <Content Include="Pages\Default.aspx" />
     <Content Include="Pages\EncodingTest.aspx" />
     <Content Include="Web.config" />
@@ -125,6 +128,13 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\TestModel.cs" />
+    <Compile Include="Pages\HtmlIncludeTest.aspx.cs">
+      <DependentUpon>HtmlIncludeTest.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\HtmlIncludeTest.aspx.designer.cs">
+      <DependentUpon>HtmlIncludeTest.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\EncodingTest.aspx.cs">
       <DependentUpon>EncodingTest.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
