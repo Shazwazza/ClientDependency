@@ -7,3 +7,10 @@
     margin:3px;
     width:700px;
 }
+
+.control.header ul li 
+{
+	
+	float:left;
+	width:450px;
+}

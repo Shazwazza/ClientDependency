@@ -17,7 +17,7 @@ namespace ClientDependency.Core
             }
             if (path.Path[0] == '~')
             {
-                return VirtualPathUtility.ToAbsolute(path.Path, HttpContext.Current.Request.ApplicationPath);
+                return HttpContext.Current.ResolveUrl(path.Path);
             }
             return path.Path;            
         }

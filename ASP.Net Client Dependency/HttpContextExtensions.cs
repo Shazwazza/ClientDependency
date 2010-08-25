@@ -65,5 +65,92 @@ namespace ClientDependency.Core
             return type;
         }
 
+
+        /// <summary>
+        /// Checks for absolute path to root of the website.
+        /// </summary>
+        /// <remarks>
+        /// This was taken from the mono source so should be accurate.
+        /// The reason we're not using the VirtualPathUtility one is because it has bugs in 3.5 whereas
+        /// if the path has query strings, it throws exceptions.
+        /// </remarks>
+        /// <param name="virtualPath"></param>
+        /// <returns></returns>
+        public static bool IsAbsolute(this HttpContext context, string virtualPath)
+        {
+            if (string.IsNullOrEmpty(virtualPath))
+                throw new ArgumentNullException("virtualPath");
+
+            return (virtualPath[0] == '/' || virtualPath[0] == '\\');
+        }
+
+        /// <summary>
+        /// Returns a site relative HTTP path from a partial path starting out with a ~.
+        /// Same syntax that ASP.Net internally supports but this method can be used
+        /// outside of the Page framework.
+        /// 
+        /// Works like Control.ResolveUrl including support for ~ syntax
+        /// but returns an absolute URL.
+        /// </summary>
+        /// <param name="originalUrl">Any Url including those starting with ~</param>
+        /// <returns>relative url</returns>
+        public static string ResolveUrl(this HttpContext context, string originalUrl)
+        {
+            if (string.IsNullOrEmpty(originalUrl))
+                return originalUrl;
+
+            // *** Absolute path - just return
+            if (context.IsAbsolutePath(originalUrl))
+                return originalUrl;
+
+            // *** We don't start with the '~' -> we don't process the Url
+            if (!originalUrl.StartsWith("~"))
+                return originalUrl;
+
+            // *** Fix up path for ~ root app dir directory
+            // VirtualPathUtility blows up if there is a 
+            // query string, so we have to account for this.
+            int queryStringStartIndex = originalUrl.IndexOf('?');
+            if (queryStringStartIndex != -1)
+            {
+                string queryString = originalUrl.Substring(queryStringStartIndex);
+                string baseUrl = originalUrl.Substring(0, queryStringStartIndex);
+
+                return string.Concat(
+                    VirtualPathUtility.ToAbsolute(baseUrl, context.Request.ApplicationPath),
+                    queryString);
+            }
+            else
+            {
+                return VirtualPathUtility.ToAbsolute(originalUrl, context.Request.ApplicationPath);
+            }
+
+        }
+
+        /// <summary>
+        /// Checks for an absolute http path
+        /// </summary>
+        /// <remarks>
+        /// Takes into account this type of url:
+        /// ~/pathtoresolve/page.aspx?returnurl=http://servertoredirect/resource.aspx
+        /// which is not an absolute path but contains the characters to describe it as one.
+        /// </remarks>
+        /// <param name="originalUrl"></param>
+        /// <returns></returns>
+        private static bool IsAbsolutePath(this HttpContext context, string originalUrl)
+        {
+            // *** Absolute path - just return
+            int IndexOfSlashes = originalUrl.IndexOf("://");
+            int IndexOfQuestionMarks = originalUrl.IndexOf("?");
+
+            if (IndexOfSlashes > -1 &&
+                 (IndexOfQuestionMarks < 0 ||
+                  (IndexOfQuestionMarks > -1 && IndexOfQuestionMarks > IndexOfSlashes)
+                  )
+                )
+                return true;
+
+            return false;
+        }
     }
 }
