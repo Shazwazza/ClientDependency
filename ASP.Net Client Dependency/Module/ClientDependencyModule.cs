@@ -1,20 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Web;
-using System.IO;
-using System.Web.UI;
-using System.Text.RegularExpressions;
-using ClientDependency.Core.Controls;
-using ClientDependency.Core.FileRegistration.Providers;
-using ClientDependency.Core.Config;
-using System.Net;
-using System.Globalization;
-using System.IO.Compression;
 using System.Configuration;
-using System.Web.Configuration;
+using System.Linq;
+using System.Web;
 using System.Web.Compilation;
+using ClientDependency.Core.Config;
 
 namespace ClientDependency.Core.Module
 {
@@ -35,10 +25,40 @@ namespace ClientDependency.Core.Module
         /// <param name="context"></param>
         void IHttpModule.Init(HttpApplication app)
         {
-            app.PreRequestHandlerExecute += new EventHandler(app_PreRequestHandlerExecute);
+            //This event is late enough that the ContentType of the request is set
+            //but not too late that we've lost the ability to change the response
+            app.PostReleaseRequestState += new EventHandler(HandleRequest);
             LoadFilterTypes();
         }
-  
+
+        /// <summary>
+        /// Checks if any assigned filters validate the current handler, if so then assigns any filter
+        /// that CanExecute to the response filter chain.
+        /// 
+        /// Checks if the request MIME type matches the list of mime types specified in the config,
+        /// if it does, then it compresses it.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void HandleRequest(object sender, EventArgs e)
+        {
+            HttpApplication app = sender as HttpApplication;
+
+            var filters = LoadFilters(app);
+
+            if (ValidateCurrentHandler(app, filters))
+            {
+                ExecuteFilter(app, filters);
+            }
+
+            //if debug is on, then don't compress
+            if (!ConfigurationHelper.IsCompilationDebug)
+            {
+                MimeTypeCompressor c = new MimeTypeCompressor(app.Context);
+                c.AddCompression();
+            }
+        }
+
         #endregion
 
         private List<Type> m_FilterTypes = new List<Type>();
@@ -94,6 +114,11 @@ namespace ClientDependency.Core.Module
 
         private void ExecuteFilter(HttpApplication app, IEnumerable<IFilter> filters)
         {
+            if (app.Response.ContentType == "image/png")
+            {
+                return;
+            }
+
             ResponseFilterStream filter = new ResponseFilterStream(app.Response.Filter);
             foreach (var f in filters)
             {
@@ -103,36 +128,34 @@ namespace ClientDependency.Core.Module
                 }
             }
             app.Response.Filter = filter;
-        } 
-        #endregion
+        }
 
         /// <summary>
-        /// Checks if any assigned filters validate the current handler, if so then assigns any filter
-        /// that CanExecute to the response filter chain.
-        /// 
-        /// Checks if the request MIME type matches the list of mime types specified in the config,
-        /// if it does, then it compresses it.
+        /// Determines whether the content type can be compressed
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void app_PreRequestHandlerExecute(object sender, EventArgs e)
+        /// <param name="request">The HttpRequest to check.</param>
+        /// <returns>
+        /// 	<c>true</c> if the content type can be compressed; otherwise, <c>false</c>.
+        /// </returns>
+        protected virtual bool IsCompressibleContentType(HttpRequest request)
         {
-            HttpApplication app = sender as HttpApplication;
-
-            var filters = LoadFilters(app);
-
-            if (ValidateCurrentHandler(app, filters))
+            //TODO: Is there a better way to check the ContentType is something we want to compress?
+            switch (request.ContentType.ToLower())
             {
-                ExecuteFilter(app, filters);
-            }
-            
-            //if debug is on, then don't compress
-            if (!ConfigurationHelper.IsCompilationDebug)
-            {
-                MimeTypeCompressor c = new MimeTypeCompressor(app.Context);
-                c.AddCompression();
+                case "text/html":
+                case "text/css":
+                case "text/plain":
+                case "application/x-javascript":
+                case "text/javascript":
+                case "text/xml":
+                case "application/xml":
+                    return true;
+
+                default:
+                    return false;
             }
         }
-        
+        #endregion
+
     }
 }
