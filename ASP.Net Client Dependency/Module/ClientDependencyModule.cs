@@ -27,7 +27,8 @@ namespace ClientDependency.Core.Module
         {
             //This event is late enough that the ContentType of the request is set
             //but not too late that we've lost the ability to change the response
-            app.PostReleaseRequestState += new EventHandler(HandleRequest);
+            //app.BeginRequest += new EventHandler(HandleRequest);
+            app.PostRequestHandlerExecute +=new EventHandler(HandleRequest);
             LoadFilterTypes();
         }
 
@@ -114,7 +115,7 @@ namespace ClientDependency.Core.Module
 
         private void ExecuteFilter(HttpApplication app, IEnumerable<IFilter> filters)
         {
-            if (!IsCompressibleContentType(app.Request))
+            if (!IsCompressibleContentType(app.Response))
                 return;
 
             ResponseFilterStream filter = new ResponseFilterStream(app.Response.Filter);
@@ -131,14 +132,14 @@ namespace ClientDependency.Core.Module
         /// <summary>
         /// Determines whether the content type can be compressed
         /// </summary>
-        /// <param name="request">The HttpRequest to check.</param>
+        /// <param name="response">The HttpRequest to check.</param>
         /// <returns>
         /// 	<c>true</c> if the content type can be compressed; otherwise, <c>false</c>.
         /// </returns>
-        protected virtual bool IsCompressibleContentType(HttpRequest request)
+        protected virtual bool IsCompressibleContentType(HttpResponse response)
         {
             //TODO: Is there a better way to check the ContentType is something we want to compress?
-            switch (request.ContentType.ToLower())
+            switch (response.ContentType.ToLower())
             {
                 case "text/html":
                 case "text/css":
@@ -147,6 +148,7 @@ namespace ClientDependency.Core.Module
                 case "text/javascript":
                 case "text/xml":
                 case "application/xml":
+                case "":
                     return true;
 
                 default:
