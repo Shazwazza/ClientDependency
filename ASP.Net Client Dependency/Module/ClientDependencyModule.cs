@@ -114,10 +114,8 @@ namespace ClientDependency.Core.Module
 
         private void ExecuteFilter(HttpApplication app, IEnumerable<IFilter> filters)
         {
-            if (app.Response.ContentType == "image/png")
-            {
+            if (!IsCompressibleContentType(app.Request))
                 return;
-            }
 
             ResponseFilterStream filter = new ResponseFilterStream(app.Response.Filter);
             foreach (var f in filters)
