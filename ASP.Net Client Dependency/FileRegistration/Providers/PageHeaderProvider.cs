@@ -83,14 +83,25 @@ namespace ClientDependency.Core.FileRegistration.Providers
 		{
             return string.Format(HtmlEmbedContants.CssEmbedWithSource, css);
 		}
-
+        
+        /// <summary>
+        /// Registers the dependencies in the page header
+        /// </summary>
+        /// <param name="dependantControl"></param>
+        /// <param name="js"></param>
+        /// <param name="css"></param>
+        /// <remarks>
+        /// For some reason ampersands that aren't html escaped are not compliant to HTML standards when they exist in 'link' or 'script' tags in URLs,
+        /// we need to replace the ampersands with &amp; . This is only required for this one w3c compliancy, the URL itself is a valid URL.
+        /// 
+        /// </remarks>
         protected override void RegisterDependencies(Control dependantControl, string js, string css)
         {
             if (dependantControl.Page.Header == null)
                 throw new NullReferenceException("PageHeaderProvider requires a runat='server' tag in the page's header tag");
 
-            LiteralControl jsScriptBlock = new LiteralControl(js);
-            LiteralControl cssStyleBlock = new LiteralControl(css);
+            LiteralControl jsScriptBlock = new LiteralControl(js.Replace("&", "&amp;"));
+            LiteralControl cssStyleBlock = new LiteralControl(css.Replace("&", "&amp;"));
             dependantControl.Page.Header.Controls.Add(cssStyleBlock);
             dependantControl.Page.Header.Controls.Add(jsScriptBlock);
 

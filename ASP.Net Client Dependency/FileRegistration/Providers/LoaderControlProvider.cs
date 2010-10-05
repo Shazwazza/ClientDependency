@@ -84,10 +84,20 @@ namespace ClientDependency.Core.FileRegistration.Providers
             return string.Format(HtmlEmbedContants.CssEmbedWithSource, css);
 		}
 
+        /// <summary>
+        /// Registers the dependencies as controls of the LoaderControl controls collection
+        /// </summary>
+        /// <param name="dependantControl"></param>
+        /// <param name="js"></param>
+        /// <param name="css"></param>
+        /// <remarks>
+        /// For some reason ampersands that aren't html escaped are not compliant to HTML standards when they exist in 'link' or 'script' tags in URLs,
+        /// we need to replace the ampersands with &amp; . This is only required for this one w3c compliancy, the URL itself is a valid URL.
+        /// </remarks>
         protected override void RegisterDependencies(Control dependantControl, string js, string css)
         {
-            AddToControl(dependantControl, css);
-            AddToControl(dependantControl, js);
+            AddToControl(dependantControl, css.Replace("&", "&amp;"));
+            AddToControl(dependantControl, js.Replace("&", "&amp;"));
         }
 
 		private void AddToControl(Control dependantControl, string literal)

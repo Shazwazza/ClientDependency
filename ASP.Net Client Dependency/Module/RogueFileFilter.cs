@@ -45,18 +45,13 @@ namespace ClientDependency.Core.Module
         /// </summary>
         /// <param name="app"></param>
         /// <returns></returns>
-        public bool ValidateCurrentHandler()
+        public virtual bool ValidateCurrentHandler()
         {
             //don't filter if we're in debug mode
             if (ConfigurationHelper.IsCompilationDebug)
                 return false;
 
-            IHttpHandler handler = CurrentContext.CurrentHandler as Page;
-            if (handler != null)
-            {
-                return true;
-            }
-            return false;
+            return (CurrentContext.CurrentHandler is Page);
         }
        
         /// <summary>
@@ -66,6 +61,11 @@ namespace ClientDependency.Core.Module
         /// <returns></returns>
         public bool CanExecute()
         {
+            if (!ValidateCurrentHandler())
+            {
+                return false;
+            }
+
             if (!m_Runnable.HasValue)
             {
                 m_Runnable = (m_FoundPath != null);
@@ -155,6 +155,19 @@ namespace ClientDependency.Core.Module
             return html;
         }
 
+        /// <summary>
+        /// Replaces the content with the new js/css paths
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="namedGroup"></param>
+        /// <param name="extensions"></param>
+        /// <param name="type"></param>
+        /// <param name="regex"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// For some reason ampersands that aren't html escaped are not compliant to HTML standards when they exist in 'link' or 'script' tags in URLs,
+        /// we need to replace the ampersands with &amp; . This is only required for this one w3c compliancy, the URL itself is a valid URL.
+        /// </remarks>
         private string ReplaceContent(string html, string namedGroup, string[] extensions, ClientDependencyType type, string regex)
         {
             html = Regex.Replace(html, regex,
@@ -187,8 +200,7 @@ namespace ClientDependency.Core.Module
 
                     var dependency = new BasicFile(type) { FilePath = grp.ToString() };
                     var resolved = BaseFileRegistrationProvider.GetCompositeFileUrl(dependency.ResolveFilePath(), type);
-                    return m.ToString().Replace(grp.ToString(),
-                        resolved);
+                    return m.ToString().Replace(grp.ToString(), resolved.Replace("&", "&amp;"));
                 },
                 RegexOptions.Compiled);
 

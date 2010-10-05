@@ -21,7 +21,7 @@
     <div class="mainContent">
 		<h2>
 			<%= Html.Encode(this.ViewData.Model.Heading)%></h2>
-		<p>
-			<%= this.ViewData.Model.BodyContent %></p>
+		<div>
+			<%= this.ViewData.Model.BodyContent %></div>
 	</div>
 </asp:Content>

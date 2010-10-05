@@ -12,7 +12,7 @@
 <div class="control header bg-primary-3 white">
 	This is a header
 	<ul >
-		<li><%= Html.ActionLink("Default Renderer", "Default", null, new { Class = "white" }) %></li>
-		<li><%= Html.ActionLink("Rogue script detection test", "RogueDependencies", null, new { Class = "white" })%></li>
+		<li><%= Html.ActionLink("Default Renderer", "Default", null, new { @class = "white" }) %></li>
+		<li><%= Html.ActionLink("Rogue script detection test", "RogueDependencies", null, new { @class = "white" })%></li>
 	</ul>
 </div>

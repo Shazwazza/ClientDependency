@@ -165,12 +165,18 @@ namespace ClientDependency.Core.Mvc
 
         private List<RendererOutput> m_Output = new List<RendererOutput>();
 
-
+        /// <summary>
+        /// Loop through each object and
+        /// get the output for both js and css from each provider in the list
+        /// based on each list items dependencies.
+        /// </summary>
+        /// <remarks>
+        /// For some reason ampersands that aren't html escaped are not compliant to HTML standards when they exist in 'link' or 'script' tags in URLs,
+        /// we need to replace the ampersands with &amp; . This is only required for this one w3c compliancy, the URL itself is a valid URL.
+        /// </remarks>
         private void GenerateOutput()
         {
-            //Loop through each object and
-            //get the output for both js and css from each provider in the list
-            //based on each list items dependencies.
+            
             m_Dependencies
                 .ToList()
                 .ForEach(x =>
@@ -183,8 +189,8 @@ namespace ClientDependency.Core.Mvc
                     m_Output.Add(new RendererOutput()
                     {
                         Name = x.Provider.Name,
-                        OutputCss = css,
-                        OutputJs = js
+                        OutputCss = css.Replace("&", "&amp;"),
+                        OutputJs = js.Replace("&", "&amp;")
                     });
                 });                       
 
