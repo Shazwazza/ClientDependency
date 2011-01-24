@@ -19,15 +19,18 @@ namespace ClientDependency.Core
 		{
 			string str = Regex.Replace(
 				fileContent,
-				@"url\((.+)\)",
+                @"url\((.+?)\)",
 				new MatchEvaluator(
 					delegate(Match m)
 					{
 						if (m.Groups.Count == 2)
 						{
-							string match = m.Groups[1].Value.Trim('\'', '"');
-							return string.Format(@"url(""{0}"")", 
-								match.StartsWith("http") ? match : new Uri(cssLocation, match).AbsolutePath);
+							var match = m.Groups[1].Value.Trim('\'', '"');
+						    var hashSplit = match.Split(new[] {'#'}, StringSplitOptions.RemoveEmptyEntries);
+
+						    return string.Format(@"url(""{0}{1}"")",
+						                         match.StartsWith("http") ? match : new Uri(cssLocation, match).AbsolutePath,
+						                         hashSplit.Length > 1 ? ("#" + hashSplit[1]) : "");
 						}
 						return m.Value;
 					})

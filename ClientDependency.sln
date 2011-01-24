@@ -19,9 +19,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "v1.0", "v1.0", "{DD8BA6D3-C
 		RELEASE\v1.0\ClientDependency.zip = RELEASE\v1.0\ClientDependency.zip
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientDependency.UnitTests", "ClientDependency.UnitTests\ClientDependency.UnitTests.csproj", "{2AAE497E-577F-4ABB-99E3-41CB80B5773E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{09017A90-7F59-40F8-8121-8B4284697BBD}"
+	ProjectSection(SolutionItems) = preProject
+		ClientDependency.vsmdi = ClientDependency.vsmdi
+		Local.testsettings = Local.testsettings
+		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 4
+		SccNumberOfProjects = 5
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs04
 		SccLocalPath0 = .
@@ -34,6 +43,12 @@ Global
 		SccProjectUniqueName3 = ClientDependency.Mvc\\ClientDependency.Core.Mvc.csproj
 		SccProjectName3 = ClientDependency.Mvc
 		SccLocalPath3 = ClientDependency.Mvc
+		SccProjectUniqueName4 = ClientDependency.UnitTests\\ClientDependency.UnitTests.csproj
+		SccProjectName4 = ClientDependency.UnitTests
+		SccLocalPath4 = ClientDependency.UnitTests
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = ClientDependency.vsmdi
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +67,10 @@ Global
 		{5A8B1824-80CD-4187-B870-384D77892A77}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A8B1824-80CD-4187-B870-384D77892A77}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A8B1824-80CD-4187-B870-384D77892A77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AAE497E-577F-4ABB-99E3-41CB80B5773E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AAE497E-577F-4ABB-99E3-41CB80B5773E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AAE497E-577F-4ABB-99E3-41CB80B5773E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AAE497E-577F-4ABB-99E3-41CB80B5773E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
