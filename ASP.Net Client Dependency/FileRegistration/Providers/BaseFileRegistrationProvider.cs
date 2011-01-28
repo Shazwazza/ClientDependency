@@ -55,13 +55,14 @@ namespace ClientDependency.Core.FileRegistration.Providers
         #endregion
 
         #region Static Methods
-        /// <summary>
-        /// Returns the url for the composite file handler for the filePath specified.
-        /// </summary>
-        /// <param name="filePath">The file path is a semi-colon delimited string of file paths</param>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public static string GetCompositeFileUrl(string filePaths, ClientDependencyType type)
+
+	    /// <summary>
+	    /// Returns the url for the composite file handler for the filePath specified.
+	    /// </summary>
+	    /// <param name="filePaths"></param>
+	    /// <param name="type"></param>
+	    /// <returns></returns>
+	    public static string GetCompositeFileUrl(string filePaths, ClientDependencyType type)
         {
             //build the combined composite list url
             string handler = "{0}?s={1}&t={2}";

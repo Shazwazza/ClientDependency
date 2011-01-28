@@ -19,7 +19,15 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 	public class CompositeFileProcessingProvider : BaseCompositeFileProcessingProvider
 	{
 
-        public const string DefaultName = "CompositeFileProcessor";
+        public CompositeFileProcessingProvider()
+        {
+        }
+
+        public CompositeFileProcessingProvider(HttpServerUtilityBase server) : base(server)
+        {
+        }
+
+	    public const string DefaultName = "CompositeFileProcessor";
 
 		/// <summary>
 		/// Saves the file's bytes to disk with a hash of the byte array

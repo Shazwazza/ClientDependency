@@ -20,3 +20,5 @@ using System.Runtime.InteropServices;
 
 //ADD RESOURCES
 [assembly: System.Web.UI.WebResource("ClientDependency.Core.Resources.LazyLoader.js", "text/javascript")]
+
+[assembly: InternalsVisibleTo("ClientDependency.UnitTests")]

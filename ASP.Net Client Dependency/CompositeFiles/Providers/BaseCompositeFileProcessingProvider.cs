@@ -14,14 +14,27 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 	public abstract class BaseCompositeFileProcessingProvider : ProviderBase
 	{
         /// <summary>
+        /// Gets/sets the server utility object
+        /// </summary>
+        public HttpServerUtilityBase Server { get; set; }
+
+        /// <summary>
         /// constructor sets defaults
         /// </summary>
-        public BaseCompositeFileProcessingProvider()
+        protected BaseCompositeFileProcessingProvider()
         {
             PersistCompositeFiles = true;
             EnableCssMinify = true;
-            EnableJsMinify = true;
-            CompositeFilePath = new DirectoryInfo(HttpContext.Current.Server.MapPath("~/App_Data/ClientDependency"));
+            EnableJsMinify = true;            
+        }
+
+	    /// <summary>
+        /// constructor sets defaults
+        /// </summary>
+        protected BaseCompositeFileProcessingProvider(HttpServerUtilityBase server)
+            : this()
+        {
+            Server = server;            
         }
 
         private readonly string m_ByteOrderMarkUtf8 = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
@@ -72,8 +85,13 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                 }
                 if (config["compositeFilePath"] != null)
                 {
-                    CompositeFilePath = new DirectoryInfo(HttpContext.Current.Server.MapPath(config["compositeFilePath"]));    
+                    CompositeFilePath = new DirectoryInfo(Server.MapPath(config["compositeFilePath"]));    
                 }                
+                else
+                {
+                    //set the default
+                    CompositeFilePath = new DirectoryInfo(Server.MapPath("~/App_Data/ClientDependency"));
+                }
             }
             
         }
@@ -135,7 +153,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                         StringWriter sw = new StringWriter();
                         try
                         {
-                            HttpContext.Current.Server.Execute(url, sw);
+                            Server.Execute(url, sw);
                             requestContents = sw.ToString();
                             sw.Close();
                             return true;
