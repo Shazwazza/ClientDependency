@@ -61,8 +61,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ControllerContextExtensions.cs" />
     <Compile Include="DependencyRenderer.cs" />
     <Compile Include="HtmlHelperExtensions.cs" />
+    <Compile Include="HttpContextBaseExtensions.cs" />
     <Compile Include="MvcFilter.cs" />
     <Compile Include="MvcRogueFileFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
