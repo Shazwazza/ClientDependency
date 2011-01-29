@@ -17,7 +17,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
         /// <summary>
         /// Constructor sets defaults
         /// </summary>
-        public BaseFileRegistrationProvider()
+        protected BaseFileRegistrationProvider()
         {
             EnableCompositeFiles = true;
         }
@@ -33,8 +33,8 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         #region Abstract methods/properties
 
-        protected abstract string RenderJsDependencies(List<IClientDependencyFile> jsDependencies);
-        protected abstract string RenderCssDependencies(List<IClientDependencyFile> cssDependencies);
+        protected abstract string RenderJsDependencies(List<IClientDependencyFile> jsDependencies, HttpContextBase http);
+        protected abstract string RenderCssDependencies(List<IClientDependencyFile> cssDependencies, HttpContextBase http);
         protected abstract string RenderSingleJsFile(string js);
         protected abstract string RenderSingleCssFile(string css); 
         
@@ -61,12 +61,13 @@ namespace ClientDependency.Core.FileRegistration.Providers
 	    /// </summary>
 	    /// <param name="filePaths"></param>
 	    /// <param name="type"></param>
+	    /// <param name="http"></param>
 	    /// <returns></returns>
-	    public static string GetCompositeFileUrl(string filePaths, ClientDependencyType type)
+	    public static string GetCompositeFileUrl(string filePaths, ClientDependencyType type, HttpContextBase http)
         {
             //build the combined composite list url
             string handler = "{0}?s={1}&t={2}";
-            string combinedurl = string.Format(handler, ClientDependencySettings.Instance.CompositeFileHandlerPath, HttpContext.Current.Server.UrlEncode(EncodeTo64(filePaths)), type.ToString());
+            string combinedurl = string.Format(handler, ClientDependencySettings.Instance.CompositeFileHandlerPath, http.Server.UrlEncode(EncodeTo64(filePaths)), type.ToString());
             return combinedurl;
         }
 
@@ -80,19 +81,20 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         #region Public Methods        
 
-        /// <summary>
-        /// Returns a URL used to return a compbined/compressed/optimized version of all dependencies.
-        /// <remarks>
-        /// The full url with the encoded query strings for the handler which will process the composite list
-        /// of dependencies. The handler will compbine, compress, minify, and output cache the results
-        /// on the base64 encoded string.
-        /// </remarks>        
-        /// </summary>
-        /// <param name="dependencies"></param>
-        /// <param name="groupName"></param>
-        /// <returns>An array containing the list of composite file URLs. This will generally only contain 1 value unless
-        /// the number of files registered exceeds the maximum length, then it will return more than one file.</returns>
-        public string[] ProcessCompositeList(List<IClientDependencyFile> dependencies, ClientDependencyType type)
+	    /// <summary>
+	    /// Returns a URL used to return a compbined/compressed/optimized version of all dependencies.
+	    /// <remarks>
+	    /// The full url with the encoded query strings for the handler which will process the composite list
+	    /// of dependencies. The handler will compbine, compress, minify, and output cache the results
+	    /// on the base64 encoded string.
+	    /// </remarks>        
+	    /// </summary>
+	    /// <param name="dependencies"></param>
+	    /// <param name="type"></param>
+	    /// <param name="http"></param>
+	    /// <returns>An array containing the list of composite file URLs. This will generally only contain 1 value unless
+	    /// the number of files registered exceeds the maximum length, then it will return more than one file.</returns>
+	    public string[] ProcessCompositeList(List<IClientDependencyFile> dependencies, ClientDependencyType type, HttpContextBase http)
         {
             if (dependencies.Count == 0)
                 return new string[] { };
@@ -102,7 +104,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
             var currBuilder = new StringBuilder();
             var builderCount = 1;
             var stringType = type.ToString();
-            foreach (IClientDependencyFile a in dependencies)
+            foreach (var a in dependencies)
             {
                 //if the addition of this file is going to exceed 75% of the max length (since we'll be base64 encoding), we'll need to split
                 if ((currBuilder.Length + 
@@ -126,10 +128,10 @@ namespace ClientDependency.Core.FileRegistration.Providers
             }
 
             //now, compress each url
-            for (int i = 0; i < files.Count; i++)
+            for (var i = 0; i < files.Count; i++)
             {
                 //append our version to the combined url 
-                files[i] = AppendVersionQueryString(GetCompositeFileUrl(files[i], type));
+                files[i] = AppendVersionQueryString(GetCompositeFileUrl(files[i], type, http));
             }
 
             return files.ToArray();
@@ -139,41 +141,39 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         #region Protected Methods
 
-        /// <summary>
-        /// Ensures the correctly resolved file path is set for each dependency (i.e. so that ~ are taken care of) and also
-        /// prefixes the file path with the correct base path specified for the PathNameAlias if specified.
-        /// </summary>
-        /// <param name="dependencies">The dependencies list for which file paths will be updated</param>
-        /// <param name="folderPaths"></param>
-        protected void UpdateFilePaths(IEnumerable<IClientDependencyFile> dependencies
-            , HashSet<IClientDependencyPath> folderPaths)
+	    /// <summary>
+	    /// Ensures the correctly resolved file path is set for each dependency (i.e. so that ~ are taken care of) and also
+	    /// prefixes the file path with the correct base path specified for the PathNameAlias if specified.
+	    /// </summary>
+	    /// <param name="dependencies">The dependencies list for which file paths will be updated</param>
+	    /// <param name="folderPaths"></param>
+	    /// <param name="http"></param>
+	    protected void UpdateFilePaths(IEnumerable<IClientDependencyFile> dependencies, 
+            HashSet<IClientDependencyPath> folderPaths, HttpContextBase http)
         {
-            foreach (IClientDependencyFile dependency in dependencies)
+            foreach (var dependency in dependencies)
             {
                 if (!string.IsNullOrEmpty(dependency.PathNameAlias))
                 {
-                    List<IClientDependencyPath> paths = folderPaths.ToList();
-                    IClientDependencyPath path = paths.Find(
-                        (p) =>
-                        {
-                            return p.Name == dependency.PathNameAlias;
-                        }
-                    );
+                    var paths = folderPaths.ToList();
+                    var d = dependency;
+                    var path = paths.Find(
+                        (p) => p.Name == d.PathNameAlias);
                     if (path == null)
                     {
                         throw new NullReferenceException("The PathNameAlias specified for dependency " + dependency.FilePath + " does not exist in the ClientDependencyPathCollection");
                     }
-                    var resolvedPath = path.ResolvePath();
-                    string basePath = resolvedPath.EndsWith("/") ? resolvedPath : resolvedPath + "/";
+                    var resolvedPath = path.ResolvePath(http);
+                    var basePath = resolvedPath.EndsWith("/") ? resolvedPath : resolvedPath + "/";
                     dependency.FilePath = basePath + dependency.FilePath;
                 }
                 else
                 {
-                    dependency.FilePath = dependency.ResolveFilePath();
+                    dependency.FilePath = dependency.ResolveFilePath(http);
                 }
 
                 //append query strings to each file if we are in debug mode
-                if (ConfigurationHelper.IsCompilationDebug || !EnableCompositeFiles)
+                if (http.IsDebuggingEnabled || !EnableCompositeFiles)
                 {
                     dependency.FilePath = AppendVersionQueryString(dependency.FilePath);
                 }

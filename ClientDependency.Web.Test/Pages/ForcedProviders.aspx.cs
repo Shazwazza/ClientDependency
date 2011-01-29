@@ -14,9 +14,10 @@ namespace ClientDependency.Web.Test.Pages
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            
+            var http = new HttpContextWrapper(Context);
+
             //dynamically register the dependency
-            ClientDependencyLoader.Instance.RegisterDependency("Content.css", "Styles", ClientDependencyType.Css);
+            ClientDependencyLoader.Instance(http).RegisterDependency("Content.css", "Styles", ClientDependencyType.Css);
 
         }
     }

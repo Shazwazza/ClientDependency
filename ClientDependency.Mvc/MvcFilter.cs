@@ -23,7 +23,7 @@ namespace ClientDependency.Core.Mvc
         /// Sets the http context
         /// </summary>
         /// <param name="ctx"></param>
-        public void SetHttpContext(HttpContextWrapper ctx)
+        public void SetHttpContext(HttpContextBase ctx)
         {
             CurrentContext = ctx;
 

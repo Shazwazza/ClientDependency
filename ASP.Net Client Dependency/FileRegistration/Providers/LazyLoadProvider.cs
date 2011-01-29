@@ -24,23 +24,23 @@ namespace ClientDependency.Core.FileRegistration.Providers
 		/// <summary>Path to the dependency loader we need for adding control dependencies.</summary>
         protected const string DependencyLoaderResourceName = "ClientDependency.Core.Resources.LazyLoader.js";
 
-		protected override string RenderJsDependencies(List<IClientDependencyFile> jsDependencies)
+        protected override string RenderJsDependencies(List<IClientDependencyFile> jsDependencies, HttpContextBase http)
 		{
 			if (jsDependencies.Count == 0)
 				return string.Empty;
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
-            if (ConfigurationHelper.IsCompilationDebug || !EnableCompositeFiles)
+            if (http.IsDebuggingEnabled || !EnableCompositeFiles)
 			{
-				foreach (IClientDependencyFile dependency in jsDependencies)
+				foreach (var dependency in jsDependencies)
 				{
                     sb.Append(RenderSingleJsFile(string.Format("'{0}','{1}'", dependency.FilePath, string.Empty)));
 				}
 			}
 			else
 			{
-                var comp = ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript);
+                var comp = ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript, http);
                 foreach (var s in comp)
                 {
                     sb.Append(RenderSingleJsFile(string.Format("'{0}','{1}'", s, string.Empty)));
@@ -52,29 +52,29 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         protected override string RenderSingleJsFile(string js)
 		{
-            StringBuilder strClientLoader = new StringBuilder("CDLazyLoader");
+            var strClientLoader = new StringBuilder("CDLazyLoader");
 			strClientLoader.AppendFormat(".AddJs({0})", js);
 			strClientLoader.Append(';');
             return strClientLoader.ToString();
 		}
 
-        protected override string RenderCssDependencies(List<IClientDependencyFile> cssDependencies)
+        protected override string RenderCssDependencies(List<IClientDependencyFile> cssDependencies, HttpContextBase http)
 		{
             if (cssDependencies.Count == 0)
                 return string.Empty;
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
-            if (ConfigurationHelper.IsCompilationDebug || !EnableCompositeFiles)
+            if (http.IsDebuggingEnabled || !EnableCompositeFiles)
 			{
-				foreach (IClientDependencyFile dependency in cssDependencies)
+				foreach (var dependency in cssDependencies)
 				{
                     sb.Append(RenderSingleCssFile(dependency.FilePath));
 				}
 			}
 			else
 			{
-                var comp = ProcessCompositeList(cssDependencies, ClientDependencyType.Css);
+                var comp = ProcessCompositeList(cssDependencies, ClientDependencyType.Css, http);
                 foreach (var s in comp)
                 {
                     sb.Append(RenderSingleCssFile(s));
@@ -86,33 +86,39 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         protected override string RenderSingleCssFile(string css)
 		{
-            StringBuilder strClientLoader = new StringBuilder("CDLazyLoader");
+            var strClientLoader = new StringBuilder("CDLazyLoader");
 			strClientLoader.AppendFormat(".AddCss('{0}')", css);
 			strClientLoader.Append(';');
             return strClientLoader.ToString();
 		}
 
-        protected override void RegisterDependencies(Control dependantControl, string js, string css)
+        protected override void RegisterDependencies(HttpContextBase http, string js, string css)
         {
-            dependantControl.Page.ClientScript.RegisterClientScriptResource(typeof(LazyLoadProvider), DependencyLoaderResourceName);
+            if (!(http.CurrentHandler is Page))
+            {
+                throw new InvalidOperationException("The current HttpHandler in a WebFormsFileRegistrationProvider must be of type Page");
+            }
+            var page = (Page)http.CurrentHandler;
 
-            RegisterScript(js, dependantControl);
-            RegisterScript(css, dependantControl);
+            page.ClientScript.RegisterClientScriptResource(typeof(LazyLoadProvider), DependencyLoaderResourceName);
+
+            RegisterScript(js, page);
+            RegisterScript(css, page);
         }		
 
-        private void RegisterScript(string strScript, Control dependantControl)
+        private void RegisterScript(string strScript, Page page)
 		{
-            ScriptManager mgr = ScriptManager.GetCurrent(dependantControl.Page);
+            var mgr = ScriptManager.GetCurrent(page);
 
 			if (mgr == null)
 			{
-                if (dependantControl.Page.Form == null)
+                if (page.Form == null)
                     throw new InvalidOperationException("A form tag must be present on the page with a runat='server' attribute specified");
-                dependantControl.Page.ClientScript.RegisterStartupScript(this.GetType(), strScript.GetHashCode().ToString(), strScript, true);
+                page.ClientScript.RegisterStartupScript(GetType(), strScript.GetHashCode().ToString(), strScript, true);
 			}
 			else
 			{
-                ScriptManager.RegisterStartupScript(dependantControl, this.GetType(), strScript.GetHashCode().ToString(), strScript, true);
+                ScriptManager.RegisterStartupScript(page, GetType(), strScript.GetHashCode().ToString(), strScript, true);
 			}
 		}
 

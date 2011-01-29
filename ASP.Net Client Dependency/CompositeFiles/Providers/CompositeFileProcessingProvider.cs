@@ -23,7 +23,8 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         {
         }
 
-        public CompositeFileProcessingProvider(HttpServerUtilityBase server) : base(server)
+	    public CompositeFileProcessingProvider(Func<string, string> mapPath)
+            : base(mapPath)
         {
         }
 
@@ -46,31 +47,33 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 
 			if (!ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CompositeFilePath.Exists)
 				ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CompositeFilePath.Create();
-			FileInfo fi = new FileInfo(
+			var fi = new FileInfo(
                 Path.Combine(ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CompositeFilePath.FullName,
 					ClientDependencySettings.Instance.Version.ToString() + "_"
                         + Guid.NewGuid().ToString("N") + ".cd" + type.ToString().Substring(0, 1).ToUpper()));
 			if (fi.Exists)
 				fi.Delete();
-			FileStream fs = fi.Create();
+			var fs = fi.Create();
 			fs.Write(fileContents, 0, fileContents.Length);
 			fs.Close();
 			return fi;
 		}
 
-		/// <summary>
-		/// combines all files to a byte array
-		/// </summary>
-		/// <param name="fileList"></param>
-		/// <param name="context"></param>
-		/// <returns></returns>
-		public override byte[] CombineFiles(string[] strFiles, HttpContext context, ClientDependencyType type, out List<CompositeFileDefinition> fileDefs)
+	    /// <summary>
+	    /// combines all files to a byte array
+	    /// </summary>
+	    /// <param name="strFiles"></param>
+	    /// <param name="context"></param>
+	    /// <param name="type"></param>
+	    /// <param name="fileDefs"></param>
+	    /// <returns></returns>
+	    public override byte[] CombineFiles(string[] strFiles, HttpContextBase context, ClientDependencyType type, out List<CompositeFileDefinition> fileDefs)
 		{
 
-			List<CompositeFileDefinition> fDefs = new List<CompositeFileDefinition>();
+			var fDefs = new List<CompositeFileDefinition>();
 
-			MemoryStream ms = new MemoryStream(5000);            
-            StreamWriter sw = new StreamWriter(ms, Encoding.UTF8);
+			var ms = new MemoryStream(5000);            
+            var sw = new StreamWriter(ms, Encoding.UTF8);
 
 			foreach (string s in strFiles)
 			{
@@ -78,23 +81,23 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 				{
 					try
 					{
-						FileInfo fi = new FileInfo(context.Server.MapPath(s));
+						var fi = new FileInfo(context.Server.MapPath(s));
 						if (ClientDependencySettings.Instance.FileBasedDependencyExtensionList.Contains(fi.Extension.ToUpper()))
 						{
 							//if the file doesn't exist, then we'll assume it is a URI external request
 							if (!fi.Exists)
 							{
-								WriteFileToStream(ref sw, s, type, ref fDefs);
+                                WriteFileToStream(ref sw, s, type, ref fDefs, context);
 							}
 							else
 							{
-								WriteFileToStream(ref sw, fi, type, s, ref fDefs);
+                                WriteFileToStream(ref sw, fi, type, s, ref fDefs, context);
 							}
 						}
 						else
 						{
 							//if it's not a file based dependency, try to get the request output.
-							WriteFileToStream(ref sw, s, type, ref fDefs);
+                            WriteFileToStream(ref sw, s, type, ref fDefs, context);
 						}
 					}
 					catch (Exception ex)
@@ -105,7 +108,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 							|| exType.Equals(typeof(HttpException)))
 						{
 							//could not parse the string into a fileinfo or couldn't mappath, so we assume it is a URI
-							WriteFileToStream(ref sw, s, type, ref fDefs);
+                            WriteFileToStream(ref sw, s, type, ref fDefs, context);
 						}
 						else
 						{
@@ -137,41 +140,43 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             return SimpleCompressor.CompressBytes(type, fileBytes);
 		}
 
-		/// <summary>
-		/// Writes the output of an external request to the stream. Returns true/false if succesful or not.
-		/// </summary>
-		/// <param name="sw"></param>
-		/// <param name="url"></param>
-		/// <returns></returns>
-		private bool WriteFileToStream(ref StreamWriter sw, string url, ClientDependencyType type, ref List<CompositeFileDefinition> fileDefs)
+	    /// <summary>
+	    /// Writes the output of an external request to the stream. Returns true/false if succesful or not.
+	    /// </summary>
+	    /// <param name="sw"></param>
+	    /// <param name="url"></param>
+	    /// <param name="type"></param>
+	    /// <param name="fileDefs"></param>
+	    /// <param name="http"></param>
+	    /// <returns></returns>
+	    private void WriteFileToStream(ref StreamWriter sw, string url, ClientDependencyType type, ref List<CompositeFileDefinition> fileDefs, HttpContextBase http)
 		{
 			string requestOutput;
-			bool rVal = false;
-			rVal = TryReadUri(url, out requestOutput);
+            var rVal = TryReadUri(url, out requestOutput, http);
 			if (rVal)
 			{
 				//write the contents of the external request.
-                sw.WriteLine(MinifyFile(ParseCssFilePaths(requestOutput, type, url), type));
+                sw.WriteLine(MinifyFile(ParseCssFilePaths(requestOutput, type, url, http), type));
 				fileDefs.Add(new CompositeFileDefinition(url, false));
 			}
-			return rVal;
+	        return;
 		}
 
-		private bool WriteFileToStream(ref StreamWriter sw, FileInfo fi, ClientDependencyType type, string origUrl, ref List<CompositeFileDefinition> fileDefs)
+		private void WriteFileToStream(ref StreamWriter sw, FileInfo fi, ClientDependencyType type, string origUrl, ref List<CompositeFileDefinition> fileDefs, HttpContextBase http)
 		{
 			try
 			{
 				//if it is a file based dependency then read it				
-                string fileContents = File.ReadAllText(fi.FullName, Encoding.UTF8); //read as utf 8
+                var fileContents = File.ReadAllText(fi.FullName, Encoding.UTF8); //read as utf 8
 
-                sw.WriteLine(MinifyFile(ParseCssFilePaths(fileContents, type, origUrl), type));
+                sw.WriteLine(MinifyFile(ParseCssFilePaths(fileContents, type, origUrl, http), type));
 				fileDefs.Add(new CompositeFileDefinition(origUrl, true));
-				return true;
+			    return;
 			}
 			catch (Exception ex)
 			{
                 ClientDependencySettings.Instance.Logger.Error(string.Format("Could not write file {0} contents to stream. EXCEPTION: {1}", fi.FullName, ex.Message), ex);
-				return false;
+			    return;
 			}
 		}
 

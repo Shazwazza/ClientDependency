@@ -9,7 +9,7 @@ namespace ClientDependency.Core
     public static class IClientDependencyPathExtensions
     {
 
-        public static string ResolvePath(this IClientDependencyPath path)
+        public static string ResolvePath(this IClientDependencyPath path, HttpContextBase http)
         {
             if (string.IsNullOrEmpty(path.Path))
             {
@@ -17,7 +17,7 @@ namespace ClientDependency.Core
             }
             if (path.Path[0] == '~')
             {
-                return HttpContext.Current.ResolveUrl(path.Path);
+                return http.ResolveUrl(path.Path);
             }
             return path.Path;            
         }

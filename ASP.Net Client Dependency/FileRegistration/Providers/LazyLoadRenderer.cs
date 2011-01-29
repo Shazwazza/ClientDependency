@@ -38,9 +38,9 @@ namespace ClientDependency.Core.FileRegistration.Providers
         private string GetWebResourceUrl(Type type, string resourceId)
         {
             if (type == null)
-                type = this.GetType();
+                type = GetType();
 
-            Page page = new Page();
+            var page = new Page();
             return page.ClientScript.GetWebResourceUrl(type, resourceId);
         }
 
@@ -49,15 +49,16 @@ namespace ClientDependency.Core.FileRegistration.Providers
         /// if it hasn't then it will add the script registration to the StringBuilder
         /// </summary>
         /// <param name="sb"></param>
-        private void RegisterLazyLoadScript(StringBuilder sb)
+        /// <param name="http"></param>
+        private void RegisterLazyLoadScript(StringBuilder sb, HttpContextBase http)
         {
-            if (HttpContext.Current.Items["LazyLoaderLoaded"] == null || (bool)HttpContext.Current.Items["LazyLoaderLoaded"] == false)
+            if (http.Items["LazyLoaderLoaded"] == null || (bool)http.Items["LazyLoaderLoaded"] == false)
             {
                 lock (m_Locker)
                 {
-                    if (HttpContext.Current.Items["LazyLoaderLoaded"] == null || (bool)HttpContext.Current.Items["LazyLoaderLoaded"] == false)
+                    if (http.Items["LazyLoaderLoaded"] == null || (bool)http.Items["LazyLoaderLoaded"] == false)
                     {
-                        HttpContext.Current.Items["LazyLoaderLoaded"] = true;
+                        http.Items["LazyLoaderLoaded"] = true;
 
                         var url = GetWebResourceUrl(typeof(LazyLoadProvider), DependencyLoaderResourceName);
                         sb.Append(string.Format(HtmlEmbedContants.ScriptEmbedWithSource, url));   
@@ -66,16 +67,16 @@ namespace ClientDependency.Core.FileRegistration.Providers
             }
         }
 
-        protected override string RenderJsDependencies(List<IClientDependencyFile> jsDependencies)
+        protected override string RenderJsDependencies(List<IClientDependencyFile> jsDependencies, HttpContextBase http)
         {
             if (jsDependencies.Count == 0)
 				return string.Empty;
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
-            if (ConfigurationHelper.IsCompilationDebug || !EnableCompositeFiles)
+            if (http.IsDebuggingEnabled || !EnableCompositeFiles)
 			{
-				foreach (IClientDependencyFile dependency in jsDependencies)
+				foreach (var dependency in jsDependencies)
 				{
                     sb.Append(RenderSingleJsFile(string.Format("'{0}','{1}'", dependency.FilePath, string.Empty)));
 				}
@@ -83,9 +84,9 @@ namespace ClientDependency.Core.FileRegistration.Providers
 			else
 			{
 
-                RegisterLazyLoadScript(sb);
+                RegisterLazyLoadScript(sb, http);
 
-                var comp = ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript);
+                var comp = ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript, http);
                 foreach (var s in comp)
                 {
                     sb.Append(RenderSingleJsFile(string.Format("'{0}','{1}'", s, string.Empty)));
@@ -99,17 +100,18 @@ namespace ClientDependency.Core.FileRegistration.Providers
         /// Registers the Css dependencies. 
         /// </summary>
         /// <param name="cssDependencies"></param>
+        /// <param name="http"></param>
         /// <returns></returns>
-        protected override string RenderCssDependencies(List<IClientDependencyFile> cssDependencies)
+        protected override string RenderCssDependencies(List<IClientDependencyFile> cssDependencies, HttpContextBase http)
         {
             if (cssDependencies.Count == 0)
                 return string.Empty;
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
-            if (ConfigurationHelper.IsCompilationDebug || !EnableCompositeFiles)
+            if (http.IsDebuggingEnabled || !EnableCompositeFiles)
             {
-                foreach (IClientDependencyFile dependency in cssDependencies)
+                foreach (var dependency in cssDependencies)
                 {
                     sb.Append(RenderSingleCssFile(dependency.FilePath));
                 }
@@ -117,9 +119,9 @@ namespace ClientDependency.Core.FileRegistration.Providers
             else
             {
 
-                RegisterLazyLoadScript(sb);
+                RegisterLazyLoadScript(sb, http);
 
-                var comp = ProcessCompositeList(cssDependencies, ClientDependencyType.Css);
+                var comp = ProcessCompositeList(cssDependencies, ClientDependencyType.Css, http);
                 foreach (var s in comp)
                 {
                     sb.Append(RenderSingleCssFile(s));
@@ -131,7 +133,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         protected override string RenderSingleJsFile(string js)
         {
-            StringBuilder strClientLoader = new StringBuilder("CDLazyLoader");
+            var strClientLoader = new StringBuilder("CDLazyLoader");
             strClientLoader.AppendFormat(".AddJs({0})", js);
             strClientLoader.Append(';');
 
@@ -140,7 +142,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         protected override string RenderSingleCssFile(string css)
         {
-            StringBuilder strClientLoader = new StringBuilder("CDLazyLoader");
+            var strClientLoader = new StringBuilder("CDLazyLoader");
             strClientLoader.AppendFormat(".AddCss('{0}')", css);
             strClientLoader.Append(';');
 

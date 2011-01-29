@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web;
 using ClientDependency.Core.Controls;
 using ClientDependency.Core.FileRegistration.Providers;
 using ClientDependency.Core.Config;
@@ -17,12 +18,12 @@ namespace ClientDependency.Core
     public class BaseLoader
     {
 
-        public BaseLoader(string contextKey)
+        public BaseLoader(HttpContextBase http)
         {
-            m_ContextKey = contextKey;
+            CurrentContext = http;
         }
 
-        public string m_ContextKey;
+        protected HttpContextBase CurrentContext { get; private set; }
 
         public BaseFileRegistrationProvider Provider { get; set; }
 
@@ -41,6 +42,7 @@ namespace ClientDependency.Core
         /// <param name="provider"></param>
         /// <param name="dependencies"></param>
         /// <param name="paths"></param>
+        /// <param name="currProviders"></param>
         /// <remarks>
         /// This is the top most overloaded method
         /// </remarks>
@@ -63,26 +65,24 @@ namespace ClientDependency.Core
             //we need to look up all of the dependencies that have forced providers, 
             //check if we've got a provider list for it, create one if not and add the dependencies
             //to it.
-            List<BaseFileRegistrationProvider> forceProviders = new List<BaseFileRegistrationProvider>();
             var allProviderNamesInList = dependencies
                 .Select(x => x.ForceProvider)
                 .Where(x => !string.IsNullOrEmpty(x))
                 .Distinct();
-            foreach (var provName in allProviderNamesInList)
-            {
-                if (currProviders[provName] != null)
-                    forceProviders.Add((BaseFileRegistrationProvider)currProviders[provName]);
-            }
+            var forceProviders = (from provName in allProviderNamesInList
+                                  where currProviders[provName] != null
+                                  select (BaseFileRegistrationProvider) currProviders[provName]).ToList();
             foreach (var prov in forceProviders)
             {
                 //find or create the ProviderDependencyList for the prov
-                ProviderDependencyList forceList = m_Dependencies
-                    .Where(x => x.Contains(prov))
+                var p = prov;
+                var forceList = m_Dependencies
+                    .Where(x => x.Contains(p))
                     .DefaultIfEmpty(new ProviderDependencyList(prov))
                     .SingleOrDefault();
                 //add the dependencies that don't have a force provider specified
                 forceList.AddDependencies(dependencies
-                    .Where(x => x.ForceProvider == prov.Name));
+                    .Where(x => x.ForceProvider == p.Name));
                 //add the list if it is new
                 if (!m_Dependencies.Contains(forceList))
                     m_Dependencies.Add(forceList);
@@ -117,14 +117,14 @@ namespace ClientDependency.Core
         /// This is similar to ScriptManager.RegisterClientScriptInclude.
         /// Registers a file dependency with the default provider.
         /// </summary>
-        /// <param name="file"></param>
+        /// <param name="priority"></param>
+        /// <param name="filePath"></param>
+        /// <param name="pathNameAlias"></param>
+        /// <param name="type"></param>
         public void RegisterDependency(int priority, string filePath, string pathNameAlias, ClientDependencyType type)
         {
-            IClientDependencyFile file = new BasicFile(type);
-            file.Priority = priority;
-            file.FilePath = filePath;
-            file.PathNameAlias = pathNameAlias;
-            RegisterClientDependencies(new List<IClientDependencyFile>() { file }, new List<IClientDependencyPath>()); //send an empty paths collection
+            IClientDependencyFile file = new BasicFile(type) { Priority = priority, FilePath = filePath, PathNameAlias = pathNameAlias };
+            RegisterClientDependencies(new List<IClientDependencyFile> { file }, new List<IClientDependencyPath>()); //send an empty paths collection
         }
 
 

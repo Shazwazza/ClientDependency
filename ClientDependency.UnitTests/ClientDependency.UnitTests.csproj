@@ -63,6 +63,7 @@
     <Compile Include="JsMinifyTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CssTransformTest.cs" />
+    <Compile Include="RogueFileFilterTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ASP.Net Client Dependency\ClientDependency.Core.csproj">

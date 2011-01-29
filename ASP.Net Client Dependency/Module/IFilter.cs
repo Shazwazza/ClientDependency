@@ -8,7 +8,7 @@ namespace ClientDependency.Core.Module
 {
     public interface IFilter
     {
-        void SetHttpContext(HttpContextWrapper ctx);
+        void SetHttpContext(HttpContextBase ctx);
         string UpdateOutputHtml(string html);
         HttpContextBase CurrentContext { get; }
         bool CanExecute();

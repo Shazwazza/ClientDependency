@@ -71,7 +71,6 @@
     <Compile Include="CompositeFiles\Providers\BaseCompositeFileProcessingProvider.cs" />
     <Compile Include="CompositeFiles\CompositeFileDefinition.cs" />
     <Compile Include="CompressionType.cs" />
-    <Compile Include="Config\ConfigurationHelper.cs" />
     <Compile Include="Config\MimeTypeCompressionCollection.cs" />
     <Compile Include="Config\MimeTypeCompressionElement.cs" />
     <Compile Include="Config\MvcSection.cs" />
@@ -86,7 +85,7 @@
     <Compile Include="FileRegistration\Providers\RendererCollection.cs" />
     <Compile Include="FileRegistration\Providers\StandardRenderer.cs" />
     <Compile Include="FileRegistration\Providers\WebFormsFileRegistrationProvider.cs" />
-    <Compile Include="HttpContextExtensions.cs" />
+    <Compile Include="HttpContextBaseExtensions.cs" />
     <Compile Include="IClientDependencyFileExtensions.cs" />
     <Compile Include="IClientDependencyPathExtensions.cs" />
     <Compile Include="Module\ClientDependencyModule.cs" />

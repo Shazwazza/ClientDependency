@@ -11,7 +11,7 @@ namespace ClientDependency.Core.Module
 {
     public class MimeTypeCompressor
     {
-        public MimeTypeCompressor(HttpContext ctx)
+        public MimeTypeCompressor(HttpContextBase ctx)
         {
             Context = ctx;
             MatchedTypes = ClientDependencySettings.Instance
@@ -22,16 +22,16 @@ namespace ClientDependency.Core.Module
                 .Where(x => Context.Request.ContentType.ToUpper().Split(';').Contains(x.MimeType.ToUpper()));
         }
 
-        protected HttpContext Context;
+        protected HttpContextBase Context;
         protected IEnumerable<MimeTypeCompressionElement> MatchedTypes;
 
         public void AddCompression()
         {
-            HttpRequest request = Context.Request;
-            HttpResponse response = Context.Response;
+            HttpRequestBase request = Context.Request;
+            HttpResponseBase response = Context.Response;
 
             //if debug is on, then don't compress
-            if (!ConfigurationHelper.IsCompilationDebug)
+            if (!Context.IsDebuggingEnabled)
             {
                 //check if this request should be compressed based on the mime type and path
                 var m = GetSupportedPath(); 

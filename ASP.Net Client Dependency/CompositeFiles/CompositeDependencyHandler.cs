@@ -41,10 +41,11 @@ namespace ClientDependency.Core.CompositeFiles
 
         void IHttpHandler.ProcessRequest(HttpContext context)
         {
-            HttpResponse response = context.Response;
-            string fileset = context.Server.UrlDecode(context.Request["s"]);
+            var contextBase = new HttpContextWrapper(context);
+            var response = contextBase.Response;
+            var fileset = context.Server.UrlDecode(context.Request["s"]);
             ClientDependencyType type;
-            int version = 0;
+            var version = 0;
             int.TryParse(context.Request["cdv"], out version);
             try
             {
@@ -64,7 +65,7 @@ namespace ClientDependency.Core.CompositeFiles
             //result. To date, it can't be replicated in VS, but we'll leave it here for error handling support... can't hurt
             for (int i = 0; i < 5; i++)
             {
-                outputBytes = ProcessRequestInternal(context, fileset, type, version, outputBytes);
+                outputBytes = ProcessRequestInternal(contextBase, fileset, type, version, outputBytes);
                 if (outputBytes != null && outputBytes.Length > 0)
                     break;
 
@@ -75,14 +76,14 @@ namespace ClientDependency.Core.CompositeFiles
             {
                 ClientDependencySettings.Instance.Logger.Fatal(string.Format("No bytes were returned after 5 attempts. Fileset: {0}, Type: {1}, Version: {2}", fileset, type, version), null);
                 List<CompositeFileDefinition> fDefs;
-                outputBytes = GetCombinedFiles(context, fileset, type, out fDefs);
+                outputBytes = GetCombinedFiles(contextBase, fileset, type, out fDefs);
             }
 
             context.Response.ContentType = type == ClientDependencyType.Javascript ? "application/x-javascript" : "text/css";
             context.Response.OutputStream.Write(outputBytes, 0, outputBytes.Length);
         }
 
-        internal byte[] ProcessRequestInternal(HttpContext context, string fileset, ClientDependencyType type, int version, byte[] outputBytes)
+        internal byte[] ProcessRequestInternal(HttpContextBase context, string fileset, ClientDependencyType type, int version, byte[] outputBytes)
         {
             //get the compression type supported
             CompressionType cType = context.GetClientCompression(); 
@@ -144,7 +145,7 @@ namespace ClientDependency.Core.CompositeFiles
             return outputBytes;
         }
 
-        private byte[] GetCombinedFiles(HttpContext context, string fileset, ClientDependencyType type, out List<CompositeFileDefinition> fDefs)
+        private byte[] GetCombinedFiles(HttpContextBase context, string fileset, ClientDependencyType type, out List<CompositeFileDefinition> fDefs)
         {
             //get the file list
             string[] strFiles = DecodeFrom64(fileset).Split(';');
@@ -152,7 +153,7 @@ namespace ClientDependency.Core.CompositeFiles
             return ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CombineFiles(strFiles, context, type, out fDefs);
         }
 
-        private void ProcessFromFile(HttpContext context, CompositeFileMap map, out string compositeFileName, out byte[] outputBytes)
+        private void ProcessFromFile(HttpContextBase context, CompositeFileMap map, out string compositeFileName, out byte[] outputBytes)
         {
             //the saved file's bytes are already compressed.
             outputBytes = map.GetCompositeFileBytes();
@@ -165,7 +166,7 @@ namespace ClientDependency.Core.CompositeFiles
         /// Sets the output cache parameters and also the client side caching parameters
         /// </summary>
         /// <param name="context"></param>
-        private void SetCaching(HttpContext context, string fileName)
+        private void SetCaching(HttpContextBase context, string fileName)
         {
             if (string.IsNullOrEmpty(fileName))
             {
@@ -175,8 +176,8 @@ namespace ClientDependency.Core.CompositeFiles
 
             //This ensures OutputCaching is set for this handler and also controls
             //client side caching on the browser side. Default is 10 days.
-            TimeSpan duration = TimeSpan.FromDays(10);
-            HttpCachePolicy cache = context.Response.Cache;
+            var duration = TimeSpan.FromDays(10);
+            var cache = context.Response.Cache;
             cache.SetCacheability(HttpCacheability.Public);
 
             cache.SetExpires(DateTime.Now.Add(duration));

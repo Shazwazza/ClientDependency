@@ -13,15 +13,19 @@ namespace ClientDependency.Core
         /// Checks if the url is a local/relative uri, if it is, it makes it absolute based on the 
         /// current request uri.
         /// </summary>
-        /// <param name="url"></param>
+        /// <param name="uri"></param>
+        /// <param name="http"></param>
         /// <returns></returns>
-        public static Uri MakeAbsoluteUri(this Uri uri)
+        public static Uri MakeAbsoluteUri(this Uri uri, HttpContextBase http)
         {
             if (!uri.IsAbsoluteUri)
             {
-                string http = HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority);
-                Uri absoluteUrl = new Uri(new Uri(http), uri);
-                return absoluteUrl;
+                if (http.Request.Url != null)
+                {
+                    var left = http.Request.Url.GetLeftPart(UriPartial.Authority);
+                    var absoluteUrl = new Uri(new Uri(left), uri);
+                    return absoluteUrl;
+                }
             }
             return uri;
         }
@@ -30,43 +34,35 @@ namespace ClientDependency.Core
         /// Determines if the uri is a locally based file
         /// </summary>
         /// <param name="uri"></param>
+        /// <param name="http"></param>
         /// <returns></returns>
-        public static bool IsLocalUri(this Uri uri)
+        public static bool IsLocalUri(this Uri uri, HttpContextBase http)
         {
-            IPAddress[] host;
-            IPAddress[] local;
-            bool isLocal = false;
+            var isLocal = false;
 
             if (!uri.IsAbsoluteUri)
             {
-                uri = uri.MakeAbsoluteUri();
+                uri = uri.MakeAbsoluteUri(http);
             }
 
-            host = Dns.GetHostAddresses(uri.Host);
-            local = Dns.GetHostAddresses(Dns.GetHostName());
+            var host = Dns.GetHostAddresses(uri.Host);
+            var local = Dns.GetHostAddresses(Dns.GetHostName());
 
-            foreach (IPAddress hostAddress in host)
+            foreach (var hostAddress in host)
             {
                 if (IPAddress.IsLoopback(hostAddress))
                 {
                     isLocal = true;
                     break;
                 }
-                else
+                if (local.Contains(hostAddress))
                 {
-                    foreach (IPAddress localAddress in local)
-                    {
-                        if (hostAddress.Equals(localAddress))
-                        {
-                            isLocal = true;
-                            break;
-                        }
-                    }
+                    isLocal = true;
+                }
 
-                    if (isLocal)
-                    {
-                        break;
-                    }
+                if (isLocal)
+                {
+                    break;
                 }
             }
             return isLocal;

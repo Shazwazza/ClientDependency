@@ -37,15 +37,15 @@ namespace ClientDependency.UnitTests
         {
             //Arrange
 
-            var codeBase = Assembly.GetExecutingAssembly().CodeBase;
-            var uri = new UriBuilder(codeBase);
-            var path = Uri.UnescapeDataString(uri.Path);
-            var binFolder = Path.GetDirectoryName(path);
-            var ctx = MockRepository.GenerateStub<HttpContextBase>();
-            ctx.Stub(x => x.Server).Return(new FakeServer());
+            //var codeBase = Assembly.GetExecutingAssembly().CodeBase;
+            //var uri = new UriBuilder(codeBase);
+            //var path = Uri.UnescapeDataString(uri.Path);
+            //var binFolder = Path.GetDirectoryName(path);
+            //var ctx = MockRepository.GenerateStub<HttpContextBase>();
+            //ctx.Stub(x => x.Server).Return(new FakeServer());
 
-            var configFile = new FileInfo(binFolder + "\\..\\..\\App.Config");
-            var target = new ClientDependencySettings(configFile, ctx);
+            //var configFile = new FileInfo(binFolder + "\\..\\..\\App.Config");
+            //var target = new ClientDependencySettings(configFile, ctx);
             
             //Act
 

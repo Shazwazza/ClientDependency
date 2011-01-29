@@ -29,7 +29,9 @@ namespace ClientDependency.Core.Module
         /// <summary>
         /// The original stream
         /// </summary>
-        Stream _stream;
+        readonly Stream _stream;
+
+        private readonly HttpContextBase _http;
 
         /// <summary>
         /// Current position in the original stream
@@ -53,9 +55,11 @@ namespace ClientDependency.Core.Module
         /// 
         /// </summary>
         /// <param name="responseStream"></param>
-        public ResponseFilterStream(Stream responseStream)
+        /// <param name="http"></param>
+        public ResponseFilterStream(Stream responseStream, HttpContextBase http)
         {
             _stream = responseStream;
+            _http = http;
         }
 
 
@@ -157,7 +161,7 @@ namespace ClientDependency.Core.Module
         {
             if (CaptureString != null)
             {
-                string content = HttpContext.Current.Response.ContentEncoding.GetString(ms.ToArray());
+                string content = _http.Response.ContentEncoding.GetString(ms.ToArray());
                 OnCaptureString(content);
             }
         }
@@ -177,7 +181,7 @@ namespace ClientDependency.Core.Module
 
         private byte[] OnTransformWriteStringInternal(byte[] buffer)
         {
-            Encoding encoding = HttpContext.Current.Response.ContentEncoding;
+            Encoding encoding = _http.Response.ContentEncoding;
             string output = OnTransformWriteString(encoding.GetString(buffer));
             return encoding.GetBytes(output);
         }
@@ -231,10 +235,10 @@ namespace ClientDependency.Core.Module
                 return ms;
 
             //string content = ms.GetAsString();
-            string content = HttpContext.Current.Response.ContentEncoding.GetString(ms.ToArray());
+            string content = _http.Response.ContentEncoding.GetString(ms.ToArray());
 
             content = TransformString(content);
-            byte[] buffer = HttpContext.Current.Response.ContentEncoding.GetBytes(content);
+            byte[] buffer = _http.Response.ContentEncoding.GetBytes(content);
             ms = new MemoryStream();
             ms.Write(buffer, 0, buffer.Length);
             //ms.WriteString(content);

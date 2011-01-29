@@ -22,21 +22,21 @@ namespace ClientDependency.Core.Config
         /// </summary>
         internal ClientDependencySettings()
         {
-            LoadProviders((ClientDependencySection)ConfigurationManager.GetSection("clientDependency"));
             if (HttpContext.Current == null)
             {
                 throw new InvalidOperationException(
                     "HttpContext.Current must exist when using the empty constructor for ClientDependencySettings, otherwise use the alternative constructor");
             }
-            Context = new HttpContextWrapper(HttpContext.Current);
+
+            LoadProviders((ClientDependencySection)ConfigurationManager.GetSection("clientDependency"));
+            
         }
 
-        internal ClientDependencySettings(FileInfo configFile, HttpContextBase ctx)
-        {
-            Context = ctx;
-            var config = ConfigurationManager.OpenExeConfiguration(configFile.FullName);
-            LoadProviders((ClientDependencySection)config.GetSection("clientDependency"));
-        }
+        //internal ClientDependencySettings(FileInfo configFile, HttpContextBase ctx)
+        //{            
+        //    var config = ConfigurationManager.OpenExeConfiguration(configFile.FullName);
+        //    LoadProviders((ClientDependencySection)config.GetSection("clientDependency"));
+        //}
 
         /// <summary>
         /// Singleton, used for web apps
@@ -65,8 +65,6 @@ namespace ClientDependency.Core.Config
         /// </summary>
         private static ClientDependencySettings m_Settings;
         private static readonly object m_Lock = new object();
-
-        public HttpContextBase Context { get; private set; }
         
         private WebFormsFileRegistrationProvider m_FileRegisterProvider = null;
         private FileRegistrationProviderCollection m_FileRegisterProviders = null;
@@ -223,15 +221,15 @@ namespace ClientDependency.Core.Config
             if (section.CompositeFileElement.Providers.Count == 0)
             {
                 //create new providers
-                PageHeaderProvider php = new PageHeaderProvider();
+                var php = new PageHeaderProvider();
                 php.Initialize(PageHeaderProvider.DefaultName, null);
                 m_FileRegisterProviders.Add(php);
 
-                LazyLoadProvider csrp = new LazyLoadProvider();
+                var csrp = new LazyLoadProvider();
                 csrp.Initialize(LazyLoadProvider.DefaultName, null);
                 m_FileRegisterProviders.Add(csrp);
 
-                LoaderControlProvider lcp = new LoaderControlProvider();
+                var lcp = new LoaderControlProvider();
                 lcp.Initialize(LoaderControlProvider.DefaultName, null);
                 m_FileRegisterProviders.Add(lcp);
             }
@@ -246,18 +244,13 @@ namespace ClientDependency.Core.Config
         {
             if (section.CompositeFileElement.Providers.Count == 0)
             {
-                CompositeFileProcessingProvider cfpp = new CompositeFileProcessingProvider(Context.Server);
+                var cfpp = new CompositeFileProcessingProvider();
                 cfpp.Initialize(CompositeFileProcessingProvider.DefaultName, null);
                 m_CompositeFileProviders.Add(cfpp);
             }
             else
             {
-                ProvidersHelper.InstantiateProviders(section.CompositeFileElement.Providers, m_CompositeFileProviders, typeof(BaseCompositeFileProcessingProvider));
-                //now we need to wire up the server utility object
-                foreach(var c in m_CompositeFileProviders.Cast<BaseCompositeFileProcessingProvider>())
-                {
-                    c.Server = Context.Server;
-                }
+                ProvidersHelper.InstantiateProviders(section.CompositeFileElement.Providers, m_CompositeFileProviders, typeof(BaseCompositeFileProcessingProvider));                
             }
             
         }

@@ -16,10 +16,12 @@ namespace ClientDependency.Web.Test.Pages
         protected void Page_Load(object sender, EventArgs e)
         {
 
+            var http = new HttpContextWrapper(Context);
+
             var embeddedCssPath = Page.ClientScript.GetWebResourceUrl(typeof(EmbeddedResourceTest), "ClientDependency.Web.Test.Pages.embedded.css");
 
             //embed the web resource! sweeet.
-            ClientDependencyLoader.Instance.RegisterDependency(embeddedCssPath, Core.ClientDependencyType.Css);
+            ClientDependencyLoader.Instance(http).RegisterDependency(embeddedCssPath, Core.ClientDependencyType.Css);
 
         }
     }

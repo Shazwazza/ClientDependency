@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Text.RegularExpressions;
@@ -17,20 +18,20 @@ namespace ClientDependency.Core.Controls
             base.OnInit(e);
 
             var isNew = false;
-            var loader = ClientDependencyLoader.TryCreate(Page, out isNew);
+            var loader = ClientDependencyLoader.TryCreate(Page, new HttpContextWrapper(Context), out isNew);
 
             RegisterIncludes(Text, loader);
 
             Text = string.Empty;
         }
 
-        private void RegisterIncludes(string innerHtml, ClientDependencyLoader loader)
+        private static void RegisterIncludes(string innerHtml, ClientDependencyLoader loader)
         {
             RegisterCssIncludes(innerHtml, loader);
             RegisterJsIncludes(innerHtml, loader);
         }
 
-        private void RegisterCssIncludes(string innerHtml, ClientDependencyLoader loader)
+        private static void RegisterCssIncludes(string innerHtml, ClientDependencyLoader loader)
         {
             var tagPattern = string.Format(TagPattern, "link");
             var typeAttributePattern = string.Format(AttributePattern, "type");
@@ -61,7 +62,7 @@ namespace ClientDependency.Core.Controls
             }
         }
 
-        private void RegisterJsIncludes(string innerHtml, ClientDependencyLoader loader)
+        private static void RegisterJsIncludes(string innerHtml, ClientDependencyLoader loader)
         {
             var tagPattern = string.Format(TagPattern, "script");
             var typeAttributePattern = string.Format(AttributePattern, "type");

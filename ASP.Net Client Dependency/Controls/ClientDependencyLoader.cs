@@ -10,7 +10,7 @@ using ClientDependency.Core.FileRegistration.Providers;
 namespace ClientDependency.Core.Controls
 {
 	[ParseChildren(typeof(ClientDependencyPath), ChildrenAsProperties = true)]
-	public class ClientDependencyLoader : Control
+	public sealed class ClientDependencyLoader : Control
 	{
         
 		/// <summary>
@@ -19,9 +19,12 @@ namespace ClientDependency.Core.Controls
 		public ClientDependencyLoader()
 		{
 			Paths = new ClientDependencyPathCollection();
-            
-            //by default the provider is the default provider 
-            m_Base.Provider = ClientDependencySettings.Instance.DefaultFileRegistrationProvider;           			
+
+		    m_Base = new BaseLoader(new HttpContextWrapper(Context))
+		                 {
+                             //by default the provider is the default provider 
+		                     Provider = ClientDependencySettings.Instance.DefaultFileRegistrationProvider
+		                 };
 		}
 
         protected override void OnInit(EventArgs e)
@@ -29,19 +32,19 @@ namespace ClientDependency.Core.Controls
             base.OnInit(e);
 
             //add this object to the context and validate the context type
-            if (this.Context != null)
+            if (Context != null)
             {
-                if (!this.Context.Items.Contains(ContextKey))
+                if (!Context.Items.Contains(ContextKey))
                 {
                     lock (m_Locker)
                     {
-                        if (!this.Context.Items.Contains(ContextKey))
+                        if (!Context.Items.Contains(ContextKey))
                         {
                             //The context needs to be a page
-                            Page page = this.Context.Handler as Page;
+                            var page = Context.Handler as Page;
                             if (page == null)
                                 throw new InvalidOperationException("ClientDependencyLoader only works with Page based handlers.");
-                            this.Context.Items[ContextKey] = this;
+                            Context.Items[ContextKey] = this;
                         }                        
                     }                    
                 }
@@ -76,17 +79,14 @@ namespace ClientDependency.Core.Controls
 		/// <exception cref="NullReferenceException">
 		/// If no ClientDependencyLoader control exists on the current page, an exception is thrown.
 		/// </exception>
-		public static ClientDependencyLoader Instance
+		public static ClientDependencyLoader Instance(HttpContextBase ctx)
 		{
-			get
-			{
-				if (!HttpContext.Current.Items.Contains(ContextKey))
-					return null;
-				return HttpContext.Current.Items[ContextKey] as ClientDependencyLoader;
-			}
+            if (!ctx.Items.Contains(ContextKey))
+				return null;
+            return ctx.Items[ContextKey] as ClientDependencyLoader;
 		}
 
-        private BaseLoader m_Base = new BaseLoader(ContextKey);
+	    private BaseLoader m_Base;
 
 		/// <summary>
 		/// Need to set the container for each of the paths to support databinding.
@@ -94,7 +94,7 @@ namespace ClientDependency.Core.Controls
 		protected override void CreateChildControls()
 		{
 			base.CreateChildControls();
-			foreach (ClientDependencyPath path in Paths)
+			foreach (var path in Paths)
 			{
 				path.Parent = this;
 			}	
@@ -107,7 +107,7 @@ namespace ClientDependency.Core.Controls
 		protected override void OnDataBinding(EventArgs e)
 		{
 			base.OnDataBinding(e);
-			foreach (ClientDependencyPath path in Paths)
+			foreach (var path in Paths)
 			{
 				path.DataBind();
 			}				
@@ -122,17 +122,14 @@ namespace ClientDependency.Core.Controls
 			base.OnPreRender(e);
 
             m_Base.m_Paths.UnionWith(Paths.Cast<IClientDependencyPath>());
-            RegisterClientDependencies((WebFormsFileRegistrationProvider)m_Base.Provider, this.Page, m_Base.m_Paths);
+            RegisterClientDependencies((WebFormsFileRegistrationProvider)m_Base.Provider, Page, m_Base.m_Paths);
 			RenderDependencies();
 		}
 
 		private void RenderDependencies()
 		{
-            m_Base.m_Dependencies.ForEach(x =>
-				{
-                    ((WebFormsFileRegistrationProvider)x.Provider)
-                        .RegisterDependencies(this.Page, x.Dependencies, m_Base.m_Paths);
-				});
+            m_Base.m_Dependencies.ForEach(x => ((WebFormsFileRegistrationProvider)x.Provider)
+                                                   .RegisterDependencies(Page, x.Dependencies, m_Base.m_Paths, new HttpContextWrapper(Context)));
 		}
 
 		[PersistenceMode(PersistenceMode.InnerProperty)]
@@ -140,29 +137,26 @@ namespace ClientDependency.Core.Controls
       
 		#region Static Helper methods
 
-		/// <summary>
-		/// Checks if a loader already exists, if it does, it returns it, otherwise it will
-		/// create a new one in the control specified.
-		/// isNew will be true if a loader was created, otherwise false if it already existed.
-		/// </summary>
-		/// <param name="parent"></param>
-		/// <param name="isNew"></param>
-		/// <returns></returns>
-		public static ClientDependencyLoader TryCreate(Control parent, out bool isNew)
+	    /// <summary>
+	    /// Checks if a loader already exists, if it does, it returns it, otherwise it will
+	    /// create a new one in the control specified.
+	    /// isNew will be true if a loader was created, otherwise false if it already existed.
+	    /// </summary>
+	    /// <param name="parent"></param>
+	    /// <param name="http"></param>
+	    /// <param name="isNew"></param>
+	    /// <returns></returns>
+	    public static ClientDependencyLoader TryCreate(Control parent, HttpContextBase http, out bool isNew)
 		{
-			if (ClientDependencyLoader.Instance == null)
+            if (Instance(http) == null)
 			{
-				ClientDependencyLoader loader = new ClientDependencyLoader();
+				var loader = new ClientDependencyLoader();
 				parent.Controls.Add(loader);
 				isNew = true;
 				return loader;
 			}
-			else
-			{
-				isNew = false;
-				return ClientDependencyLoader.Instance;
-			}
-
+	        isNew = false;
+            return Instance(http);
 		}        
 
 		#endregion
@@ -219,12 +213,11 @@ namespace ClientDependency.Core.Controls
 			return this;
 		}
 
-		/// <summary>
-		/// Adds a path to the current loader
-		/// </summary>
-		/// <param name="pathNameAlias"></param>
-		/// <param name="path"></param>
-		public void AddPath(IClientDependencyPath path)
+	    /// <summary>
+	    /// Adds a path to the current loader
+	    /// </summary>
+	    /// <param name="path"></param>
+	    public void AddPath(IClientDependencyPath path)
 		{
             m_Base.m_Paths.Add(path);
 		}		
@@ -257,16 +250,10 @@ namespace ClientDependency.Core.Controls
 			where T : WebFormsFileRegistrationProvider
 		{
 			//need to find the provider with the type
-			WebFormsFileRegistrationProvider found = null;
-			foreach (WebFormsFileRegistrationProvider p in ClientDependencySettings.Instance.FileRegistrationProviderCollection)
-			{
-				if (p.GetType().Equals(typeof(T)))
-				{
-					found = p;
-					break;
-				}
-			}
-			if (found == null)
+			var found = ClientDependencySettings.Instance.FileRegistrationProviderCollection
+                .Cast<WebFormsFileRegistrationProvider>()
+                .FirstOrDefault(p => p.GetType().Equals(typeof (T)));
+		    if (found == null)
 				throw new ArgumentException("Could not find the ClientDependencyProvider specified by T");
 
 			RegisterClientDependencies(found, control, paths);
@@ -274,7 +261,7 @@ namespace ClientDependency.Core.Controls
 
 		public void RegisterClientDependencies(WebFormsFileRegistrationProvider provider, Control control, IEnumerable<IClientDependencyPath> paths)
 		{
-            IEnumerable<IClientDependencyFile> dependencies = FindDependencies(control);
+            var dependencies = FindDependencies(control);
             m_Base.RegisterClientDependencies(provider, dependencies, paths, ClientDependencySettings.Instance.FileRegistrationProviderCollection);
 		}
 
@@ -283,31 +270,26 @@ namespace ClientDependency.Core.Controls
 		/// </summary>
 		/// <param name="control"></param>
 		/// <returns></returns>
-        private IEnumerable<IClientDependencyFile> FindDependencies(Control control)
+        private static IEnumerable<IClientDependencyFile> FindDependencies(Control control)
 		{
-            var ctls = new List<Control>(control.FlattenChildren());
-            ctls.Add(control);
-            
-            List<IClientDependencyFile> dependencies = new List<IClientDependencyFile>();
+            var ctls = new List<Control>(control.FlattenChildren()) { control };
+
+		    var dependencies = new List<IClientDependencyFile>();
 			
             // add child dependencies
-			Type iClientDependency = typeof(IClientDependencyFile);
-            foreach (Control ctl in ctls)
+			var iClientDependency = typeof(IClientDependencyFile);
+            foreach (var ctl in ctls)
 			{
                 // find dependencies
-                Type controlType = ctl.GetType();
-                
-                foreach (Attribute attribute in Attribute.GetCustomAttributes(controlType))
-                {
-                    if (attribute is ClientDependencyAttribute)
-                    {
-                        dependencies.Add((ClientDependencyAttribute)attribute);
-                    }
-                }
+                var controlType = ctl.GetType();
 
-                if (iClientDependency.IsAssignableFrom(ctl.GetType()))
+			    dependencies.AddRange(Attribute.GetCustomAttributes(controlType)
+                    .OfType<ClientDependencyAttribute>()
+                    .Cast<IClientDependencyFile>());
+
+			    if (iClientDependency.IsAssignableFrom(ctl.GetType()))
                 {
-                    IClientDependencyFile include = (IClientDependencyFile)ctl;
+                    var include = (IClientDependencyFile)ctl;
                     dependencies.Add(include);
                 }
                 

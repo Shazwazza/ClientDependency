@@ -8,16 +8,13 @@ using System.Web;
 using System.Net;
 using System.IO.Compression;
 using System.Configuration.Provider;
+using System.Web.Hosting;
 
 namespace ClientDependency.Core.CompositeFiles.Providers
 {
 	public abstract class BaseCompositeFileProcessingProvider : ProviderBase
 	{
-        /// <summary>
-        /// Gets/sets the server utility object
-        /// </summary>
-        public HttpServerUtilityBase Server { get; set; }
-
+       
         /// <summary>
         /// constructor sets defaults
         /// </summary>
@@ -25,24 +22,31 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         {
             PersistCompositeFiles = true;
             EnableCssMinify = true;
-            EnableJsMinify = true;            
+            EnableJsMinify = true;   
+         
+            _mapPath = HostingEnvironment.MapPath;         
         }
 
-	    /// <summary>
-        /// constructor sets defaults
+        /// <summary>
+        /// Internal constructor used for testing
         /// </summary>
-        protected BaseCompositeFileProcessingProvider(HttpServerUtilityBase server)
-            : this()
+        /// <param name="mapPath"></param>
+        internal BaseCompositeFileProcessingProvider(Func<string, string> mapPath)
         {
-            Server = server;            
+            PersistCompositeFiles = true;
+            EnableCssMinify = true;
+            EnableJsMinify = true;   
+            _mapPath = mapPath;
         }
 
-        private readonly string m_ByteOrderMarkUtf8 = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
+	    private readonly Func<string, string> _mapPath;
+
+        private readonly string _byteOrderMarkUtf8 = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
 
 		#region Provider Members
 
 		public abstract FileInfo SaveCompositeFile(byte[] fileContents, ClientDependencyType type);
-		public abstract byte[] CombineFiles(string[] strFiles, HttpContext context, ClientDependencyType type, out List<CompositeFileDefinition> fileDefs);
+        public abstract byte[] CombineFiles(string[] strFiles, HttpContextBase context, ClientDependencyType type, out List<CompositeFileDefinition> fileDefs);
 		public abstract byte[] CompressBytes(CompressionType type, byte[] fileBytes);
 
         /// <summary>
@@ -85,12 +89,12 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                 }
                 if (config["compositeFilePath"] != null)
                 {
-                    CompositeFilePath = new DirectoryInfo(Server.MapPath(config["compositeFilePath"]));    
+                    CompositeFilePath = new DirectoryInfo(_mapPath(config["compositeFilePath"]));    
                 }                
                 else
                 {
                     //set the default
-                    CompositeFilePath = new DirectoryInfo(Server.MapPath("~/App_Data/ClientDependency"));
+                    CompositeFilePath = new DirectoryInfo(_mapPath("~/App_Data/ClientDependency"));
                 }
             }
             
@@ -109,35 +113,38 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             }
         }
 
-		/// <summary>
-		/// This ensures that all paths (i.e. images) in a CSS file have their paths change to absolute paths.
-		/// </summary>
-		/// <param name="fileContents"></param>
-		/// <param name="type"></param>
-		/// <returns></returns>
-		protected string ParseCssFilePaths(string fileContents, ClientDependencyType type, string url)
+	    /// <summary>
+	    /// This ensures that all paths (i.e. images) in a CSS file have their paths change to absolute paths.
+	    /// </summary>
+	    /// <param name="fileContents"></param>
+	    /// <param name="type"></param>
+	    /// <param name="url"></param>
+	    /// <param name="http"></param>
+	    /// <returns></returns>
+	    protected string ParseCssFilePaths(string fileContents, ClientDependencyType type, string url, HttpContextBase http)
 		{
 			//if it is a CSS file we need to parse the URLs
 			if (type == ClientDependencyType.Css)
 			{
-                Uri uri = new Uri(url, UriKind.RelativeOrAbsolute);
-                fileContents = CssFileUrlFormatter.TransformCssFile(fileContents, uri.MakeAbsoluteUri());
+                var uri = new Uri(url, UriKind.RelativeOrAbsolute);
+                fileContents = CssFileUrlFormatter.TransformCssFile(fileContents, uri.MakeAbsoluteUri(http));
 			}
 			return fileContents;
 		}
 
-		/// <summary>
-		/// Tries to convert the url to a uri, then read the request into a string and return it.
-		/// This takes into account relative vs absolute URI's
-		/// </summary>
-		/// <param name="url"></param>
-		/// <param name="requestContents"></param>
-		/// <returns>true if successful, false if not successful</returns>
-		/// <remarks>
-		/// if the path is a relative local path, the we use Server.Execute to get the request output, otherwise
-		/// if it is an absolute path, a WebClient request is made to fetch the contents.
-		/// </remarks>
-		protected bool TryReadUri(string url, out string requestContents)
+	    /// <summary>
+	    /// Tries to convert the url to a uri, then read the request into a string and return it.
+	    /// This takes into account relative vs absolute URI's
+	    /// </summary>
+	    /// <param name="url"></param>
+	    /// <param name="requestContents"></param>
+	    /// <param name="http"></param>
+	    /// <returns>true if successful, false if not successful</returns>
+	    /// <remarks>
+	    /// if the path is a relative local path, the we use Server.Execute to get the request output, otherwise
+	    /// if it is an absolute path, a WebClient request is made to fetch the contents.
+	    /// </remarks>
+	    protected bool TryReadUri(string url, out string requestContents, HttpContextBase http)
 		{
 			Uri uri;
 			if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out uri))
@@ -150,10 +157,10 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                     if (uri.ToString().ToUpper().EndsWith(".ASPX"))
                     {
                         //its a relative path so use the execute method
-                        StringWriter sw = new StringWriter();
+                        var sw = new StringWriter();
                         try
                         {
-                            Server.Execute(url, sw);
+                            http.Server.Execute(url, sw);
                             requestContents = sw.ToString();
                             sw.Close();
                             return true;
@@ -165,7 +172,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                     }
                     else
                     {
-                        uri = uri.MakeAbsoluteUri();
+                        uri = uri.MakeAbsoluteUri(http);
                     }                    
                 }
 
@@ -200,9 +207,9 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                 xml = client.DownloadString(resource);
             }
 
-            if (xml.StartsWith(m_ByteOrderMarkUtf8))
+            if (xml.StartsWith(_byteOrderMarkUtf8))
             {
-                xml = xml.Remove(0, m_ByteOrderMarkUtf8.Length - 1);
+                xml = xml.Remove(0, _byteOrderMarkUtf8.Length - 1);
             }
 
             return xml;

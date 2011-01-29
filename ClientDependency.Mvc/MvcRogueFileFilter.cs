@@ -22,7 +22,7 @@ namespace ClientDependency.Core.Mvc
         public override bool ValidateCurrentHandler()
         {
             //don't filter if we're in debug mode
-            if (ConfigurationHelper.IsCompilationDebug)
+            if (CurrentContext.IsDebuggingEnabled)
                 return false;
 
             IHttpHandler handler = CurrentContext.CurrentHandler as MvcHandler;

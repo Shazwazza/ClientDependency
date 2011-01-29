@@ -8,13 +8,13 @@ namespace ClientDependency.Core
 {
     public static class IClientDependencyFileExtensions
     {
-
         /// <summary>
         /// Resolves an absolute web path for the file path
         /// </summary>
         /// <param name="file"></param>
+        /// <param name="http"></param>
         /// <returns></returns>
-        public static string ResolveFilePath(this IClientDependencyFile file)
+        public static string ResolveFilePath(this IClientDependencyFile file, HttpContextBase http)
         {
             if (string.IsNullOrEmpty(file.FilePath))
             {
@@ -22,13 +22,13 @@ namespace ClientDependency.Core
             }
             if (file.FilePath[0] == '~')
             {
-                return HttpContext.Current.ResolveUrl(file.FilePath);
+                return http.ResolveUrl(file.FilePath);
             }
-            else if (!HttpContext.Current.IsAbsolute(file.FilePath))
+            if (!http.IsAbsolute(file.FilePath))
             {
                 //get the relative path
-                var path = HttpContext.Current.Request.AppRelativeCurrentExecutionFilePath.Substring(0, HttpContext.Current.Request.AppRelativeCurrentExecutionFilePath.LastIndexOf('/') + 1);
-                return HttpContext.Current.ResolveUrl(path + file.FilePath);
+                var path = http.Request.AppRelativeCurrentExecutionFilePath.Substring(0, http.Request.AppRelativeCurrentExecutionFilePath.LastIndexOf('/') + 1);
+                return http.ResolveUrl(path + file.FilePath);
             }
             return file.FilePath;
         }

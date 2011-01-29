@@ -5,6 +5,7 @@ using System.Text;
 using System.Configuration.Provider;
 using ClientDependency.Core.FileRegistration.Providers;
 using System.IO;
+using System.Web;
 
 namespace ClientDependency.Core.FileRegistration.Providers
 {
@@ -15,18 +16,19 @@ namespace ClientDependency.Core.FileRegistration.Providers
         public void RegisterDependencies(List<IClientDependencyFile> allDependencies, 
             HashSet<IClientDependencyPath> paths,
             out string jsOutput,
-            out string cssOutput)
+            out string cssOutput,
+            HttpContextBase http)
         {            
             var folderPaths = paths;
 
-            UpdateFilePaths(allDependencies, folderPaths);
+            UpdateFilePaths(allDependencies, folderPaths, http);
             EnsureNoDuplicates(allDependencies, folderPaths);
 
-            List<IClientDependencyFile> jsDependencies = allDependencies
+            var jsDependencies = allDependencies
                 .Where(x => x.DependencyType == ClientDependencyType.Javascript)
                 .ToList();
 
-            List<IClientDependencyFile> cssDependencies = allDependencies
+            var cssDependencies = allDependencies
                 .Where(x => x.DependencyType == ClientDependencyType.Css)
                 .ToList();
 
@@ -34,8 +36,8 @@ namespace ClientDependency.Core.FileRegistration.Providers
             jsDependencies.Sort((a, b) => a.Priority.CompareTo(b.Priority));
             cssDependencies.Sort((a, b) => a.Priority.CompareTo(b.Priority));
 
-            cssOutput = RenderCssDependencies(cssDependencies.ConvertAll<IClientDependencyFile>(a => { return (IClientDependencyFile)a; }));
-            jsOutput = RenderJsDependencies(jsDependencies.ConvertAll<IClientDependencyFile>(a => { return (IClientDependencyFile)a; }));         
+            cssOutput = RenderCssDependencies(cssDependencies.ConvertAll(a => a), http);
+            jsOutput = RenderJsDependencies(jsDependencies.ConvertAll(a => a), http);         
         }
     }
 }

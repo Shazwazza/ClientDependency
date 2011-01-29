@@ -21,9 +21,9 @@ namespace ClientDependency.Core.Module
     /// </summary>
     public class RogueFileFilter : IFilter
     {
-        
+
         #region Private members
-        
+
         private bool? m_Runnable = null;
         private string m_MatchScript = "<script(?:(?:.*(?<src>(?<=src=\")[^\"]*(?=\"))[^>]*)|[^>]*)>(?<content>(?:(?:\n|.)(?!(?:\n|.)<script))*)</script>";
         private string m_MatchLink = "<link\\s+[^>]*(href\\s*=\\s*(['\"])(?<href>.*?)\\2)";
@@ -34,7 +34,7 @@ namespace ClientDependency.Core.Module
 
         #region IFilter Members
 
-        public void SetHttpContext(HttpContextWrapper ctx)
+        public void SetHttpContext(HttpContextBase ctx)
         {
             CurrentContext = ctx;
             m_FoundPath = GetSupportedPath();
@@ -43,21 +43,19 @@ namespace ClientDependency.Core.Module
         /// <summary>
         /// This filter can only execute when it's a Page or MvcHandler
         /// </summary>
-        /// <param name="app"></param>
         /// <returns></returns>
         public virtual bool ValidateCurrentHandler()
         {
             //don't filter if we're in debug mode
-            if (ConfigurationHelper.IsCompilationDebug)
+            if (CurrentContext.IsDebuggingEnabled)
                 return false;
 
             return (CurrentContext.CurrentHandler is Page);
         }
-       
+
         /// <summary>
         /// Returns true when this filter should be applied
         /// </summary>
-        /// <param name="app"></param>
         /// <returns></returns>
         public bool CanExecute()
         {
@@ -98,29 +96,13 @@ namespace ClientDependency.Core.Module
                 .CompositeFileElement
                 .RogueFileCompression;
 
-            foreach (var m in rogueFiles.Cast<RogueFileCompressionElement>())
-            {
-                //if it is only "*" then convert it to proper regex
-                var reg = m.FilePath == "*" ? ".*" : m.FilePath;
-                var matched = Regex.IsMatch(CurrentContext.Request.RawUrl, reg, RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                if (matched)
-                {
-                    bool isGood = true;
-                    //if we have a match, make sure there are no exclusions
-                    foreach (var e in m.ExcludePaths.Cast<RogueFileCompressionExcludeElement>())
-                    {
-                        var excluded = Regex.IsMatch(CurrentContext.Request.RawUrl, e.FilePath, RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                        if (excluded)
-                        {
-                            isGood = false;
-                            break;
-                        }
-                    }
-
-                    if (isGood) return m;
-                }
-            }
-            return null;
+            return (from m in rogueFiles.Cast<RogueFileCompressionElement>()
+                    let reg = m.FilePath == "*" ? ".*" : m.FilePath
+                    let matched = Regex.IsMatch(CurrentContext.Request.RawUrl, reg, RegexOptions.Compiled | RegexOptions.IgnoreCase)
+                    where matched
+                    let isGood = m.ExcludePaths.Cast<RogueFileCompressionExcludeElement>().Select(e => Regex.IsMatch(CurrentContext.Request.RawUrl, e.FilePath, RegexOptions.Compiled | RegexOptions.IgnoreCase)).All(excluded => !excluded)
+                    where isGood
+                    select m).FirstOrDefault();
         }
 
         /// <summary>
@@ -134,8 +116,8 @@ namespace ClientDependency.Core.Module
             //check if we should be processing!            
             if (CanExecute() && m_FoundPath.CompressJs)
             {
-                return ReplaceContent(html, "src", m_FoundPath.JsRequestExtension.Split(','), ClientDependencyType.Javascript, m_MatchScript);
-            }            
+                return ReplaceContent(html, "src", m_FoundPath.JsRequestExtension.Split(','), ClientDependencyType.Javascript, m_MatchScript, CurrentContext);
+            }
             return html;
         }
 
@@ -150,7 +132,7 @@ namespace ClientDependency.Core.Module
             //check if we should be processing!            
             if (CanExecute() && m_FoundPath.CompressCss)
             {
-                return ReplaceContent(html, "href", m_FoundPath.CssRequestExtension.Split(','), ClientDependencyType.Css, m_MatchLink);
+                return ReplaceContent(html, "href", m_FoundPath.CssRequestExtension.Split(','), ClientDependencyType.Css, m_MatchLink, CurrentContext);
             }
             return html;
         }
@@ -163,12 +145,14 @@ namespace ClientDependency.Core.Module
         /// <param name="extensions"></param>
         /// <param name="type"></param>
         /// <param name="regex"></param>
+        /// <param name="http"></param>
         /// <returns></returns>
         /// <remarks>
         /// For some reason ampersands that aren't html escaped are not compliant to HTML standards when they exist in 'link' or 'script' tags in URLs,
         /// we need to replace the ampersands with &amp; . This is only required for this one w3c compliancy, the URL itself is a valid URL.
         /// </remarks>
-        private string ReplaceContent(string html, string namedGroup, string[] extensions, ClientDependencyType type, string regex)
+        private static string ReplaceContent(string html, string namedGroup, string[] extensions,
+            ClientDependencyType type, string regex, HttpContextBase http)
         {
             html = Regex.Replace(html, regex,
                 (m) =>
@@ -189,7 +173,7 @@ namespace ClientDependency.Core.Module
                     try
                     {
                         var url = new Uri(grp.ToString(), UriKind.RelativeOrAbsolute);
-                        if (!url.IsLocalUri())
+                        if (!url.IsLocalUri(http))
                             return m.ToString(); //not a local uri                       
                     }
                     catch (UriFormatException)
@@ -199,7 +183,7 @@ namespace ClientDependency.Core.Module
                     }
 
                     var dependency = new BasicFile(type) { FilePath = grp.ToString() };
-                    var resolved = BaseFileRegistrationProvider.GetCompositeFileUrl(dependency.ResolveFilePath(), type);
+                    var resolved = BaseFileRegistrationProvider.GetCompositeFileUrl(dependency.ResolveFilePath(http), type, http);
                     return m.ToString().Replace(grp.ToString(), resolved.Replace("&", "&amp;"));
                 },
                 RegexOptions.Compiled);

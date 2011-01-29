@@ -15,13 +15,12 @@ namespace ClientDependency.Core.Mvc
 {
     public class DependencyRenderer : BaseLoader
     {
-
         /// <summary>
         /// Constructor based on MvcHandler 
         /// </summary>
-        /// <param name="handler"></param>
+        /// <param name="ctx"></param>
         private DependencyRenderer(HttpContextBase ctx)
-            :base(ContextKey)
+            : base(ctx)
         {
             //by default the provider is the default provider 
             Provider = ClientDependencySettings.Instance.DefaultMvcRenderer;
@@ -34,7 +33,7 @@ namespace ClientDependency.Core.Mvc
         #region Constants
         public const string ContextKey = "MvcLoader";
         private const string JsMarkupRegex = "<!--\\[Javascript:Name=\"(?<renderer>.*?)\"\\]//-->";
-        private const string CssMarkupRegex = "<!--\\[Css:Name=\"(?<renderer>.*?)\"\\]//-->"; 
+        private const string CssMarkupRegex = "<!--\\[Css:Name=\"(?<renderer>.*?)\"\\]//-->";
         #endregion
 
         #region Static methods
@@ -62,35 +61,35 @@ namespace ClientDependency.Core.Mvc
         /// create a new one in the control specified.
         /// isNew will be true if a loader was created, otherwise false if it already existed.
         /// </summary>
-        /// <param name="parent"></param>
+        /// <param name="ctx"></param>
         /// <param name="isNew"></param>
         /// <returns></returns>
         internal static DependencyRenderer TryCreate(HttpContextBase ctx, out bool isNew)
         {
-            if (DependencyRenderer.Instance(ctx) == null)
+            if (Instance(ctx) == null)
             {
                 lock (m_Locker)
                 {
                     //double check
-                    if (DependencyRenderer.Instance(ctx) == null)
+                    if (Instance(ctx) == null)
                     {
-                        DependencyRenderer loader = new DependencyRenderer(ctx);
+                        var loader = new DependencyRenderer(ctx);
                         isNew = true;
                         return loader;
-                    }                    
+                    }
                 }
-                
+
             }
-           
+
             isNew = false;
-            return DependencyRenderer.Instance(ctx);       
+            return Instance(ctx);
 
         }
 
         #endregion
 
         #region Internal Methods
-        
+
         /// <summary>
         /// This replaces the HTML placeholders that we're rendered into the html
         /// markup before the module calls this method to update the placeholders with 
@@ -107,7 +106,7 @@ namespace ClientDependency.Core.Mvc
                 {
                     var grp = m.Groups["renderer"];
                     if (grp != null)
-                    {                        
+                    {
                         return m_Output
                             .Where(x => x.Name == grp.ToString())
                             .Single()
@@ -129,7 +128,7 @@ namespace ClientDependency.Core.Mvc
                     }
                     return m.ToString();
                 }, RegexOptions.Compiled);
-            
+
             return html;
         }
 
@@ -156,9 +155,9 @@ namespace ClientDependency.Core.Mvc
             m_Paths.UnionWith(paths);
 
             return string.Format("<!--[{0}:Name=\"{1}\"]//-->"
-                , type.ToString()
+                , type
                 , rendererName);
-        } 
+        }
 
         #endregion
 
@@ -176,14 +175,14 @@ namespace ClientDependency.Core.Mvc
         /// </remarks>
         private void GenerateOutput()
         {
-            
+
             m_Dependencies
                 .ToList()
                 .ForEach(x =>
                 {
                     var renderer = ((BaseRenderer)x.Provider);
                     string js, css;
-                    renderer.RegisterDependencies(x.Dependencies, m_Paths, out js, out css);
+                    renderer.RegisterDependencies(x.Dependencies, m_Paths, out js, out css, CurrentContext);
 
                     //store the output in a new output object
                     m_Output.Add(new RendererOutput()
@@ -192,7 +191,7 @@ namespace ClientDependency.Core.Mvc
                         OutputCss = css.Replace("&", "&amp;"),
                         OutputJs = js.Replace("&", "&amp;")
                     });
-                });                       
+                });
 
         }
 
@@ -203,6 +202,6 @@ namespace ClientDependency.Core.Mvc
             public string OutputCss { get; set; }
         }
 
-        
+
     }
 }

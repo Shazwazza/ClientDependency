@@ -22,13 +22,13 @@ namespace ClientDependency.Core.Module
         /// <summary>
         /// Binds the events
         /// </summary>
-        /// <param name="context"></param>
+        /// <param name="app"></param>
         void IHttpModule.Init(HttpApplication app)
         {
             //This event is late enough that the ContentType of the request is set
             //but not too late that we've lost the ability to change the response
             //app.BeginRequest += new EventHandler(HandleRequest);
-            app.PostRequestHandlerExecute +=new EventHandler(HandleRequest);
+            app.PostRequestHandlerExecute += HandleRequest;
             LoadFilterTypes();
         }
 
@@ -43,19 +43,20 @@ namespace ClientDependency.Core.Module
         /// <param name="e"></param>
         void HandleRequest(object sender, EventArgs e)
         {
-            HttpApplication app = sender as HttpApplication;
+            var app = (HttpApplication)sender;
+            var http = new HttpContextWrapper(app.Context);
 
-            var filters = LoadFilters(app);
+            var filters = LoadFilters(http);
 
-            if (ValidateCurrentHandler(app, filters))
+            if (ValidateCurrentHandler(filters))
             {
-                ExecuteFilter(app, filters);
+                ExecuteFilter(http, filters);
             }
 
             //if debug is on, then don't compress
-            if (!ConfigurationHelper.IsCompilationDebug)
+            if (!http.IsDebuggingEnabled)
             {
-                MimeTypeCompressor c = new MimeTypeCompressor(app.Context);
+                var c = new MimeTypeCompressor(new HttpContextWrapper(app.Context));
                 c.AddCompression();
             }
         }
@@ -74,23 +75,22 @@ namespace ClientDependency.Core.Module
                 if (t != null)
                 {
                     m_FilterTypes.Add(t);
-                }                
+                }
             }
         }
 
         /// <summary>
         /// loads instances of all registered filters.
         /// </summary>
-        /// <param name="app"></param>
-        private IEnumerable<IFilter> LoadFilters(HttpApplication app)
+        /// <param name="http"></param>
+        private IEnumerable<IFilter> LoadFilters(HttpContextBase http)
         {
-            HttpContextWrapper ctx = new HttpContextWrapper(app.Context);
             var loadedFilters = new List<IFilter>();
 
             foreach (var t in m_FilterTypes)
             {
                 var filter = (IFilter)Activator.CreateInstance(t);
-                filter.SetHttpContext(ctx);
+                filter.SetHttpContext(http);
                 loadedFilters.Add(filter);
 
             }
@@ -101,32 +101,24 @@ namespace ClientDependency.Core.Module
         /// <summary>
         /// Ensure the current running handler is valid in order to proceed with the module filter.
         /// </summary>
-        /// <param name="app"></param>
+        /// <param name="filters"></param>
         /// <returns></returns>
-        private bool ValidateCurrentHandler(HttpApplication app, IEnumerable<IFilter> filters)
+        private static bool ValidateCurrentHandler(IEnumerable<IFilter> filters)
         {
-            foreach (var f in filters)
-            {
-                //if any filter validates the handler then we need to add the response filter
-                if (f.ValidateCurrentHandler()) return true;
-            }
-            return false;
+            return filters.Any(f => f.ValidateCurrentHandler());
         }
 
-        private void ExecuteFilter(HttpApplication app, IEnumerable<IFilter> filters)
+        private void ExecuteFilter(HttpContextBase http, IEnumerable<IFilter> filters)
         {
-            if (!IsCompressibleContentType(app.Response))
+            if (!IsCompressibleContentType(http.Response))
                 return;
 
-            ResponseFilterStream filter = new ResponseFilterStream(app.Response.Filter);
-            foreach (var f in filters)
+            var filter = new ResponseFilterStream(http.Response.Filter, http);
+            foreach (var f in filters.Where(f => f.CanExecute()))
             {
-                if (f.CanExecute())
-                {
-                    filter.TransformString += f.UpdateOutputHtml;
-                }
+                filter.TransformString += f.UpdateOutputHtml;
             }
-            app.Response.Filter = filter;
+            http.Response.Filter = filter;
         }
 
         /// <summary>
@@ -136,7 +128,7 @@ namespace ClientDependency.Core.Module
         /// <returns>
         /// 	<c>true</c> if the content type can be compressed; otherwise, <c>false</c>.
         /// </returns>
-        protected virtual bool IsCompressibleContentType(HttpResponse response)
+        protected virtual bool IsCompressibleContentType(HttpResponseBase response)
         {
             //TODO: Is there a better way to check the ContentType is something we want to compress?
             switch (response.ContentType.ToLower())
