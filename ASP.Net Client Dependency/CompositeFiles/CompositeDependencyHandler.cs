@@ -113,7 +113,7 @@ namespace ClientDependency.Core.CompositeFiles
                         outputBytes = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CompressBytes(cType, fileBytes);
                         context.AddCompressionResponseHeader(cType);
                         //save combined file
-                        FileInfo compositeFile = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.SaveCompositeFile(outputBytes, type);
+                        FileInfo compositeFile = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.SaveCompositeFile(outputBytes, type, context.Server);
                         if (compositeFile != null)
                         {
                             compositeFileName = compositeFile.FullName;

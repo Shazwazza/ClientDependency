@@ -41,7 +41,7 @@ namespace ClientDependency.Core.Mvc
         /// <summary>
         /// used for locking
         /// </summary>
-        private static readonly object m_Locker = new object();
+        private static readonly object Locker = new object();
 
         /// <summary>
         /// Singleton per request instance.
@@ -68,7 +68,7 @@ namespace ClientDependency.Core.Mvc
         {
             if (Instance(ctx) == null)
             {
-                lock (m_Locker)
+                lock (Locker)
                 {
                     //double check
                     if (Instance(ctx) == null)

@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Web.Configuration;
 using System.Configuration.Provider;
-using System.IO;
 using System.Web;
 using System.Configuration;
-using ClientDependency.Core.CompositeFiles;
 using ClientDependency.Core.FileRegistration.Providers;
 using ClientDependency.Core.CompositeFiles.Providers;
 using ClientDependency.Core.Logging;
@@ -16,7 +13,12 @@ namespace ClientDependency.Core.Config
 {
     public class ClientDependencySettings
     {
-        
+        /// <summary>
+        /// used for singleton
+        /// </summary>
+        private static ClientDependencySettings _settings;
+        private static readonly object Lock = new object();
+
         /// <summary>
         /// Default constructor, for use with a web context app
         /// </summary>
@@ -28,7 +30,7 @@ namespace ClientDependency.Core.Config
                     "HttpContext.Current must exist when using the empty constructor for ClientDependencySettings, otherwise use the alternative constructor");
             }
 
-            LoadProviders((ClientDependencySection)ConfigurationManager.GetSection("clientDependency"));
+            LoadProviders((ClientDependencySection)ConfigurationManager.GetSection("clientDependency"), new HttpContextWrapper(HttpContext.Current));
             
         }
 
@@ -45,35 +47,20 @@ namespace ClientDependency.Core.Config
         {
             get
             {
-                if (m_Settings == null)
+                if (_settings == null)
                 {
-                    lock(m_Lock)
+                    lock(Lock)
                     {
                         //double check
-                        if (m_Settings == null)
+                        if (_settings == null)
                         {
-                            m_Settings = new ClientDependencySettings();
+                            _settings = new ClientDependencySettings();
                         }
                     }
                 }
-                return m_Settings;
+                return _settings;
             }
         }
-
-        /// <summary>
-        /// used for singleton
-        /// </summary>
-        private static ClientDependencySettings m_Settings;
-        private static readonly object m_Lock = new object();
-        
-        private WebFormsFileRegistrationProvider m_FileRegisterProvider = null;
-        private FileRegistrationProviderCollection m_FileRegisterProviders = null;
-
-        private BaseCompositeFileProcessingProvider m_CompositeFileProvider = null;
-        private CompositeFileProcessingProviderCollection m_CompositeFileProviders = null;
-
-        private BaseRenderer m_MvcRenderer = null;
-        private RendererCollection m_MvcRenderers = null; 
 
         /// <summary>
         /// The file extensions of Client Dependencies that are file based as opposed to request based.
@@ -93,69 +80,32 @@ namespace ClientDependency.Core.Config
         
         public int Version { get; set; }
 
-        private ILogger _logger;
-        public ILogger Logger
-        {
-            get
-            {
-                return _logger;
-            }
-        }
-        public BaseRenderer DefaultMvcRenderer
-        {
-            get
-            {
-                return m_MvcRenderer;
-            }
-        }
-        public RendererCollection MvcRendererCollection
-        {
-            get
-            {
-                return m_MvcRenderers;
-            }
-        }
-        public WebFormsFileRegistrationProvider DefaultFileRegistrationProvider
-        {
-            get
-            {
-                return m_FileRegisterProvider;
-            }
-        }
-        public FileRegistrationProviderCollection FileRegistrationProviderCollection
-        {
-            get
-            {
-                return m_FileRegisterProviders;
-            }
-        }
-        public BaseCompositeFileProcessingProvider DefaultCompositeFileProcessingProvider
-        {
-            get
-            {
-                return m_CompositeFileProvider;
-            }
-        }
-        public CompositeFileProcessingProviderCollection CompositeFileProcessingProviderCollection
-        {
-            get
-            {
-                return m_CompositeFileProviders;
-            }
-        }
+        public ILogger Logger { get; private set; }
+
+        public BaseRenderer DefaultMvcRenderer { get; private set; }
+
+        public RendererCollection MvcRendererCollection { get; private set; }
+
+        public WebFormsFileRegistrationProvider DefaultFileRegistrationProvider { get; private set; }
+
+        public FileRegistrationProviderCollection FileRegistrationProviderCollection { get; private set; }
+
+        public BaseCompositeFileProcessingProvider DefaultCompositeFileProcessingProvider { get; private set; }
+
+        public CompositeFileProcessingProviderCollection CompositeFileProcessingProviderCollection { get; private set; }
 
         public ClientDependencySection ConfigSection { get; private set; }
        
         public string CompositeFileHandlerPath { get; set; }
        
-        internal void LoadProviders(ClientDependencySection section)
+        internal void LoadProviders(ClientDependencySection section, HttpContextBase http)
         {
          
             ConfigSection = section;
 
-            m_FileRegisterProviders = new FileRegistrationProviderCollection();
-            m_CompositeFileProviders = new CompositeFileProcessingProviderCollection();
-            m_MvcRenderers = new RendererCollection();
+            FileRegistrationProviderCollection = new FileRegistrationProviderCollection();
+            CompositeFileProcessingProviderCollection = new CompositeFileProcessingProviderCollection();
+            MvcRendererCollection = new RendererCollection();
 
             // if there is no section found, then create one
             if (ConfigSection == null)
@@ -165,43 +115,38 @@ namespace ClientDependency.Core.Config
             }
 
             //load the providers from the config, if there isn't config sections then add default providers
-            LoadDefaultCompositeFileConfig(ConfigSection);
+            LoadDefaultCompositeFileConfig(ConfigSection, http);
             LoadDefaultMvcFileConfig(ConfigSection);
             LoadDefaultFileRegConfig(ConfigSection);
 
             //set the defaults
 
-            m_FileRegisterProvider = m_FileRegisterProviders[ConfigSection.FileRegistrationElement.DefaultProvider];
-            if (m_FileRegisterProvider == null)
+            DefaultFileRegistrationProvider = FileRegistrationProviderCollection[ConfigSection.FileRegistrationElement.DefaultProvider];
+            if (DefaultFileRegistrationProvider == null)
                 throw new ProviderException("Unable to load default file registration provider");
 
-            m_CompositeFileProvider = m_CompositeFileProviders[ConfigSection.CompositeFileElement.DefaultProvider];
-            if (m_CompositeFileProvider == null)
+            DefaultCompositeFileProcessingProvider = CompositeFileProcessingProviderCollection[ConfigSection.CompositeFileElement.DefaultProvider];
+            if (DefaultCompositeFileProcessingProvider == null)
                 throw new ProviderException("Unable to load default composite file provider");
 
-            m_MvcRenderer = m_MvcRenderers[ConfigSection.MvcElement.DefaultRenderer];
-            if (m_MvcRenderer == null)
+            DefaultMvcRenderer = MvcRendererCollection[ConfigSection.MvcElement.DefaultRenderer];
+            if (DefaultMvcRenderer == null)
                 throw new ProviderException("Unable to load default mvc renderer");
 
             //need to check if it's an http path or a lambda path
             var path = ConfigSection.CompositeFileElement.CompositeFileHandlerPath;
-            if (path.StartsWith("~"))
-            {
-                VirtualPathUtility.ToAbsolute(ConfigSection.CompositeFileElement.CompositeFileHandlerPath);
-            }
-            else
-            {
-                CompositeFileHandlerPath = ConfigSection.CompositeFileElement.CompositeFileHandlerPath;
-            }
+            CompositeFileHandlerPath = path.StartsWith("~") 
+                ? VirtualPathUtility.ToAbsolute(ConfigSection.CompositeFileElement.CompositeFileHandlerPath) 
+                : ConfigSection.CompositeFileElement.CompositeFileHandlerPath;
 
-            this.Version = ConfigSection.Version;
+            Version = ConfigSection.Version;
 
             FileBasedDependencyExtensionList = ConfigSection.FileRegistrationElement.FileBasedDependencyExtensionList.ToList();
 
 
             if (string.IsNullOrEmpty(ConfigSection.LoggerType))
             {
-                _logger = new NullLogger();
+                Logger = new NullLogger();
             }
             else
             {
@@ -211,7 +156,7 @@ namespace ClientDependency.Core.Config
                     throw new ArgumentException("The loggerType '" + ConfigSection.LoggerType + "' does not inherit from ClientDependency.Core.Logging.ILogger");
                 }
 
-                _logger = (ILogger)Activator.CreateInstance(t);
+                Logger = (ILogger)Activator.CreateInstance(t);
             }
                     
         }
@@ -223,34 +168,40 @@ namespace ClientDependency.Core.Config
                 //create new providers
                 var php = new PageHeaderProvider();
                 php.Initialize(PageHeaderProvider.DefaultName, null);
-                m_FileRegisterProviders.Add(php);
+                FileRegistrationProviderCollection.Add(php);
 
                 var csrp = new LazyLoadProvider();
                 csrp.Initialize(LazyLoadProvider.DefaultName, null);
-                m_FileRegisterProviders.Add(csrp);
+                FileRegistrationProviderCollection.Add(csrp);
 
                 var lcp = new LoaderControlProvider();
                 lcp.Initialize(LoaderControlProvider.DefaultName, null);
-                m_FileRegisterProviders.Add(lcp);
+                FileRegistrationProviderCollection.Add(lcp);
             }
             else
             {
-                ProvidersHelper.InstantiateProviders(section.FileRegistrationElement.Providers, m_FileRegisterProviders, typeof(BaseFileRegistrationProvider));
+                ProvidersHelper.InstantiateProviders(section.FileRegistrationElement.Providers, FileRegistrationProviderCollection, typeof(BaseFileRegistrationProvider));
             }
 
         }
 
-        private void LoadDefaultCompositeFileConfig(ClientDependencySection section)
+        private void LoadDefaultCompositeFileConfig(ClientDependencySection section, HttpContextBase http)
         {
             if (section.CompositeFileElement.Providers.Count == 0)
             {
                 var cfpp = new CompositeFileProcessingProvider();
                 cfpp.Initialize(CompositeFileProcessingProvider.DefaultName, null);
-                m_CompositeFileProviders.Add(cfpp);
+                cfpp.Initialize(http);
+                CompositeFileProcessingProviderCollection.Add(cfpp);
             }
             else
             {
-                ProvidersHelper.InstantiateProviders(section.CompositeFileElement.Providers, m_CompositeFileProviders, typeof(BaseCompositeFileProcessingProvider));                
+                ProvidersHelper.InstantiateProviders(section.CompositeFileElement.Providers, CompositeFileProcessingProviderCollection, typeof(BaseCompositeFileProcessingProvider));
+                //since the BaseCompositeFileProcessingProvider is an IHttpProvider, we need to do the http init
+                foreach(var p in CompositeFileProcessingProviderCollection.Cast<BaseCompositeFileProcessingProvider>())
+                {
+                    p.Initialize(http);
+                }
             }
             
         }
@@ -261,11 +212,11 @@ namespace ClientDependency.Core.Config
             {
                 var mvc = new StandardRenderer();
                 mvc.Initialize(StandardRenderer.DefaultName, null);
-                m_MvcRenderers.Add(mvc);
+                MvcRendererCollection.Add(mvc);
             }
             else
             {
-                ProvidersHelper.InstantiateProviders(section.MvcElement.Renderers, m_MvcRenderers, typeof(BaseRenderer));
+                ProvidersHelper.InstantiateProviders(section.MvcElement.Renderers, MvcRendererCollection, typeof(BaseRenderer));
             }
 
         }

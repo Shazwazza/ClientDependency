@@ -19,41 +19,36 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 	public class CompositeFileProcessingProvider : BaseCompositeFileProcessingProvider
 	{
 
-        public CompositeFileProcessingProvider()
-        {
-        }
-
-	    public CompositeFileProcessingProvider(Func<string, string> mapPath)
-            : base(mapPath)
-        {
-        }
-
 	    public const string DefaultName = "CompositeFileProcessor";
 
-		/// <summary>
-		/// Saves the file's bytes to disk with a hash of the byte array
-		/// </summary>
-		/// <param name="fileContents"></param>
-		/// <param name="type"></param>
-		/// <returns>The new file path</returns>
-		/// <remarks>
-		/// the extension will be: .cdj for JavaScript and .cdc for CSS
-		/// </remarks>
-		public override FileInfo SaveCompositeFile(byte[] fileContents, ClientDependencyType type)
+	    /// <summary>
+	    /// Saves the file's bytes to disk with a hash of the byte array
+	    /// </summary>
+	    /// <param name="fileContents"></param>
+	    /// <param name="type"></param>
+	    /// <param name="server"></param>
+	    /// <returns>The new file path</returns>
+	    /// <remarks>
+	    /// the extension will be: .cdj for JavaScript and .cdc for CSS
+	    /// </remarks>
+	    public override FileInfo SaveCompositeFile(byte[] fileContents, ClientDependencyType type, HttpServerUtilityBase server)
 		{
             //don't save the file if composite files are disabled.
-            if (!this.PersistCompositeFiles)
+            if (!PersistCompositeFiles)
                 return null;
 
-			if (!ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CompositeFilePath.Exists)
-				ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CompositeFilePath.Create();
-			var fi = new FileInfo(
-                Path.Combine(ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CompositeFilePath.FullName,
-					ClientDependencySettings.Instance.Version.ToString() + "_"
+            if (!CompositeFilePath.Exists)
+                CompositeFilePath.Create();
+			
+            var fi = new FileInfo(
+                Path.Combine(CompositeFilePath.FullName,
+					ClientDependencySettings.Instance.Version + "_"
                         + Guid.NewGuid().ToString("N") + ".cd" + type.ToString().Substring(0, 1).ToUpper()));
-			if (fi.Exists)
+			
+            if (fi.Exists)
 				fi.Delete();
-			var fs = fi.Create();
+			
+            var fs = fi.Create();
 			fs.Write(fileContents, 0, fileContents.Length);
 			fs.Close();
 			return fi;
