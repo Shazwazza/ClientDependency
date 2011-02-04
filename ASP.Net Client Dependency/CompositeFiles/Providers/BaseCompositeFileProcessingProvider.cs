@@ -11,6 +11,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 {
     public abstract class BaseCompositeFileProcessingProvider : ProviderBase, IHttpProvider
 	{
+        private const string DefaultDependencyPath = "~/App_Data/ClientDependency";
         private readonly string _byteOrderMarkUtf8 = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
         
         /// <summary>
@@ -25,7 +26,9 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         {
             PersistCompositeFiles = true;
             EnableCssMinify = true;
-            EnableJsMinify = true;              
+            EnableJsMinify = true;
+
+            _compositeFilePath = DefaultDependencyPath;
         }
 
         /// <summary>
@@ -60,7 +63,10 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
         {
             base.Initialize(name, config);
-          
+
+            if (config == null)
+                return;                
+
             if (config["enableCssMinify"] != null)
             {
                 bool enableCssMinify;
@@ -82,7 +88,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             }
 
 
-            _compositeFilePath = config["compositeFilePath"] ?? "~/App_Data/ClientDependency";
+            _compositeFilePath = config["compositeFilePath"] ?? DefaultDependencyPath;
            
             
         }

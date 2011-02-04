@@ -8,6 +8,7 @@ using System.Configuration;
 using ClientDependency.Core.FileRegistration.Providers;
 using ClientDependency.Core.CompositeFiles.Providers;
 using ClientDependency.Core.Logging;
+using System.IO;
 
 namespace ClientDependency.Core.Config
 {
@@ -34,11 +35,12 @@ namespace ClientDependency.Core.Config
             
         }
 
-        //internal ClientDependencySettings(FileInfo configFile, HttpContextBase ctx)
-        //{            
-        //    var config = ConfigurationManager.OpenExeConfiguration(configFile.FullName);
-        //    LoadProviders((ClientDependencySection)config.GetSection("clientDependency"));
-        //}
+        internal ClientDependencySettings(FileInfo configFile, HttpContextBase ctx)
+        {
+            var fileMap = new ExeConfigurationFileMap { ExeConfigFilename = configFile.FullName };
+            var configuration = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
+            LoadProviders((ClientDependencySection)configuration.GetSection("clientDependency"), ctx);
+        }
 
         /// <summary>
         /// Singleton, used for web apps
@@ -135,13 +137,13 @@ namespace ClientDependency.Core.Config
 
             //need to check if it's an http path or a lambda path
             var path = ConfigSection.CompositeFileElement.CompositeFileHandlerPath;
-            CompositeFileHandlerPath = path.StartsWith("~") 
-                ? VirtualPathUtility.ToAbsolute(ConfigSection.CompositeFileElement.CompositeFileHandlerPath) 
+            CompositeFileHandlerPath = path.StartsWith("~")
+                ? VirtualPathUtility.ToAbsolute(ConfigSection.CompositeFileElement.CompositeFileHandlerPath, http.Request.ApplicationPath) 
                 : ConfigSection.CompositeFileElement.CompositeFileHandlerPath;
 
             Version = ConfigSection.Version;
 
-            FileBasedDependencyExtensionList = ConfigSection.FileRegistrationElement.FileBasedDependencyExtensionList.ToList();
+            FileBasedDependencyExtensionList = ConfigSection.FileBasedDependencyExtensionList.ToList();
 
 
             if (string.IsNullOrEmpty(ConfigSection.LoggerType))
