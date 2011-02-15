@@ -10,38 +10,46 @@ namespace ClientDependency.Core.Mvc
     public static class HtmlHelperExtensions
     {
 
-        public static void RequiresJs(this HtmlHelper html, string filePath)
+        public static HtmlHelper RequiresJs(this HtmlHelper html, string filePath)
         {
             html.ViewContext.GetLoader().RegisterDependency(filePath, ClientDependencyType.Javascript);
+            return html;
         }
-        public static void RequiresJs(this HtmlHelper html, string filePath, string pathNameAlias)
+        public static HtmlHelper RequiresJs(this HtmlHelper html, string filePath, string pathNameAlias)
         {
             html.ViewContext.GetLoader().RegisterDependency(filePath, pathNameAlias, ClientDependencyType.Javascript);
+            return html;
         }
-        public static void RequiresJs(this HtmlHelper html, string filePath, string pathNameAlias, int priority)
+        public static HtmlHelper RequiresJs(this HtmlHelper html, string filePath, string pathNameAlias, int priority)
         {
             html.ViewContext.GetLoader().RegisterDependency(priority, filePath, pathNameAlias, ClientDependencyType.Javascript);
+            return html;
         }
-        public static void RequiresJs(this HtmlHelper html, string filePath, int priority)
+        public static HtmlHelper RequiresJs(this HtmlHelper html, string filePath, int priority)
         {
             html.ViewContext.GetLoader().RegisterDependency(priority, filePath, ClientDependencyType.Javascript);
+            return html;
         }
 
-        public static void RequiresCss(this HtmlHelper html, string filePath)
+        public static HtmlHelper RequiresCss(this HtmlHelper html, string filePath)
         {
             html.ViewContext.GetLoader().RegisterDependency(filePath, ClientDependencyType.Css);
+            return html;
         }
-        public static void RequiresCss(this HtmlHelper html, string filePath, string pathNameAlias)
+        public static HtmlHelper RequiresCss(this HtmlHelper html, string filePath, string pathNameAlias)
         {
             html.ViewContext.GetLoader().RegisterDependency(filePath, pathNameAlias, ClientDependencyType.Css);
+            return html;
         }
-        public static void RequiresCss(this HtmlHelper html, string filePath, string pathNameAlias, int priority)
+        public static HtmlHelper RequiresCss(this HtmlHelper html, string filePath, string pathNameAlias, int priority)
         {
             html.ViewContext.GetLoader().RegisterDependency(priority, filePath, pathNameAlias, ClientDependencyType.Css);
+            return html;
         }
-        public static void RequiresCss(this HtmlHelper html, string filePath, int priority)
+        public static HtmlHelper RequiresCss(this HtmlHelper html, string filePath, int priority)
         {
             html.ViewContext.GetLoader().RegisterDependency(priority, filePath, ClientDependencyType.Css);
+            return html;
         }
 
         public static string RenderJsHere(this HtmlHelper html)

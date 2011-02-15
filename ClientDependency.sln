@@ -2,9 +2,6 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solutions Items", "Solutions Items", "{1CB96BA3-1B76-4954-A798-99C6B3CD591B}"
-	ProjectSection(SolutionItems) = preProject
-		SolutionInfo.cs = SolutionInfo.cs
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientDependency.Core", "ASP.Net Client Dependency\ClientDependency.Core.csproj", "{EA35B06D-0CC8-4830-A3F7-9BB3D36D0FAF}"
 EndProject
