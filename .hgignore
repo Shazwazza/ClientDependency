@@ -1,0 +1,9 @@
+syntax: glob
+_ReSharper*
+*/bin/*
+*/obj/*
+TestResults/*
+*.suo
+*.vsmdi
+*.sdf
+*ReSharper.user
