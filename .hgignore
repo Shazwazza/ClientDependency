@@ -7,3 +7,4 @@ TestResults/*
 *.vsmdi
 *.sdf
 *ReSharper.user
+*.csproj.user
