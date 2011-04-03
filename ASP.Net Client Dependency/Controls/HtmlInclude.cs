@@ -9,7 +9,6 @@ namespace ClientDependency.Core.Controls
     [ToolboxData("<{0}:HtmlInclude runat=\"server\"></{0}:HtmlInclude>")]
     public class HtmlInclude : Literal
     {
-        public const int DefaultPriority = 100;
         public const string TagPattern = @"<{0}((\s+\w+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)+\s*|\s*)/?>";
         public const string AttributePattern = @"{0}(\s*=\s*(?:""(?<val>.*?)""|'(?<val>.*?)'|(?<val>[^'"">\s]+)))";
 
@@ -52,7 +51,7 @@ namespace ClientDependency.Core.Controls
 
                     if (srcMatch.Success)
                     {
-                        loader.RegisterDependency(DefaultPriority + count,
+                        loader.RegisterDependency(Constants.DefaultPriority + count,
                             srcMatch.Groups["val"].Value,
                             ClientDependencyType.Css);
 
@@ -83,7 +82,7 @@ namespace ClientDependency.Core.Controls
 
                     if (srcMatch.Success)
                     {
-                        loader.RegisterDependency(DefaultPriority + count,
+                        loader.RegisterDependency(Constants.DefaultPriority + count,
                             srcMatch.Groups["val"].Value,
                             ClientDependencyType.Javascript);
 

@@ -198,7 +198,7 @@ namespace ClientDependency.Core.Controls
 		/// <param name="type"></param>
 		public ClientDependencyLoader RegisterDependency(string filePath, string pathNameAlias, ClientDependencyType type)
 		{
-			m_Base.RegisterDependency(ClientDependencyInclude.DefaultPriority, filePath, pathNameAlias, type);
+            m_Base.RegisterDependency(Constants.DefaultPriority, filePath, pathNameAlias, type);
 			return this;
 		}
 		

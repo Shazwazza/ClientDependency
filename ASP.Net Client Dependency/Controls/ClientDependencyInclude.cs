@@ -9,8 +9,8 @@ namespace ClientDependency.Core.Controls
 	{
 
 		public ClientDependencyInclude()
-		{			
-            Priority = DefaultPriority;			
+		{
+            Priority = Constants.DefaultPriority;			
 			PathNameAlias = "";
 		}
 
@@ -21,16 +21,7 @@ namespace ClientDependency.Core.Controls
 			FilePath = file.FilePath;
 			DependencyType = file.DependencyType;
 		}
-
-        /// <summary>
-        /// If a priority is not set, the default will be 100.
-        /// </summary>
-        /// <remarks>
-        /// This will generally mean that if a developer doesn't specify a priority it will come after all other dependencies that 
-        /// have unless the priority is explicitly set above 100.
-        /// </remarks>
-        public const int DefaultPriority = 100;
-
+        
 		public ClientDependencyType DependencyType { get; internal set; }
 
 		public string FilePath { get; set; }
