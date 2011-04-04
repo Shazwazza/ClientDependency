@@ -82,3 +82,9 @@ $MvcNuSpec = Join-Path -Path $MvcFolder -ChildPath "ClientDependency-Mvc.nuspec"
   
 $NuGet = Join-Path $SolutionRoot -ChildPath "Dependencies\NuGet.exe"
 & $NuGet pack $MvcNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber
+
+""
+"Build $ReleaseVersionNumber is done!"
+"NuGet packages also created, so if you want to push them just run:"
+"  nuget push $CoreNuSpec"
+"  nuget push $MvcNuSpec"
