@@ -17,13 +17,7 @@ namespace ClientDependency.Core.Mvc
         #region RequiresJsResource Extensions
         public static HtmlHelper RequiresJsResource(this HtmlHelper html, Type resourceType, string resourcePath, int priority)
         {
-            //the only way to get a web resource url it to get the underlying webforms page object
-            var page = html.ViewContext.HttpContext.CurrentHandler as Page;
-            if (page == null)
-            {
-                throw new ArgumentException("The controller provided exists in an HttpContext that has not 'Page' object");
-            }
-
+            var page = new Page();
             var resourceUrl = page.ClientScript.GetWebResourceUrl(resourceType, resourcePath);
             if (string.IsNullOrEmpty(resourceUrl))
             {
@@ -43,13 +37,7 @@ namespace ClientDependency.Core.Mvc
         #region RequiresCssResource Extensions
         public static HtmlHelper RequiresCssResource(this HtmlHelper html, Type resourceType, string resourcePath, int priority)
         {
-            //the only way to get a web resource url it to get the underlying webforms page object
-            var page = html.ViewContext.HttpContext.CurrentHandler as Page;
-            if (page == null)
-            {
-                throw new ArgumentException("The controller provided exists in an HttpContext that has not 'Page' object");
-            }
-
+            var page = new Page();
             var resourceUrl = page.ClientScript.GetWebResourceUrl(resourceType, resourcePath);
             if (string.IsNullOrEmpty(resourceUrl))
             {
