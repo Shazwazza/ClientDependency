@@ -66,7 +66,7 @@ namespace ClientDependency.Core.CompositeFiles
                 {
                     _doc = XDocument.Load(_xmlFile.FullName);
                 }
-                catch (XmlException ex)
+                catch (XmlException)
                 {
                     //if it's an xml exception, create a new one and try one more time... should always work.
                     CreateNewXmlFile();
