@@ -23,7 +23,8 @@ $ClrVersion = (Get-ItemProperty -path "HKLM:\SOFTWARE$RegistryArchitecturePath\M
 $MSBuild = "$Env:SYSTEMROOT\Microsoft.NET\Framework$FrameworkArchitecturePath\$ClrVersion\MSBuild.exe"
 
 # Make sure we don't have a release folder for this version already
-$ReleaseFolder = Join-Path -Path $SolutionRoot -ChildPath "build\Releases\v$ReleaseVersionNumber";
+$BuildFolder = Join-Path -Path $SolutionRoot -ChildPath "build";
+$ReleaseFolder = Join-Path -Path $BuildFolder -ChildPath "Releases\v$ReleaseVersionNumber";
 if ((Get-Item $ReleaseFolder -ErrorAction SilentlyContinue) -ne $null)
 {
 	Write-Warning "$ReleaseFolder already exists on your local machine. It will now be deleted."
@@ -60,3 +61,24 @@ Copy-Item "$CoreBinFolder\*.dll" -Destination $CoreFolder
 
 $MvcBinFolder = Join-Path -Path $SolutionRoot -ChildPath "ClientDependency.Mvc\bin\Release";
 Copy-Item "$MvcBinFolder\*.dll" -Destination $MvcFolder -Include "ClientDependency.Core.Mvc.dll" 
+
+$CoreNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency.nuspec";
+Copy-Item $CoreNuSpecSource -Destination $CoreFolder
+Copy-Item "$BuildFolder\nuget-transforms\*.transform" -Destination (New-Item (Join-Path -Path $CoreFolder -ChildPath "nuget-transforms") -Type directory);
+
+$CoreNuSpec = Join-Path -Path $CoreFolder -ChildPath "ClientDependency.nuspec";
+
+$NuGet = Join-Path $SolutionRoot -ChildPath "Dependencies\NuGet.exe" 
+& $NuGet pack $CoreNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber
+
+
+$MvcNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency-Mvc.nuspec";
+Copy-Item $MvcNuSpecSource -Destination $MvcFolder
+
+$MvcNuSpec = Join-Path -Path $MvcFolder -ChildPath "ClientDependency-Mvc.nuspec"
+(gc -Path (Join-Path -Path $MvcFolder -ChildPath "ClientDependency-Mvc.nuspec")) `
+	-replace "(?<=dependency id=`"ClientDependency`" version=`")[.\d]*(?=`")", $ReleaseVersionNumber |
+	sc -Path $MvcNuSpec -Encoding UTF8
+  
+$NuGet = Join-Path $SolutionRoot -ChildPath "Dependencies\NuGet.exe"
+& $NuGet pack $MvcNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber

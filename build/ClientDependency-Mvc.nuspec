@@ -16,6 +16,6 @@
 	</dependencies>
   </metadata> 
   <files>
-    <file src="Library\Mvc\*.dll" target="lib" />
+    <file src="*.dll" target="lib" />
   </files>
 </package>

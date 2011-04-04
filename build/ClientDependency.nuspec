@@ -13,7 +13,7 @@
 	<requireLicenseAcceptance>false</requireLicenseAcceptance>
   </metadata> 
   <files>
-    <file src="Library\*.dll" target="lib" />
-	<file src="nuget-transform\*.*" target="Content" />
+    <file src="*.dll" target="lib" />
+	<file src="nuget-transforms\*.*" target="Content" />
   </files>
 </package>
