@@ -82,6 +82,7 @@
     <Compile Include="Config\RogueFileCompressionElement.cs" />
     <Compile Include="Config\RogueFileCompressionExcludeCollection.cs" />
     <Compile Include="Config\RogueFileCompressionExcludeElement.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="ControlExtensions.cs" />
     <Compile Include="Controls\HtmlInclude.cs" />
     <Compile Include="FileRegistration\Providers\BaseRenderer.cs" />
