@@ -6,7 +6,7 @@
   <clientDependency version="1">
 
     <!-- This section is used for Web Forms only, the enableCompositeFiles="true" is optional and by default is set to true -->
-    <fileRegistration defaultProvider="LoaderControlProvider" fileDependencyExtensions=".js,.css">
+    <fileRegistration defaultProvider="LoaderControlProvider">
       <providers>
         <add name="PageHeaderProvider" type="ClientDependency.Core.FileRegistration.Providers.PageHeaderProvider, ClientDependency.Core"
              enableCompositeFiles="true"/>
