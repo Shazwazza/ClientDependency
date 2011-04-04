@@ -109,7 +109,7 @@ namespace ClientDependency.Core
         
         public void RegisterDependency(string filePath, string pathNameAlias, ClientDependencyType type)
         {
-            RegisterDependency(ClientDependencyInclude.DefaultPriority, filePath, pathNameAlias, type);
+            RegisterDependency(Constants.DefaultPriority, filePath, pathNameAlias, type);
         }
 
         /// <summary>

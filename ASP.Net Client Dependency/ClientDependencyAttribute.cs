@@ -4,6 +4,20 @@ using System.Text;
 
 namespace ClientDependency.Core
 {
+
+
+    public static class Constants
+    {
+        /// <summary>
+        /// If a priority is not set, the default will be 100.
+        /// </summary>
+        /// <remarks>
+        /// This will generally mean that if a developer doesn't specify a priority it will come after all other dependencies that 
+        /// have unless the priority is explicitly set above 100.
+        /// </remarks>
+        public const int DefaultPriority = 100;
+    }
+
 	/// <summary>
 	/// This attribute is used for data types that uses client assets like Javascript and CSS for liveediting.
 	/// The Live Editing feature in umbraco will look for this attribute and preload all dependencies to the page
@@ -14,18 +28,11 @@ namespace ClientDependency.Core
 	{
         public ClientDependencyAttribute()
         {
-            Priority = DefaultPriority;
+            Priority = Constants.DefaultPriority;
 			PathNameAlias = "";
         }
 
-        /// <summary>
-        /// If a priority is not set, the default will be 100.
-        /// </summary>
-        /// <remarks>
-        /// This will generally mean that if a developer doesn't specify a priority it will come after all other dependencies that 
-        /// have unless the priority is explicitly set above 100.
-        /// </remarks>
-        protected const int DefaultPriority = 100;
+       
 
 		/// <summary>
 		/// Gets or sets the priority.
@@ -59,11 +66,11 @@ namespace ClientDependency.Core
 		public ClientDependencyType DependencyType { get; set; }
 
 		public ClientDependencyAttribute(ClientDependencyType dependencyType, string fullFilePath)
-			: this(DefaultPriority, dependencyType, fullFilePath, string.Empty)
+            : this(Constants.DefaultPriority, dependencyType, fullFilePath, string.Empty)
 		{ }
 
 		public ClientDependencyAttribute(ClientDependencyType dependencyType, string fileName, string pathNameAlias)
-			: this(DefaultPriority, dependencyType, fileName, pathNameAlias)
+            : this(Constants.DefaultPriority, dependencyType, fileName, pathNameAlias)
 		{ }
 
 		/// <summary>
@@ -77,14 +84,14 @@ namespace ClientDependency.Core
 		{ }
 
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ClientDependencyAttribute"/> class.
-		/// </summary>
-		/// <param name="priority">The priority.</param>
-		/// <param name="dependencyType">Type of the dependency.</param>
-		/// <param name="filePath">The file path to the dependency.</param>
-		/// <param name="appendUmbracoPath">if set to <c>true</c> the current umbraco path will be prefixed to the filePath.</param>
-		public ClientDependencyAttribute(int priority, ClientDependencyType dependencyType, string fileName, string pathNameAlias)
+	    /// <summary>
+	    /// Initializes a new instance of the <see cref="ClientDependencyAttribute"/> class.
+	    /// </summary>
+	    /// <param name="priority">The priority.</param>
+	    /// <param name="dependencyType">Type of the dependency.</param>
+	    /// <param name="fileName"></param>
+	    /// <param name="pathNameAlias"></param>
+	    public ClientDependencyAttribute(int priority, ClientDependencyType dependencyType, string fileName, string pathNameAlias)
 		{
 			if (String.IsNullOrEmpty(fileName))
 				throw new ArgumentNullException("fileName");
