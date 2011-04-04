@@ -28,7 +28,7 @@ namespace ClientDependency.Core.Mvc
 
         public bool CanExecute()
         {
-            return (CurrentContext.CurrentHandler is MvcHandler);
+            return CurrentContext.CurrentHandler is MvcHandler && IsCompressibleContentType(CurrentContext.Response);
         }
 
         public bool ValidateCurrentHandler()
@@ -70,5 +70,24 @@ namespace ClientDependency.Core.Mvc
 
         #endregion
 
+        protected virtual bool IsCompressibleContentType(HttpResponseBase response)
+        {
+            //TODO: Is there a better way to check the ContentType is something we want to compress?
+            switch (response.ContentType.ToLower())
+            {
+                case "text/html":
+                case "text/css":
+                case "text/plain":
+                case "application/x-javascript":
+                case "text/javascript":
+                case "text/xml":
+                case "application/xml":
+                case "":
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
     }
 }
