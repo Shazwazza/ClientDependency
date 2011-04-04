@@ -8,3 +8,4 @@ TestResults/*
 *.sdf
 *ReSharper.user
 *.csproj.user
+*build/Releases/*
