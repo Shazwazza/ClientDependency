@@ -110,9 +110,6 @@ namespace ClientDependency.Core.Module
 
         private void ExecuteFilter(HttpContextBase http, IEnumerable<IFilter> filters)
         {
-            if (!IsCompressibleContentType(http.Response))
-                return;
-
             var filter = new ResponseFilterStream(http.Response.Filter, http);
             foreach (var f in filters.Where(f => f.CanExecute()))
             {
@@ -121,32 +118,6 @@ namespace ClientDependency.Core.Module
             http.Response.Filter = filter;
         }
 
-        /// <summary>
-        /// Determines whether the content type can be compressed
-        /// </summary>
-        /// <param name="response">The HttpRequest to check.</param>
-        /// <returns>
-        /// 	<c>true</c> if the content type can be compressed; otherwise, <c>false</c>.
-        /// </returns>
-        protected virtual bool IsCompressibleContentType(HttpResponseBase response)
-        {
-            //TODO: Is there a better way to check the ContentType is something we want to compress?
-            switch (response.ContentType.ToLower())
-            {
-                case "text/html":
-                case "text/css":
-                case "text/plain":
-                case "application/x-javascript":
-                case "text/javascript":
-                case "text/xml":
-                case "application/xml":
-                case "":
-                    return true;
-
-                default:
-                    return false;
-            }
-        }
         #endregion
 
     }

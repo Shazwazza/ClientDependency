@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Web;
+﻿using System.Web;
 using System.Web.Mvc;
 using ClientDependency.Core.Module;
 
@@ -14,8 +10,7 @@ namespace ClientDependency.Core.Mvc
     /// </summary>
     public class MvcFilter : IFilter
     {
-
-        private MvcRogueFileFilter m_RogueFilter = new MvcRogueFileFilter();
+        private readonly MvcRogueFileFilter _rogueFileFilter = new MvcRogueFileFilter();
 
         #region IFilter Members
 
@@ -28,7 +23,7 @@ namespace ClientDependency.Core.Mvc
             CurrentContext = ctx;
 
             //set the context for the internal rogue filter
-            m_RogueFilter.SetHttpContext(ctx);
+            _rogueFileFilter.SetHttpContext(ctx);
         }
 
         public bool CanExecute()
@@ -61,10 +56,8 @@ namespace ClientDependency.Core.Mvc
                     var output  = r.ParseHtmlPlaceholders(html);
 
                     //get the rogue filter going
-                    if (m_RogueFilter.CanExecute())
-                    {
-                        output = m_RogueFilter.UpdateOutputHtml(output);
-                    }
+                    if (_rogueFileFilter.CanExecute())
+                        output = _rogueFileFilter.UpdateOutputHtml(output);
 
                     return output;
                 }                
