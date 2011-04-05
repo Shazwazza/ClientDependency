@@ -9,3 +9,4 @@ TestResults/*
 *ReSharper.user
 *.csproj.user
 *build/Releases/*
+*/App_Data/ClientDependency/*

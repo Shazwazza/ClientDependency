@@ -10,7 +10,7 @@ using ClientDependency.Core.FileRegistration.Providers;
 namespace ClientDependency.Core.Controls
 {
 	[ParseChildren(typeof(ClientDependencyPath), ChildrenAsProperties = true)]
-	public sealed class ClientDependencyLoader : Control
+	public class ClientDependencyLoader : Control
 	{
         
 		/// <summary>
