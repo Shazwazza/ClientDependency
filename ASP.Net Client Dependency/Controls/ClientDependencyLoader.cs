@@ -73,13 +73,19 @@ namespace ClientDependency.Core.Controls
             }
         }
 
+        [Obsolete("Use the GetInstance() method instead to pass in an HttpContext object")]
+        public static ClientDependencyLoader Instance
+        {
+            get { return GetInstance(new HttpContextWrapper(HttpContext.Current)); }
+        }
+
 		/// <summary>
 		/// Singleton per request instance.
 		/// </summary>
 		/// <exception cref="NullReferenceException">
 		/// If no ClientDependencyLoader control exists on the current page, an exception is thrown.
 		/// </exception>
-		public static ClientDependencyLoader Instance(HttpContextBase ctx)
+		public static ClientDependencyLoader GetInstance(HttpContextBase ctx)
 		{
             if (!ctx.Items.Contains(ContextKey))
 				return null;
@@ -148,7 +154,7 @@ namespace ClientDependency.Core.Controls
 	    /// <returns></returns>
 	    public static ClientDependencyLoader TryCreate(Control parent, HttpContextBase http, out bool isNew)
 		{
-            if (Instance(http) == null)
+            if (GetInstance(http) == null)
 			{
 				var loader = new ClientDependencyLoader();
 				parent.Controls.Add(loader);
@@ -156,7 +162,7 @@ namespace ClientDependency.Core.Controls
 				return loader;
 			}
 	        isNew = false;
-            return Instance(http);
+            return GetInstance(http);
 		}        
 
 		#endregion

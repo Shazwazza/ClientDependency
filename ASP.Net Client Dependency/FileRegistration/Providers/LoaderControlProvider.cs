@@ -104,7 +104,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
         private static void AddToControl(HttpContextBase http, string literal)
 		{          
 			var dCtl = new LiteralControl(literal);
-          	ClientDependencyLoader.Instance(http).Controls.Add(dCtl);           
+          	ClientDependencyLoader.GetInstance(http).Controls.Add(dCtl);           
 		}
 	}
 }

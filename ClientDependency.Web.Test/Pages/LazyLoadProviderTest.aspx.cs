@@ -17,10 +17,10 @@ namespace ClientDependency.Web.Test.Pages
             var http = new HttpContextWrapper(Context);
 
             //Changes the provider to be used at runtime
-            ClientDependencyLoader.Instance(http).ProviderName = LazyLoadProvider.DefaultName;
+            ClientDependencyLoader.GetInstance(http).ProviderName = LazyLoadProvider.DefaultName;
 
             //dynamically register the dependency
-            ClientDependencyLoader.Instance(http).RegisterDependency("Content.css", "Styles", ClientDependencyType.Css);
+            ClientDependencyLoader.GetInstance(http).RegisterDependency("Content.css", "Styles", ClientDependencyType.Css);
 
         }
     }

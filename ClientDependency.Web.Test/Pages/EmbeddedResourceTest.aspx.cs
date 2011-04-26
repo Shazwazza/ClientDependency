@@ -21,7 +21,7 @@ namespace ClientDependency.Web.Test.Pages
             var embeddedCssPath = Page.ClientScript.GetWebResourceUrl(typeof(EmbeddedResourceTest), "ClientDependency.Web.Test.Pages.embedded.css");
 
             //embed the web resource! sweeet.
-            ClientDependencyLoader.Instance(http).RegisterDependency(embeddedCssPath, Core.ClientDependencyType.Css);
+            ClientDependencyLoader.GetInstance(http).RegisterDependency(embeddedCssPath, Core.ClientDependencyType.Css);
 
         }
     }
