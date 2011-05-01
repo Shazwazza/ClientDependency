@@ -141,7 +141,7 @@ namespace ClientDependency.Core.CompositeFiles
                 }
             }
 
-            SetCaching(context, compositeFileName);
+            SetCaching(context, compositeFileName, fileset);
             return outputBytes;
         }
 
@@ -166,7 +166,9 @@ namespace ClientDependency.Core.CompositeFiles
         /// Sets the output cache parameters and also the client side caching parameters
         /// </summary>
         /// <param name="context"></param>
-        private void SetCaching(HttpContextBase context, string fileName)
+        /// <param name="fileName">The name of the file that has been saved to disk</param>
+        /// <param name="fileset">The Base64 encoded string supplied in the query string for the handler</param>
+        private void SetCaching(HttpContextBase context, string fileName, string fileset)
         {
             if (string.IsNullOrEmpty(fileName))
             {
@@ -184,8 +186,8 @@ namespace ClientDependency.Core.CompositeFiles
             cache.SetMaxAge(duration);
             cache.SetValidUntilExpires(true);
             cache.SetLastModified(DateTime.Now);
-            
-            cache.SetETag(FormsAuthentication.HashPasswordForStoringInConfigFile(fileName, "MD5"));
+
+            cache.SetETag(FormsAuthentication.HashPasswordForStoringInConfigFile(fileset, "MD5"));
             
             //set server OutputCache to vary by our params
             cache.VaryByParams["t"] = true;
