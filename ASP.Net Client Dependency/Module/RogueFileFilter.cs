@@ -167,6 +167,7 @@ namespace ClientDependency.Core.Module
                         || grp.ToString().StartsWith(ClientDependencySettings.Instance.CompositeFileHandlerPath))
                         return m.ToString();
 
+                    
                     //make sure that it's an internal request, though we can deal with external 
                     //requests, we'll leave that up to the developer to register an external request
                     //explicitly if they want to include in the composite scripts.
@@ -174,7 +175,13 @@ namespace ClientDependency.Core.Module
                     {
                         var url = new Uri(grp.ToString(), UriKind.RelativeOrAbsolute);
                         if (!url.IsLocalUri(http))
-                            return m.ToString(); //not a local uri                       
+                            return m.ToString(); //not a local uri        
+                        else
+                        {
+                            var dependency = new BasicFile(type) { FilePath = url.AbsolutePath };
+                            var resolved = BaseFileRegistrationProvider.GetCompositeFileUrl(dependency.ResolveFilePath(http), type, http);
+                            return m.ToString().Replace(grp.ToString(), resolved.Replace("&", "&amp;"));
+                        }
                     }
                     catch (UriFormatException)
                     {
@@ -182,9 +189,6 @@ namespace ClientDependency.Core.Module
                         return m.ToString();
                     }
 
-                    var dependency = new BasicFile(type) { FilePath = grp.ToString() };
-                    var resolved = BaseFileRegistrationProvider.GetCompositeFileUrl(dependency.ResolveFilePath(http), type, http);
-                    return m.ToString().Replace(grp.ToString(), resolved.Replace("&", "&amp;"));
                 },
                 RegexOptions.Compiled);
 

@@ -85,6 +85,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="ControlExtensions.cs" />
     <Compile Include="Controls\HtmlInclude.cs" />
+    <Compile Include="CssMediaType.cs" />
     <Compile Include="FileRegistration\Providers\BaseRenderer.cs" />
     <Compile Include="FileRegistration\Providers\LazyLoadRenderer.cs" />
     <Compile Include="FileRegistration\Providers\RendererCollection.cs" />

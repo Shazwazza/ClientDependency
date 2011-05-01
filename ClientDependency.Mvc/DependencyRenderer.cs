@@ -49,7 +49,7 @@ namespace ClientDependency.Core.Mvc
         /// <exception cref="NullReferenceException">
         /// If no MvcDependencyLoader control exists on the context, an exception is thrown.
         /// </exception>
-        public static DependencyRenderer Instance(HttpContextBase ctx)
+        public static DependencyRenderer GetInstance(HttpContextBase ctx)
         {
             if (!ctx.Items.Contains(ContextKey))
                 return null;
@@ -66,12 +66,12 @@ namespace ClientDependency.Core.Mvc
         /// <returns></returns>
         internal static DependencyRenderer TryCreate(HttpContextBase ctx, out bool isNew)
         {
-            if (Instance(ctx) == null)
+            if (GetInstance(ctx) == null)
             {
                 lock (Locker)
                 {
                     //double check
-                    if (Instance(ctx) == null)
+                    if (GetInstance(ctx) == null)
                     {
                         var loader = new DependencyRenderer(ctx);
                         isNew = true;
@@ -82,7 +82,7 @@ namespace ClientDependency.Core.Mvc
             }
 
             isNew = false;
-            return Instance(ctx);
+            return GetInstance(ctx);
 
         }
 

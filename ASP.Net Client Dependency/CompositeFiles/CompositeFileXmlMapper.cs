@@ -159,11 +159,11 @@ namespace ClientDependency.Core.CompositeFiles
             try
             {
                 return (x == null ? null : new CompositeFileMap(base64Key,
-                    x.Attribute("compression").Value,
-                    x.Attribute("file").Value,
+                    (string)x.Attribute("compression"),
+                    (string)x.Attribute("file"),
                     x.Descendants("file")
-                        .Select(f => new FileInfo(f.Attribute("name").Value))
-                        .ToList(), int.Parse(x.Attribute("version").Value)));
+                        .Select(f => new FileInfo((string)f.Attribute("name")))
+                        .ToList(), int.Parse((string)x.Attribute("version"))));
             }
             catch
             {

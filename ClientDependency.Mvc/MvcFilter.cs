@@ -50,7 +50,7 @@ namespace ClientDependency.Core.Mvc
             if (CurrentContext.CurrentHandler is MvcHandler)
             {
                 //parse the html output with the renderer
-                var r = DependencyRenderer.Instance(CurrentContext);
+                var r = DependencyRenderer.GetInstance(CurrentContext);
                 if (r != null)
                 {
                     var output  = r.ParseHtmlPlaceholders(html);
