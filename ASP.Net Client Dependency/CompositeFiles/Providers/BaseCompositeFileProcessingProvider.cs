@@ -196,6 +196,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 
             using (var client = new WebClient())
             {
+                client.Credentials = CredentialCache.DefaultNetworkCredentials;
                 client.Encoding = Encoding.UTF8;
                 xml = client.DownloadString(resource);
             }
