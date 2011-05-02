@@ -20,6 +20,12 @@ namespace ClientDependency.Core.Controls
 			DependencyType = ClientDependencyType.Css;
             CssMedia = CssMediaType.All;
 		}
+        public CssInclude(IClientDependencyFile file, CssMediaType mediaType)
+            : base(file)
+        {
+            DependencyType = ClientDependencyType.Css;
+            CssMedia = mediaType;
+        }
 
         public CssMediaType CssMedia { get; set; }
 	}

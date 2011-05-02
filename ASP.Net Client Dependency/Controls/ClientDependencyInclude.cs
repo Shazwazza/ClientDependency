@@ -7,14 +7,13 @@ namespace ClientDependency.Core.Controls
 {
     public abstract class ClientDependencyInclude : Control, IClientDependencyFile
 	{
-
-		public ClientDependencyInclude()
+        protected ClientDependencyInclude()
 		{
             Priority = Constants.DefaultPriority;			
 			PathNameAlias = "";
 		}
 
-		public ClientDependencyInclude(IClientDependencyFile file)
+        protected ClientDependencyInclude(IClientDependencyFile file)
 		{
 			Priority = file.Priority;
 			PathNameAlias = file.PathNameAlias;
