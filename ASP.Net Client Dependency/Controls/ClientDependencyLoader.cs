@@ -50,7 +50,10 @@ namespace ClientDependency.Core.Controls
                 }
                 else
                 {
-                    throw new InvalidOperationException("Only one ClientDependencyLoader may exist on a page");
+                    if (Context.Items[ContextKey] != this)
+                    {
+                        throw new InvalidOperationException("Only one ClientDependencyLoader may exist on a page");    
+                    }
                 }                               
             }
             else

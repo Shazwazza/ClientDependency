@@ -66,7 +66,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 	    public static string GetCompositeFileUrl(string filePaths, ClientDependencyType type, HttpContextBase http)
         {
             //build the combined composite list url
-            string handler = "{0}/{1}/{2}";
+            string handler = "{0}/{1}/{2}/0";
             string combinedurl = string.Format(handler, ClientDependencySettings.Instance.CompositeFileHandlerPath, http.Server.UrlEncode(EncodeTo64(filePaths)), type.ToString());
             return combinedurl;
         }
@@ -252,8 +252,9 @@ namespace ClientDependency.Core.FileRegistration.Providers
         {
             if (ClientDependencySettings.Instance.Version == 0)
                 return url;
-            
-            url += "/" + ClientDependencySettings.Instance.Version.ToString();
+            //the URL should end with a '0'
+
+            url = url.TrimEnd('0') + ClientDependencySettings.Instance.Version.ToString();
             return url;
         } 
         #endregion
