@@ -67,9 +67,9 @@ namespace ClientDependency.Core.FileRegistration.Providers
             }
         }
 
-        protected override string RenderJsDependencies(List<IClientDependencyFile> jsDependencies, HttpContextBase http)
+        protected override string RenderJsDependencies(IEnumerable<IClientDependencyFile> jsDependencies, HttpContextBase http)
         {
-            if (jsDependencies.Count == 0)
+            if (!jsDependencies.Any())
 				return string.Empty;
 
             var sb = new StringBuilder();
@@ -102,9 +102,9 @@ namespace ClientDependency.Core.FileRegistration.Providers
         /// <param name="cssDependencies"></param>
         /// <param name="http"></param>
         /// <returns></returns>
-        protected override string RenderCssDependencies(List<IClientDependencyFile> cssDependencies, HttpContextBase http)
+        protected override string RenderCssDependencies(IEnumerable<IClientDependencyFile> cssDependencies, HttpContextBase http)
         {
-            if (cssDependencies.Count == 0)
+            if (!cssDependencies.Any())
                 return string.Empty;
 
             var sb = new StringBuilder();

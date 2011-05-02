@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.UI;
@@ -24,9 +25,9 @@ namespace ClientDependency.Core.FileRegistration.Providers
 		/// <summary>Path to the dependency loader we need for adding control dependencies.</summary>
         protected const string DependencyLoaderResourceName = "ClientDependency.Core.Resources.LazyLoader.js";
 
-        protected override string RenderJsDependencies(List<IClientDependencyFile> jsDependencies, HttpContextBase http)
+        protected override string RenderJsDependencies(IEnumerable<IClientDependencyFile> jsDependencies, HttpContextBase http)
 		{
-			if (jsDependencies.Count == 0)
+			if (!jsDependencies.Any())
 				return string.Empty;
 
             var sb = new StringBuilder();
@@ -58,9 +59,9 @@ namespace ClientDependency.Core.FileRegistration.Providers
             return strClientLoader.ToString();
 		}
 
-        protected override string RenderCssDependencies(List<IClientDependencyFile> cssDependencies, HttpContextBase http)
+        protected override string RenderCssDependencies(IEnumerable<IClientDependencyFile> cssDependencies, HttpContextBase http)
 		{
-            if (cssDependencies.Count == 0)
+            if (!cssDependencies.Any())
                 return string.Empty;
 
             var sb = new StringBuilder();

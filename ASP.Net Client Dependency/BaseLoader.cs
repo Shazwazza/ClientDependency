@@ -50,7 +50,7 @@ namespace ClientDependency.Core
         {
             //find or create the ProviderDependencyList for the provider
             ProviderDependencyList currList = m_Dependencies
-                .Where(x => x.Contains(provider))
+                .Where(x => x.ProviderIs(provider))
                 .DefaultIfEmpty(new ProviderDependencyList(provider))
                 .SingleOrDefault();
             
@@ -77,7 +77,7 @@ namespace ClientDependency.Core
                 //find or create the ProviderDependencyList for the prov
                 var p = prov;
                 var forceList = m_Dependencies
-                    .Where(x => x.Contains(p))
+                    .Where(x => x.ProviderIs(prov))
                     .DefaultIfEmpty(new ProviderDependencyList(prov))
                     .SingleOrDefault();
                 //add the dependencies that don't have a force provider specified
@@ -122,8 +122,12 @@ namespace ClientDependency.Core
         /// <param name="pathNameAlias"></param>
         /// <param name="type"></param>
         public void RegisterDependency(int priority, string filePath, string pathNameAlias, ClientDependencyType type)
+		{
+			RegisterDependency(Constants.DefaultGroup, priority, filePath, pathNameAlias, type);
+		}
+		public void RegisterDependency(int group, int priority, string filePath, string pathNameAlias, ClientDependencyType type)
         {
-            IClientDependencyFile file = new BasicFile(type) { Priority = priority, FilePath = filePath, PathNameAlias = pathNameAlias };
+            IClientDependencyFile file = new BasicFile(type) { Group = group, Priority = priority, FilePath = filePath, PathNameAlias = pathNameAlias };
             RegisterClientDependencies(new List<IClientDependencyFile> { file }, new List<IClientDependencyPath>()); //send an empty paths collection
         }
 

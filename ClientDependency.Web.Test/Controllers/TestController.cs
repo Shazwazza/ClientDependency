@@ -59,5 +59,22 @@ IMPORTANT: Please note that although Rogue scripts/styles get replaced with comp
 
             return View(model);
         }
+
+        public ActionResult RemoteDependencies()
+        {
+            var model = new TestModel()
+            {
+                Heading = "Some dependencies are from remote servers",
+                BodyContent = @"<p>
+On this page, we've got the jquery library loaded from our local server with a priority of '1', but we've got the jquery UI registered with a file path from the Google CDN with a priority of '3'
+</p>
+<p>
+In the source of this page, ClientDependency has split the registrations for JavaScript so that everthing found before the jQuery UI lib is compressed, combined, etc.. then the jQuery UI lib is registered for downloading from the CDN, then everything after is again compressed, combined, etc...
+</p>
+"
+            };
+
+            return View(model);
+        }
     }
 }

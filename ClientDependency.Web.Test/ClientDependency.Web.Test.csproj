@@ -91,10 +91,12 @@
     <Content Include="Js\EncodingTestUTF8WithoutBOM.js" />
     <Content Include="Js\HtmlIncludeTest1.js" />
     <EmbeddedResource Include="Pages\embedded.css" />
+    <Content Include="Pages\RemoteDependencies.aspx" />
     <Content Include="Pages\EmbeddedResourceTest.aspx" />
     <Content Include="Pages\HtmlIncludeTest.aspx" />
     <Content Include="Pages\Default.aspx" />
     <Content Include="Pages\EncodingTest.aspx" />
+    <Content Include="Views\Test\RemoteDependencies.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -135,6 +137,13 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\TestModel.cs" />
+    <Compile Include="Pages\RemoteDependencies.aspx.cs">
+      <DependentUpon>RemoteDependencies.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\RemoteDependencies.aspx.designer.cs">
+      <DependentUpon>RemoteDependencies.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\EmbeddedResourceTest.aspx.cs">
       <DependentUpon>EmbeddedResourceTest.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

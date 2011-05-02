@@ -9,15 +9,16 @@ namespace ClientDependency.Core
 		string FilePath { get; set; }
 		ClientDependencyType DependencyType { get; }
 		int Priority { get; set; }
+		int Group { get; set; }
         string PathNameAlias { get; set; }
 		string ForceProvider { get; set; }
 
-        /// <summary>
-        /// Used to store additional attributes in the HTML markup for the item
-        /// </summary>
-        /// <remarks>
-        /// Mostly used for CSS Media, but could be for anything
-        /// </remarks>
-        IEnumerable<KeyValuePair<string, string>> AdditionalAttributes { get; }
+        ///// <summary>
+        ///// Used to store additional attributes in the HTML markup for the item
+        ///// </summary>
+        ///// <remarks>
+        ///// Mostly used for CSS Media, but could be for anything
+        ///// </remarks>
+        //IEnumerable<KeyValuePair<string, string>> AdditionalAttributes { get; }
 	}
 }

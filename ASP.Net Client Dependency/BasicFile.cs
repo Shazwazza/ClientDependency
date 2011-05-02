@@ -17,6 +17,7 @@ namespace ClientDependency.Core
 		public string FilePath { get; set; }
 		public ClientDependencyType DependencyType { get; private set; }
 		public int Priority { get; set; }
+		public int Group { get; set; }
 		public string PathNameAlias { get; set; }
 		/// <summary>
 		/// This can be empty and will use default provider

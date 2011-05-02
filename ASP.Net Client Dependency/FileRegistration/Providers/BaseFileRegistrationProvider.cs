@@ -33,8 +33,8 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         #region Abstract methods/properties
 
-        protected abstract string RenderJsDependencies(List<IClientDependencyFile> jsDependencies, HttpContextBase http);
-        protected abstract string RenderCssDependencies(List<IClientDependencyFile> cssDependencies, HttpContextBase http);
+        protected abstract string RenderJsDependencies(IEnumerable<IClientDependencyFile> jsDependencies, HttpContextBase http);
+        protected abstract string RenderCssDependencies(IEnumerable<IClientDependencyFile> cssDependencies, HttpContextBase http);
         protected abstract string RenderSingleJsFile(string js);
         protected abstract string RenderSingleCssFile(string css); 
         
@@ -94,9 +94,9 @@ namespace ClientDependency.Core.FileRegistration.Providers
 	    /// <param name="http"></param>
 	    /// <returns>An array containing the list of composite file URLs. This will generally only contain 1 value unless
 	    /// the number of files registered exceeds the maximum length, then it will return more than one file.</returns>
-	    public string[] ProcessCompositeList(List<IClientDependencyFile> dependencies, ClientDependencyType type, HttpContextBase http)
+        public string[] ProcessCompositeList(IEnumerable<IClientDependencyFile> dependencies, ClientDependencyType type, HttpContextBase http)
         {
-            if (dependencies.Count == 0)
+            if (!dependencies.Any())
                 return new string[] { };
 
             //build the combined composite list urls          
@@ -140,6 +140,56 @@ namespace ClientDependency.Core.FileRegistration.Providers
         #endregion
 
         #region Protected Methods
+
+	    /// <summary>
+	    /// Because we can have both internal and external dependencies rendered, we need to stagger the script tag output... if they are external, we need to stop the compressing/combining
+	    /// and write out the external dependency, then resume the compressing/combining handler.
+	    /// </summary>
+	    /// <param name="dependencies"></param>
+	    /// <param name="http"></param>
+	    /// <param name="builder"></param>
+	    /// <param name="renderCompositeFiles"></param>
+	    /// <param name="renderSingle"></param>
+	    protected void WriteStaggeredDependencies(IEnumerable<IClientDependencyFile> dependencies, HttpContextBase http, StringBuilder builder, 
+            Func<IEnumerable<IClientDependencyFile>, HttpContextBase, string> renderCompositeFiles, 
+            Func<string, string> renderSingle)
+        {
+            var currNonRemoteFiles = new List<IClientDependencyFile>();
+            foreach (var f in dependencies)
+            {
+                //if it is an external resource, then we need to break the sequence
+                if (http.IsAbsolutePath(f.FilePath)
+                    //remote dependencies aren't local
+                    && !new Uri(f.FilePath, UriKind.RelativeOrAbsolute).IsLocalUri(http))
+                {
+                    //we've encountered an external dependency, so we need to break the sequence and restart it after
+                    //we output the raw script tag
+                    if (currNonRemoteFiles.Count > 0)
+                    {
+                        //render the current buffer
+                        //builder.Append(RenderJsDependencies(currNonRemoteFiles, http));
+                        builder.Append(renderCompositeFiles(currNonRemoteFiles, http));
+                        //clear the buffer
+                        currNonRemoteFiles.Clear();
+                    }
+                    //write out the single script tag
+                    //builder.Append(RenderSingleJsFile(f.FilePath));
+                    builder.Append(renderSingle(f.FilePath));
+                }
+                else
+                {
+                    //its a normal registration, add to the buffer
+                    currNonRemoteFiles.Add(f);
+                }
+            }
+            //now check if there's anything in the buffer to render
+            if (currNonRemoteFiles.Count > 0)
+            {
+                //render the current buffer
+                //builder.Append(RenderJsDependencies(currNonRemoteFiles, http));
+                builder.Append(renderCompositeFiles(currNonRemoteFiles, http));
+            }
+        }
 
 	    /// <summary>
 	    /// Ensures the correctly resolved file path is set for each dependency (i.e. so that ~ are taken care of) and also

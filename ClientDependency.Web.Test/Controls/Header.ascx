@@ -19,5 +19,6 @@
 		<li><a class="white" href="/Pages/RogueScriptDetectionTest.aspx">Rogue script detection test</a></li>
         <li><a class="white" href="/Pages/EncodingTest.aspx">File Encoding test</a></li>
         <li><a class="white" href="/Pages/EmbeddedResourceTest.aspx">Embedded Resource test</a></li>
+        <li><a class="white" href="/Pages/RemoteDependencies.aspx">Remote Dependencies test</a></li>
 	</ul>
 </div>

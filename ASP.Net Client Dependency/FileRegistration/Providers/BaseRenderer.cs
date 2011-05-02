@@ -24,20 +24,40 @@ namespace ClientDependency.Core.FileRegistration.Providers
             UpdateFilePaths(allDependencies, folderPaths, http);
             EnsureNoDuplicates(allDependencies, folderPaths);
 
-            var jsDependencies = allDependencies
-                .Where(x => x.DependencyType == ClientDependencyType.Javascript)
+            var cssBuilder = new StringBuilder();
+			var jsBuilder = new StringBuilder();
+
+            // find the groups
+            var groups = allDependencies
+                .Select(x => x.Group)
+                .Distinct()
                 .ToList();
 
-            var cssDependencies = allDependencies
-                .Where(x => x.DependencyType == ClientDependencyType.Css)
-                .ToList();
+            // sort them
+            groups.Sort((a, b) => a.CompareTo(b));
 
-            // sort by priority
-            jsDependencies.Sort((a, b) => a.Priority.CompareTo(b.Priority));
-            cssDependencies.Sort((a, b) => a.Priority.CompareTo(b.Priority));
+            foreach (var group in groups)
+            {
+                var g = group;
+                var jsDependencies = allDependencies
+                    .Where(x => x.Group == g && x.DependencyType == ClientDependencyType.Javascript)
+                    .ToList();
 
-            cssOutput = RenderCssDependencies(cssDependencies.ConvertAll(a => a), http);
-            jsOutput = RenderJsDependencies(jsDependencies.ConvertAll(a => a), http);         
+                var cssDependencies = allDependencies
+                    .Where(x => x.Group == g && x.DependencyType == ClientDependencyType.Css)
+                    .ToList();
+
+                // sort by priority
+                jsDependencies.Sort((a, b) => a.Priority.CompareTo(b.Priority));
+                cssDependencies.Sort((a, b) => a.Priority.CompareTo(b.Priority));
+
+                //cssOutput = RenderCssDependencies(cssDependencies.ConvertAll(a => a), http);
+                //jsOutput = RenderJsDependencies(jsDependencies.ConvertAll(a => a), http);   
+                WriteStaggeredDependencies(cssDependencies, http, cssBuilder, RenderCssDependencies, RenderSingleCssFile);
+                WriteStaggeredDependencies(jsDependencies, http, jsBuilder, RenderJsDependencies, RenderSingleJsFile);                
+            }
+            cssOutput = cssBuilder.ToString();
+            jsOutput = jsBuilder.ToString();
         }
     }
 }

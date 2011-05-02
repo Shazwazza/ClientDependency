@@ -79,7 +79,7 @@ namespace ClientDependency.Core
         /// <returns></returns>
         public static bool IsAbsolute(this HttpContextBase context, string virtualPath)
         {
-            if (virtualPath.StartsWith("http://") || virtualPath.StartsWith("https://"))
+            if (IsAbsolutePath(context, virtualPath))
             {
                 throw new InvalidOperationException("IsAbsolute method will check if a Virtual path is absolute, it is not supported for full URLs");
             }
@@ -98,6 +98,7 @@ namespace ClientDependency.Core
         /// Works like Control.ResolveUrl including support for ~ syntax
         /// but returns an absolute URL.
         /// </summary>
+        /// <param name="context"></param>
         /// <param name="originalUrl">Any Url including those starting with ~</param>
         /// <returns>relative url</returns>
         public static string ResolveUrl(this HttpContextBase context, string originalUrl)
@@ -141,17 +142,18 @@ namespace ClientDependency.Core
         /// ~/pathtoresolve/page.aspx?returnurl=http://servertoredirect/resource.aspx
         /// which is not an absolute path but contains the characters to describe it as one.
         /// </remarks>
+        /// <param name="context"></param>
         /// <param name="originalUrl"></param>
         /// <returns></returns>
-        private static bool IsAbsolutePath(this HttpContextBase context, string originalUrl)
+        public static bool IsAbsolutePath(this HttpContextBase context, string originalUrl)
         {
             // *** Absolute path - just return
-            int IndexOfSlashes = originalUrl.IndexOf("://");
-            int IndexOfQuestionMarks = originalUrl.IndexOf("?");
+            var indexOfSlashes = originalUrl.IndexOf("://");
+            var indexOfQuestionMarks = originalUrl.IndexOf("?");
 
-            if (IndexOfSlashes > -1 &&
-                 (IndexOfQuestionMarks < 0 ||
-                  (IndexOfQuestionMarks > -1 && IndexOfQuestionMarks > IndexOfSlashes)
+            if (indexOfSlashes > -1 &&
+                 (indexOfQuestionMarks < 0 ||
+                  (indexOfQuestionMarks > -1 && indexOfQuestionMarks > indexOfSlashes)
                   )
                 )
                 return true;

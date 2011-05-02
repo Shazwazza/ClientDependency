@@ -15,7 +15,7 @@ namespace ClientDependency.Core
             Dependencies = new List<IClientDependencyFile>();
 		}
 
-		internal bool Contains(BaseFileRegistrationProvider provider)
+		internal bool ProviderIs(BaseFileRegistrationProvider provider)
 		{
 			return Provider.Name == provider.Name;
 		}

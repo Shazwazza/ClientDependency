@@ -15,16 +15,21 @@ namespace ClientDependency.Core
         public ClientDependencyAttribute()
         {
             Priority = Constants.DefaultPriority;
+            Group = Constants.DefaultGroup;
 			PathNameAlias = "";
         }
-
-       
 
 		/// <summary>
 		/// Gets or sets the priority.
 		/// </summary>
 		/// <value>The priority.</value>
 		public int Priority { get; set; }
+
+		/// <summary>
+		/// Gets or sets the group.
+		/// </summary>
+		/// <value>The group.</value>
+        public int Group { get; set; }
 
 		/// <summary>
 		/// This can be empty and will use default provider
@@ -78,18 +83,32 @@ namespace ClientDependency.Core
 	    /// <param name="fileName"></param>
 	    /// <param name="pathNameAlias"></param>
 	    public ClientDependencyAttribute(int priority, ClientDependencyType dependencyType, string fileName, string pathNameAlias)
-		{
-			if (String.IsNullOrEmpty(fileName))
-				throw new ArgumentNullException("fileName");
-
-			Priority = priority;
-
-
-			FilePath = fileName;
-			PathNameAlias = pathNameAlias;
-
-			DependencyType = dependencyType;
+		    : this(Constants.DefaultGroup, priority, dependencyType, fileName, pathNameAlias)
+        {
 		}
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ClientDependencyAttribute"/> class.
+        /// </summary>
+        /// <param name="group"></param>
+        /// <param name="priority">The priority.</param>
+        /// <param name="dependencyType">Type of the dependency.</param>
+        /// <param name="fileName"></param>
+        /// <param name="pathNameAlias"></param>
+        public ClientDependencyAttribute(int group, int priority, ClientDependencyType dependencyType, string fileName, string pathNameAlias)
+        {
+            if (String.IsNullOrEmpty(fileName))
+                throw new ArgumentNullException("fileName");
+
+            Priority = priority;
+
+            Group = group;
+
+            FilePath = fileName;
+            PathNameAlias = pathNameAlias;
+
+            DependencyType = dependencyType;
+        }
         
 	}
 
