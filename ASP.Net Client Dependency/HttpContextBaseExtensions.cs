@@ -111,7 +111,7 @@ namespace ClientDependency.Core
                 return originalUrl;
 
             // *** We don't start with the '~' -> we don't process the Url
-            if (!originalUrl.StartsWith("~"))
+            if (!originalUrl.StartsWith("~/"))
                 return originalUrl;
 
             // *** Fix up path for ~ root app dir directory

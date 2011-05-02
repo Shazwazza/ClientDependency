@@ -137,7 +137,7 @@ namespace ClientDependency.Core.Config
 
             //need to check if it's an http path or a lambda path
             var path = ConfigSection.CompositeFileElement.CompositeFileHandlerPath;
-            CompositeFileHandlerPath = path.StartsWith("~")
+            CompositeFileHandlerPath = path.StartsWith("~/")
                 ? VirtualPathUtility.ToAbsolute(ConfigSection.CompositeFileElement.CompositeFileHandlerPath, http.Request.ApplicationPath) 
                 : ConfigSection.CompositeFileElement.CompositeFileHandlerPath;
 

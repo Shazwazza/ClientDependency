@@ -21,7 +21,7 @@ namespace ClientDependency.Core
             {
                 throw new ArgumentException("The Path specified is null", "Path");
             }
-            if (upperPath[0] == '~')
+            if (upperPath.StartsWith("~/"))
             {
                 return http.ResolveUrl(file.FilePath);
             }
