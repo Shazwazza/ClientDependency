@@ -43,13 +43,21 @@ namespace ClientDependency.Core.CompositeFiles
         {
             var contextBase = new HttpContextWrapper(context);
             var response = contextBase.Response;
-            var fileset = context.Server.UrlDecode(context.Request["s"]);
+
+            //the URL parts are based on the last 3 elements in the URL segments
+            // last = version
+            // 2nd last = type
+            // 3rd last = file set
+            var urlParts = context.Request.Url.Segments.ToList();
+
+            var fileset = context.Server.UrlDecode(urlParts[urlParts.Count - 3].TrimEnd('/'));
+
             ClientDependencyType type;
             var version = 0;
-            int.TryParse(context.Request["cdv"], out version);
+            int.TryParse(urlParts[urlParts.Count - 1].TrimEnd('/'), out version);
             try
             {
-                type = (ClientDependencyType)Enum.Parse(typeof(ClientDependencyType), context.Request["t"], true);
+                type = (ClientDependencyType)Enum.Parse(typeof(ClientDependencyType), urlParts[urlParts.Count - 2].TrimEnd('/'), true);
             }
             catch
             {
@@ -190,9 +198,9 @@ namespace ClientDependency.Core.CompositeFiles
             cache.SetETag(FormsAuthentication.HashPasswordForStoringInConfigFile(fileset, "MD5"));
             
             //set server OutputCache to vary by our params
-            cache.VaryByParams["t"] = true;
-            cache.VaryByParams["s"] = true;
-            cache.VaryByParams["cdv"] = true;
+            var urlParts = context.Request.Url.Segments.ToList();
+            cache.SetVaryByCustom(string.Format("{0}{1}{2}", urlParts[urlParts.Count - 3], urlParts[urlParts.Count - 2], urlParts[urlParts.Count - 1]));
+
             //ensure the cache is different based on the encoding specified per browser
             cache.VaryByContentEncodings["gzip"] = true;
             cache.VaryByContentEncodings["deflate"] = true;

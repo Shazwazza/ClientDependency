@@ -16,13 +16,18 @@ namespace ClientDependency.Core
         /// <returns></returns>
         public static string ResolveFilePath(this IClientDependencyFile file, HttpContextBase http)
         {
-            if (string.IsNullOrEmpty(file.FilePath))
+            var upperPath = file.FilePath.Trim().ToUpper();
+            if (string.IsNullOrEmpty(upperPath))
             {
                 throw new ArgumentException("The Path specified is null", "Path");
             }
-            if (file.FilePath[0] == '~')
+            if (upperPath[0] == '~')
             {
                 return http.ResolveUrl(file.FilePath);
+            }
+            if (upperPath.StartsWith("http://".ToUpper()) || upperPath.StartsWith("https://".ToUpper()))
+            {
+                return file.FilePath; 
             }
             if (!http.IsAbsolute(file.FilePath))
             {

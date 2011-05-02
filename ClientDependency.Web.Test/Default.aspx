@@ -6,8 +6,8 @@
 <head runat="server">
     <title></title>
     <link rel="Stylesheet" href="Css/Site.css" />
-    <link rel="Stylesheet" href="Css/ColorScheme.css" />
-    <link rel="Stylesheet" href="Css/Default.css" />
+    <link rel="Stylesheet" href="/Css/ColorScheme.css" />
+    <link rel="Stylesheet" href="http://localhost:49999/Css/Default.css" />
 </head>
 <body>
     <form id="form1" runat="server">

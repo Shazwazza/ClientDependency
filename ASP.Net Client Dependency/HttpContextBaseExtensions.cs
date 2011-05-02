@@ -74,10 +74,16 @@ namespace ClientDependency.Core
         /// The reason we're not using the VirtualPathUtility one is because it has bugs in 3.5 whereas
         /// if the path has query strings, it throws exceptions.
         /// </remarks>
+        /// <param name="context"></param>
         /// <param name="virtualPath"></param>
         /// <returns></returns>
         public static bool IsAbsolute(this HttpContextBase context, string virtualPath)
         {
+            if (virtualPath.StartsWith("http://") || virtualPath.StartsWith("https://"))
+            {
+                throw new InvalidOperationException("IsAbsolute method will check if a Virtual path is absolute, it is not supported for full URLs");
+            }
+
             if (string.IsNullOrEmpty(virtualPath))
                 throw new ArgumentNullException("virtualPath");
 
