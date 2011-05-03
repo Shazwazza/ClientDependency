@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Web.UI;
@@ -109,8 +110,10 @@ namespace ClientDependency.Core.FileRegistration.Providers
           	ClientDependencyLoader.GetInstance(http).Controls.Add(dCtl);           
 		}
 
-		void RegisterDependenciesWebSite(System.Collections.Specialized.NameValueCollection config)
+		void RegisterDependenciesWebSite(NameValueCollection config)
 		{
+            if (config == null) return;
+
 			_dependenciesWebSite = config["website"];
 			if (!string.IsNullOrEmpty(_dependenciesWebSite))
 				_dependenciesWebSite = _dependenciesWebSite.TrimEnd('/');
