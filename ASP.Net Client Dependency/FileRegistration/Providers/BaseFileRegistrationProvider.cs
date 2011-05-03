@@ -12,8 +12,8 @@ using ClientDependency.Core.CompositeFiles;
 
 namespace ClientDependency.Core.FileRegistration.Providers
 {
-	public abstract class BaseFileRegistrationProvider : ProviderBase
-	{
+    public abstract class BaseFileRegistrationProvider : ProviderBase
+    {
         /// <summary>
         /// Constructor sets defaults
         /// </summary>
@@ -21,10 +21,10 @@ namespace ClientDependency.Core.FileRegistration.Providers
         {
             EnableCompositeFiles = true;
         }
-		
+
         //protected HashSet<IClientDependencyPath> FolderPaths { get; set; }
         //protected List<IClientDependencyFile> AllDependencies { get; set; }
-                
+
         /// <summary>
         /// By default this is true but can be overriden (in either config or code). 
         /// Composite files are never enabled with compilation debug="true" however.
@@ -33,17 +33,30 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         #region Abstract methods/properties
 
+        [Obsolete("Use the alternative RenderJsDependencies method with the HttpContextBase parameter instead")]
+        protected virtual string RenderJsDependencies(List<IClientDependencyFile> jsDependencies)
+        {
+            return RenderJsDependencies(jsDependencies, new HttpContextWrapper(HttpContext.Current));
+        }
+
+        [Obsolete("Use the alternative RenderCssDependencies method with the HttpContextBase parameter instead")]
+        protected virtual string RenderCssDependencies(List<IClientDependencyFile> cssDependencies)
+        {
+            return RenderCssDependencies(cssDependencies, new HttpContextWrapper(HttpContext.Current));
+        }
+
         protected abstract string RenderJsDependencies(IEnumerable<IClientDependencyFile> jsDependencies, HttpContextBase http);
         protected abstract string RenderCssDependencies(IEnumerable<IClientDependencyFile> cssDependencies, HttpContextBase http);
+
         protected abstract string RenderSingleJsFile(string js);
-        protected abstract string RenderSingleCssFile(string css); 
-        
+        protected abstract string RenderSingleCssFile(string css);
+
         #endregion
-        
+
         #region Provider Initialization
 
         public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
-        {          
+        {
             base.Initialize(name, config);
 
             if (config != null && config["enableCompositeFiles"] != null && !string.IsNullOrEmpty(config["enableCompositeFiles"]))
@@ -56,14 +69,14 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         #region Static Methods
 
-	    /// <summary>
-	    /// Returns the url for the composite file handler for the filePath specified.
-	    /// </summary>
-	    /// <param name="filePaths"></param>
-	    /// <param name="type"></param>
-	    /// <param name="http"></param>
-	    /// <returns></returns>
-	    public static string GetCompositeFileUrl(string filePaths, ClientDependencyType type, HttpContextBase http)
+        /// <summary>
+        /// Returns the url for the composite file handler for the filePath specified.
+        /// </summary>
+        /// <param name="filePaths"></param>
+        /// <param name="type"></param>
+        /// <param name="http"></param>
+        /// <returns></returns>
+        public static string GetCompositeFileUrl(string filePaths, ClientDependencyType type, HttpContextBase http)
         {
             //build the combined composite list url
             string handler = "{0}/{1}/{2}/0";
@@ -76,24 +89,24 @@ namespace ClientDependency.Core.FileRegistration.Providers
             byte[] toEncodeAsBytes = Encoding.Default.GetBytes(toEncode);
             string returnValue = System.Convert.ToBase64String(toEncodeAsBytes);
             return returnValue;
-        } 
+        }
         #endregion
 
-        #region Public Methods        
+        #region Public Methods
 
-	    /// <summary>
-	    /// Returns a URL used to return a compbined/compressed/optimized version of all dependencies.
-	    /// <remarks>
-	    /// The full url with the encoded query strings for the handler which will process the composite list
-	    /// of dependencies. The handler will compbine, compress, minify, and output cache the results
-	    /// on the base64 encoded string.
-	    /// </remarks>        
-	    /// </summary>
-	    /// <param name="dependencies"></param>
-	    /// <param name="type"></param>
-	    /// <param name="http"></param>
-	    /// <returns>An array containing the list of composite file URLs. This will generally only contain 1 value unless
-	    /// the number of files registered exceeds the maximum length, then it will return more than one file.</returns>
+        /// <summary>
+        /// Returns a URL used to return a compbined/compressed/optimized version of all dependencies.
+        /// <remarks>
+        /// The full url with the encoded query strings for the handler which will process the composite list
+        /// of dependencies. The handler will compbine, compress, minify, and output cache the results
+        /// on the base64 encoded string.
+        /// </remarks>        
+        /// </summary>
+        /// <param name="dependencies"></param>
+        /// <param name="type"></param>
+        /// <param name="http"></param>
+        /// <returns>An array containing the list of composite file URLs. This will generally only contain 1 value unless
+        /// the number of files registered exceeds the maximum length, then it will return more than one file.</returns>
         public string[] ProcessCompositeList(IEnumerable<IClientDependencyFile> dependencies, ClientDependencyType type, HttpContextBase http)
         {
             if (!dependencies.Any())
@@ -107,8 +120,8 @@ namespace ClientDependency.Core.FileRegistration.Providers
             foreach (var a in dependencies)
             {
                 //if the addition of this file is going to exceed 75% of the max length (since we'll be base64 encoding), we'll need to split
-                if ((currBuilder.Length + 
-                    a.FilePath.Length + 
+                if ((currBuilder.Length +
+                    a.FilePath.Length +
                     ClientDependencySettings.Instance.CompositeFileHandlerPath.Length +
                     stringType.Length + 10) >= (CompositeDependencyHandler.MaxHandlerUrlLength * 0.75))
                 {
@@ -135,23 +148,71 @@ namespace ClientDependency.Core.FileRegistration.Providers
             }
 
             return files.ToArray();
-        } 
+        }
 
         #endregion
 
         #region Protected Methods
 
-	    /// <summary>
-	    /// Because we can have both internal and external dependencies rendered, we need to stagger the script tag output... if they are external, we need to stop the compressing/combining
-	    /// and write out the external dependency, then resume the compressing/combining handler.
-	    /// </summary>
-	    /// <param name="dependencies"></param>
-	    /// <param name="http"></param>
-	    /// <param name="builder"></param>
-	    /// <param name="renderCompositeFiles"></param>
-	    /// <param name="renderSingle"></param>
-	    protected void WriteStaggeredDependencies(IEnumerable<IClientDependencyFile> dependencies, HttpContextBase http, StringBuilder builder, 
-            Func<IEnumerable<IClientDependencyFile>, HttpContextBase, string> renderCompositeFiles, 
+        /// <summary>
+        /// Obsolete method required for backwards compatibility
+        /// </summary>
+        /// <param name="dependencies"></param>
+        /// <param name="builder"></param>
+        /// <param name="renderCompositeFiles"></param>
+        /// <param name="renderSingle"></param>
+        [Obsolete("Use the other WriteStaggeredDependencies method with the HttpContextBase parameter instead")]
+        protected void WriteStaggeredDependencies(IEnumerable<IClientDependencyFile> dependencies, StringBuilder builder,
+           Func<List<IClientDependencyFile>, string> renderCompositeFiles,
+           Func<string, string> renderSingle)
+        {
+            var http = new HttpContextWrapper(HttpContext.Current);
+
+            var currNonRemoteFiles = new List<IClientDependencyFile>();
+            foreach (var f in dependencies)
+            {
+                //if it is an external resource, then we need to break the sequence
+                if (http.IsAbsolutePath(f.FilePath)
+                    //remote dependencies aren't local
+                    && !new Uri(f.FilePath, UriKind.RelativeOrAbsolute).IsLocalUri(http))
+                {
+                    //we've encountered an external dependency, so we need to break the sequence and restart it after
+                    //we output the raw script tag
+                    if (currNonRemoteFiles.Count > 0)
+                    {
+                        //render the current buffer
+                        builder.Append(renderCompositeFiles(currNonRemoteFiles));
+                        //clear the buffer
+                        currNonRemoteFiles.Clear();
+                    }
+                    //write out the single script tag
+                    builder.Append(renderSingle(f.FilePath));
+                }
+                else
+                {
+                    //its a normal registration, add to the buffer
+                    currNonRemoteFiles.Add(f);
+                }
+            }
+            //now check if there's anything in the buffer to render
+            if (currNonRemoteFiles.Count > 0)
+            {
+                //render the current buffer
+                builder.Append(renderCompositeFiles(currNonRemoteFiles));
+            }
+        }
+
+        /// <summary>
+        /// Because we can have both internal and external dependencies rendered, we need to stagger the script tag output... if they are external, we need to stop the compressing/combining
+        /// and write out the external dependency, then resume the compressing/combining handler.
+        /// </summary>
+        /// <param name="dependencies"></param>
+        /// <param name="http"></param>
+        /// <param name="builder"></param>
+        /// <param name="renderCompositeFiles"></param>
+        /// <param name="renderSingle"></param>
+        protected void WriteStaggeredDependencies(IEnumerable<IClientDependencyFile> dependencies, HttpContextBase http, StringBuilder builder,
+            Func<IEnumerable<IClientDependencyFile>, HttpContextBase, string> renderCompositeFiles,
             Func<string, string> renderSingle)
         {
             var currNonRemoteFiles = new List<IClientDependencyFile>();
@@ -167,13 +228,11 @@ namespace ClientDependency.Core.FileRegistration.Providers
                     if (currNonRemoteFiles.Count > 0)
                     {
                         //render the current buffer
-                        //builder.Append(RenderJsDependencies(currNonRemoteFiles, http));
                         builder.Append(renderCompositeFiles(currNonRemoteFiles, http));
                         //clear the buffer
                         currNonRemoteFiles.Clear();
                     }
                     //write out the single script tag
-                    //builder.Append(RenderSingleJsFile(f.FilePath));
                     builder.Append(renderSingle(f.FilePath));
                 }
                 else
@@ -186,19 +245,18 @@ namespace ClientDependency.Core.FileRegistration.Providers
             if (currNonRemoteFiles.Count > 0)
             {
                 //render the current buffer
-                //builder.Append(RenderJsDependencies(currNonRemoteFiles, http));
                 builder.Append(renderCompositeFiles(currNonRemoteFiles, http));
             }
         }
 
-	    /// <summary>
-	    /// Ensures the correctly resolved file path is set for each dependency (i.e. so that ~ are taken care of) and also
-	    /// prefixes the file path with the correct base path specified for the PathNameAlias if specified.
-	    /// </summary>
-	    /// <param name="dependencies">The dependencies list for which file paths will be updated</param>
-	    /// <param name="folderPaths"></param>
-	    /// <param name="http"></param>
-	    protected void UpdateFilePaths(IEnumerable<IClientDependencyFile> dependencies, 
+        /// <summary>
+        /// Ensures the correctly resolved file path is set for each dependency (i.e. so that ~ are taken care of) and also
+        /// prefixes the file path with the correct base path specified for the PathNameAlias if specified.
+        /// </summary>
+        /// <param name="dependencies">The dependencies list for which file paths will be updated</param>
+        /// <param name="folderPaths"></param>
+        /// <param name="http"></param>
+        protected void UpdateFilePaths(IEnumerable<IClientDependencyFile> dependencies,
             HashSet<IClientDependencyPath> folderPaths, HttpContextBase http)
         {
             foreach (var dependency in dependencies)
@@ -230,7 +288,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
             }
         }
 
-      
+
         /// <summary>
         /// This will ensure that no duplicates have made it into the collection.
         /// Duplicates WILL occur if the same dependency is registered in 2 different ways: 
@@ -260,7 +318,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
                         .ToList();
 
                     var priorities = dups.Select(x => x.File.Priority).Distinct().ToList();
-                    
+
                     //if there's more than 1 priority defined, we know we need to remove by priority
                     //instead of by index
                     if (priorities.Count() > 1)
@@ -285,7 +343,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
                     toKeep.Add(d);
                 }
 
-               
+
             }
 
             dependencies.Clear();
@@ -312,12 +370,12 @@ namespace ClientDependency.Core.FileRegistration.Providers
             else
             {
                 //the URL should end with a '0'
-                url = url.TrimEnd('0') + ClientDependencySettings.Instance.Version;    
+                url = url.TrimEnd('0') + ClientDependencySettings.Instance.Version;
             }
             return url;
-        } 
+        }
         #endregion
-		
 
-	}
+
+    }
 }

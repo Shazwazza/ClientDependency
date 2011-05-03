@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Configuration.Provider;
+using ClientDependency.Core.Config;
 using ClientDependency.Core.FileRegistration.Providers;
 using System.IO;
 using System.Web;
@@ -51,10 +52,18 @@ namespace ClientDependency.Core.FileRegistration.Providers
                 jsDependencies.Sort((a, b) => a.Priority.CompareTo(b.Priority));
                 cssDependencies.Sort((a, b) => a.Priority.CompareTo(b.Priority));
 
-                //cssOutput = RenderCssDependencies(cssDependencies.ConvertAll(a => a), http);
-                //jsOutput = RenderJsDependencies(jsDependencies.ConvertAll(a => a), http);   
-                WriteStaggeredDependencies(cssDependencies, http, cssBuilder, RenderCssDependencies, RenderSingleCssFile);
-                WriteStaggeredDependencies(jsDependencies, http, jsBuilder, RenderJsDependencies, RenderSingleJsFile);                
+                //render
+                if (ClientDependencySettings.Instance.UseLegacyRenderMethods)
+                {
+                    WriteStaggeredDependencies(cssDependencies, cssBuilder, RenderCssDependencies, RenderSingleCssFile);
+                    WriteStaggeredDependencies(jsDependencies, jsBuilder, RenderJsDependencies, RenderSingleJsFile);                
+                }
+                else
+                {
+                    WriteStaggeredDependencies(cssDependencies, http, cssBuilder, RenderCssDependencies, RenderSingleCssFile);
+                    WriteStaggeredDependencies(jsDependencies, http, jsBuilder, RenderJsDependencies, RenderSingleJsFile);                
+                }
+                
             }
             cssOutput = cssBuilder.ToString();
             jsOutput = jsBuilder.ToString();

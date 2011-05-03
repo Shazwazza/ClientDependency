@@ -65,11 +65,17 @@ namespace ClientDependency.Core.FileRegistration.Providers
 				jsDependencies.Sort((a, b) => a.Priority.CompareTo(b.Priority));
 				cssDependencies.Sort((a, b) => a.Priority.CompareTo(b.Priority));
 
-				// render them				
-                //cssBuilder.Append(RenderCssDependencies(cssDependencies, http));
-                //jsBuilder.Append(RenderJsDependencies(jsDependencies, http));
-			    WriteStaggeredDependencies(cssDependencies, http, cssBuilder, RenderCssDependencies, RenderSingleCssFile);
-                WriteStaggeredDependencies(jsDependencies, http, jsBuilder, RenderJsDependencies, RenderSingleJsFile);
+                //render
+                if (ClientDependencySettings.Instance.UseLegacyRenderMethods)
+                {
+                    WriteStaggeredDependencies(cssDependencies, cssBuilder, RenderCssDependencies, RenderSingleCssFile);
+                    WriteStaggeredDependencies(jsDependencies, jsBuilder, RenderJsDependencies, RenderSingleJsFile);
+                }
+                else
+                {
+                    WriteStaggeredDependencies(cssDependencies, http, cssBuilder, RenderCssDependencies, RenderSingleCssFile);
+                    WriteStaggeredDependencies(jsDependencies, http, jsBuilder, RenderJsDependencies, RenderSingleJsFile);
+                }
 			}
 
 			var cssOutput = cssBuilder.ToString();

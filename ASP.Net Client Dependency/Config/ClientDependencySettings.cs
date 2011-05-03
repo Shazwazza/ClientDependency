@@ -39,7 +39,7 @@ namespace ClientDependency.Core.Config
         {
             var fileMap = new ExeConfigurationFileMap { ExeConfigFilename = configFile.FullName };
             var configuration = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
-            LoadProviders((ClientDependencySection)configuration.GetSection("clientDependency"), ctx);
+            LoadProviders((ClientDependencySection)configuration.GetSection("clientDependency"), ctx);            
         }
 
         /// <summary>
@@ -77,8 +77,8 @@ namespace ClientDependency.Core.Config
         /// </remarks>
         public List<string> FileBasedDependencyExtensionList { get; set; }
 
-        
-        //public bool EnableCompositeFiles { get; set; }
+
+        public bool UseLegacyRenderMethods { get; private set; }
         
         public int Version { get; set; }
 
@@ -142,6 +142,8 @@ namespace ClientDependency.Core.Config
                 : ConfigSection.CompositeFileElement.CompositeFileHandlerPath;
 
             Version = ConfigSection.Version;
+
+            UseLegacyRenderMethods = ConfigSection.UseLegacyRenderMethods;
 
             FileBasedDependencyExtensionList = ConfigSection.FileBasedDependencyExtensionList.ToList();
 
