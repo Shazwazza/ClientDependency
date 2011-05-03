@@ -131,7 +131,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
             for (var i = 0; i < files.Count; i++)
             {
                 //append our version to the combined url 
-                files[i] = AppendVersionQueryString(GetCompositeFileUrl(files[i], type, http));
+                files[i] = AppendVersion(GetCompositeFileUrl(files[i], type, http), http);
             }
 
             return files.ToArray();
@@ -225,7 +225,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
                 //append query strings to each file if we are in debug mode
                 if (http.IsDebuggingEnabled || !EnableCompositeFiles)
                 {
-                    dependency.FilePath = AppendVersionQueryString(dependency.FilePath);
+                    dependency.FilePath = AppendVersion(dependency.FilePath, http);
                 }
             }
         }
@@ -298,13 +298,22 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         #region Private Methods
 
-        private string AppendVersionQueryString(string url)
+        private string AppendVersion(string url, HttpContextBase http)
         {
             if (ClientDependencySettings.Instance.Version == 0)
                 return url;
-            //the URL should end with a '0'
-
-            url = url.TrimEnd('0') + ClientDependencySettings.Instance.Version.ToString();
+            if (http.IsDebuggingEnabled)
+            {
+                //ensure there's not duplicated query string syntax
+                url += url.Contains('?') ? "&" : "?";
+                //append a version
+                url += "cdv=" + ClientDependencySettings.Instance.Version;
+            }
+            else
+            {
+                //the URL should end with a '0'
+                url = url.TrimEnd('0') + ClientDependencySettings.Instance.Version;    
+            }
             return url;
         } 
         #endregion
