@@ -44,27 +44,58 @@ namespace ClientDependency.Core.CompositeFiles
             var contextBase = new HttpContextWrapper(context);
             var response = contextBase.Response;
 
-            //the URL parts are based on the last 3 elements in the URL segments
-            // last = version
-            // 2nd last = type
-            // 3rd last = file set
-            var urlParts = context.Request.Url.Segments.ToList();
+			ClientDependencyType type;
+			string fileset;
+			int version = 0;
 
-            var fileset = context.Server.UrlDecode(urlParts[urlParts.Count - 3].TrimEnd('/'));
+			if (string.IsNullOrEmpty(context.Request.PathInfo))
+			{
+				// querystring format
+				fileset = context.Request["s"];
+				if (!string.IsNullOrEmpty(context.Request["cdv"]) && !Int32.TryParse(context.Request["cdv"], out version))
+					throw new ArgumentException("Could not parse the version in the request");
+				try
+				{
+					type = (ClientDependencyType)Enum.Parse(typeof(ClientDependencyType), context.Request["t"], true);
+				}
+				catch
+				{
+					throw new ArgumentException("Could not parse the type set in the request");
+				}
+			}
+			else
+			{
+				// path format
+				var segs = context.Request.PathInfo.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+				fileset = "";
+				int i = 0;
+				while (i < segs.Length - 1)
+					fileset += segs[i++];
+				int pos;
+				pos = segs[i].IndexOf('.');
+				if (pos < 0)
+					throw new ArgumentException("Could not parse the type set in the request");
+				fileset += segs[i].Substring(0, pos);
+				string ext = segs[i].Substring(pos + 1);
+				pos = ext.IndexOf('.');
+				if (pos > 0)
+				{
+					if (!Int32.TryParse(ext.Substring(0, pos), out version))
+						throw new ArgumentException("Could not parse the version in the request");
+					ext = ext.Substring(pos + 1);
+				}
+				ext = ext.ToLower();
+				if (ext == "js")
+					type = ClientDependencyType.Javascript;
+				else if (ext == "css")
+					type = ClientDependencyType.Css;
+				else
+					throw new ArgumentException("Could not parse the type set in the request");
+			}
 
-            ClientDependencyType type;
-            var version = 0;
-            int.TryParse(urlParts[urlParts.Count - 1].TrimEnd('/'), out version);
-            try
-            {
-                type = (ClientDependencyType)Enum.Parse(typeof(ClientDependencyType), urlParts[urlParts.Count - 2].TrimEnd('/'), true);
-            }
-            catch
-            {
-                throw new ArgumentException("Could not parse the type set in the request");
-            }
-
-            if (string.IsNullOrEmpty(fileset))
+			fileset = context.Server.UrlDecode(fileset);
+			
+			if (string.IsNullOrEmpty(fileset))
                 throw new ArgumentException("Must specify a fileset in the request");
 
             byte[] outputBytes = null;
@@ -176,7 +207,9 @@ namespace ClientDependency.Core.CompositeFiles
         /// <param name="context"></param>
         /// <param name="fileName">The name of the file that has been saved to disk</param>
         /// <param name="fileset">The Base64 encoded string supplied in the query string for the handler</param>
-        private void SetCaching(HttpContextBase context, string fileName, string fileset)
+		/// <param name="type">The type (css or js).</param>
+		/// <param name="version">The version.</param>
+		private void SetCaching(HttpContextBase context, string fileName, string fileset)
         {
             if (string.IsNullOrEmpty(fileName))
             {
@@ -198,10 +231,39 @@ namespace ClientDependency.Core.CompositeFiles
             cache.SetETag(FormsAuthentication.HashPasswordForStoringInConfigFile(fileset, "MD5"));
             
             //set server OutputCache to vary by our params
-            var urlParts = context.Request.Url.Segments.ToList();
-            cache.SetVaryByCustom(string.Format("{0}{1}{2}", urlParts[urlParts.Count - 3], urlParts[urlParts.Count - 2], urlParts[urlParts.Count - 1]));
 
-            //ensure the cache is different based on the encoding specified per browser
+			/* // proper way to do it is to have
+			 * cache.SetVaryByCustom("cdparms");
+			 * 
+			 * // then have this in global.asax
+			 * public override string GetVaryByCustomString(HttpContext context, string arg)
+			 * {
+			 *   if (arg == "cdparms")
+			 *   {
+			 *     if (string.IsNullOrEmpty(context.Request.PathInfo))
+			 *     {
+			 *       // querystring format
+			 *       return context.Request["s"] + "+" + context.Request["t"] + "+" + (context.Request["v"] ?? "0");
+			 *     }
+			 *     else
+			 *     {
+			 *	     // path format
+			 *	     return context.Request.PathInfo.Replace('/', '');
+			 *     }
+			 *   }
+			 * }
+			 * 
+			 * // that way, there would be one cache entry for both querystring and path formats.
+			 * // but, it requires a global.asax and I can't find a way to do without it.
+			 */
+
+			// in any case, cache already varies by pathInfo (build-in) so for path formats, we do not need anything
+			// just add params for querystring format, just in case...
+			cache.VaryByParams["t"] = true;
+			cache.VaryByParams["s"] = true;
+			cache.VaryByParams["cdv"] = true;
+
+			//ensure the cache is different based on the encoding specified per browser
             cache.VaryByContentEncodings["gzip"] = true;
             cache.VaryByContentEncodings["deflate"] = true;
 

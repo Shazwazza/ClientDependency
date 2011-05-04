@@ -76,13 +76,42 @@ namespace ClientDependency.Core.FileRegistration.Providers
         /// <param name="type"></param>
         /// <param name="http"></param>
         /// <returns></returns>
-        public static string GetCompositeFileUrl(string filePaths, ClientDependencyType type, HttpContextBase http)
-        {
-            //build the combined composite list url
-            string handler = "{0}/{1}/{2}/0";
-            string combinedurl = string.Format(handler, ClientDependencySettings.Instance.CompositeFileHandlerPath, http.Server.UrlEncode(EncodeTo64(filePaths)), type.ToString());
-            return combinedurl;
-        }
+		public static string GetCompositeFileUrl(string filePaths, ClientDependencyType type, HttpContextBase http)
+		{
+			return GetCompositeFileUrl(filePaths, type, http, true);
+		}
+
+		public static string GetCompositeFileUrl(string filePaths, ClientDependencyType type, HttpContextBase http, bool appendVersion)
+		{
+			filePaths = http.Server.UrlEncode(EncodeTo64(filePaths));
+
+			StringBuilder url = new StringBuilder();
+			url.Append(ClientDependencySettings.Instance.CompositeFileHandlerPath);
+			int pos = 0;
+			while (filePaths.Length > pos)
+			{
+				url.Append("/");
+				int len = Math.Min(filePaths.Length - pos, 240);
+				url.Append(filePaths.Substring(pos, len));
+				pos += 240;
+			}
+			int version = ClientDependencySettings.Instance.Version;
+			if (appendVersion && version > 0)
+			{
+				url.Append(".");
+				url.Append(version.ToString());
+			}
+			switch (type)
+			{
+				case ClientDependencyType.Css:
+					url.Append(".css");
+					break;
+				case ClientDependencyType.Javascript:
+					url.Append(".js");
+					break;
+			}
+			return url.ToString();
+		}
 
         private static string EncodeTo64(string toEncode)
         {
@@ -144,7 +173,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
             for (var i = 0; i < files.Count; i++)
             {
                 //append our version to the combined url 
-                files[i] = AppendVersion(GetCompositeFileUrl(files[i], type, http), http);
+				files[i] = GetCompositeFileUrl(files[i], type, http);
             }
 
             return files.ToArray();

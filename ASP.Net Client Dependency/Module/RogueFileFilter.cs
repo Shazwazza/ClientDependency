@@ -180,7 +180,7 @@ namespace ClientDependency.Core.Module
                         {
                             //var dependency = new BasicFile(type) { FilePath = url.AbsolutePath };
                             var dependency = new BasicFile(type) { FilePath = grp.ToString() };
-                            var resolved = BaseFileRegistrationProvider.GetCompositeFileUrl(dependency.ResolveFilePath(http), type, http);
+                            var resolved = BaseFileRegistrationProvider.GetCompositeFileUrl(dependency.ResolveFilePath(http), type, http, false);
                             return m.ToString().Replace(grp.ToString(), resolved.Replace("&", "&amp;"));
                         }
                     }
