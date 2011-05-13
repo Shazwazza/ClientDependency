@@ -36,6 +36,8 @@ namespace ClientDependency.Core
 		/// </summary>
 		public string ForceProvider { get; set; }
 
+		public bool ForceBundle { get; set; }
+
 		/// <summary>
 		/// Gets or sets the file path.
 		/// </summary>
@@ -83,7 +85,7 @@ namespace ClientDependency.Core
 	    /// <param name="fileName"></param>
 	    /// <param name="pathNameAlias"></param>
 	    public ClientDependencyAttribute(int priority, ClientDependencyType dependencyType, string fileName, string pathNameAlias)
-		    : this(Constants.DefaultGroup, priority, dependencyType, fileName, pathNameAlias)
+		    : this(Constants.DefaultGroup, priority, dependencyType, fileName, pathNameAlias, false)
         {
 		}
 
@@ -95,7 +97,7 @@ namespace ClientDependency.Core
         /// <param name="dependencyType">Type of the dependency.</param>
         /// <param name="fileName"></param>
         /// <param name="pathNameAlias"></param>
-        public ClientDependencyAttribute(int group, int priority, ClientDependencyType dependencyType, string fileName, string pathNameAlias)
+        public ClientDependencyAttribute(int group, int priority, ClientDependencyType dependencyType, string fileName, string pathNameAlias, bool forceBundle)
         {
             if (String.IsNullOrEmpty(fileName))
                 throw new ArgumentNullException("fileName");
@@ -108,6 +110,7 @@ namespace ClientDependency.Core
             PathNameAlias = pathNameAlias;
 
             DependencyType = dependencyType;
+			ForceBundle = forceBundle;
         }
         
 	}

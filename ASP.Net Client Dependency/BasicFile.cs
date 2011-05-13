@@ -23,6 +23,7 @@ namespace ClientDependency.Core
 		/// This can be empty and will use default provider
 		/// </summary>
 		public string ForceProvider { get; set; }
+		public bool ForceBundle { get; set; }
 
 		#endregion
 	}

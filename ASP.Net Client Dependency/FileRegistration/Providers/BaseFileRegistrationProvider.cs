@@ -83,7 +83,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
 		public static string GetCompositeFileUrl(string filePaths, ClientDependencyType type, HttpContextBase http, bool appendVersion)
 		{
-			filePaths = http.Server.UrlEncode(EncodeTo64(filePaths));
+			filePaths = EncodeTo64Url(filePaths);
 
 			StringBuilder url = new StringBuilder();
 			url.Append(ClientDependencySettings.Instance.CompositeFileHandlerPath);
@@ -111,6 +111,21 @@ namespace ClientDependency.Core.FileRegistration.Providers
 					break;
 			}
 			return url.ToString();
+		}
+
+		static string EncodeTo64Url(string toEncode)
+		{
+			string returnValue = EncodeTo64(toEncode);
+
+			// returnValue is base64 = may contain a-z, A-Z, 0-9, +, /, and =.
+			// the = at the end is just a filler, can remove
+			// then convert the + and / to "base64url" equivalent
+			//
+			returnValue = returnValue.TrimEnd(new char[] { '=' });
+			returnValue = returnValue.Replace("+", "-");
+			returnValue = returnValue.Replace("/", "_");
+			
+			return returnValue;
 		}
 
         private static string EncodeTo64(string toEncode)
@@ -201,9 +216,12 @@ namespace ClientDependency.Core.FileRegistration.Providers
             foreach (var f in dependencies)
             {
                 //if it is an external resource, then we need to break the sequence
+                // unless it has been explicitely required that the dependency be bundled
                 if (http.IsAbsolutePath(f.FilePath)
                     //remote dependencies aren't local
-                    && !new Uri(f.FilePath, UriKind.RelativeOrAbsolute).IsLocalUri(http))
+                    && !new Uri(f.FilePath, UriKind.RelativeOrAbsolute).IsLocalUri(http)
+                    // not required to be bundled
+                    && !f.ForceBundle)
                 {
                     //we've encountered an external dependency, so we need to break the sequence and restart it after
                     //we output the raw script tag
@@ -248,9 +266,12 @@ namespace ClientDependency.Core.FileRegistration.Providers
             foreach (var f in dependencies)
             {
                 //if it is an external resource, then we need to break the sequence
+                // unless it has been explicitely required that the dependency be bundled
                 if (http.IsAbsolutePath(f.FilePath)
                     //remote dependencies aren't local
-                    && !new Uri(f.FilePath, UriKind.RelativeOrAbsolute).IsLocalUri(http))
+                    && !new Uri(f.FilePath, UriKind.RelativeOrAbsolute).IsLocalUri(http)
+                    // not required to be bundled
+                    && !f.ForceBundle)
                 {
                     //we've encountered an external dependency, so we need to break the sequence and restart it after
                     //we output the raw script tag
@@ -303,6 +324,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
                     var resolvedPath = path.ResolvePath(http);
                     var basePath = resolvedPath.EndsWith("/") ? resolvedPath : resolvedPath + "/";
                     dependency.FilePath = basePath + dependency.FilePath;
+                    dependency.ForceBundle = (dependency.ForceBundle | path.ForceBundle);
                 }
                 else
                 {

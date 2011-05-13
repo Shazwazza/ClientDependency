@@ -37,6 +37,8 @@ namespace ClientDependency.Core.Controls
 		/// </summary>
 		public string ForceProvider { get; set; }
 
+		public bool ForceBundle { get; set; }
+
 		protected override void OnPreRender(EventArgs e)
 		{
 			base.OnPreRender(e);

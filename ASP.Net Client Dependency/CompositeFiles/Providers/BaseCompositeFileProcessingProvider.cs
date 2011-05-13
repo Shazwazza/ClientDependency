@@ -47,6 +47,11 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         /// <returns></returns>
         public DirectoryInfo CompositeFilePath { get; protected set; }
 
+		/// <summary>
+		/// Returns the set of white listed domains
+		/// </summary>
+		public IList<string> BundleDomains { get; protected set; }
+
         #region IHttpProvider Members
 
         public void Initialize(HttpContextBase http)
@@ -89,8 +94,28 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 
 
             _compositeFilePath = config["compositeFilePath"] ?? DefaultDependencyPath;
-           
-            
+
+			string bundleDomains = config["bundleDomains"];
+			if (bundleDomains != null)
+				bundleDomains = bundleDomains.Trim();
+			if (string.IsNullOrEmpty(bundleDomains))
+			{
+				BundleDomains = new List<string>();
+			}
+			else
+			{
+				string[] domains = bundleDomains.Split(new char[] { ',' });
+				for (int i = 0; i < domains.Length; i++)
+				{
+					// make sure we have a starting dot and a trailing port
+					// ie 'maps.google.com' will be stored as '.maps.google.com:80'
+					if (domains[i].IndexOf(':') < 0)
+						domains[i] = domains[i] + ":80";
+					if (!domains[i].StartsWith("."))
+						domains[i] = "." + domains[i];
+				}
+				BundleDomains = new List<string>(domains);
+			}
         }
 
         protected string MinifyFile(string fileContents, ClientDependencyType type)
@@ -171,8 +196,29 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 
 				try
 				{
-                    requestContents = GetXmlResponse(uri);
-					return true;
+					// get the domain to test, with starting dot and trailing port, then compare with
+					// declared (authorized) domains. the starting dot is here to allow for subdomain
+					// approval, eg '.maps.google.com:80' will be approved by rule '.google.com:80', yet
+					// '.roguegoogle.com:80' will not.
+					var domain = string.Format(".{0}:{1}", uri.Host, uri.Port);
+					bool bundle = false;
+					foreach (string bundleDomain in BundleDomains)
+					{
+						if (domain.EndsWith(bundleDomain))
+						{
+							bundle = true;
+							break;
+						}
+					}
+					if (bundle)
+					{
+						requestContents = GetXmlResponse(uri);
+						return true;
+					}
+					else
+					{
+						ClientDependencySettings.Instance.Logger.Error(string.Format("Could not load file contents from {0}. Domain is not white-listed.", url), null);
+					}
 				}
 				catch (Exception ex)
 				{

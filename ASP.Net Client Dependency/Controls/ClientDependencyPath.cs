@@ -20,6 +20,8 @@ namespace ClientDependency.Core.Controls
 		public string Name { get { return _name; } set { _name = value; } }
 		public string Path { get { return _path; } set { _path = value; } }
 
+		public bool ForceBundle { get; set; }
+
 		#region Logic to allow for databinding non-UI ASP.Net control
 		public event EventHandler DataBinding;
 		public void DataBind()

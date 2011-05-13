@@ -12,6 +12,7 @@ namespace ClientDependency.Core
 		int Group { get; set; }
         string PathNameAlias { get; set; }
 		string ForceProvider { get; set; }
+		bool ForceBundle { get; set; }
 
         ///// <summary>
         ///// Used to store additional attributes in the HTML markup for the item

@@ -187,7 +187,7 @@ namespace ClientDependency.Core.CompositeFiles
         private byte[] GetCombinedFiles(HttpContextBase context, string fileset, ClientDependencyType type, out List<CompositeFileDefinition> fDefs)
         {
             //get the file list
-            string[] strFiles = DecodeFrom64(fileset).Split(';');
+            string[] strFiles = DecodeFrom64Url(fileset).Split(';');
             //combine files and get the definition types of them (internal vs external resources)
             return ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CombineFiles(strFiles, context, type, out fDefs);
         }
@@ -279,7 +279,20 @@ namespace ClientDependency.Core.CompositeFiles
             //make this output cache dependent on the file if there is one.
             if (!string.IsNullOrEmpty(fileName))
                 context.Response.AddFileDependency(fileName);
-        }       
+        }
+
+		string DecodeFrom64Url(string toDecode)
+		{
+			// see BaseFileRegistrationProvider.EncodeTo64Url
+			//
+			toDecode = toDecode.Replace("-", "+");
+			toDecode = toDecode.Replace("_", "/");
+			int rem = toDecode.Length % 4; // 0 (aligned), 1, 2 or 3 (not aligned)
+			if (rem > 0)
+				toDecode = toDecode.PadRight(toDecode.Length + 4 - rem, '='); // align
+
+			return DecodeFrom64(toDecode);
+		}
 
         private string DecodeFrom64(string toDecode)
         {

@@ -10,6 +10,7 @@ namespace ClientDependency.Core
 
 		string Name { get; set; }
 		string Path { get; set; }
+		bool ForceBundle { get; set; }
 
 	}
 }
