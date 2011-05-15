@@ -26,7 +26,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
         protected const string DependencyLoaderResourceName = "ClientDependency.Core.Resources.LazyLoader.js";
         
 
-        private static readonly object m_Locker = new object();
+        private static readonly object Locker = new object();
         
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
         {
             if (http.Items["LazyLoaderLoaded"] == null || (bool)http.Items["LazyLoaderLoaded"] == false)
             {
-                lock (m_Locker)
+                lock (Locker)
                 {
                     if (http.Items["LazyLoaderLoaded"] == null || (bool)http.Items["LazyLoaderLoaded"] == false)
                     {
@@ -86,7 +86,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
                 RegisterLazyLoadScript(sb, http);
 
-                var comp = ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript, http);
+                var comp = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript, http);
                 foreach (var s in comp)
                 {
                     sb.Append(RenderSingleJsFile(string.Format("'{0}','{1}'", s, string.Empty)));
@@ -121,7 +121,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
                 RegisterLazyLoadScript(sb, http);
 
-                var comp = ProcessCompositeList(cssDependencies, ClientDependencyType.Css, http);
+                var comp = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.ProcessCompositeList(cssDependencies, ClientDependencyType.Css, http);
                 foreach (var s in comp)
                 {
                     sb.Append(RenderSingleCssFile(s));

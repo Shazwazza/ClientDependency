@@ -36,7 +36,7 @@ namespace ClientDependency.Core.Controls
             {
                 if (!Context.Items.Contains(ContextKey))
                 {
-                    lock (m_Locker)
+                    lock (Locker)
                     {
                         if (!Context.Items.Contains(ContextKey))
                         {
@@ -62,7 +62,7 @@ namespace ClientDependency.Core.Controls
 
 		public const string ContextKey = "ClientDependencyLoader";
 
-        private static object m_Locker = new object();
+        private static readonly object Locker = new object();
 
         public string ProviderName
         {

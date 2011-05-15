@@ -57,12 +57,12 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 	    /// <summary>
 	    /// combines all files to a byte array
 	    /// </summary>
-	    /// <param name="strFiles"></param>
+	    /// <param name="filePaths"></param>
 	    /// <param name="context"></param>
 	    /// <param name="type"></param>
 	    /// <param name="fileDefs"></param>
 	    /// <returns></returns>
-	    public override byte[] CombineFiles(string[] strFiles, HttpContextBase context, ClientDependencyType type, out List<CompositeFileDefinition> fileDefs)
+	    public override byte[] CombineFiles(string[] filePaths, HttpContextBase context, ClientDependencyType type, out List<CompositeFileDefinition> fileDefs)
 		{
 
 			var fDefs = new List<CompositeFileDefinition>();
@@ -70,7 +70,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 			var ms = new MemoryStream(5000);            
             var sw = new StreamWriter(ms, Encoding.UTF8);
 
-			foreach (string s in strFiles)
+			foreach (string s in filePaths)
 			{
 				if (!string.IsNullOrEmpty(s))
 				{

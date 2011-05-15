@@ -39,7 +39,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 			}
 			else
 			{
-                var comp = ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript, http);
+                var comp = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript, http);
                 foreach (var s in comp)
                 {
                     sb.Append(RenderSingleJsFile(s));
@@ -70,7 +70,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 			}
 			else
 			{
-                var comp = ProcessCompositeList(cssDependencies, ClientDependencyType.Css, http);
+                var comp = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.ProcessCompositeList(cssDependencies, ClientDependencyType.Css, http);
                 foreach (var s in comp)
                 {
                     sb.Append(RenderSingleCssFile(s));

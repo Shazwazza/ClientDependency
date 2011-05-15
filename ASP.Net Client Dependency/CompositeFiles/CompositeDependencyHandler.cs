@@ -18,7 +18,7 @@ namespace ClientDependency.Core.CompositeFiles
 
         }
 
-        private readonly object _lock = new object();
+        private readonly static object Lock = new object();
 
         /// <summary>
         /// When building composite includes, it creates a Base64 encoded string of all of the combined dependency file paths
@@ -26,9 +26,9 @@ namespace ClientDependency.Core.CompositeFiles
         /// This is the maximum allowed number of characters that there is allowed, otherwise an exception is thrown.
         /// </summary>
         /// <remarks>
-        /// If this handler path needs to change, it can be change by setting it in the global.asax on application start
+        /// If this handler path needs to change, it can be changed by setting it in the global.asax on application start
         /// </remarks>
-        public const int MaxHandlerUrlLength = 2048;
+        public static int MaxHandlerUrlLength = 2048;
 
         bool IHttpHandler.IsReusable
         {
@@ -41,60 +41,59 @@ namespace ClientDependency.Core.CompositeFiles
         void IHttpHandler.ProcessRequest(HttpContext context)
         {
             var contextBase = new HttpContextWrapper(context);
-            var response = contextBase.Response;
+            
+            ClientDependencyType type;
+            string fileset;
+            int version = 0;
 
-			ClientDependencyType type;
-			string fileset;
-			int version = 0;
+            if (string.IsNullOrEmpty(context.Request.PathInfo))
+            {
+                // querystring format
+                fileset = context.Request["s"];
+                if (!string.IsNullOrEmpty(context.Request["cdv"]) && !Int32.TryParse(context.Request["cdv"], out version))
+                    throw new ArgumentException("Could not parse the version in the request");
+                try
+                {
+                    type = (ClientDependencyType)Enum.Parse(typeof(ClientDependencyType), context.Request["t"], true);
+                }
+                catch
+                {
+                    throw new ArgumentException("Could not parse the type set in the request");
+                }
+            }
+            else
+            {
+                // path format
+                var segs = context.Request.PathInfo.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+                fileset = "";
+                int i = 0;
+                while (i < segs.Length - 1)
+                    fileset += segs[i++];
+                int pos;
+                pos = segs[i].IndexOf('.');
+                if (pos < 0)
+                    throw new ArgumentException("Could not parse the type set in the request");
+                fileset += segs[i].Substring(0, pos);
+                string ext = segs[i].Substring(pos + 1);
+                pos = ext.IndexOf('.');
+                if (pos > 0)
+                {
+                    if (!Int32.TryParse(ext.Substring(0, pos), out version))
+                        throw new ArgumentException("Could not parse the version in the request");
+                    ext = ext.Substring(pos + 1);
+                }
+                ext = ext.ToLower();
+                if (ext == "js")
+                    type = ClientDependencyType.Javascript;
+                else if (ext == "css")
+                    type = ClientDependencyType.Css;
+                else
+                    throw new ArgumentException("Could not parse the type set in the request");
+            }
 
-			if (string.IsNullOrEmpty(context.Request.PathInfo))
-			{
-				// querystring format
-				fileset = context.Request["s"];
-				if (!string.IsNullOrEmpty(context.Request["cdv"]) && !Int32.TryParse(context.Request["cdv"], out version))
-					throw new ArgumentException("Could not parse the version in the request");
-				try
-				{
-					type = (ClientDependencyType)Enum.Parse(typeof(ClientDependencyType), context.Request["t"], true);
-				}
-				catch
-				{
-					throw new ArgumentException("Could not parse the type set in the request");
-				}
-			}
-			else
-			{
-				// path format
-				var segs = context.Request.PathInfo.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-				fileset = "";
-				int i = 0;
-				while (i < segs.Length - 1)
-					fileset += segs[i++];
-				int pos;
-				pos = segs[i].IndexOf('.');
-				if (pos < 0)
-					throw new ArgumentException("Could not parse the type set in the request");
-				fileset += segs[i].Substring(0, pos);
-				string ext = segs[i].Substring(pos + 1);
-				pos = ext.IndexOf('.');
-				if (pos > 0)
-				{
-					if (!Int32.TryParse(ext.Substring(0, pos), out version))
-						throw new ArgumentException("Could not parse the version in the request");
-					ext = ext.Substring(pos + 1);
-				}
-				ext = ext.ToLower();
-				if (ext == "js")
-					type = ClientDependencyType.Javascript;
-				else if (ext == "css")
-					type = ClientDependencyType.Css;
-				else
-					throw new ArgumentException("Could not parse the type set in the request");
-			}
+            fileset = context.Server.UrlDecode(fileset);
 
-			fileset = context.Server.UrlDecode(fileset);
-			
-			if (string.IsNullOrEmpty(fileset))
+            if (string.IsNullOrEmpty(fileset))
                 throw new ArgumentException("Must specify a fileset in the request");
 
             byte[] outputBytes = null;
@@ -124,10 +123,10 @@ namespace ClientDependency.Core.CompositeFiles
         internal byte[] ProcessRequestInternal(HttpContextBase context, string fileset, ClientDependencyType type, int version, byte[] outputBytes)
         {
             //get the compression type supported
-            CompressionType cType = context.GetClientCompression(); 
+            var clientCompression = context.GetClientCompression();
 
             //get the map to the composite file for this file set, if it exists.
-            CompositeFileMap map = ClientDependencySettings.Instance.DefaultFileMapProvider.GetCompositeFile(fileset, version, cType.ToString());
+            var map = ClientDependencySettings.Instance.DefaultFileMapProvider.GetCompositeFile(fileset, version, clientCompression.ToString());
 
             string compositeFileName = "";
             if (map != null && map.HasFileBytes)
@@ -136,46 +135,62 @@ namespace ClientDependency.Core.CompositeFiles
             }
             else
             {
-                bool fromFile = false;
-
-                lock (_lock)
+                lock (Lock)
                 {
                     //check again...
-                    if (map == null || !map.HasFileBytes)
+                    if (map != null && map.HasFileBytes)
                     {
-                        //need to do the combining, etc... and save the file map
+                        //there's files there now, so process them
+                        ProcessFromFile(context, map, out compositeFileName, out outputBytes);
+                    }
+                    else
+                    {
+                        List<CompositeFileDefinition> fileDefinitions;
+                        byte[] fileBytes;
 
-                        List<CompositeFileDefinition> fDefs;
-                        byte[] fileBytes = GetCombinedFiles(context, fileset, type, out fDefs);
+                        if (ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.UrlType == CompositeUrlType.MappedId)
+                        {
+                            //need to try to find the map by it's id/version (not compression)
+                            var filePaths = ClientDependencySettings.Instance.DefaultFileMapProvider.GetDependentFiles(fileset, version);
+
+                            if (filePaths == null)
+                            {
+                                throw new KeyNotFoundException("no map was found for the dependency key: " + fileset +
+                                                               " ,CompositeUrlType.MappedId requires that a map is found");
+                            }
+
+                            //combine files and get the definition types of them (internal vs external resources)
+                            fileBytes = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider
+                                .CombineFiles(filePaths.ToArray(), context, type, out fileDefinitions);
+                        }
+                        else
+                        {
+                            //need to do the combining, etc... and save the file map                            
+                            fileBytes = GetCombinedFiles(context, fileset, type, out fileDefinitions);                           
+                        }
+
                         //compress data                        
-                        outputBytes = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CompressBytes(cType, fileBytes);
-                        context.AddCompressionResponseHeader(cType);
+                        outputBytes = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CompressBytes(clientCompression, fileBytes);
+                        context.AddCompressionResponseHeader(clientCompression);
+
                         //save combined file
-                        FileInfo compositeFile = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.SaveCompositeFile(outputBytes, type, context.Server);
+                        var compositeFile = ClientDependencySettings.Instance
+                            .DefaultCompositeFileProcessingProvider
+                            .SaveCompositeFile(outputBytes, type, context.Server);
+
                         if (compositeFile != null)
                         {
                             compositeFileName = compositeFile.FullName;
                             if (!string.IsNullOrEmpty(compositeFileName))
                             {
                                 //Update the XML file map
-                                ClientDependencySettings.Instance.DefaultFileMapProvider.CreateMap(fileset, cType.ToString(),
-                                    fDefs
-                                        .Where(f => f.IsLocalFile)
-                                        .Select(x => new FileInfo(context.Server.MapPath(x.Uri))).ToList(), compositeFileName,
+                                ClientDependencySettings.Instance.DefaultFileMapProvider.CreateUpdateMap(fileset, clientCompression.ToString(),
+                                    fileDefinitions.Select(x => new BasicFile(type) { FilePath = x.Uri }).Cast<IClientDependencyFile>(),
+                                        compositeFileName,
                                         ClientDependencySettings.Instance.Version);
                             }
-                        }                        
+                        }
                     }
-                    else
-                    {
-                        //files are there now, process from file.
-                        fromFile = true;
-                    }
-                }
-
-                if (fromFile)
-                {
-                    ProcessFromFile(context, map, out compositeFileName, out outputBytes);
                 }
             }
 
@@ -186,9 +201,9 @@ namespace ClientDependency.Core.CompositeFiles
         private byte[] GetCombinedFiles(HttpContextBase context, string fileset, ClientDependencyType type, out List<CompositeFileDefinition> fDefs)
         {
             //get the file list
-            string[] strFiles = DecodeFrom64Url(fileset).Split(';');
+            string[] filePaths = fileset.DecodeFrom64Url().Split(';');
             //combine files and get the definition types of them (internal vs external resources)
-            return ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CombineFiles(strFiles, context, type, out fDefs);
+            return ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CombineFiles(filePaths, context, type, out fDefs);
         }
 
         private void ProcessFromFile(HttpContextBase context, CompositeFileMap map, out string compositeFileName, out byte[] outputBytes)
@@ -226,41 +241,41 @@ namespace ClientDependency.Core.CompositeFiles
             cache.SetLastModified(DateTime.Now);
 
             cache.SetETag(FormsAuthentication.HashPasswordForStoringInConfigFile(fileset, "MD5"));
-            
+
             //set server OutputCache to vary by our params
 
-			/* // proper way to do it is to have
-			 * cache.SetVaryByCustom("cdparms");
-			 * 
-			 * // then have this in global.asax
-			 * public override string GetVaryByCustomString(HttpContext context, string arg)
-			 * {
-			 *   if (arg == "cdparms")
-			 *   {
-			 *     if (string.IsNullOrEmpty(context.Request.PathInfo))
-			 *     {
-			 *       // querystring format
-			 *       return context.Request["s"] + "+" + context.Request["t"] + "+" + (context.Request["v"] ?? "0");
-			 *     }
-			 *     else
-			 *     {
-			 *	     // path format
-			 *	     return context.Request.PathInfo.Replace('/', '');
-			 *     }
-			 *   }
-			 * }
-			 * 
-			 * // that way, there would be one cache entry for both querystring and path formats.
-			 * // but, it requires a global.asax and I can't find a way to do without it.
-			 */
+            /* // proper way to do it is to have
+             * cache.SetVaryByCustom("cdparms");
+             * 
+             * // then have this in global.asax
+             * public override string GetVaryByCustomString(HttpContext context, string arg)
+             * {
+             *   if (arg == "cdparms")
+             *   {
+             *     if (string.IsNullOrEmpty(context.Request.PathInfo))
+             *     {
+             *       // querystring format
+             *       return context.Request["s"] + "+" + context.Request["t"] + "+" + (context.Request["v"] ?? "0");
+             *     }
+             *     else
+             *     {
+             *	     // path format
+             *	     return context.Request.PathInfo.Replace('/', '');
+             *     }
+             *   }
+             * }
+             * 
+             * // that way, there would be one cache entry for both querystring and path formats.
+             * // but, it requires a global.asax and I can't find a way to do without it.
+             */
 
-			// in any case, cache already varies by pathInfo (build-in) so for path formats, we do not need anything
-			// just add params for querystring format, just in case...
-			cache.VaryByParams["t"] = true;
-			cache.VaryByParams["s"] = true;
-			cache.VaryByParams["cdv"] = true;
+            // in any case, cache already varies by pathInfo (build-in) so for path formats, we do not need anything
+            // just add params for querystring format, just in case...
+            cache.VaryByParams["t"] = true;
+            cache.VaryByParams["s"] = true;
+            cache.VaryByParams["cdv"] = true;
 
-			//ensure the cache is different based on the encoding specified per browser
+            //ensure the cache is different based on the encoding specified per browser
             cache.VaryByContentEncodings["gzip"] = true;
             cache.VaryByContentEncodings["deflate"] = true;
 
@@ -268,7 +283,7 @@ namespace ClientDependency.Core.CompositeFiles
             cache.SetOmitVaryStar(true);
             //ensure client browser maintains strict caching rules
             cache.AppendCacheExtension("must-revalidate, proxy-revalidate");
-            
+
             //This is the only way to set the max-age cachability header in ASP.Net!
             //FieldInfo maxAgeField = cache.GetType().GetField("_maxAge", BindingFlags.Instance | BindingFlags.NonPublic);
             //maxAgeField.SetValue(cache, duration);
@@ -278,24 +293,6 @@ namespace ClientDependency.Core.CompositeFiles
                 context.Response.AddFileDependency(fileName);
         }
 
-		string DecodeFrom64Url(string toDecode)
-		{
-			// see BaseFileRegistrationProvider.EncodeTo64Url
-			//
-			toDecode = toDecode.Replace("-", "+");
-			toDecode = toDecode.Replace("_", "/");
-			int rem = toDecode.Length % 4; // 0 (aligned), 1, 2 or 3 (not aligned)
-			if (rem > 0)
-				toDecode = toDecode.PadRight(toDecode.Length + 4 - rem, '='); // align
-
-			return DecodeFrom64(toDecode);
-		}
-
-        private string DecodeFrom64(string toDecode)
-        {
-            byte[] toDecodeAsBytes = System.Convert.FromBase64String(toDecode);
-            return Encoding.Default.GetString(toDecodeAsBytes);
-        }
     }
 }
 

@@ -72,61 +72,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         #region Public Methods
 
-        /// <summary>
-        /// Returns a URL used to return a compbined/compressed/optimized version of all dependencies.
-        /// <remarks>
-        /// The full url with the encoded query strings for the handler which will process the composite list
-        /// of dependencies. The handler will compbine, compress, minify, and output cache the results
-        /// on the base64 encoded string.
-        /// </remarks>        
-        /// </summary>
-        /// <param name="dependencies"></param>
-        /// <param name="type"></param>
-        /// <param name="http"></param>
-        /// <returns>An array containing the list of composite file URLs. This will generally only contain 1 value unless
-        /// the number of files registered exceeds the maximum length, then it will return more than one file.</returns>
-        public string[] ProcessCompositeList(IEnumerable<IClientDependencyFile> dependencies, ClientDependencyType type, HttpContextBase http)
-        {
-            if (!dependencies.Any())
-                return new string[] { };
-
-            //build the combined composite list urls          
-            var files = new List<string>();
-            var currBuilder = new StringBuilder();
-            var builderCount = 1;
-            var stringType = type.ToString();
-            foreach (var a in dependencies)
-            {
-                //if the addition of this file is going to exceed 75% of the max length (since we'll be base64 encoding), we'll need to split
-                if ((currBuilder.Length +
-                    a.FilePath.Length +
-                    ClientDependencySettings.Instance.CompositeFileHandlerPath.Length +
-                    stringType.Length + 10) >= (CompositeDependencyHandler.MaxHandlerUrlLength * 0.75))
-                {
-                    //add the current output to the array
-                    files.Add(currBuilder.ToString());
-                    //create some new output
-                    currBuilder = new StringBuilder();
-                    builderCount++;
-                }
-
-                currBuilder.Append(a.FilePath + ";");
-            }
-
-            if (builderCount > files.Count)
-            {
-                files.Add(currBuilder.ToString());
-            }
-
-            //now, compress each url
-            for (var i = 0; i < files.Count; i++)
-            {
-                //append our version to the combined url 
-                files[i] = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.GetCompositeFileUrl(files[i], type, http, true);
-            }
-
-            return files.ToArray();
-        }
+        
 
         #endregion
 

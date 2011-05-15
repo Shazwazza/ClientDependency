@@ -7,27 +7,28 @@ using System.IO;
 
 namespace ClientDependency.Core.CompositeFiles
 {
-	/// <summary>
+    /// <summary>
 	/// Deserialized structure of the XML stored in the map file
 	/// </summary>
 	public class CompositeFileMap
 	{
 
-		internal CompositeFileMap(string key, string compressionType, string file, List<FileInfo> files, int version)
+		internal CompositeFileMap(string key, string compressionType, string file, IEnumerable<string> filePaths, int version)
 		{
-			DependentFiles = files;
-			Base64Key = key;
+            DependentFiles = filePaths;
+			FileKey = key;
 			CompositeFileName = file;
 			CompressionType = compressionType;
             Version = version;
 		}
 
-		public string Base64Key { get; private set; }
+		public string FileKey { get; private set; }
 		public string CompositeFileName { get; private set; }
 		public string CompressionType { get; private set; }
         public int Version { get; private set; }
+        public IEnumerable<string> DependentFiles { get; private set; }
 
-		private byte[] m_FileBytes;
+        private byte[] m_FileBytes;
 
 		/// <summary>
 		/// If for some reason the file doesn't exist any more or we cannot read the file, this will return false.
@@ -48,6 +49,11 @@ namespace ClientDependency.Core.CompositeFiles
 		{
 			if (m_FileBytes == null)
 			{
+                if (string.IsNullOrEmpty(CompositeFileName))
+                {
+                    return null;
+                }
+
 				try
 				{
 					FileInfo fi = new FileInfo(CompositeFileName);
@@ -65,7 +71,7 @@ namespace ClientDependency.Core.CompositeFiles
 			return m_FileBytes;
 		}
 
-		public List<FileInfo> DependentFiles { get; private set; }
+		
 
 	}
 }

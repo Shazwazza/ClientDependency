@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using ClientDependency.Core.Config;
 using System.IO;
@@ -11,31 +12,6 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 {
     public abstract class BaseCompositeFileProcessingProvider : ProviderBase, IHttpProvider
     {
-
-        #region Static Methods
-
-        static string EncodeTo64Url(string toEncode)
-        {
-            string returnValue = EncodeTo64(toEncode);
-
-            // returnValue is base64 = may contain a-z, A-Z, 0-9, +, /, and =.
-            // the = at the end is just a filler, can remove
-            // then convert the + and / to "base64url" equivalent
-            //
-            returnValue = returnValue.TrimEnd(new char[] { '=' });
-            returnValue = returnValue.Replace("+", "-");
-            returnValue = returnValue.Replace("/", "_");
-
-            return returnValue;
-        }
-
-        private static string EncodeTo64(string toEncode)
-        {
-            byte[] toEncodeAsBytes = Encoding.Default.GetBytes(toEncode);
-            string returnValue = System.Convert.ToBase64String(toEncodeAsBytes);
-            return returnValue;
-        }
-        #endregion
 
         private const string DefaultDependencyPath = "~/App_Data/ClientDependency";
         private readonly string _byteOrderMarkUtf8 = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
@@ -97,39 +73,128 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         #endregion
 
         public abstract FileInfo SaveCompositeFile(byte[] fileContents, ClientDependencyType type, HttpServerUtilityBase server);
-        public abstract byte[] CombineFiles(string[] strFiles, HttpContextBase context, ClientDependencyType type, out List<CompositeFileDefinition> fileDefs);
+        public abstract byte[] CombineFiles(string[] filePaths, HttpContextBase context, ClientDependencyType type, out List<CompositeFileDefinition> fileDefs);
         public abstract byte[] CompressBytes(CompressionType type, byte[] fileBytes);
+
+        /// <summary>
+        /// Returns a URL used to return a compbined/compressed/optimized version of all dependencies.
+        /// <remarks>
+        /// The full url with the encoded query strings for the handler which will process the composite list
+        /// of dependencies. The handler will compbine, compress, minify, and output cache the results
+        /// on the base64 encoded string.
+        /// </remarks>        
+        /// </summary>
+        /// <param name="dependencies"></param>
+        /// <param name="type"></param>
+        /// <param name="http"></param>
+        /// <returns>An array containing the list of composite file URLs. This will generally only contain 1 value unless
+        /// the number of files registered exceeds the maximum length, then it will return more than one file.</returns>
+        public virtual string[] ProcessCompositeList(
+            IEnumerable<IClientDependencyFile> dependencies, 
+            ClientDependencyType type, 
+            HttpContextBase http)
+        {
+            if (!dependencies.Any())
+                return new string[] { };
+
+            switch (UrlType)
+            {
+                case CompositeUrlType.MappedId:
+                    
+                    //use the file mapper to create us a file key/id for the file set
+                    var fileKey = ClientDependencySettings.Instance.DefaultFileMapProvider.CreateNewMap(http, dependencies,
+                                                                                                        ClientDependencySettings.Instance.Version);
+
+                    //create the url
+                    return new[] { GetCompositeFileUrl(fileKey, type, http, true, CompositeUrlType.MappedId) };
+
+                default:
+                    
+                    //build the combined composite list urls          
+                    
+                    var files = new List<string>();
+                    var currBuilder = new StringBuilder();
+                    var base64Builder = new StringBuilder();
+                    var builderCount = 1;
+                    var stringType = type.ToString();
+                    foreach (var a in dependencies)
+                    {
+                        //update the base64 output to get the length
+                        base64Builder.Append(a.FilePath.EncodeTo64());
+
+                        //test if the current base64 string exceeds the max length, if so we need to split
+                        if ((base64Builder.Length + ClientDependencySettings.Instance.CompositeFileHandlerPath.Length + stringType.Length + 10) 
+                            >= (CompositeDependencyHandler.MaxHandlerUrlLength))
+                        {
+                            //add the current output to the array
+                            files.Add(currBuilder.ToString());
+                            //create some new output
+                            currBuilder = new StringBuilder();
+                            base64Builder = new StringBuilder();
+                            builderCount++;
+                        }
+
+                        //update the normal builder
+                        currBuilder.Append(a.FilePath + ";");
+                    }
+
+                    if (builderCount > files.Count)
+                    {
+                        files.Add(currBuilder.ToString());
+                    }
+
+                    //now, compress each url
+                    for (var i = 0; i < files.Count; i++)
+                    {
+                        //append our version to the combined url 
+                        var encodedFile = files[i].EncodeTo64Url();
+                        files[i] = GetCompositeFileUrl(encodedFile, type, http, true, UrlType);
+                    }
+
+                    return files.ToArray();
+            }            
+        }
 
         /// <summary>
         /// Returns the url for the composite file handler for the filePath specified.
         /// </summary>
-        /// <param name="filePaths"></param>
+        /// <param name="fileKey">The Base64 encoded file paths or the file map key used to lookup the required dependencies</param>
         /// <param name="type"></param>
         /// <param name="http"></param>
         /// <param name="appendVersion"></param>
+        /// <param name="urlType"></param>
         /// <returns></returns>
-        public virtual string GetCompositeFileUrl(string filePaths, ClientDependencyType type, HttpContextBase http, bool appendVersion)
+        public virtual string GetCompositeFileUrl(
+            string fileKey, 
+            ClientDependencyType type, 
+            HttpContextBase http, 
+            bool appendVersion,
+            CompositeUrlType urlType)
         {
             var url = new StringBuilder();
 
-            switch (UrlType)
+            switch (urlType)
             {
                 case CompositeUrlType.Base64QueryStrings:
+
+                    //Create a URL with a base64 query string
+
                     const string handler = "{0}?s={1}&t={2}";
                     url.Append(string.Format(handler,
                                              ClientDependencySettings.Instance.CompositeFileHandlerPath,
-                                             http.Server.UrlEncode(EncodeTo64(filePaths)), type));
+                                             http.Server.UrlEncode(fileKey), type));
                     break;
-                case CompositeUrlType.Base64Paths:
-                    filePaths = EncodeTo64Url(filePaths);
+                default:
+
+                    //Create a URL based on base64 paths instead of a query string
 
                     url.Append(ClientDependencySettings.Instance.CompositeFileHandlerPath);
                     int pos = 0;
-                    while (filePaths.Length > pos)
+                    while (fileKey.Length > pos)
                     {
                         url.Append("/");
-                        int len = Math.Min(filePaths.Length - pos, 240);
-                        url.Append(filePaths.Substring(pos, len));
+                        int len = Math.Min(fileKey.Length - pos, 240);
+                        url.Append(fileKey.Substring(pos, len));
                         pos += 240;
                     }
                     int version = ClientDependencySettings.Instance.Version;
@@ -148,10 +213,6 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                             break;
                     }
                     break;
-                case CompositeUrlType.MappedId:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
 
             return url.ToString();

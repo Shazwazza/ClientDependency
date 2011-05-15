@@ -179,9 +179,16 @@ namespace ClientDependency.Core.Module
                             return m.ToString(); //not a local uri        
                         else
                         {
-                            //var dependency = new BasicFile(type) { FilePath = url.AbsolutePath };
+                           
                             var dependency = new BasicFile(type) { FilePath = grp.ToString() };
-                            var resolved = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.GetCompositeFileUrl(dependency.ResolveFilePath(http), type, http, false);
+
+                            var file = new[] { new BasicFile(type) { FilePath = dependency.ResolveFilePath(http) } };
+
+                            var resolved = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.ProcessCompositeList(
+                                file,
+                                type,
+                                http).Single();
+
                             return m.ToString().Replace(grp.ToString(), resolved.Replace("&", "&amp;"));
                         }
                     }
