@@ -23,5 +23,4 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 			base.Add(provider);
 		}
 	}
-
 }

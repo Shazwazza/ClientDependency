@@ -11,7 +11,7 @@ using ClientDependency.Core.Controls;
 namespace ClientDependency.Web.Test.Pages
 {
 
-    public partial class EmbeddedResourceTest : System.Web.UI.Page
+    public partial class EmbeddedResourceTest : Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {

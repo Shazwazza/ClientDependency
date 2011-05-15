@@ -84,17 +84,45 @@ namespace ClientDependency.Core.Config
 
         public ILogger Logger { get; private set; }
 
+        /// <summary>
+        /// Returns the default MVC renderer
+        /// </summary>
         public BaseRenderer DefaultMvcRenderer { get; private set; }
 
+        /// <summary>
+        /// Returns the MVC renderer provider collection
+        /// </summary>
         public RendererCollection MvcRendererCollection { get; private set; }
 
+        /// <summary>
+        /// Returns the default file registration provider
+        /// </summary>
         public WebFormsFileRegistrationProvider DefaultFileRegistrationProvider { get; private set; }
 
+        /// <summary>
+        /// Returns the file registration provider collection
+        /// </summary>
         public FileRegistrationProviderCollection FileRegistrationProviderCollection { get; private set; }
 
+        /// <summary>
+        /// Returns the default composite file processing provider
+        /// </summary>
         public BaseCompositeFileProcessingProvider DefaultCompositeFileProcessingProvider { get; private set; }
 
+        /// <summary>
+        /// Returns the composite file processing provider collection
+        /// </summary>
         public CompositeFileProcessingProviderCollection CompositeFileProcessingProviderCollection { get; private set; }
+
+        /// <summary>
+        /// Returns the default file map provider
+        /// </summary>
+        public BaseFileMapProvider DefaultFileMapProvider { get; private set; }
+
+        /// <summary>
+        /// Returns the collection of file map providers
+        /// </summary>
+        public FileMapProviderCollection FileMapProviderCollection { get; private set; }
 
         public ClientDependencySection ConfigSection { get; private set; }
        
@@ -108,6 +136,7 @@ namespace ClientDependency.Core.Config
             FileRegistrationProviderCollection = new FileRegistrationProviderCollection();
             CompositeFileProcessingProviderCollection = new CompositeFileProcessingProviderCollection();
             MvcRendererCollection = new RendererCollection();
+            FileMapProviderCollection = new FileMapProviderCollection();
 
             // if there is no section found, then create one
             if (ConfigSection == null)
@@ -116,37 +145,41 @@ namespace ClientDependency.Core.Config
                 ConfigSection = new ClientDependencySection();                            
             }
 
+            //need to check if it's an http path or a lambda path
+            var path = ConfigSection.CompositeFileElement.CompositeFileHandlerPath;
+            CompositeFileHandlerPath = path.StartsWith("~/")
+                ? VirtualPathUtility.ToAbsolute(ConfigSection.CompositeFileElement.CompositeFileHandlerPath, http.Request.ApplicationPath)
+                : ConfigSection.CompositeFileElement.CompositeFileHandlerPath;
+            Version = ConfigSection.Version;
+            UseLegacyRenderMethods = ConfigSection.UseLegacyRenderMethods;
+            FileBasedDependencyExtensionList = ConfigSection.FileBasedDependencyExtensionList.ToList();
+
             //load the providers from the config, if there isn't config sections then add default providers
+            // and then load the defaults.
+            
             LoadDefaultCompositeFileConfig(ConfigSection, http);
-            LoadDefaultMvcFileConfig(ConfigSection);
-            LoadDefaultFileRegConfig(ConfigSection);
 
-            //set the defaults
-
-            DefaultFileRegistrationProvider = FileRegistrationProviderCollection[ConfigSection.FileRegistrationElement.DefaultProvider];
-            if (DefaultFileRegistrationProvider == null)
-                throw new ProviderException("Unable to load default file registration provider");
-
-            DefaultCompositeFileProcessingProvider = CompositeFileProcessingProviderCollection[ConfigSection.CompositeFileElement.DefaultProvider];
+            DefaultCompositeFileProcessingProvider = CompositeFileProcessingProviderCollection[ConfigSection.CompositeFileElement.DefaultFileProcessingProvider];
             if (DefaultCompositeFileProcessingProvider == null)
                 throw new ProviderException("Unable to load default composite file provider");
+
+            LoadDefaultFileMapConfig(ConfigSection, http);
+
+            DefaultFileMapProvider = FileMapProviderCollection[ConfigSection.CompositeFileElement.DefaultFileMapProvider];
+            if (DefaultFileMapProvider == null)
+                throw new ProviderException("Unable to load default file map provider");
+
+            LoadDefaultMvcFileConfig(ConfigSection);
 
             DefaultMvcRenderer = MvcRendererCollection[ConfigSection.MvcElement.DefaultRenderer];
             if (DefaultMvcRenderer == null)
                 throw new ProviderException("Unable to load default mvc renderer");
 
-            //need to check if it's an http path or a lambda path
-            var path = ConfigSection.CompositeFileElement.CompositeFileHandlerPath;
-            CompositeFileHandlerPath = path.StartsWith("~/")
-                ? VirtualPathUtility.ToAbsolute(ConfigSection.CompositeFileElement.CompositeFileHandlerPath, http.Request.ApplicationPath) 
-                : ConfigSection.CompositeFileElement.CompositeFileHandlerPath;
+            LoadDefaultFileRegConfig(ConfigSection);
 
-            Version = ConfigSection.Version;
-
-            UseLegacyRenderMethods = ConfigSection.UseLegacyRenderMethods;
-
-            FileBasedDependencyExtensionList = ConfigSection.FileBasedDependencyExtensionList.ToList();
-
+            DefaultFileRegistrationProvider = FileRegistrationProviderCollection[ConfigSection.FileRegistrationElement.DefaultProvider];
+            if (DefaultFileRegistrationProvider == null)
+                throw new ProviderException("Unable to load default file registration provider");
 
             if (string.IsNullOrEmpty(ConfigSection.LoggerType))
             {
@@ -167,7 +200,7 @@ namespace ClientDependency.Core.Config
 
         private void LoadDefaultFileRegConfig(ClientDependencySection section)
         {
-            if (section.CompositeFileElement.Providers.Count == 0)
+            if (section.CompositeFileElement.FileProcessingProviders.Count == 0)
             {
                 //create new providers
                 var php = new PageHeaderProvider();
@@ -189,9 +222,31 @@ namespace ClientDependency.Core.Config
 
         }
 
+        private void LoadDefaultFileMapConfig(ClientDependencySection section, HttpContextBase http)
+        {
+            if (section.CompositeFileElement.FileMapProviders.Count == 0)
+            {
+                //if not specified, create default
+                var fmp = new XmlFileMapper();
+                fmp.Initialize(CompositeFileProcessingProvider.DefaultName, null);
+                fmp.Initialize(http);
+                FileMapProviderCollection.Add(fmp);
+            }
+            else
+            {
+                ProvidersHelper.InstantiateProviders(section.CompositeFileElement.FileMapProviders, FileMapProviderCollection, typeof(BaseFileMapProvider));
+                //since the BaseFileMapProvider is an IHttpProvider, we need to do the http init
+                foreach (var p in FileMapProviderCollection.Cast<BaseFileMapProvider>())
+                {
+                    p.Initialize(http);
+                }
+            }
+
+        }
+
         private void LoadDefaultCompositeFileConfig(ClientDependencySection section, HttpContextBase http)
         {
-            if (section.CompositeFileElement.Providers.Count == 0)
+            if (section.CompositeFileElement.FileProcessingProviders.Count == 0)
             {
                 var cfpp = new CompositeFileProcessingProvider();
                 cfpp.Initialize(CompositeFileProcessingProvider.DefaultName, null);
@@ -200,7 +255,7 @@ namespace ClientDependency.Core.Config
             }
             else
             {
-                ProvidersHelper.InstantiateProviders(section.CompositeFileElement.Providers, CompositeFileProcessingProviderCollection, typeof(BaseCompositeFileProcessingProvider));
+                ProvidersHelper.InstantiateProviders(section.CompositeFileElement.FileProcessingProviders, CompositeFileProcessingProviderCollection, typeof(BaseCompositeFileProcessingProvider));
                 //since the BaseCompositeFileProcessingProvider is an IHttpProvider, we need to do the http init
                 foreach(var p in CompositeFileProcessingProviderCollection.Cast<BaseCompositeFileProcessingProvider>())
                 {

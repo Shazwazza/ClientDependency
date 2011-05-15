@@ -5,6 +5,7 @@ using System.Web.UI;
 using System.Configuration.Provider;
 using System.Web;
 using System.Linq;
+using ClientDependency.Core.CompositeFiles.Providers;
 using ClientDependency.Core.Controls;
 using ClientDependency.Core.Config;
 using ClientDependency.Core;
@@ -67,74 +68,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         #endregion
 
-        #region Static Methods
-
-        /// <summary>
-        /// Returns the url for the composite file handler for the filePath specified.
-        /// </summary>
-        /// <param name="filePaths"></param>
-        /// <param name="type"></param>
-        /// <param name="http"></param>
-        /// <returns></returns>
-		public static string GetCompositeFileUrl(string filePaths, ClientDependencyType type, HttpContextBase http)
-		{
-			return GetCompositeFileUrl(filePaths, type, http, true);
-		}
-
-		public static string GetCompositeFileUrl(string filePaths, ClientDependencyType type, HttpContextBase http, bool appendVersion)
-		{
-			filePaths = EncodeTo64Url(filePaths);
-
-			StringBuilder url = new StringBuilder();
-			url.Append(ClientDependencySettings.Instance.CompositeFileHandlerPath);
-			int pos = 0;
-			while (filePaths.Length > pos)
-			{
-				url.Append("/");
-				int len = Math.Min(filePaths.Length - pos, 240);
-				url.Append(filePaths.Substring(pos, len));
-				pos += 240;
-			}
-			int version = ClientDependencySettings.Instance.Version;
-			if (appendVersion && version > 0)
-			{
-				url.Append(".");
-				url.Append(version.ToString());
-			}
-			switch (type)
-			{
-				case ClientDependencyType.Css:
-					url.Append(".css");
-					break;
-				case ClientDependencyType.Javascript:
-					url.Append(".js");
-					break;
-			}
-			return url.ToString();
-		}
-
-		static string EncodeTo64Url(string toEncode)
-		{
-			string returnValue = EncodeTo64(toEncode);
-
-			// returnValue is base64 = may contain a-z, A-Z, 0-9, +, /, and =.
-			// the = at the end is just a filler, can remove
-			// then convert the + and / to "base64url" equivalent
-			//
-			returnValue = returnValue.TrimEnd(new char[] { '=' });
-			returnValue = returnValue.Replace("+", "-");
-			returnValue = returnValue.Replace("/", "_");
-			
-			return returnValue;
-		}
-
-        private static string EncodeTo64(string toEncode)
-        {
-            byte[] toEncodeAsBytes = Encoding.Default.GetBytes(toEncode);
-            string returnValue = System.Convert.ToBase64String(toEncodeAsBytes);
-            return returnValue;
-        }
-        #endregion
+        
 
         #region Public Methods
 
@@ -188,7 +122,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
             for (var i = 0; i < files.Count; i++)
             {
                 //append our version to the combined url 
-				files[i] = GetCompositeFileUrl(files[i], type, http);
+                files[i] = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.GetCompositeFileUrl(files[i], type, http, true);
             }
 
             return files.ToArray();

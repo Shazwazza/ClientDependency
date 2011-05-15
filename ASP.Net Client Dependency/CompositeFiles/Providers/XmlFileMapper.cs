@@ -8,7 +8,7 @@ using System.IO;
 using ClientDependency.Core.Config;
 using System.Security.Cryptography;
 
-namespace ClientDependency.Core.CompositeFiles
+namespace ClientDependency.Core.CompositeFiles.Providers
 {
 
     /// <summary>
@@ -19,41 +19,20 @@ namespace ClientDependency.Core.CompositeFiles
     /// this allows the system to simply read the one file again instead of compiling all of the other files
     /// into one again.
     /// </summary>
-    public class CompositeFileXmlMapper
+    public class XmlFileMapper : BaseFileMapProvider
     {
-
-        /// <summary>
-        /// Singleton
-        /// </summary>
-        public static CompositeFileXmlMapper Instance
-        {
-            get
-            {
-                return Mapper;
-            }
-        }
-
-        private CompositeFileXmlMapper()
-        {
-            Initialize();
-        }
-
-        private static readonly CompositeFileXmlMapper Mapper = new CompositeFileXmlMapper();
 
         private const string MapFileName = "map.xml";
 
         private XDocument _doc;
         private FileInfo _xmlFile;
+        private DirectoryInfo _xmlMapFolder;
+        private string _fileMapVirtualFolder = "~/App_Data/ClientDependency";
         private readonly object _locker = new object();
 
-        /// <summary>
-        /// Loads in the existing file contents. If the file doesn't exist, it creates one.
-        /// </summary>
-        private void Initialize()
+        public override void Initialize(System.Web.HttpContextBase http)
         {
-            //return if composite files are disabled.
-            if (!ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.PersistCompositeFiles)
-                return;
+            _xmlMapFolder = new DirectoryInfo(http.Server.MapPath(_fileMapVirtualFolder));
 
             //Name the map file according to the machine name
             _xmlFile = new FileInfo(GetXmlMapPath());
@@ -76,6 +55,20 @@ namespace ClientDependency.Core.CompositeFiles
         }
 
         /// <summary>
+        /// Initializes the provider, loads in the existing file contents. If the file doesn't exist, it creates one.
+        /// </summary>
+        public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
+        {
+            base.Initialize(name, config);
+
+            if (config["mapPath"] != null)
+            {
+                _fileMapVirtualFolder = config["mapPath"];
+            }
+
+        }
+
+        /// <summary>
         /// Returns the full path the map xml file for the current machine and install folder.
         /// </summary>
         /// <remarks>
@@ -87,13 +80,11 @@ namespace ClientDependency.Core.CompositeFiles
         /// of folder path and machine name.
         /// </remarks>
         /// <returns></returns>
-        private static string GetXmlMapPath()
+        private string GetXmlMapPath()
         {
-            var folder = ClientDependencySettings.Instance.
-                            DefaultCompositeFileProcessingProvider.
-                            CompositeFilePath.FullName;
+            var folder = _xmlMapFolder.FullName;
             var folderMd5 = GenerateMd5(folder);
-            return Path.Combine(folder,Environment.MachineName + "-" + folderMd5 + "-" + MapFileName);
+            return Path.Combine(folder, Environment.MachineName + "-" + folderMd5 + "-" + MapFileName);
         }
 
 
@@ -101,7 +92,7 @@ namespace ClientDependency.Core.CompositeFiles
         /// method to gene
         /// </summary>
         /// <returns>hashed string</returns>
-        private static string GenerateMd5(string str)
+        private string GenerateMd5(string str)
         {
             var md5 = new MD5CryptoServiceProvider();
             var byteArray = Encoding.ASCII.GetBytes(str);
@@ -111,10 +102,6 @@ namespace ClientDependency.Core.CompositeFiles
 
         private void CreateNewXmlFile()
         {
-            //return if composite files are disabled.
-            if (!ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.PersistCompositeFiles)
-                return;
-
             if (File.Exists(_xmlFile.FullName))
             {
                 File.Delete(_xmlFile.FullName);
@@ -134,8 +121,8 @@ namespace ClientDependency.Core.CompositeFiles
                     //double check
                     if (!File.Exists(_xmlFile.FullName))
                     {
-                        if (!ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CompositeFilePath.Exists)
-                            ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CompositeFilePath.Create();
+                        if (!_xmlMapFolder.Exists)
+                            _xmlMapFolder.Create();
                         CreateNewXmlFile();
                     }
                 }
@@ -145,20 +132,17 @@ namespace ClientDependency.Core.CompositeFiles
         /// <summary>
         /// Returns the composite file map associated with the base 64 key of the URL, the version and the compression type
         /// </summary>
-        /// <param name="base64Key"></param>
+        /// <param name="fileKey"></param>
         /// <param name="version"></param>
         /// <param name="compression"></param>
         /// <returns></returns>
-        public CompositeFileMap GetCompositeFile(string base64Key, int version, string compression)
+        public override CompositeFileMap GetCompositeFile(string fileKey, int version, string compression)
         {
-            //return null if composite files are disabled.
-            if (!ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.PersistCompositeFiles)
-                return null;
 
-            var x = FindItem(base64Key, version, compression);
+            var x = FindItem(fileKey, version, compression);
             try
             {
-                return (x == null ? null : new CompositeFileMap(base64Key,
+                return (x == null ? null : new CompositeFileMap(fileKey,
                     (string)x.Attribute("compression"),
                     (string)x.Attribute("file"),
                     x.Descendants("file")
@@ -174,7 +158,7 @@ namespace ClientDependency.Core.CompositeFiles
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="base64Key"></param>
+        /// <param name="fileKey"></param>
         ///<param name="compressionType"></param>
         ///<param name="dependentFiles"></param>
         /// <param name="compositeFile"></param>
@@ -193,16 +177,12 @@ namespace ClientDependency.Core.CompositeFiles
         /// </map>
         /// ]]>
         /// </example>
-        public void CreateMap(string base64Key, string compressionType, List<FileInfo> dependentFiles, string compositeFile, int version)
+        public override void CreateMap(string fileKey, string compressionType, IEnumerable<FileInfo> dependentFiles, string compositeFile, int version)
         {
-            //return if composite files are disabled.
-            if (!ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.PersistCompositeFiles)
-                return;
-
             lock (_locker)
             {
                 //see if we can find an item with the key already
-                var x = FindItem(base64Key, version, compressionType);
+                var x = FindItem(fileKey, version, compressionType);
 
                 if (x != null)
                 {
@@ -216,7 +196,7 @@ namespace ClientDependency.Core.CompositeFiles
                 {
                     //if it doesn't exist, create it
                     _doc.Root.Add(new XElement("item",
-                        new XAttribute("key", base64Key),
+                        new XAttribute("key", fileKey),
                         new XAttribute("file", compositeFile),
                         new XAttribute("compression", compressionType),
                         new XAttribute("version", version),
@@ -236,13 +216,15 @@ namespace ClientDependency.Core.CompositeFiles
                     .SingleOrDefault();
         }
 
-        private static XElement CreateFileNode(List<FileInfo> files)
+        private XElement CreateFileNode(IEnumerable<FileInfo> files)
         {
             var x = new XElement("files");
 
             //add all of the files
-            files.ForEach(d => x.Add(new XElement("file",
-                                                  new XAttribute("name", d.FullName))));
+            foreach (var d in files)
+            {
+                x.Add(new XElement("file", new XAttribute("name", d.FullName)));
+            }
 
             return x;
         }

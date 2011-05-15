@@ -8,20 +8,45 @@ namespace ClientDependency.Core.Config
 {
     public class CompositeFileSection : ConfigurationElement
     {
-       
 
-        [ConfigurationProperty("providers")]
-        public ProviderSettingsCollection Providers
+        /// <summary>
+        /// All of the file processing providers registered
+        /// </summary>
+        [ConfigurationProperty("fileProcessingProviders")]
+        public ProviderSettingsCollection FileProcessingProviders
         {
-            get { return (ProviderSettingsCollection)base["providers"]; }
+            get { return (ProviderSettingsCollection)base["fileProcessingProviders"]; }
         }
 
-        [StringValidator(MinLength = 1)]
-        [ConfigurationProperty("defaultProvider", DefaultValue = "CompositeFileProcessor")]
-        public string DefaultProvider
+        /// <summary>
+        /// All of the File map providers registered
+        /// </summary>
+        [ConfigurationProperty("fileMapProviders")]
+        public ProviderSettingsCollection FileMapProviders
         {
-            get { return (string)base["defaultProvider"]; }
-            set { base["defaultProvider"] = value; }
+            get { return (ProviderSettingsCollection)base["fileMapProviders"]; }
+        }
+
+        /// <summary>
+        /// The default File processing provider
+        /// </summary>
+        [StringValidator(MinLength = 1)]
+        [ConfigurationProperty("defaultFileProcessingProvider", DefaultValue = "CompositeFileProcessor")]
+        public string DefaultFileProcessingProvider
+        {
+            get { return (string)base["defaultFileProcessingProvider"]; }
+            set { base["defaultFileProcessingProvider"] = value; }
+        }
+
+        /// <summary>
+        /// The default file map provider
+        /// </summary>
+        [StringValidator(MinLength = 1)]
+        [ConfigurationProperty("defaultFileMapProvider", DefaultValue = "XmlFileMap")]
+        public string DefaultFileMapProvider
+        {
+            get { return (string)base["defaultFileMapProvider"]; }
+            set { base["defaultFileMapProvider"] = value; }
         }
 
         [ConfigurationProperty("compositeFileHandlerPath", DefaultValue = "DependencyHandler.axd")]

@@ -74,6 +74,9 @@
     <Compile Include="CompositeFiles\JSMin.cs" />
     <Compile Include="CompositeFiles\Providers\BaseCompositeFileProcessingProvider.cs" />
     <Compile Include="CompositeFiles\CompositeFileDefinition.cs" />
+    <Compile Include="CompositeFiles\Providers\BaseFileMapProvider.cs" />
+    <Compile Include="CompositeFiles\Providers\CompositeUrlType.cs" />
+    <Compile Include="CompositeFiles\Providers\FileMapProviderCollection.cs" />
     <Compile Include="CompressionType.cs" />
     <Compile Include="Config\MimeTypeCompressionCollection.cs" />
     <Compile Include="Config\MimeTypeCompressionElement.cs" />
@@ -102,7 +105,7 @@
     <Compile Include="ClientDependencyType.cs" />
     <Compile Include="CompositeFiles\CompositeFileMap.cs" />
     <Compile Include="CompositeFiles\Providers\CompositeFileProcessingProvider.cs" />
-    <Compile Include="CompositeFiles\CompositeFileXmlMapper.cs" />
+    <Compile Include="CompositeFiles\Providers\XmlFileMapper.cs" />
     <Compile Include="Config\ClientDependencySettings.cs" />
     <Compile Include="Controls\CssInclude.cs" />
     <Compile Include="Controls\JsInclude.cs" />

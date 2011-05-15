@@ -4,6 +4,7 @@ using System.Web;
 using System.Reflection;
 using System.IO;
 using System.Linq;
+using ClientDependency.Core.CompositeFiles.Providers;
 using ClientDependency.Core.Config;
 using System.Text;
 using System.Web.Security;
@@ -17,9 +18,7 @@ namespace ClientDependency.Core.CompositeFiles
 
         }
 
-        private static readonly string _versionNo = string.Empty;
-
-        private object m_Lock = new object();
+        private readonly object _lock = new object();
 
         /// <summary>
         /// When building composite includes, it creates a Base64 encoded string of all of the combined dependency file paths
@@ -128,7 +127,7 @@ namespace ClientDependency.Core.CompositeFiles
             CompressionType cType = context.GetClientCompression(); 
 
             //get the map to the composite file for this file set, if it exists.
-            CompositeFileMap map = CompositeFileXmlMapper.Instance.GetCompositeFile(fileset, version, cType.ToString());
+            CompositeFileMap map = ClientDependencySettings.Instance.DefaultFileMapProvider.GetCompositeFile(fileset, version, cType.ToString());
 
             string compositeFileName = "";
             if (map != null && map.HasFileBytes)
@@ -139,7 +138,7 @@ namespace ClientDependency.Core.CompositeFiles
             {
                 bool fromFile = false;
 
-                lock (m_Lock)
+                lock (_lock)
                 {
                     //check again...
                     if (map == null || !map.HasFileBytes)
@@ -159,7 +158,7 @@ namespace ClientDependency.Core.CompositeFiles
                             if (!string.IsNullOrEmpty(compositeFileName))
                             {
                                 //Update the XML file map
-                                CompositeFileXmlMapper.Instance.CreateMap(fileset, cType.ToString(),
+                                ClientDependencySettings.Instance.DefaultFileMapProvider.CreateMap(fileset, cType.ToString(),
                                     fDefs
                                         .Where(f => f.IsLocalFile)
                                         .Select(x => new FileInfo(context.Server.MapPath(x.Uri))).ToList(), compositeFileName,
@@ -207,9 +206,7 @@ namespace ClientDependency.Core.CompositeFiles
         /// <param name="context"></param>
         /// <param name="fileName">The name of the file that has been saved to disk</param>
         /// <param name="fileset">The Base64 encoded string supplied in the query string for the handler</param>
-		/// <param name="type">The type (css or js).</param>
-		/// <param name="version">The version.</param>
-		private void SetCaching(HttpContextBase context, string fileName, string fileset)
+        private void SetCaching(HttpContextBase context, string fileName, string fileset)
         {
             if (string.IsNullOrEmpty(fileName))
             {

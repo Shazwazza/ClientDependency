@@ -6,6 +6,7 @@ using System.Web;
 using System.IO;
 using System.Web.UI;
 using System.Text.RegularExpressions;
+using ClientDependency.Core.CompositeFiles.Providers;
 using ClientDependency.Core.Controls;
 using ClientDependency.Core.FileRegistration.Providers;
 using ClientDependency.Core.Config;
@@ -180,7 +181,7 @@ namespace ClientDependency.Core.Module
                         {
                             //var dependency = new BasicFile(type) { FilePath = url.AbsolutePath };
                             var dependency = new BasicFile(type) { FilePath = grp.ToString() };
-                            var resolved = BaseFileRegistrationProvider.GetCompositeFileUrl(dependency.ResolveFilePath(http), type, http, false);
+                            var resolved = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.GetCompositeFileUrl(dependency.ResolveFilePath(http), type, http, false);
                             return m.ToString().Replace(grp.ToString(), resolved.Replace("&", "&amp;"));
                         }
                     }
