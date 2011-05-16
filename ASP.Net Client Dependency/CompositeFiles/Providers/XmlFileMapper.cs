@@ -23,6 +23,8 @@ namespace ClientDependency.Core.CompositeFiles.Providers
     public class XmlFileMapper : BaseFileMapProvider
     {
 
+        public const string DefaultName = "XmlFileMap";
+
         private const string MapFileName = "map.xml";
 
         private XDocument _doc;
@@ -63,6 +65,9 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
         {
             base.Initialize(name, config);
+
+            if (config == null)
+                return;
 
             if (config["mapPath"] != null)
             {

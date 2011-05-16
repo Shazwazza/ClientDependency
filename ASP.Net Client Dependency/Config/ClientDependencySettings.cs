@@ -228,7 +228,7 @@ namespace ClientDependency.Core.Config
             {
                 //if not specified, create default
                 var fmp = new XmlFileMapper();
-                fmp.Initialize(CompositeFileProcessingProvider.DefaultName, null);
+                fmp.Initialize(XmlFileMapper.DefaultName, null);
                 fmp.Initialize(http);
                 FileMapProviderCollection.Add(fmp);
             }

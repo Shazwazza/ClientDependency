@@ -245,8 +245,8 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                     PersistCompositeFiles = persistFiles;
             }
 
-            //set the default
-            UrlType = CompositeUrlType.Base64QueryStrings;
+            //set the default, MappedId
+            UrlType = CompositeUrlType.MappedId;
             if (config["urlType"] != null)
             {
                 try
