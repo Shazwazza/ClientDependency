@@ -29,6 +29,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             PersistCompositeFiles = true;
             EnableCssMinify = true;
             EnableJsMinify = true;
+            UrlType = CompositeUrlType.MappedId;
 
             _compositeFilePath = DefaultDependencyPath;
         }
@@ -188,6 +189,11 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 
                     //Create a URL based on base64 paths instead of a query string
 
+
+                    //this used to be a "." but this causes problems with mvc and ignore routes for 
+                    //some very strange reason, so we'll just use normal paths.
+                    var versionDelimiter = "/";
+
                     url.Append(ClientDependencySettings.Instance.CompositeFileHandlerPath);
                     int pos = 0;
                     while (fileKey.Length > pos)
@@ -200,16 +206,18 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                     int version = ClientDependencySettings.Instance.Version;
                     if (appendVersion && version > 0)
                     {
-                        url.Append(".");
+                        url.Append(versionDelimiter);
                         url.Append(version.ToString());
                     }
                     switch (type)
                     {
                         case ClientDependencyType.Css:
-                            url.Append(".css");
+                            url.Append(versionDelimiter);
+                            url.Append("css");
                             break;
                         case ClientDependencyType.Javascript:
-                            url.Append(".js");
+                            url.Append(versionDelimiter);
+                            url.Append("js");
                             break;
                     }
                     break;
@@ -244,9 +252,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                 if (bool.TryParse(config["persistFiles"], out persistFiles))
                     PersistCompositeFiles = persistFiles;
             }
-
-            //set the default, MappedId
-            UrlType = CompositeUrlType.MappedId;
+                        
             if (config["urlType"] != null)
             {
                 try

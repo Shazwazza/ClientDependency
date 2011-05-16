@@ -291,7 +291,8 @@ namespace ClientDependency.Core.FileRegistration.Providers
         {
             if (ClientDependencySettings.Instance.Version == 0)
                 return url;
-            if (http.IsDebuggingEnabled)
+            if (http.IsDebuggingEnabled 
+                || ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.UrlType == CompositeUrlType.Base64QueryStrings)
             {
                 //ensure there's not duplicated query string syntax
                 url += url.Contains('?') ? "&" : "?";
