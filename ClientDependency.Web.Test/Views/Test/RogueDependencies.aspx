@@ -15,7 +15,7 @@
     
     <%--Load first Rogue Script--%>
     <script type="text/javascript" src="../Js/RogueScript1.js"></script>
-
+    <script type="text/javascript" src="../Js/RogueScript2.js"></script>
     <% Html.RequiresCss("Content.css", "Styles"); %>
 
     <div class="mainContent">

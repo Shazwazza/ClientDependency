@@ -86,6 +86,8 @@
     <Content Include="Js\EncodingTestUTF8WithoutBOM.js" />
     <Content Include="Js\HtmlIncludeTest1.js" />
     <EmbeddedResource Include="Pages\embedded.css" />
+    <Content Include="Js\jquery-ui-1.8.13.custom.min.js" />
+    <Content Include="Pages\DependencyGroups.aspx" />
     <Content Include="Pages\RemoteDependencies.aspx" />
     <Content Include="Pages\EmbeddedResourceTest.aspx" />
     <Content Include="Pages\HtmlIncludeTest.aspx" />
@@ -134,6 +136,13 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\TestModel.cs" />
+    <Compile Include="Pages\DependencyGroups.aspx.cs">
+      <DependentUpon>DependencyGroups.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\DependencyGroups.aspx.designer.cs">
+      <DependentUpon>DependencyGroups.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\RemoteDependencies.aspx.cs">
       <DependentUpon>RemoteDependencies.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

@@ -287,7 +287,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         #region Private Methods
 
-        private string AppendVersion(string url, HttpContextBase http)
+        protected string AppendVersion(string url, HttpContextBase http)
         {
             if (ClientDependencySettings.Instance.Version == 0)
                 return url;

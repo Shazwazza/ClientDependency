@@ -106,10 +106,10 @@ namespace ClientDependency.Core.Mvc
             return html.ViewContext.GetLoader().RenderPlaceholder(
                 ClientDependencyType.Javascript, new List<IClientDependencyPath>());
         }
-        public static string RenderJsHere(this HtmlHelper html, IClientDependencyPath path)
+        public static string RenderJsHere(this HtmlHelper html, params IClientDependencyPath[] path)
         {
             return html.ViewContext.GetLoader().RenderPlaceholder(
-                ClientDependencyType.Javascript, new List<IClientDependencyPath>() { path });
+                ClientDependencyType.Javascript, path);
         }
         public static string RenderJsHere(this HtmlHelper html, IEnumerable<IClientDependencyPath> paths)
         {
@@ -129,10 +129,10 @@ namespace ClientDependency.Core.Mvc
             return html.ViewContext.GetLoader().RenderPlaceholder(
                 ClientDependencyType.Css, new List<IClientDependencyPath>());
         }
-        public static string RenderCssHere(this HtmlHelper html, IClientDependencyPath path)
+        public static string RenderCssHere(this HtmlHelper html, params IClientDependencyPath[] path)
         {
             return html.ViewContext.GetLoader().RenderPlaceholder(
-                ClientDependencyType.Css, new List<IClientDependencyPath>() { path });
+                ClientDependencyType.Css, path);
         }
         public static string RenderCssHere(this HtmlHelper html, IEnumerable<IClientDependencyPath> paths)
         {
@@ -140,6 +140,11 @@ namespace ClientDependency.Core.Mvc
                 ClientDependencyType.Css, paths);
         }
         public static string RenderCssHere(this HtmlHelper html, string rendererName, IEnumerable<IClientDependencyPath> paths)
+        {
+            return html.ViewContext.GetLoader().RenderPlaceholder(
+                ClientDependencyType.Css, rendererName, paths);
+        }
+        public static string RenderCssHere(this HtmlHelper html, string rendererName, params IClientDependencyPath[] paths)
         {
             return html.ViewContext.GetLoader().RenderPlaceholder(
                 ClientDependencyType.Css, rendererName, paths);

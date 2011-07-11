@@ -92,6 +92,11 @@ namespace ClientDependency.Core
             m_Paths.UnionWith(paths);
         }
 
+        public void RegisterClientDependencies(List<IClientDependencyFile> dependencies, params IClientDependencyPath[] paths)
+        {
+            RegisterClientDependencies(Provider, dependencies, paths, ClientDependencySettings.Instance.MvcRendererCollection);
+        }
+
         public void RegisterClientDependencies(List<IClientDependencyFile> dependencies, IEnumerable<IClientDependencyPath> paths)
         {
             RegisterClientDependencies(Provider, dependencies, paths, ClientDependencySettings.Instance.MvcRendererCollection);

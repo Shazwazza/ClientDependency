@@ -107,7 +107,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                                                                                                         ClientDependencySettings.Instance.Version);
 
                     //create the url
-                    return new[] { GetCompositeFileUrl(fileKey, type, http, true, CompositeUrlType.MappedId) };
+                    return new[] { GetCompositeFileUrl(fileKey, type, http, CompositeUrlType.MappedId) };
 
                 default:
                     
@@ -149,7 +149,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                     {
                         //append our version to the combined url 
                         var encodedFile = files[i].EncodeTo64Url();
-                        files[i] = GetCompositeFileUrl(encodedFile, type, http, true, UrlType);
+                        files[i] = GetCompositeFileUrl(encodedFile, type, http, UrlType);
                     }
 
                     return files.ToArray();
@@ -162,18 +162,16 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         /// <param name="fileKey">The Base64 encoded file paths or the file map key used to lookup the required dependencies</param>
         /// <param name="type"></param>
         /// <param name="http"></param>
-        /// <param name="appendVersion"></param>
         /// <param name="urlType"></param>
         /// <returns></returns>
         public virtual string GetCompositeFileUrl(
             string fileKey, 
             ClientDependencyType type, 
             HttpContextBase http, 
-            bool appendVersion,
             CompositeUrlType urlType)
         {
             var url = new StringBuilder();
-
+            int version = ClientDependencySettings.Instance.Version;
             switch (urlType)
             {
                 case CompositeUrlType.Base64QueryStrings:
@@ -184,6 +182,8 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                     url.Append(string.Format(handler,
                                              ClientDependencySettings.Instance.CompositeFileHandlerPath,
                                              http.Server.UrlEncode(fileKey), type));
+                    url.Append("&cdv=");
+                    url.Append(version.ToString());
                     break;
                 default:
 
@@ -203,12 +203,8 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                         url.Append(fileKey.Substring(pos, len));
                         pos += 240;
                     }
-                    int version = ClientDependencySettings.Instance.Version;
-                    if (appendVersion && version > 0)
-                    {
-                        url.Append(versionDelimiter);
-                        url.Append(version.ToString());
-                    }
+                    url.Append(versionDelimiter);
+                    url.Append(version.ToString());
                     switch (type)
                     {
                         case ClientDependencyType.Css:
