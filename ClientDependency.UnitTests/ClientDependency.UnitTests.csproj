@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="ClientDependencySettingsTest.cs" />
     <Compile Include="CompositeFileProcessingProviderTest.cs" />
+    <Compile Include="CssMinTest.cs" />
     <Compile Include="FakeHttpContextFactory.cs" />
     <Compile Include="JsMinifyTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
