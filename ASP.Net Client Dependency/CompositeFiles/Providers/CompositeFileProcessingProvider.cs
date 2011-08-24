@@ -15,7 +15,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 {
 
 	/// <summary>
-	/// A utility class for combining, minifying, compressing and saving composite scripts/css files
+	/// A provider for combining, minifying, compressing and saving composite scripts/css files
 	/// </summary>
 	public class CompositeFileProcessingProvider : BaseCompositeFileProcessingProvider
 	{

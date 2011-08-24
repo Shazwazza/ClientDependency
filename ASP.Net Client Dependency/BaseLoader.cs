@@ -102,19 +102,38 @@ namespace ClientDependency.Core
             RegisterClientDependencies(Provider, dependencies, paths, ClientDependencySettings.Instance.MvcRendererCollection);
         }
 
+
+
+        #region RegisterDependency overloads
+
         public void RegisterDependency(string filePath, ClientDependencyType type)
         {
             RegisterDependency(filePath, "", type);
+        }
+
+        public void RegisterDependency(string filePath, ClientDependencyType type, object htmlAttributes)
+        {
+            RegisterDependency(filePath, "", type, htmlAttributes);
         }
 
         public void RegisterDependency(int priority, string filePath, ClientDependencyType type)
         {
             RegisterDependency(priority, filePath, "", type);
         }
-        
+
+        public void RegisterDependency(int priority, string filePath, ClientDependencyType type, object htmlAttributes)
+        {
+            RegisterDependency(priority, filePath, "", type, htmlAttributes);
+        }
+
         public void RegisterDependency(string filePath, string pathNameAlias, ClientDependencyType type)
         {
             RegisterDependency(Constants.DefaultPriority, filePath, pathNameAlias, type);
+        }
+
+        public void RegisterDependency(string filePath, string pathNameAlias, ClientDependencyType type, object htmlAttributes)
+        {
+            RegisterDependency(Constants.DefaultPriority, filePath, pathNameAlias, type, htmlAttributes);
         }
 
         /// <summary>
@@ -127,14 +146,35 @@ namespace ClientDependency.Core
         /// <param name="pathNameAlias"></param>
         /// <param name="type"></param>
         public void RegisterDependency(int priority, string filePath, string pathNameAlias, ClientDependencyType type)
-		{
-			RegisterDependency(Constants.DefaultGroup, priority, filePath, pathNameAlias, type);
-		}
-		public void RegisterDependency(int group, int priority, string filePath, string pathNameAlias, ClientDependencyType type)
+        {
+            RegisterDependency(Constants.DefaultGroup, priority, filePath, pathNameAlias, type);
+        }
+
+        public void RegisterDependency(int priority, string filePath, string pathNameAlias, ClientDependencyType type, object htmlAttributes)
+        {
+            RegisterDependency(Constants.DefaultGroup, priority, filePath, pathNameAlias, type, htmlAttributes);
+        }
+
+        public void RegisterDependency(int group, int priority, string filePath, string pathNameAlias, ClientDependencyType type)
         {
             IClientDependencyFile file = new BasicFile(type) { Group = group, Priority = priority, FilePath = filePath, PathNameAlias = pathNameAlias };
             RegisterClientDependencies(new List<IClientDependencyFile> { file }, new List<IClientDependencyPath>()); //send an empty paths collection
         }
+
+        public void RegisterDependency(int group, int priority, string filePath, string pathNameAlias, ClientDependencyType type, object htmlAttributes)
+        {
+            var file = new BasicFile(type) { Group = group, Priority = priority, FilePath = filePath, PathNameAlias = pathNameAlias };
+
+            //now add the attributes to the list
+            foreach(var d in htmlAttributes.ToDictionary())
+            {
+                file.HtmlAttributes.Add(d.Key, d.Value.ToString());
+            }
+
+            RegisterClientDependencies(new List<IClientDependencyFile> { file }, new List<IClientDependencyPath>()); //send an empty paths collection
+        } 
+
+        #endregion
 
 
     }

@@ -35,22 +35,22 @@ namespace ClientDependency.Core.FileRegistration.Providers
         #region Abstract methods/properties
 
         [Obsolete("Use the alternative RenderJsDependencies method with the HttpContextBase parameter instead")]
-        protected virtual string RenderJsDependencies(List<IClientDependencyFile> jsDependencies)
+        protected virtual string RenderJsDependencies(List<IClientDependencyFile> jsDependencies, IDictionary<string, string> htmlAttributes)
         {
-            return RenderJsDependencies(jsDependencies, new HttpContextWrapper(HttpContext.Current));
+            return RenderJsDependencies(jsDependencies, new HttpContextWrapper(HttpContext.Current), htmlAttributes);
         }
 
         [Obsolete("Use the alternative RenderCssDependencies method with the HttpContextBase parameter instead")]
-        protected virtual string RenderCssDependencies(List<IClientDependencyFile> cssDependencies)
+        protected virtual string RenderCssDependencies(List<IClientDependencyFile> cssDependencies, IDictionary<string, string> htmlAttributes)
         {
-            return RenderCssDependencies(cssDependencies, new HttpContextWrapper(HttpContext.Current));
+            return RenderCssDependencies(cssDependencies, new HttpContextWrapper(HttpContext.Current), htmlAttributes);
         }
 
-        protected abstract string RenderJsDependencies(IEnumerable<IClientDependencyFile> jsDependencies, HttpContextBase http);
-        protected abstract string RenderCssDependencies(IEnumerable<IClientDependencyFile> cssDependencies, HttpContextBase http);
+        protected abstract string RenderJsDependencies(IEnumerable<IClientDependencyFile> jsDependencies, HttpContextBase http, IDictionary<string, string> htmlAttributes);
+        protected abstract string RenderCssDependencies(IEnumerable<IClientDependencyFile> cssDependencies, HttpContextBase http, IDictionary<string, string> htmlAttributes);
 
-        protected abstract string RenderSingleJsFile(string js);
-        protected abstract string RenderSingleCssFile(string css);
+        protected abstract string RenderSingleJsFile(string js, IDictionary<string, string> htmlAttributes);
+        protected abstract string RenderSingleCssFile(string css, IDictionary<string, string> htmlAttributes);
 
         #endregion
 
@@ -68,14 +68,6 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         #endregion
 
-        
-
-        #region Public Methods
-
-        
-
-        #endregion
-
         #region Protected Methods
 
         /// <summary>
@@ -86,11 +78,42 @@ namespace ClientDependency.Core.FileRegistration.Providers
         /// <param name="renderCompositeFiles"></param>
         /// <param name="renderSingle"></param>
         [Obsolete("Use the other WriteStaggeredDependencies method with the HttpContextBase parameter instead")]
-        protected void WriteStaggeredDependencies(IEnumerable<IClientDependencyFile> dependencies, StringBuilder builder,
-           Func<List<IClientDependencyFile>, string> renderCompositeFiles,
-           Func<string, string> renderSingle)
+        protected void WriteStaggeredDependencies(
+            IEnumerable<IClientDependencyFile> dependencies,
+            StringBuilder builder,
+            Func<List<IClientDependencyFile>, IDictionary<string, string>, string> renderCompositeFiles,
+            Func<string, IDictionary<string, string>, string> renderSingle)
         {
             var http = new HttpContextWrapper(HttpContext.Current);
+
+            //This action will stagger the output based on whether or not the html attribute declarations are the same for each dependency
+            Action<IEnumerable<IClientDependencyFile>> staggerOnDifferentAttributes = (list) =>
+                {
+                    var sameAttributes = new List<IClientDependencyFile>();
+                    var currHtmlAttr = GetHtmlAttributes(list.ElementAt(0));
+                    foreach (var c in list)
+                    {
+                        var htmlAttr = GetHtmlAttributes(c);
+                        if (!htmlAttr.IsEqualTo(currHtmlAttr))
+                        {
+                            //if the attributes are different we need to stagger
+                            if (sameAttributes.Any())
+                            {
+                                //render the current buffer
+                                builder.Append(renderCompositeFiles(sameAttributes, currHtmlAttr));
+                                //clear the buffer
+                                sameAttributes.Clear();
+                            }
+                        }
+
+                        //add the item to the buffer
+                        sameAttributes.Add(c);
+                    }
+
+                    //if there's anything in the buffer then write the remaining
+                    if (sameAttributes.Any())
+                        builder.Append(renderCompositeFiles(sameAttributes, currHtmlAttr));
+                };
 
             var currNonRemoteFiles = new List<IClientDependencyFile>();
             foreach (var f in dependencies)
@@ -108,12 +131,13 @@ namespace ClientDependency.Core.FileRegistration.Providers
                     if (currNonRemoteFiles.Count > 0)
                     {
                         //render the current buffer
-                        builder.Append(renderCompositeFiles(currNonRemoteFiles));
+                        staggerOnDifferentAttributes(currNonRemoteFiles);
+                        
                         //clear the buffer
                         currNonRemoteFiles.Clear();
                     }
                     //write out the single script tag
-                    builder.Append(renderSingle(f.FilePath));
+                    builder.Append(renderSingle(f.FilePath, GetHtmlAttributes(f)));
                 }
                 else
                 {
@@ -125,7 +149,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
             if (currNonRemoteFiles.Count > 0)
             {
                 //render the current buffer
-                builder.Append(renderCompositeFiles(currNonRemoteFiles));
+                staggerOnDifferentAttributes(currNonRemoteFiles);
             }
         }
 
@@ -138,10 +162,44 @@ namespace ClientDependency.Core.FileRegistration.Providers
         /// <param name="builder"></param>
         /// <param name="renderCompositeFiles"></param>
         /// <param name="renderSingle"></param>
-        protected void WriteStaggeredDependencies(IEnumerable<IClientDependencyFile> dependencies, HttpContextBase http, StringBuilder builder,
-            Func<IEnumerable<IClientDependencyFile>, HttpContextBase, string> renderCompositeFiles,
-            Func<string, string> renderSingle)
+        protected void WriteStaggeredDependencies(
+            IEnumerable<IClientDependencyFile> dependencies, 
+            HttpContextBase http, 
+            StringBuilder builder,
+            Func<IEnumerable<IClientDependencyFile>, HttpContextBase, IDictionary<string, string>, string> renderCompositeFiles,
+            Func<string, IDictionary<string, string>, string> renderSingle)
         {
+
+
+            //This action will stagger the output based on whether or not the html attribute declarations are the same for each dependency
+            Action<IEnumerable<IClientDependencyFile>> staggerOnDifferentAttributes = (list) =>
+            {
+                var sameAttributes = new List<IClientDependencyFile>();
+                var currHtmlAttr = GetHtmlAttributes(list.ElementAt(0));
+                foreach (var c in list)
+                {
+                    var htmlAttr = GetHtmlAttributes(c);
+                    if (!htmlAttr.IsEqualTo(currHtmlAttr))
+                    {
+                        //if the attributes are different we need to stagger
+                        if (sameAttributes.Any())
+                        {
+                            //render the current buffer
+                            builder.Append(renderCompositeFiles(sameAttributes, http, currHtmlAttr));
+                            //clear the buffer
+                            sameAttributes.Clear();
+                        }
+                    }
+
+                    //add the item to the buffer
+                    sameAttributes.Add(c);
+                }
+
+                //if there's anything in the buffer then write the remaining
+                if (sameAttributes.Any())
+                    builder.Append(renderCompositeFiles(sameAttributes, http, currHtmlAttr));
+            };
+
             var currNonRemoteFiles = new List<IClientDependencyFile>();
             foreach (var f in dependencies)
             {
@@ -158,12 +216,12 @@ namespace ClientDependency.Core.FileRegistration.Providers
                     if (currNonRemoteFiles.Count > 0)
                     {
                         //render the current buffer
-                        builder.Append(renderCompositeFiles(currNonRemoteFiles, http));
+                        staggerOnDifferentAttributes(currNonRemoteFiles);
                         //clear the buffer
                         currNonRemoteFiles.Clear();
                     }
                     //write out the single script tag
-                    builder.Append(renderSingle(f.FilePath));
+                    builder.Append(renderSingle(f.FilePath, GetHtmlAttributes(f)));
                 }
                 else
                 {
@@ -175,7 +233,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
             if (currNonRemoteFiles.Count > 0)
             {
                 //render the current buffer
-                builder.Append(renderCompositeFiles(currNonRemoteFiles, http));
+                staggerOnDifferentAttributes(currNonRemoteFiles);
             }
         }
 
@@ -230,17 +288,16 @@ namespace ClientDependency.Core.FileRegistration.Providers
         /// </summary>
         /// <param name="dependencies">The dependencies list for which duplicates will be removed</param>
         /// <param name="folderPaths"></param>
-        protected void EnsureNoDuplicates(List<IClientDependencyFile> dependencies
-            , HashSet<IClientDependencyPath> folderPaths)
+        protected virtual void EnsureNoDuplicates(List<IClientDependencyFile> dependencies, HashSet<IClientDependencyPath> folderPaths)
         {
-
-
             var toKeep = new HashSet<IClientDependencyFile>();
 
             foreach (var d in dependencies)
             {
                 //check if it is a duplicate
-                if (dependencies.Where(x => x.FilePath.ToUpper().Trim().Equals(d.FilePath.ToUpper().Trim())).Count() > 1)
+                if (dependencies
+                    .Where(x => x.FilePath.ToUpper().Trim().Equals(d.FilePath.ToUpper().Trim()))
+                    .Any())
                 {
                     //find the dups and return an object with the associated index
                     var dups = dependencies
@@ -283,15 +340,11 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         }
 
-        #endregion
-
-        #region Private Methods
-
         protected string AppendVersion(string url, HttpContextBase http)
         {
             if (ClientDependencySettings.Instance.Version == 0)
                 return url;
-            if (http.IsDebuggingEnabled 
+            if (http.IsDebuggingEnabled
                 || ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.UrlType == CompositeUrlType.Base64QueryStrings)
             {
                 //ensure there's not duplicated query string syntax
@@ -306,8 +359,32 @@ namespace ClientDependency.Core.FileRegistration.Providers
             }
             return url;
         }
+
         #endregion
 
 
+        /// <summary>
+        /// Checks if the current file implements the html attribute interfaces and returns the appropriate html attributes
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        private static IDictionary<string, string> GetHtmlAttributes(IClientDependencyFile file)
+        {
+            if (file is IHaveHtmlAttributes)
+            {
+                var withAttributes = (IHaveHtmlAttributes)file;
+
+                if (file is IRequiresHtmlAttributesParsing)
+                {
+                    //we need to parse the attributes into the dictionary
+                    HtmlAttributesStringParser.ParseIntoDictionary(((IRequiresHtmlAttributesParsing)file).HtmlAttributesAsString, withAttributes.HtmlAttributes);                    
+                }
+
+                return withAttributes.HtmlAttributes;
+            }
+
+            //just return an empty dictionary
+            return new Dictionary<string, string>();
+        }
     }
 }

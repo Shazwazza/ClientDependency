@@ -74,7 +74,30 @@ namespace ClientDependency.Core.Mvc
         {
             html.ViewContext.GetLoader().RegisterDependency(priority, filePath, ClientDependencyType.Javascript);
             return html;
+        }
+
+
+        public static HtmlHelper RequiresJs(this HtmlHelper html, string filePath, object htmlAttributes)
+        {
+            html.ViewContext.GetLoader().RegisterDependency(filePath, ClientDependencyType.Javascript);
+            return html;
+        }
+        public static HtmlHelper RequiresJs(this HtmlHelper html, string filePath, string pathNameAlias, object htmlAttributes)
+        {
+            html.ViewContext.GetLoader().RegisterDependency(filePath, pathNameAlias, ClientDependencyType.Javascript);
+            return html;
+        }
+        public static HtmlHelper RequiresJs(this HtmlHelper html, string filePath, string pathNameAlias, int priority, object htmlAttributes)
+        {
+            html.ViewContext.GetLoader().RegisterDependency(priority, filePath, pathNameAlias, ClientDependencyType.Javascript);
+            return html;
+        }
+        public static HtmlHelper RequiresJs(this HtmlHelper html, string filePath, int priority, object htmlAttributes)
+        {
+            html.ViewContext.GetLoader().RegisterDependency(priority, filePath, ClientDependencyType.Javascript);
+            return html;
         } 
+
         #endregion
 
         #region RequiresCss Extensions

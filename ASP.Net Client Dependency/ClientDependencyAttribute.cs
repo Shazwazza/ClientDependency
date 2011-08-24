@@ -10,54 +10,16 @@ namespace ClientDependency.Core
 	/// to ensure that all client events and assets gets loaded
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-	public class ClientDependencyAttribute : Attribute, IClientDependencyFile
+    public class ClientDependencyAttribute : Attribute, IClientDependencyFile, IRequiresHtmlAttributesParsing
 	{
         public ClientDependencyAttribute()
         {
             Priority = Constants.DefaultPriority;
             Group = Constants.DefaultGroup;
 			PathNameAlias = "";
+            HtmlAttributes = new Dictionary<string, string>();
         }
-
-		/// <summary>
-		/// Gets or sets the priority.
-		/// </summary>
-		/// <value>The priority.</value>
-		public int Priority { get; set; }
-
-		/// <summary>
-		/// Gets or sets the group.
-		/// </summary>
-		/// <value>The group.</value>
-        public int Group { get; set; }
-
-		/// <summary>
-		/// This can be empty and will use default provider
-		/// </summary>
-		public string ForceProvider { get; set; }
-
-		public bool ForceBundle { get; set; }
-
-		/// <summary>
-		/// Gets or sets the file path.
-		/// </summary>
-		/// <value>The file path.</value>
-		public string FilePath { get; set; }
-
-		/// <summary>
-		/// The path alias to be pre-pended to the file path if specified.
-		/// The alias is specified in in the ClientDependencyHelper constructor.
-		/// If the alias specified does not exist in the ClientDependencyHelper
-		/// path collection, an exception is thrown.
-		/// </summary>
-		public string PathNameAlias { get; set; }
-
-		/// <summary>
-		/// Gets or sets the type of the dependency.
-		/// </summary>
-		/// <value>The type of the dependency.</value>
-		public ClientDependencyType DependencyType { get; set; }
-
+        
 		public ClientDependencyAttribute(ClientDependencyType dependencyType, string fullFilePath)
             : this(Constants.DefaultPriority, dependencyType, fullFilePath, string.Empty)
 		{ }
@@ -111,8 +73,65 @@ namespace ClientDependency.Core
 
             DependencyType = dependencyType;
 			ForceBundle = forceBundle;
+
+            HtmlAttributes = new Dictionary<string, string>();
         }
-        
+
+
+        /// <summary>
+        /// Gets or sets the priority.
+        /// </summary>
+        /// <value>The priority.</value>
+        public int Priority { get; set; }
+
+        /// <summary>
+        /// Gets or sets the group.
+        /// </summary>
+        /// <value>The group.</value>
+        public int Group { get; set; }
+
+        /// <summary>
+        /// This can be empty and will use default provider
+        /// </summary>
+        public string ForceProvider { get; set; }
+
+        public bool ForceBundle { get; set; }
+
+        /// <summary>
+        /// Gets or sets the file path.
+        /// </summary>
+        /// <value>The file path.</value>
+        public string FilePath { get; set; }
+
+        /// <summary>
+        /// The path alias to be pre-pended to the file path if specified.
+        /// The alias is specified in in the ClientDependencyHelper constructor.
+        /// If the alias specified does not exist in the ClientDependencyHelper
+        /// path collection, an exception is thrown.
+        /// </summary>
+        public string PathNameAlias { get; set; }
+
+        /// <summary>
+        /// Used to set the HtmlAttributes on this class via a string which is parsed
+        /// </summary>
+        /// <remarks>
+        /// The syntax for the string must be: key1:value1,key2:value2   etc...
+        /// </remarks>
+        public string HtmlAttributesAsString { get; set; }
+
+        /// <summary>
+        /// Used to store additional attributes in the HTML markup for the item
+        /// </summary>
+        /// <remarks>
+        /// Mostly used for CSS Media, but could be for anything
+        /// </remarks>
+        public IDictionary<string, string> HtmlAttributes { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the type of the dependency.
+        /// </summary>
+        /// <value>The type of the dependency.</value>
+        public ClientDependencyType DependencyType { get; set; }
 	}
 
 	

@@ -67,7 +67,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
             }
         }
 
-        protected override string RenderJsDependencies(IEnumerable<IClientDependencyFile> jsDependencies, HttpContextBase http)
+        protected override string RenderJsDependencies(IEnumerable<IClientDependencyFile> jsDependencies, HttpContextBase http, IDictionary<string, string> htmlAttributes)
         {
             if (!jsDependencies.Any())
 				return string.Empty;
@@ -78,7 +78,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 			{
 				foreach (var dependency in jsDependencies)
 				{
-                    sb.Append(RenderSingleJsFile(string.Format("'{0}','{1}'", dependency.FilePath, string.Empty)));
+                    sb.Append(RenderSingleJsFile(string.Format("'{0}','{1}'", dependency.FilePath, string.Empty), htmlAttributes));
 				}
 			}
 			else
@@ -89,7 +89,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
                 var comp = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript, http);
                 foreach (var s in comp)
                 {
-                    sb.Append(RenderSingleJsFile(string.Format("'{0}','{1}'", s, string.Empty)));
+                    sb.Append(RenderSingleJsFile(string.Format("'{0}','{1}'", s, string.Empty), htmlAttributes));
                 }   
 			}
 
@@ -101,8 +101,9 @@ namespace ClientDependency.Core.FileRegistration.Providers
         /// </summary>
         /// <param name="cssDependencies"></param>
         /// <param name="http"></param>
+        /// <param name="htmlAttributes"></param>
         /// <returns></returns>
-        protected override string RenderCssDependencies(IEnumerable<IClientDependencyFile> cssDependencies, HttpContextBase http)
+        protected override string RenderCssDependencies(IEnumerable<IClientDependencyFile> cssDependencies, HttpContextBase http, IDictionary<string, string> htmlAttributes)
         {
             if (!cssDependencies.Any())
                 return string.Empty;
@@ -113,7 +114,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
             {
                 foreach (var dependency in cssDependencies)
                 {
-                    sb.Append(RenderSingleCssFile(dependency.FilePath));
+                    sb.Append(RenderSingleCssFile(dependency.FilePath, htmlAttributes));
                 }
             }
             else
@@ -124,14 +125,14 @@ namespace ClientDependency.Core.FileRegistration.Providers
                 var comp = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.ProcessCompositeList(cssDependencies, ClientDependencyType.Css, http);
                 foreach (var s in comp)
                 {
-                    sb.Append(RenderSingleCssFile(s));
+                    sb.Append(RenderSingleCssFile(s, htmlAttributes));
                 }
             }
 
             return sb.ToString();
         }
 
-        protected override string RenderSingleJsFile(string js)
+        protected override string RenderSingleJsFile(string js, IDictionary<string, string> htmlAttributes)
         {
             var strClientLoader = new StringBuilder("CDLazyLoader");
             strClientLoader.AppendFormat(".AddJs({0})", js);
@@ -140,7 +141,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
             return string.Format(HtmlEmbedContants.ScriptEmbedWithCode, strClientLoader.ToString());
         }
 
-        protected override string RenderSingleCssFile(string css)
+        protected override string RenderSingleCssFile(string css, IDictionary<string, string> htmlAttributes)
         {
             var strClientLoader = new StringBuilder("CDLazyLoader");
             strClientLoader.AppendFormat(".AddCss('{0}')", css);
