@@ -200,7 +200,7 @@ namespace ClientDependency.Core.Config
 
         private void LoadDefaultFileRegConfig(ClientDependencySection section)
         {
-            if (section.CompositeFileElement.FileProcessingProviders.Count == 0)
+            if (section.FileRegistrationElement.Providers.Count == 0)
             {
                 //create new providers
                 var php = new PageHeaderProvider();
