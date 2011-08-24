@@ -192,7 +192,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 
                     //this used to be a "." but this causes problems with mvc and ignore routes for 
                     //some very strange reason, so we'll just use normal paths.
-                    var versionDelimiter = "/";
+                    var versionDelimiter = ".";
 
                     url.Append(ClientDependencySettings.Instance.CompositeFileHandlerPath);
                     int pos = 0;

@@ -63,30 +63,33 @@ namespace ClientDependency.Core.CompositeFiles
             }
             else
             {
-                
+
                 // path format
-                var segs = context.Request.PathInfo.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-
-                //need to store/strip the last 2 paths, the last one is the type, the 2nd last one is the version
-                if (!int.TryParse(segs[segs.Count - 2], out version))
-                    throw new ArgumentException("Could not parse the version in the request");
-                var ext = segs[segs.Count - 1].ToLower();
-                switch (ext)
-                {
-                    case "js":
-                        type = ClientDependencyType.Javascript;
-                        break;
-                    case "css":
-                        type = ClientDependencyType.Css;
-                        break;
-                    default:
-                        throw new ArgumentException("Could not parse the type set in the request");
-                }
-
+                var segs = context.Request.PathInfo.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
                 fileset = "";
-                var i = 0;
-                while (i < segs.Count - 2) //don't include the last 2
+                int i = 0;
+                while (i < segs.Length - 1)
                     fileset += segs[i++];
+                int pos;
+                pos = segs[i].IndexOf('.');
+                if (pos < 0)
+                    throw new ArgumentException("Could not parse the type set in the request");
+                fileset += segs[i].Substring(0, pos);
+                string ext = segs[i].Substring(pos + 1);
+                pos = ext.IndexOf('.');
+                if (pos > 0)
+                {
+                    if (!Int32.TryParse(ext.Substring(0, pos), out version))
+                        throw new ArgumentException("Could not parse the version in the request");
+                    ext = ext.Substring(pos + 1);
+                }
+                ext = ext.ToLower();
+                if (ext == "js")
+                    type = ClientDependencyType.Javascript;
+                else if (ext == "css")
+                    type = ClientDependencyType.Css;
+                else
+                    throw new ArgumentException("Could not parse the type set in the request");
                 
             }
 
