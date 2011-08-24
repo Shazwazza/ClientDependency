@@ -193,7 +193,7 @@ namespace ClientDependency.Core.CompositeFiles
                 }
             }
 
-            SetCaching(context, compositeFileName, fileset);
+            SetCaching(context, compositeFileName, fileset, clientCompression);
             return outputBytes;
         }
 
@@ -220,7 +220,8 @@ namespace ClientDependency.Core.CompositeFiles
         /// <param name="context"></param>
         /// <param name="fileName">The name of the file that has been saved to disk</param>
         /// <param name="fileset">The Base64 encoded string supplied in the query string for the handler</param>
-        private void SetCaching(HttpContextBase context, string fileName, string fileset)
+        /// <param name="compressionType"></param>
+        private void SetCaching(HttpContextBase context, string fileName, string fileset, CompressionType compressionType)
         {
             if (string.IsNullOrEmpty(fileName))
             {
@@ -239,7 +240,7 @@ namespace ClientDependency.Core.CompositeFiles
             cache.SetValidUntilExpires(true);
             cache.SetLastModified(DateTime.Now);
 
-            cache.SetETag(FormsAuthentication.HashPasswordForStoringInConfigFile(fileset, "MD5"));
+            cache.SetETag("\"" + FormsAuthentication.HashPasswordForStoringInConfigFile(fileset + compressionType.ToString(), "MD5") + "\"");
 
             //set server OutputCache to vary by our params
 
