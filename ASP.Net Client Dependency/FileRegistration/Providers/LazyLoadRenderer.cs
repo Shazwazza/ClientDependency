@@ -61,7 +61,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
                         http.Items["LazyLoaderLoaded"] = true;
 
                         var url = GetWebResourceUrl(typeof(LazyLoadProvider), DependencyLoaderResourceName);
-                        sb.Append(string.Format(HtmlEmbedContants.ScriptEmbedWithSource, url));   
+                        sb.Append(string.Format(HtmlEmbedContants.ScriptEmbedWithSource, url, ""));   
                     }
                 }
             }

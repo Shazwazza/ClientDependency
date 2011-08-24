@@ -94,7 +94,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
                     foreach (var c in list)
                     {
                         var htmlAttr = GetHtmlAttributes(c);
-                        if (!htmlAttr.IsEqualTo(currHtmlAttr))
+                        if (!currHtmlAttr.IsEqualTo(GetHtmlAttributes(c)))
                         {
                             //if the attributes are different we need to stagger
                             if (sameAttributes.Any())
@@ -106,8 +106,9 @@ namespace ClientDependency.Core.FileRegistration.Providers
                             }
                         }
 
-                        //add the item to the buffer
+                        //add the item to the buffer and set the current html attributes
                         sameAttributes.Add(c);
+                        currHtmlAttr = GetHtmlAttributes(c);
                     }
 
                     //if there's anything in the buffer then write the remaining
@@ -178,8 +179,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
                 var currHtmlAttr = GetHtmlAttributes(list.ElementAt(0));
                 foreach (var c in list)
                 {
-                    var htmlAttr = GetHtmlAttributes(c);
-                    if (!htmlAttr.IsEqualTo(currHtmlAttr))
+                    if (!currHtmlAttr.IsEqualTo(GetHtmlAttributes(c)))
                     {
                         //if the attributes are different we need to stagger
                         if (sameAttributes.Any())
@@ -191,8 +191,9 @@ namespace ClientDependency.Core.FileRegistration.Providers
                         }
                     }
 
-                    //add the item to the buffer
+                    //add the item to the buffer and set the current html attributes
                     sameAttributes.Add(c);
+                    currHtmlAttr = GetHtmlAttributes(c);
                 }
 
                 //if there's anything in the buffer then write the remaining
@@ -370,21 +371,43 @@ namespace ClientDependency.Core.FileRegistration.Providers
         /// <returns></returns>
         private static IDictionary<string, string> GetHtmlAttributes(IClientDependencyFile file)
         {
+            IDictionary<string, string> attributes = new Dictionary<string, string>();
+
             if (file is IHaveHtmlAttributes)
             {
-                var withAttributes = (IHaveHtmlAttributes)file;
+                var fileWithAttributes = (IHaveHtmlAttributes)file;
+                attributes = fileWithAttributes.HtmlAttributes;
 
                 if (file is IRequiresHtmlAttributesParsing)
                 {
                     //we need to parse the attributes into the dictionary
-                    HtmlAttributesStringParser.ParseIntoDictionary(((IRequiresHtmlAttributesParsing)file).HtmlAttributesAsString, withAttributes.HtmlAttributes);                    
-                }
+                    HtmlAttributesStringParser.ParseIntoDictionary(((IRequiresHtmlAttributesParsing)file).HtmlAttributesAsString, attributes);                    
+                }                
+            }
 
-                return withAttributes.HtmlAttributes;
+            //now we must ensure that the correct js/css attribute exist!
+            switch(file.DependencyType)
+            {
+                case ClientDependencyType.Javascript:
+                    if (!attributes.ContainsKey("type"))
+                        attributes.Add("type", "text/javascript");
+                    if (attributes.ContainsKey("src"))
+                        attributes.Remove("src");
+                    break;
+                case ClientDependencyType.Css:
+                    if (!attributes.ContainsKey("type"))
+                        attributes.Add("type", "text/css");
+                    if (!attributes.ContainsKey("rel"))
+                        attributes.Add("rel", "stylesheet");
+                    if (attributes.ContainsKey("href"))
+                        attributes.Remove("href");
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
             //just return an empty dictionary
-            return new Dictionary<string, string>();
+            return attributes;
         }
     }
 }

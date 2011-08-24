@@ -80,12 +80,12 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         protected override string RenderSingleJsFile(string js, IDictionary<string, string> htmlAttributes)
 		{
-            return string.Format(HtmlEmbedContants.ScriptEmbedWithSource, MapToDependenciesWebSite(js));
+            return string.Format(HtmlEmbedContants.ScriptEmbedWithSource, MapToDependenciesWebSite(js), htmlAttributes.ToHtmlAttributes());
 		}
 
         protected override string RenderSingleCssFile(string css, IDictionary<string, string> htmlAttributes)
 		{
-            return string.Format(HtmlEmbedContants.CssEmbedWithSource, MapToDependenciesWebSite(css));
+            return string.Format(HtmlEmbedContants.CssEmbedWithSource, MapToDependenciesWebSite(css), htmlAttributes.ToHtmlAttributes());
 		}
 
         /// <summary>

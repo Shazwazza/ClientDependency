@@ -60,6 +60,24 @@ IMPORTANT: Please note that although Rogue scripts/styles get replaced with comp
             return View(model);
         }
 
+        public ActionResult HtmlAttributes()
+        {
+            var model = new TestModel()
+            {
+                Heading = "Some dependencies are have custom html attributes",
+                BodyContent = @"<p>
+On this page we have 2 dependencies registered with custom html attributes:
+</p>
+<ul>
+<li>A print style sheet with a custom media='print' attribute</li>
+<li>A js dependency with a type='text/jquery' which could be used as a jquery template</li>
+</ul>
+"
+            };
+
+            return View(model);
+        }
+
         public ActionResult RemoteDependencies()
         {
             var model = new TestModel()

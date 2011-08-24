@@ -51,7 +51,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         protected override string RenderSingleJsFile(string js, IDictionary<string, string> htmlAttributes)
 		{
-            return string.Format(HtmlEmbedContants.ScriptEmbedWithSource, js);
+            return string.Format(HtmlEmbedContants.ScriptEmbedWithSource, js, htmlAttributes.ToHtmlAttributes());
 		}
 
         protected override string RenderCssDependencies(IEnumerable<IClientDependencyFile> cssDependencies, HttpContextBase http, IDictionary<string, string> htmlAttributes)
@@ -82,7 +82,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
 		protected override string RenderSingleCssFile(string css, IDictionary<string, string> htmlAttributes)
 		{
-            return string.Format(HtmlEmbedContants.CssEmbedWithSource, css);
+            return string.Format(HtmlEmbedContants.CssEmbedWithSource, css, htmlAttributes.ToHtmlAttributes());
 		}
 
         /// <summary>

@@ -78,7 +78,9 @@
     <Content Include="Controls\Header.ascx" />
     <Content Include="Controls\Sidebar.ascx" />
     <Content Include="Css\Controls.css" />
+    <Content Include="Css\Print.css" />
     <Content Include="Css\Site.css" />
+    <Content Include="Js\JQueryTemplate.js" />
     <Content Include="Js\HtmlIncludeTest2.js" />
     <Content Include="Js\EncodingTestANSI.js" />
     <Content Include="Js\EncodingTestUCS2BigEndian.js" />
@@ -93,6 +95,7 @@
     <Content Include="Pages\HtmlIncludeTest.aspx" />
     <Content Include="Pages\Default.aspx" />
     <Content Include="Pages\EncodingTest.aspx" />
+    <Content Include="Views\Test\HtmlAttributes.aspx" />
     <Content Include="Views\Test\RemoteDependencies.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
