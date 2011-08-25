@@ -9,7 +9,7 @@
     <language>en-US</language>
     <licenseUrl>http://www.opensource.org/licenses/ms-pl</licenseUrl>
     <projectUrl>http://clientdependency.codeplex.com</projectUrl>
-	<tags>mvc css html</tags>
+	<tags>mvc css html javascript</tags>
 	<requireLicenseAcceptance>false</requireLicenseAcceptance>
 	<dependencies>
 		<dependency id="ClientDependency" version="1.3" />
