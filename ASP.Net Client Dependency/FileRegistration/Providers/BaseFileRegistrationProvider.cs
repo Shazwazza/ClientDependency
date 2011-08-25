@@ -34,42 +34,6 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         #region Abstract methods/properties
 
-        [Obsolete("Use the alternative RenderJsDependencies method with the HttpContextBase/HtmlAttributes parameters instead")]
-        protected virtual string RenderJsDependencies(List<IClientDependencyFile> jsDependencies)
-        {
-            return RenderJsDependencies(jsDependencies, new HttpContextWrapper(HttpContext.Current), new Dictionary<string, string>());
-        }
-
-        [Obsolete("Use the alternative RenderCssDependencies method with the HttpContextBase/HtmlAttributes parameters instead")]
-        protected virtual string RenderCssDependencies(List<IClientDependencyFile> cssDependencies)
-        {
-            return RenderCssDependencies(cssDependencies, new HttpContextWrapper(HttpContext.Current), new Dictionary<string, string>());
-        }
-
-        [Obsolete("Use the alternative RenderJsDependencies method with the HttpContextBase parameter instead")]
-        protected virtual string RenderJsDependencies(List<IClientDependencyFile> jsDependencies, IDictionary<string, string> htmlAttributes)
-        {
-            return RenderJsDependencies(jsDependencies, new HttpContextWrapper(HttpContext.Current), htmlAttributes);
-        }
-
-        [Obsolete("Use the alternative RenderCssDependencies method with the HttpContextBase parameter instead")]
-        protected virtual string RenderCssDependencies(List<IClientDependencyFile> cssDependencies, IDictionary<string, string> htmlAttributes)
-        {
-            return RenderCssDependencies(cssDependencies, new HttpContextWrapper(HttpContext.Current), htmlAttributes);
-        }
-
-        [Obsolete("Use the alternative RenderSingleJsFile method with the HtmlAttributes parameter instead")]
-        protected virtual string RenderSingleJsFile(string js)
-        {
-            return RenderSingleJsFile(js, new Dictionary<string, string>());
-        }
-
-        [Obsolete("Use the alternative RenderSingleCssFile method with the HtmlAttributes parameter instead")]
-        protected virtual string RenderSingleCssFile(string css)
-        {
-            return RenderSingleCssFile(css, new Dictionary<string, string>());
-        }
-
         protected abstract string RenderJsDependencies(IEnumerable<IClientDependencyFile> jsDependencies, HttpContextBase http, IDictionary<string, string> htmlAttributes);
         protected abstract string RenderCssDependencies(IEnumerable<IClientDependencyFile> cssDependencies, HttpContextBase http, IDictionary<string, string> htmlAttributes);
 
