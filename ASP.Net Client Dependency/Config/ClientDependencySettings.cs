@@ -76,9 +76,6 @@ namespace ClientDependency.Core.Config
         /// If this is not explicitly set, then the extensions 'js' and 'css' are the defaults.
         /// </remarks>
         public List<string> FileBasedDependencyExtensionList { get; set; }
-
-
-        public bool UseLegacyRenderMethods { get; private set; }
         
         public int Version { get; set; }
 
@@ -151,7 +148,6 @@ namespace ClientDependency.Core.Config
                 ? VirtualPathUtility.ToAbsolute(ConfigSection.CompositeFileElement.CompositeFileHandlerPath, http.Request.ApplicationPath)
                 : ConfigSection.CompositeFileElement.CompositeFileHandlerPath;
             Version = ConfigSection.Version;
-            UseLegacyRenderMethods = ConfigSection.UseLegacyRenderMethods;
             FileBasedDependencyExtensionList = ConfigSection.FileBasedDependencyExtensionList.ToList();
 
             //load the providers from the config, if there isn't config sections then add default providers

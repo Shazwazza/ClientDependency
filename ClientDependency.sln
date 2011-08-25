@@ -25,6 +25,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "v1.4", "v1.4", "{E1785FD4-6C59-4962-9E34-8964B1469D73}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = ClientDependency.vsmdi
@@ -56,5 +58,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{DD8BA6D3-CF54-4F1A-8555-46D733FDC296} = {6AFC27C7-1F6B-42E5-AC52-120AD3ACA8BA}
+		{E1785FD4-6C59-4962-9E34-8964B1469D73} = {6AFC27C7-1F6B-42E5-AC52-120AD3ACA8BA}
 	EndGlobalSection
 EndGlobal

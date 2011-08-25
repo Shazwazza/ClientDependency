@@ -27,8 +27,11 @@ namespace ClientDependency.Core.FileRegistration.Providers
         /// <param name="allDependencies"></param>
         /// <param name="paths"></param>
         /// <param name="http"></param>
-        public void RegisterDependencies(Control dependantControl, List<IClientDependencyFile> allDependencies, 
-            HashSet<IClientDependencyPath> paths, HttpContextBase http)
+        public void RegisterDependencies(
+            Control dependantControl, 
+            List<IClientDependencyFile> allDependencies, 
+            HashSet<IClientDependencyPath> paths, 
+            HttpContextBase http)
         {
             var ctl = dependantControl;
 
@@ -66,16 +69,8 @@ namespace ClientDependency.Core.FileRegistration.Providers
 				cssDependencies.Sort((a, b) => a.Priority.CompareTo(b.Priority));
 
                 //render
-                if (ClientDependencySettings.Instance.UseLegacyRenderMethods)
-                {
-                    WriteStaggeredDependencies(cssDependencies, cssBuilder, RenderCssDependencies, RenderSingleCssFile);
-                    WriteStaggeredDependencies(jsDependencies, jsBuilder, RenderJsDependencies, RenderSingleJsFile);
-                }
-                else
-                {
-                    WriteStaggeredDependencies(cssDependencies, http, cssBuilder, RenderCssDependencies, RenderSingleCssFile);
-                    WriteStaggeredDependencies(jsDependencies, http, jsBuilder, RenderJsDependencies, RenderSingleJsFile);
-                }
+                WriteStaggeredDependencies(cssDependencies, http, cssBuilder, RenderCssDependencies, RenderSingleCssFile);
+                WriteStaggeredDependencies(jsDependencies, http, jsBuilder, RenderJsDependencies, RenderSingleJsFile);
 			}
 
 			var cssOutput = cssBuilder.ToString();

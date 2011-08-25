@@ -50,7 +50,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
             return sb.ToString();
 		}
-
+        
         protected override string RenderSingleJsFile(string js, IDictionary<string, string> htmlAttributes)
 		{
             var strClientLoader = new StringBuilder("CDLazyLoader");

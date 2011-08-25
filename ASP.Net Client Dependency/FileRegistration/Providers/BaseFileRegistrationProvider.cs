@@ -34,6 +34,18 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         #region Abstract methods/properties
 
+        [Obsolete("Use the alternative RenderJsDependencies method with the HttpContextBase/HtmlAttributes parameters instead")]
+        protected virtual string RenderJsDependencies(List<IClientDependencyFile> jsDependencies)
+        {
+            return RenderJsDependencies(jsDependencies, new HttpContextWrapper(HttpContext.Current), new Dictionary<string, string>());
+        }
+
+        [Obsolete("Use the alternative RenderCssDependencies method with the HttpContextBase/HtmlAttributes parameters instead")]
+        protected virtual string RenderCssDependencies(List<IClientDependencyFile> cssDependencies)
+        {
+            return RenderCssDependencies(cssDependencies, new HttpContextWrapper(HttpContext.Current), new Dictionary<string, string>());
+        }
+
         [Obsolete("Use the alternative RenderJsDependencies method with the HttpContextBase parameter instead")]
         protected virtual string RenderJsDependencies(List<IClientDependencyFile> jsDependencies, IDictionary<string, string> htmlAttributes)
         {
@@ -44,6 +56,18 @@ namespace ClientDependency.Core.FileRegistration.Providers
         protected virtual string RenderCssDependencies(List<IClientDependencyFile> cssDependencies, IDictionary<string, string> htmlAttributes)
         {
             return RenderCssDependencies(cssDependencies, new HttpContextWrapper(HttpContext.Current), htmlAttributes);
+        }
+
+        [Obsolete("Use the alternative RenderSingleJsFile method with the HtmlAttributes parameter instead")]
+        protected virtual string RenderSingleJsFile(string js)
+        {
+            return RenderSingleJsFile(js, new Dictionary<string, string>());
+        }
+
+        [Obsolete("Use the alternative RenderSingleCssFile method with the HtmlAttributes parameter instead")]
+        protected virtual string RenderSingleCssFile(string css)
+        {
+            return RenderSingleCssFile(css, new Dictionary<string, string>());
         }
 
         protected abstract string RenderJsDependencies(IEnumerable<IClientDependencyFile> jsDependencies, HttpContextBase http, IDictionary<string, string> htmlAttributes);
@@ -69,90 +93,6 @@ namespace ClientDependency.Core.FileRegistration.Providers
         #endregion
 
         #region Protected Methods
-
-        /// <summary>
-        /// Obsolete method required for backwards compatibility
-        /// </summary>
-        /// <param name="dependencies"></param>
-        /// <param name="builder"></param>
-        /// <param name="renderCompositeFiles"></param>
-        /// <param name="renderSingle"></param>
-        [Obsolete("Use the other WriteStaggeredDependencies method with the HttpContextBase parameter instead")]
-        protected void WriteStaggeredDependencies(
-            IEnumerable<IClientDependencyFile> dependencies,
-            StringBuilder builder,
-            Func<List<IClientDependencyFile>, IDictionary<string, string>, string> renderCompositeFiles,
-            Func<string, IDictionary<string, string>, string> renderSingle)
-        {
-            var http = new HttpContextWrapper(HttpContext.Current);
-
-            //This action will stagger the output based on whether or not the html attribute declarations are the same for each dependency
-            Action<IEnumerable<IClientDependencyFile>> staggerOnDifferentAttributes = (list) =>
-                {
-                    var sameAttributes = new List<IClientDependencyFile>();
-                    var currHtmlAttr = GetHtmlAttributes(list.ElementAt(0));
-                    foreach (var c in list)
-                    {
-                        var htmlAttr = GetHtmlAttributes(c);
-                        if (!currHtmlAttr.IsEqualTo(GetHtmlAttributes(c)))
-                        {
-                            //if the attributes are different we need to stagger
-                            if (sameAttributes.Any())
-                            {
-                                //render the current buffer
-                                builder.Append(renderCompositeFiles(sameAttributes, currHtmlAttr));
-                                //clear the buffer
-                                sameAttributes.Clear();
-                            }
-                        }
-
-                        //add the item to the buffer and set the current html attributes
-                        sameAttributes.Add(c);
-                        currHtmlAttr = GetHtmlAttributes(c);
-                    }
-
-                    //if there's anything in the buffer then write the remaining
-                    if (sameAttributes.Any())
-                        builder.Append(renderCompositeFiles(sameAttributes, currHtmlAttr));
-                };
-
-            var currNonRemoteFiles = new List<IClientDependencyFile>();
-            foreach (var f in dependencies)
-            {
-                //if it is an external resource, then we need to break the sequence
-                // unless it has been explicitely required that the dependency be bundled
-                if (http.IsAbsolutePath(f.FilePath)
-                    //remote dependencies aren't local
-                    && !new Uri(f.FilePath, UriKind.RelativeOrAbsolute).IsLocalUri(http)
-                    // not required to be bundled
-                    && !f.ForceBundle)
-                {
-                    //we've encountered an external dependency, so we need to break the sequence and restart it after
-                    //we output the raw script tag
-                    if (currNonRemoteFiles.Count > 0)
-                    {
-                        //render the current buffer
-                        staggerOnDifferentAttributes(currNonRemoteFiles);
-                        
-                        //clear the buffer
-                        currNonRemoteFiles.Clear();
-                    }
-                    //write out the single script tag
-                    builder.Append(renderSingle(f.FilePath, GetHtmlAttributes(f)));
-                }
-                else
-                {
-                    //its a normal registration, add to the buffer
-                    currNonRemoteFiles.Add(f);
-                }
-            }
-            //now check if there's anything in the buffer to render
-            if (currNonRemoteFiles.Count > 0)
-            {
-                //render the current buffer
-                staggerOnDifferentAttributes(currNonRemoteFiles);
-            }
-        }
 
         /// <summary>
         /// Because we can have both internal and external dependencies rendered, we need to stagger the script tag output... if they are external, we need to stop the compressing/combining

@@ -20,16 +20,6 @@ namespace ClientDependency.Core.Config
             get { return (int)base["version"]; }
             set { base["version"] = value; }
         }
-
-        /// <summary>
-        /// A flag to specify if legacy render methods are to be used... this is purely for backwards compatibility, especially with Umbraco 4.x
-        /// </summary>
-        [ConfigurationProperty("useLegacyRenderMethods", DefaultValue = false)]
-        public bool UseLegacyRenderMethods
-        {
-            get { return (bool)base["useLegacyRenderMethods"]; }
-            set { base["useLegacyRenderMethods"] = value; }
-        }
        
 		[ConfigurationProperty("compositeFiles")]
 		public CompositeFileSection CompositeFileElement

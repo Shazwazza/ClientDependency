@@ -13,11 +13,6 @@ namespace ClientDependency.Core.CompositeFiles
 {
     public class CompositeDependencyHandler : IHttpHandler
     {
-        static CompositeDependencyHandler()
-        {
-
-        }
-
         private readonly static object Lock = new object();
 
         /// <summary>
