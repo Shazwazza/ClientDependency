@@ -1,9 +1,9 @@
 ﻿using System.Reflection;
-[assembly: AssemblyCompany("TheFARM")]
-[assembly: AssemblyCopyright("Copyright © TheFARM 2010")]
+[assembly: AssemblyCompany("Shannon Deminick")]
+[assembly: AssemblyCopyright("Copyright © Shannon Deminick 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 
-[assembly: AssemblyVersion("1.3.1.0")]
-[assembly: AssemblyFileVersion("1.3.1.0")]
+[assembly: AssemblyVersion("1.4.0.0")]
+[assembly: AssemblyFileVersion("1.4.0.0")]
