@@ -145,7 +145,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 	    /// <param name="fileDefs"></param>
 	    /// <param name="http"></param>
 	    /// <returns></returns>
-	    private void WriteFileToStream(ref StreamWriter sw, string url, ClientDependencyType type, ref List<CompositeFileDefinition> fileDefs, HttpContextBase http)
+	    protected virtual void WriteFileToStream(ref StreamWriter sw, string url, ClientDependencyType type, ref List<CompositeFileDefinition> fileDefs, HttpContextBase http)
 		{
 			string requestOutput;
             var rVal = TryReadUri(url, out requestOutput, http);
@@ -158,7 +158,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 	        return;
 		}
 
-		private void WriteFileToStream(ref StreamWriter sw, FileInfo fi, ClientDependencyType type, string origUrl, ref List<CompositeFileDefinition> fileDefs, HttpContextBase http)
+        protected virtual void WriteFileToStream(ref StreamWriter sw, FileInfo fi, ClientDependencyType type, string origUrl, ref List<CompositeFileDefinition> fileDefs, HttpContextBase http)
 		{
 			try
 			{

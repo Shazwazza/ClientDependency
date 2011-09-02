@@ -149,7 +149,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
         /// <param name="dependencies">The dependencies list for which file paths will be updated</param>
         /// <param name="folderPaths"></param>
         /// <param name="http"></param>
-        protected void UpdateFilePaths(IEnumerable<IClientDependencyFile> dependencies,
+        protected virtual void UpdateFilePaths(IEnumerable<IClientDependencyFile> dependencies,
             HashSet<IClientDependencyPath> folderPaths, HttpContextBase http)
         {
             foreach (var dependency in dependencies)

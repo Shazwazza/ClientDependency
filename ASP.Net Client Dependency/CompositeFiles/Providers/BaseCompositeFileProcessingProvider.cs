@@ -286,7 +286,13 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             }
         }
 
-        protected string MinifyFile(string fileContents, ClientDependencyType type)
+        /// <summary>
+        /// Minifies the file
+        /// </summary>
+        /// <param name="fileContents"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        protected virtual string MinifyFile(string fileContents, ClientDependencyType type)
         {
             switch (type)
             {
@@ -307,7 +313,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         /// <param name="url"></param>
         /// <param name="http"></param>
         /// <returns></returns>
-        protected string ParseCssFilePaths(string fileContents, ClientDependencyType type, string url, HttpContextBase http)
+        protected virtual string ParseCssFilePaths(string fileContents, ClientDependencyType type, string url, HttpContextBase http)
         {
             //if it is a CSS file we need to parse the URLs
             if (type == ClientDependencyType.Css)

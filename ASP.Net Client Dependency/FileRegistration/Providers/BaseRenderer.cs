@@ -14,7 +14,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
     {
 
 
-        public void RegisterDependencies(List<IClientDependencyFile> allDependencies, 
+        public virtual void RegisterDependencies(List<IClientDependencyFile> allDependencies, 
             HashSet<IClientDependencyPath> paths,
             out string jsOutput,
             out string cssOutput,
