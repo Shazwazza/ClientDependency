@@ -341,14 +341,16 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             Uri uri;
             if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out uri))
             {
+                //flag of whether or not to make a request to get the external resource (used below)
+                bool bundleExternalUri = false;
 
-                //if its a relative path, and it's an aspx page, then execute it, 
+                //if its a relative path, then check if we should execute/retreive contents,
                 //otherwise change it to an absolute path and try to request it.
                 if (!uri.IsAbsoluteUri)
                 {
-                    if (uri.ToString().ToUpper().EndsWith(".ASPX"))
+                    //if this is an ASPX page, we should execute it instead of http getting it.
+                    if (uri.ToString().EndsWith(".aspx", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        //its a relative path so use the execute method
                         var sw = new StringWriter();
                         try
                         {
@@ -360,31 +362,43 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                         catch (Exception ex)
                         {
                             ClientDependencySettings.Instance.Logger.Error(string.Format("Could not load file contents from {0}. EXCEPTION: {1}", url, ex.Message), ex);
+                            requestContents = "";
+                            return false;
                         }
                     }
-                    else
+                    
+                    //if this is a call for a web resource, we should http get it
+                    if(url.StartsWith("/webresource.axd", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        uri = uri.MakeAbsoluteUri(http);
+                        bundleExternalUri = true;
                     }
                 }
 
                 try
                 {
-                    // get the domain to test, with starting dot and trailing port, then compare with
-                    // declared (authorized) domains. the starting dot is here to allow for subdomain
-                    // approval, eg '.maps.google.com:80' will be approved by rule '.google.com:80', yet
-                    // '.roguegoogle.com:80' will not.
-                    var domain = string.Format(".{0}:{1}", uri.Host, uri.Port);
-                    bool bundle = false;
-                    foreach (string bundleDomain in BundleDomains)
+                    //we've gotten this far, make the URI absolute and try to load it
+                    uri = uri.MakeAbsoluteUri(http);
+
+                    //if this isn't a web resource, we need to check if its approved
+                    if (!bundleExternalUri)
                     {
-                        if (domain.EndsWith(bundleDomain))
+                        // get the domain to test, with starting dot and trailing port, then compare with
+                        // declared (authorized) domains. the starting dot is here to allow for subdomain
+                        // approval, eg '.maps.google.com:80' will be approved by rule '.google.com:80', yet
+                        // '.roguegoogle.com:80' will not.
+                        var domain = string.Format(".{0}:{1}", uri.Host, uri.Port);
+
+                        foreach (string bundleDomain in BundleDomains)
                         {
-                            bundle = true;
-                            break;
+                            if (domain.EndsWith(bundleDomain))
+                            {
+                                bundleExternalUri = true;
+                                break;
+                            }
                         }
                     }
-                    if (bundle)
+                    
+                    if (bundleExternalUri)
                     {
                         requestContents = GetXmlResponse(uri);
                         return true;
