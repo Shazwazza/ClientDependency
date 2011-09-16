@@ -12,14 +12,14 @@
 <div class="control header bg-primary-3 white">
 	This is a header
 	<ul >
-		<li><a class="white" href="/Pages/Default.aspx">Default Provider</a></li>
-		<li><a class="white" href="/Pages/HtmlIncludeTest.aspx">HtmlInclude control tests</a></li>
-		<li><a class="white" href="/Pages/LazyLoadProviderTest.aspx">Lazy Load Provider with dynamic registration</a></li>
-		<li><a class="white" href="/Pages/ForcedProviders.aspx">Default Provider with a Forced providers on certain dependencies</a></li>
-		<li><a class="white" href="/Pages/RogueScriptDetectionTest.aspx">Rogue script detection test</a></li>
-        <li><a class="white" href="/Pages/EncodingTest.aspx">File Encoding test</a></li>
-        <li><a class="white" href="/Pages/EmbeddedResourceTest.aspx">Embedded Resource test</a></li>
-        <li><a class="white" href="/Pages/RemoteDependencies.aspx">Remote Dependencies test</a></li>
-        <li><a class="white" href="/Pages/HtmlAttributes.aspx">Html attribute tests</a></li>
+		<li><a class="white" href="<%=ResolveClientUrl("~/Pages/Default.aspx") %>">Default Provider</a></li>
+		<li><a class="white" href="<%=ResolveClientUrl("~/Pages/HtmlIncludeTest.aspx") %>">HtmlInclude control tests</a></li>
+		<li><a class="white" href="<%=ResolveClientUrl("~/Pages/LazyLoadProviderTest.aspx") %>">Lazy Load Provider with dynamic registration</a></li>
+		<li><a class="white" href="<%=ResolveClientUrl("~/Pages/ForcedProviders.aspx") %>">Default Provider with a Forced providers on certain dependencies</a></li>
+		<li><a class="white" href="<%=ResolveClientUrl("~/Pages/RogueScriptDetectionTest.aspx") %>">Rogue script detection test</a></li>
+        <li><a class="white" href="<%=ResolveClientUrl("~/Pages/EncodingTest.aspx") %>">File Encoding test</a></li>
+        <li><a class="white" href="<%=ResolveClientUrl("~/Pages/EmbeddedResourceTest.aspx") %>">Embedded Resource test</a></li>
+        <li><a class="white" href="<%=ResolveClientUrl("~/Pages/RemoteDependencies.aspx") %>">Remote Dependencies test</a></li>
+        <li><a class="white" href="<%=ResolveClientUrl("~/Pages/HtmlAttributes.aspx") %>">Html attribute tests</a></li>
 	</ul>
 </div>

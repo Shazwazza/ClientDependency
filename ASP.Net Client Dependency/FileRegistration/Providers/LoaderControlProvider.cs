@@ -11,82 +11,82 @@ using System.Web;
 namespace ClientDependency.Core.FileRegistration.Providers
 {
     public class LoaderControlProvider : WebFormsFileRegistrationProvider
-	{
-		
+    {
+
         public const string DefaultName = "LoaderControlProvider";
         string _dependenciesWebSite;
 
-		public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
-		{
-			// Assign the provider a default name if it doesn't have one
-			if (string.IsNullOrEmpty(name))
-				name = DefaultName;
+        public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
+        {
+            // Assign the provider a default name if it doesn't have one
+            if (string.IsNullOrEmpty(name))
+                name = DefaultName;
 
-			RegisterDependenciesWebSite(config);
-			base.Initialize(name, config);
-		}
+            RegisterDependenciesWebSite(config);
+            base.Initialize(name, config);
+        }
 
         protected override string RenderJsDependencies(IEnumerable<IClientDependencyFile> jsDependencies, HttpContextBase http, IDictionary<string, string> htmlAttributes)
-		{
-			if (!jsDependencies.Any())
-				return string.Empty;
+        {
+            if (!jsDependencies.Any())
+                return string.Empty;
 
             var sb = new StringBuilder();
 
             if (http.IsDebuggingEnabled || !EnableCompositeFiles)
-			{
-				foreach (var dependency in jsDependencies)
-				{
+            {
+                foreach (var dependency in jsDependencies)
+                {
                     sb.Append(RenderSingleJsFile(dependency.FilePath, htmlAttributes));
-				}
-			}
-			else
-			{
+                }
+            }
+            else
+            {
                 var comp = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript, http);
                 foreach (var s in comp)
                 {
                     sb.Append(RenderSingleJsFile(s, htmlAttributes));
-                }                    
-			}
+                }
+            }
 
             return sb.ToString();
-		}
+        }
 
         protected override string RenderCssDependencies(IEnumerable<IClientDependencyFile> cssDependencies, HttpContextBase http, IDictionary<string, string> htmlAttributes)
-		{
+        {
             if (!cssDependencies.Any())
                 return string.Empty;
 
             var sb = new StringBuilder();
 
             if (http.IsDebuggingEnabled || !EnableCompositeFiles)
-			{
-				foreach (var dependency in cssDependencies)
-				{
-				    sb.Append(RenderSingleCssFile(dependency.FilePath, htmlAttributes));
-				}
-			}
-			else
-			{
+            {
+                foreach (var dependency in cssDependencies)
+                {
+                    sb.Append(RenderSingleCssFile(dependency.FilePath, htmlAttributes));
+                }
+            }
+            else
+            {
                 var comp = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.ProcessCompositeList(cssDependencies, ClientDependencyType.Css, http);
                 foreach (var s in comp)
                 {
                     sb.Append(RenderSingleCssFile(s, htmlAttributes));
-                }    
-			}
+                }
+            }
 
             return sb.ToString();
-		}
+        }
 
         protected override string RenderSingleJsFile(string js, IDictionary<string, string> htmlAttributes)
-		{
+        {
             return string.Format(HtmlEmbedContants.ScriptEmbedWithSource, MapToDependenciesWebSite(js), htmlAttributes.ToHtmlAttributes());
-		}
+        }
 
         protected override string RenderSingleCssFile(string css, IDictionary<string, string> htmlAttributes)
-		{
+        {
             return string.Format(HtmlEmbedContants.CssEmbedWithSource, MapToDependenciesWebSite(css), htmlAttributes.ToHtmlAttributes());
-		}
+        }
 
         /// <summary>
         /// Registers the dependencies as controls of the LoaderControl controls collection
@@ -105,47 +105,44 @@ namespace ClientDependency.Core.FileRegistration.Providers
         }
 
         private static void AddToControl(HttpContextBase http, string literal)
-		{          
-			var dCtl = new LiteralControl(literal);
-          	ClientDependencyLoader.GetInstance(http).Controls.Add(dCtl);           
-		}
+        {
+            var dCtl = new LiteralControl(literal);
+            ClientDependencyLoader.GetInstance(http).Controls.Add(dCtl);
+        }
 
-		void RegisterDependenciesWebSite(NameValueCollection config)
-		{
+        /// <summary>
+        /// Sets up a property where you can inject a base Url to pre-pend to all dependencies
+        /// </summary>
+        /// <param name="config"></param>
+        void RegisterDependenciesWebSite(NameValueCollection config)
+        {
             if (config == null) return;
 
-			_dependenciesWebSite = config["website"];
-			if (!string.IsNullOrEmpty(_dependenciesWebSite))
-				_dependenciesWebSite = _dependenciesWebSite.TrimEnd('/');
-		}
+            _dependenciesWebSite = config["website"];
+            if (!string.IsNullOrEmpty(_dependenciesWebSite))
+                _dependenciesWebSite = _dependenciesWebSite.TrimEnd('/');
+        }
 
-		string MapToDependenciesWebSite(string url)
-		{
-			if (url.StartsWith("http://"))
-				return url;
+        /// <summary>
+        /// Checks if the "website" config param has been passed in, if so this formats the url
+        /// to be an absolute URL with the pre-pended domain
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        string MapToDependenciesWebSite(string url)
+        {
+            if (!string.IsNullOrEmpty(_dependenciesWebSite))
+            {
+                if (url.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase)
+                    || url.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase))
+                    return url;
 
-			// make sure the url begins with a /
-			string slashedUrl = (url[0] != '/' ? "/" : string.Empty) + url;
+                // make sure the url begins with a /
+                string slashedUrl = (url[0] != '/' ? "/" : string.Empty) + url;
 
-			if (!string.IsNullOrEmpty(_dependenciesWebSite))
-			{
-				return _dependenciesWebSite + slashedUrl;
-			}
-			else
-			{
-				// if no dependencies website is configured then serve content ourselves
-				// which means, map the url to the current application path
-
-				System.Web.HttpContext context = System.Web.HttpContext.Current;
-				System.Web.HttpRequest request = context.Request;
-				string applicationPath = request.ApplicationPath;
-
-				// request.ApplicationPath is '/<vdir>' so it can be either '/' or '/foo'
-				if (applicationPath == "/")
-					return url;
-				else
-					return applicationPath + slashedUrl;
-			}
-		}
-	}
+                return _dependenciesWebSite + slashedUrl;
+            }
+            return url;
+        }
+    }
 }

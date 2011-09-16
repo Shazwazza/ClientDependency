@@ -13,8 +13,8 @@
     <form id="form1" runat="server">
     <div>
         <div class="choose">Pick your poison</div>
-        <div class="link"><a href="/Test/Default">MVC</a></div>
-        <div class="link"><a href="/Pages">Forms</a></div>
+        <div class="link"><a href="<%=ResolveClientUrl("~/Test/Default") %>">MVC</a></div>
+        <div class="link"><a href="<%=ResolveClientUrl("~/Pages") %>">Forms</a></div>
     </div>
     </form>
 </body>

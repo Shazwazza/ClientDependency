@@ -6,7 +6,7 @@ using System.Web;
 
 namespace ClientDependency.Core
 {
-    public static class IClientDependencyFileExtensions
+    public static class ClientDependencyFileExtensions
     {
         /// <summary>
         /// Resolves an absolute web path for the file path
@@ -16,16 +16,17 @@ namespace ClientDependency.Core
         /// <returns></returns>
         public static string ResolveFilePath(this IClientDependencyFile file, HttpContextBase http)
         {
-            var upperPath = file.FilePath.Trim().ToUpper();
-            if (string.IsNullOrEmpty(upperPath))
+            var trimmedPath = file.FilePath.Trim();
+            if (string.IsNullOrEmpty(trimmedPath))
             {
                 throw new ArgumentException("The Path specified is null", "Path");
             }
-            if (upperPath.StartsWith("~/"))
+            if (trimmedPath.StartsWith("~/"))
             {
                 return http.ResolveUrl(file.FilePath);
             }
-            if (upperPath.StartsWith("http://".ToUpper()) || upperPath.StartsWith("https://".ToUpper()))
+            if (trimmedPath.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase) 
+                || trimmedPath.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase))
             {
                 return file.FilePath; 
             }
