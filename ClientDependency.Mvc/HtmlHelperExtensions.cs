@@ -14,6 +14,28 @@ namespace ClientDependency.Core.Mvc
     public static class HtmlHelperExtensions
     {
 
+        /// <summary>
+        /// Dynamically registers a path alias
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="pathAlias"></param>
+        /// <param name="virtualPath"></param>
+        public static void RegisterPathAlias(this HtmlHelper html, string pathAlias, string virtualPath)
+        {
+            html.ViewContext.GetLoader().AddPath(pathAlias, virtualPath);
+        }
+
+        /// <summary>
+        /// Dynamically registers a path alias
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="path"></param>
+        public static void RegisterPathAlias(this HtmlHelper html, IClientDependencyPath path)
+        {
+            html.ViewContext.GetLoader().AddPath(path);
+        }
+
+
         #region RequiresJsResource Extensions
         public static HtmlHelper RequiresJsResource(this HtmlHelper html, Type resourceType, string resourcePath, int priority)
         {

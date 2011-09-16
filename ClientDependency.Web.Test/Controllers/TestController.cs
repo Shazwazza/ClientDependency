@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using ClientDependency.Core.Mvc;
 using ClientDependency.Web.Models;
 
 namespace ClientDependency.Web.Controllers
 {
+
+    //NOTE: Yes i realize this text shouldn't be hard coded here, but it's an example website!
+
     [HandleError]
     public class TestController : Controller
     {
-        /// <summary>
-        /// Yes i realize this shouldn't be hard coded here, but it's an example website!
-        /// </summary>
-        /// <returns></returns>
+       
         public ActionResult Default()
         {
             var model = new TestModel()
@@ -74,6 +75,27 @@ On this page we have 2 dependencies registered with custom html attributes:
 </ul>
 "
             };
+
+            return View(model);
+        }
+
+        public ActionResult DynamicPathRegistration()
+        {
+            var model = new TestModel()
+            {
+                Heading = "Dynamic path registration",
+                BodyContent = @"<p>
+In the MVC Action for this page, we've dynamically added a path registration and have dynamically added a 2nd one in the view.
+</p>
+<p>
+There are a few extension methods to acheive this, the direct way is to get an instance of the DependencyRenderer by calling the extension method
+GetLoader() on either the ControllerContext, ViewContext or HttpContextBase, then you can just use the AddPath methods. <br/>
+Otherwise, if you are working in a view, you can use the HtmlHelper methods: RegisterPathAlias
+</p>
+"
+            };
+
+            ControllerContext.GetLoader().AddPath("NewJsPath", "~/Js/TestPath");
 
             return View(model);
         }

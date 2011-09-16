@@ -80,6 +80,7 @@
     <Content Include="Css\Controls.css" />
     <Content Include="Css\Print.css" />
     <Content Include="Css\Site.css" />
+    <Content Include="Css\TestPath\BodyGradient.css" />
     <Content Include="Js\JQueryTemplate.js" />
     <Content Include="Js\HtmlIncludeTest2.js" />
     <Content Include="Js\EncodingTestANSI.js" />
@@ -89,6 +90,7 @@
     <Content Include="Js\HtmlIncludeTest1.js" />
     <EmbeddedResource Include="Pages\embedded.css" />
     <Content Include="Js\jquery-ui-1.8.13.custom.min.js" />
+    <Content Include="Js\TestPath\HeaderOrange.js" />
     <Content Include="Pages\HtmlAttributes.aspx" />
     <Content Include="Pages\DependencyGroups.aspx" />
     <Content Include="Pages\RemoteDependencies.aspx" />
@@ -96,6 +98,7 @@
     <Content Include="Pages\HtmlIncludeTest.aspx" />
     <Content Include="Pages\Default.aspx" />
     <Content Include="Pages\EncodingTest.aspx" />
+    <Content Include="Views\Test\DynamicPathRegistration.aspx" />
     <Content Include="Views\Test\HtmlAttributes.aspx" />
     <Content Include="Views\Test\RemoteDependencies.aspx" />
     <Content Include="Web.config">

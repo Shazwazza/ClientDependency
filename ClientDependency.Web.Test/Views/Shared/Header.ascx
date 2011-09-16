@@ -16,5 +16,6 @@
 		<li><%= Html.ActionLink("Rogue script detection test", "RogueDependencies", null, new { @class = "white" })%></li>
         <li><%= Html.ActionLink("Remote dependencies test", "RemoteDependencies", null, new { @class = "white" })%></li>
         <li><%= Html.ActionLink("Html attributes test", "HtmlAttributes", null, new { @class = "white" })%></li>
+        <li><%= Html.ActionLink("Dynamic path registration test", "DynamicPathRegistration", null, new { @class = "white" })%></li>
 	</ul>
 </div>

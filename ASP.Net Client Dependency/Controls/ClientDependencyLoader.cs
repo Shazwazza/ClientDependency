@@ -20,7 +20,7 @@ namespace ClientDependency.Core.Controls
 		{
 			Paths = new ClientDependencyPathCollection();
 
-		    m_Base = new BaseLoader(new HttpContextWrapper(Context))
+		    _base = new BaseLoader(new HttpContextWrapper(Context))
 		                 {
                              //by default the provider is the default provider 
 		                     Provider = ClientDependencySettings.Instance.DefaultFileRegistrationProvider
@@ -68,11 +68,11 @@ namespace ClientDependency.Core.Controls
         {
             get
             {
-                return m_Base.Provider.Name;
+                return _base.Provider.Name;
             }
             set
             {
-                m_Base.Provider = ClientDependencySettings.Instance.FileRegistrationProviderCollection[value];
+                _base.Provider = ClientDependencySettings.Instance.FileRegistrationProviderCollection[value];
             }
         }
 
@@ -95,7 +95,7 @@ namespace ClientDependency.Core.Controls
             return ctx.Items[ContextKey] as ClientDependencyLoader;
 		}
 
-	    private BaseLoader m_Base;
+	    private readonly BaseLoader _base;
 
 		/// <summary>
 		/// Need to set the container for each of the paths to support databinding.
@@ -130,15 +130,15 @@ namespace ClientDependency.Core.Controls
 		{
 			base.OnPreRender(e);
 
-            m_Base.m_Paths.UnionWith(Paths.Cast<IClientDependencyPath>());
-            RegisterClientDependencies((WebFormsFileRegistrationProvider)m_Base.Provider, Page, m_Base.m_Paths);
+            _base.Paths.UnionWith(Paths.Cast<IClientDependencyPath>());
+            RegisterClientDependencies((WebFormsFileRegistrationProvider)_base.Provider, Page, _base.Paths);
 			RenderDependencies();
 		}
 
 		private void RenderDependencies()
 		{
-            m_Base.m_Dependencies.ForEach(x => ((WebFormsFileRegistrationProvider)x.Provider)
-                                                   .RegisterDependencies(Page, x.Dependencies, m_Base.m_Paths, new HttpContextWrapper(Context)));
+            _base.Dependencies.ForEach(x => ((WebFormsFileRegistrationProvider)x.Provider)
+                                                   .RegisterDependencies(Page, x.Dependencies, _base.Paths, new HttpContextWrapper(Context)));
 		}
 
 		[PersistenceMode(PersistenceMode.InnerProperty)]
@@ -177,7 +177,7 @@ namespace ClientDependency.Core.Controls
 		/// <param name="type"></param>
 		public ClientDependencyLoader RegisterDependency(string filePath, ClientDependencyType type)
 		{
-            m_Base.RegisterDependency(filePath, type);
+            _base.RegisterDependency(filePath, type);
 			return this;
 		}
 
@@ -186,7 +186,7 @@ namespace ClientDependency.Core.Controls
         /// </summary>
         public ClientDependencyLoader RegisterDependency(int priority, string filePath, ClientDependencyType type)
         {
-            m_Base.RegisterDependency(priority, filePath, type);
+            _base.RegisterDependency(priority, filePath, type);
             return this;
         }
 
@@ -195,7 +195,7 @@ namespace ClientDependency.Core.Controls
         /// </summary>
         public ClientDependencyLoader RegisterDependency(int priority, string filePath, string pathNameAlias, ClientDependencyType type)
         {
-            m_Base.RegisterDependency(priority, filePath, pathNameAlias, type);
+            _base.RegisterDependency(priority, filePath, pathNameAlias, type);
             return this;
         }
 
@@ -207,7 +207,7 @@ namespace ClientDependency.Core.Controls
 		/// <param name="type"></param>
 		public ClientDependencyLoader RegisterDependency(string filePath, string pathNameAlias, ClientDependencyType type)
 		{
-            m_Base.RegisterDependency(Constants.DefaultGroup, Constants.DefaultPriority, filePath, pathNameAlias, type);
+            _base.RegisterDependency(Constants.DefaultGroup, Constants.DefaultPriority, filePath, pathNameAlias, type);
 			return this;
 		}
 		
@@ -218,7 +218,7 @@ namespace ClientDependency.Core.Controls
 		/// <param name="path"></param>
 		public ClientDependencyLoader AddPath(string pathNameAlias, string path)
 		{
-			AddPath(new BasicPath() { Name = pathNameAlias, Path = path });
+		    _base.AddPath(pathNameAlias, path);
 			return this;
 		}
 
@@ -226,10 +226,11 @@ namespace ClientDependency.Core.Controls
 	    /// Adds a path to the current loader
 	    /// </summary>
 	    /// <param name="path"></param>
-	    public void AddPath(IClientDependencyPath path)
-		{
-            m_Base.m_Paths.Add(path);
-		}		
+        public ClientDependencyLoader AddPath(IClientDependencyPath path)
+	    {
+	        _base.AddPath(path);
+	        return this;
+	    }		
 
 		/// <summary>
 		/// Registers dependencies
@@ -238,7 +239,7 @@ namespace ClientDependency.Core.Controls
 		/// <param name="paths"></param>
 		public void RegisterClientDependencies(Control control, ClientDependencyPathCollection paths)
 		{
-            RegisterClientDependencies((WebFormsFileRegistrationProvider)m_Base.Provider, control, paths.Cast<IClientDependencyPath>());
+            RegisterClientDependencies((WebFormsFileRegistrationProvider)_base.Provider, control, paths.Cast<IClientDependencyPath>());
 		}
 
 		/// <summary>
@@ -271,7 +272,7 @@ namespace ClientDependency.Core.Controls
 		public void RegisterClientDependencies(WebFormsFileRegistrationProvider provider, Control control, IEnumerable<IClientDependencyPath> paths)
 		{
             var dependencies = FindDependencies(control);
-            m_Base.RegisterClientDependencies(provider, dependencies, paths, ClientDependencySettings.Instance.FileRegistrationProviderCollection);
+            _base.RegisterClientDependencies(provider, dependencies, paths, ClientDependencySettings.Instance.FileRegistrationProviderCollection);
 		}
 
 		/// <summary>

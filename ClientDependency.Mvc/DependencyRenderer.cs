@@ -152,7 +152,7 @@ namespace ClientDependency.Core.Mvc
         /// <returns></returns>
         internal string RenderPlaceholder(ClientDependencyType type, string rendererName, IEnumerable<IClientDependencyPath> paths)
         {
-            m_Paths.UnionWith(paths);
+            Paths.UnionWith(paths);
 
             return string.Format("<!--[{0}:Name=\"{1}\"]//-->"
                 , type
@@ -176,13 +176,13 @@ namespace ClientDependency.Core.Mvc
         private void GenerateOutput()
         {
 
-            m_Dependencies
+            Dependencies
                 .ToList()
                 .ForEach(x =>
                 {
                     var renderer = ((BaseRenderer)x.Provider);
                     string js, css;
-                    renderer.RegisterDependencies(x.Dependencies, m_Paths, out js, out css, CurrentContext);
+                    renderer.RegisterDependencies(x.Dependencies, Paths, out js, out css, CurrentContext);
 
                     //store the output in a new output object
                     m_Output.Add(new RendererOutput()

@@ -30,11 +30,34 @@ namespace ClientDependency.Core
         /// <summary>
         /// Tracks all dependencies and maintains a deduplicated list
         /// </summary>
-        internal List<ProviderDependencyList> m_Dependencies = new List<ProviderDependencyList>();
+        internal List<ProviderDependencyList> Dependencies = new List<ProviderDependencyList>();
         /// <summary>
         /// Tracks all paths and maintains a deduplicated list
         /// </summary>
-        internal HashSet<IClientDependencyPath> m_Paths = new HashSet<IClientDependencyPath>();
+        internal HashSet<IClientDependencyPath> Paths = new HashSet<IClientDependencyPath>();
+
+        /// <summary>
+        /// Adds a path to the current loader
+        /// </summary>
+        /// <param name="pathNameAlias"></param>
+        /// <param name="path"></param>
+        /// <returns>Returns the current loader instance so you can chain calls together</returns>
+        public BaseLoader AddPath(string pathNameAlias, string path)
+        {
+            AddPath(new BasicPath() { Name = pathNameAlias, Path = path });
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a path to the current loader
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns>Returns the current loader instance so you can chain calls together</returns>
+        public BaseLoader AddPath(IClientDependencyPath path)
+        {
+            Paths.Add(path);
+            return this;
+        }		
 
         /// <summary>
         /// Registers dependencies with the specified provider.
@@ -49,7 +72,7 @@ namespace ClientDependency.Core
         public void RegisterClientDependencies(BaseFileRegistrationProvider provider, IEnumerable<IClientDependencyFile> dependencies, IEnumerable<IClientDependencyPath> paths, ProviderCollection currProviders)
         {
             //find or create the ProviderDependencyList for the provider
-            ProviderDependencyList currList = m_Dependencies
+            ProviderDependencyList currList = Dependencies
                 .Where(x => x.ProviderIs(provider))
                 .DefaultIfEmpty(new ProviderDependencyList(provider))
                 .SingleOrDefault();
@@ -59,8 +82,8 @@ namespace ClientDependency.Core
                 .Where(x => string.IsNullOrEmpty(x.ForceProvider)));
             
             //add the list if it is new
-            if (!m_Dependencies.Contains(currList) && currList.Dependencies.Count > 0)
-                m_Dependencies.Add(currList); 
+            if (!Dependencies.Contains(currList) && currList.Dependencies.Count > 0)
+                Dependencies.Add(currList); 
 
             //we need to look up all of the dependencies that have forced providers, 
             //check if we've got a provider list for it, create one if not and add the dependencies
@@ -76,7 +99,7 @@ namespace ClientDependency.Core
             {
                 //find or create the ProviderDependencyList for the prov
                 var p = prov;
-                var forceList = m_Dependencies
+                var forceList = Dependencies
                     .Where(x => x.ProviderIs(prov))
                     .DefaultIfEmpty(new ProviderDependencyList(prov))
                     .SingleOrDefault();
@@ -84,12 +107,12 @@ namespace ClientDependency.Core
                 forceList.AddDependencies(dependencies
                     .Where(x => x.ForceProvider == p.Name));
                 //add the list if it is new
-                if (!m_Dependencies.Contains(forceList))
-                    m_Dependencies.Add(forceList);
+                if (!Dependencies.Contains(forceList))
+                    Dependencies.Add(forceList);
             }
 
             //add the paths, ensure no dups
-            m_Paths.UnionWith(paths);
+            Paths.UnionWith(paths);
         }
 
         public void RegisterClientDependencies(List<IClientDependencyFile> dependencies, params IClientDependencyPath[] paths)
