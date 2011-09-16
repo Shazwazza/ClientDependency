@@ -18,11 +18,6 @@ namespace ClientDependency.Web.Controllers
        
         public ActionResult Default()
         {
-            ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.EnableCssMinify = false;
-            ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.EnableJsMinify = false;
-            ClientDependencySettings.Instance.DefaultFileRegistrationProvider.EnableCompositeFiles = false;
-            ClientDependencySettings.Instance.DefaultMvcRenderer.EnableCompositeFiles = false;
-
 
             var model = new TestModel()
             {
