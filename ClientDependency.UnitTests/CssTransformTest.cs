@@ -14,7 +14,19 @@ namespace ClientDependency.UnitTests
     public class CssTransformTest
     {
 
-       
+
+        [TestMethod]
+        public void CssTransform_Ensure_Query_Strings_Retained()
+        {
+            //refer to this:http://clientdependency.codeplex.com/workitem/13184
+
+            var css = @"#test {display:block; background-image:url(""/media.ashx?arg=value"")   }";
+
+            var output = CssFileUrlFormatter.TransformCssFile(css, new Uri("http://MySite/MySubFolder"));
+
+            Assert.AreEqual(@"#test {display:block; background-image:url(""/media.ashx?arg=value"")   }", output);
+
+        }
 
         [TestMethod]
         public void CssTransform_Parse_Urls()

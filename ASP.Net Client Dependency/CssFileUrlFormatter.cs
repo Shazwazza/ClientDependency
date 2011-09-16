@@ -29,7 +29,7 @@ namespace ClientDependency.Core
 						    var hashSplit = match.Split(new[] {'#'}, StringSplitOptions.RemoveEmptyEntries);
 
 						    return string.Format(@"url(""{0}{1}"")",
-						                         match.StartsWith("http") ? match : new Uri(cssLocation, match).AbsolutePath,
+						                         match.StartsWith("http") ? match : new Uri(cssLocation, match).PathAndQuery,
 						                         hashSplit.Length > 1 ? ("#" + hashSplit[1]) : "");
 						}
 						return m.Value;
