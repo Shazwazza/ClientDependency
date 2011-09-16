@@ -1,7 +1,7 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl" %>
 <%@ Import Namespace="ClientDependency.Core.Mvc" %>
 
-<% Html.RequiresJs("/Js/jquery-1.3.2.min.js"); %>
+<% Html.RequiresJs("~/Js/jquery-1.3.2.min.js"); %>
 
 <%--Demonstrates the use of using the PathNameAlias--%>
 <% Html.RequiresCss("Controls.css", "Styles"); %>

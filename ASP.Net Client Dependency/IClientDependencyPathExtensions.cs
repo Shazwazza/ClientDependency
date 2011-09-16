@@ -6,7 +6,7 @@ using System.Web;
 
 namespace ClientDependency.Core
 {
-    public static class IClientDependencyPathExtensions
+    public static class ClientDependencyPathExtensions
     {
 
         public static string ResolvePath(this IClientDependencyPath path, HttpContextBase http)

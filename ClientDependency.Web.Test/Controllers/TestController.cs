@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using ClientDependency.Core.Config;
 using ClientDependency.Core.Mvc;
 using ClientDependency.Web.Models;
 
@@ -17,6 +18,12 @@ namespace ClientDependency.Web.Controllers
        
         public ActionResult Default()
         {
+            ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.EnableCssMinify = false;
+            ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.EnableJsMinify = false;
+            ClientDependencySettings.Instance.DefaultFileRegistrationProvider.EnableCompositeFiles = false;
+            ClientDependencySettings.Instance.DefaultMvcRenderer.EnableCompositeFiles = false;
+
+
             var model = new TestModel()
             {
                 Heading = "Using the default provider specified in the web.config",

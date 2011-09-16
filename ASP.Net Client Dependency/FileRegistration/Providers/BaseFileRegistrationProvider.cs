@@ -30,7 +30,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
         /// By default this is true but can be overriden (in either config or code). 
         /// Composite files are never enabled with compilation debug="true" however.
         /// </summary>
-        protected bool EnableCompositeFiles { get; set; }
+        public bool EnableCompositeFiles { get; set; }
 
         #region Abstract methods/properties
 
@@ -245,11 +245,11 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         }
 
-        protected string AppendVersion(string url, HttpContextBase http)
+        private string AppendVersion(string url, HttpContextBase http)
         {
             if (ClientDependencySettings.Instance.Version == 0)
                 return url;
-            if (http.IsDebuggingEnabled
+            if ((http.IsDebuggingEnabled || !EnableCompositeFiles)
                 || ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.UrlType == CompositeUrlType.Base64QueryStrings)
             {
                 //ensure there's not duplicated query string syntax

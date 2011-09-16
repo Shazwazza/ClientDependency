@@ -6,12 +6,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title><asp:ContentPlaceHolder ID="TitleContent" runat="server" /></title>    
-    <%= Html.RenderCssHere(new BasicPath("Styles", "/Css")) %>
+    <%= Html.RenderCssHere(new BasicPath("Styles", "~/Css")) %>
 </head>
 
 <body>
 	
-	<%= Html.RenderJsHere(new BasicPath("Scripts", "/Js")) %>
+	<%= Html.RenderJsHere(new BasicPath("Scripts", "~/Js")) %>
 	
 	<% Html.RequiresCss("ColorScheme.css", "Styles"); %>
     <% Html.RequiresCss("Site.css", "Styles"); %>

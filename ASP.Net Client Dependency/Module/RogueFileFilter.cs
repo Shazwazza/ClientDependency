@@ -48,7 +48,7 @@ namespace ClientDependency.Core.Module
         public virtual bool ValidateCurrentHandler()
         {
             //don't filter if we're in debug mode
-            if (CurrentContext.IsDebuggingEnabled)
+            if (CurrentContext.IsDebuggingEnabled || !ClientDependencySettings.Instance.DefaultFileRegistrationProvider.EnableCompositeFiles)
                 return false;
 
             return (CurrentContext.CurrentHandler is Page);

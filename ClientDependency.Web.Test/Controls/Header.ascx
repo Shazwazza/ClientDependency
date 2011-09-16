@@ -7,7 +7,7 @@
 <CD:CssInclude ID="CssInclude1" runat="server" FilePath="Controls.css" PathNameAlias="Styles" />
 
 <div class="control white bg-complement-2">
-    <a href="/" class="f-primary-4 bg-complement-2">Return to landing page</a>
+    <a href="<%= ResolveClientUrl("~/") %>" class="f-primary-4 bg-complement-2">Return to landing page</a>
 </div>
 <div class="control header bg-primary-3 white">
 	This is a header
