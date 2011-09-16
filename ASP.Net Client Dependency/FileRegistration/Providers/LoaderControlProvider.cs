@@ -14,7 +14,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
     {
 
         public const string DefaultName = "LoaderControlProvider";
-        string _dependenciesWebSite;
+        
 
         public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
         {
@@ -22,7 +22,6 @@ namespace ClientDependency.Core.FileRegistration.Providers
             if (string.IsNullOrEmpty(name))
                 name = DefaultName;
 
-            RegisterDependenciesWebSite(config);
             base.Initialize(name, config);
         }
 
@@ -80,12 +79,12 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         protected override string RenderSingleJsFile(string js, IDictionary<string, string> htmlAttributes)
         {
-            return string.Format(HtmlEmbedContants.ScriptEmbedWithSource, MapToDependenciesWebSite(js), htmlAttributes.ToHtmlAttributes());
+            return string.Format(HtmlEmbedContants.ScriptEmbedWithSource, js, htmlAttributes.ToHtmlAttributes());
         }
 
         protected override string RenderSingleCssFile(string css, IDictionary<string, string> htmlAttributes)
         {
-            return string.Format(HtmlEmbedContants.CssEmbedWithSource, MapToDependenciesWebSite(css), htmlAttributes.ToHtmlAttributes());
+            return string.Format(HtmlEmbedContants.CssEmbedWithSource, css, htmlAttributes.ToHtmlAttributes());
         }
 
         /// <summary>
@@ -110,39 +109,6 @@ namespace ClientDependency.Core.FileRegistration.Providers
             ClientDependencyLoader.GetInstance(http).Controls.Add(dCtl);
         }
 
-        /// <summary>
-        /// Sets up a property where you can inject a base Url to pre-pend to all dependencies
-        /// </summary>
-        /// <param name="config"></param>
-        void RegisterDependenciesWebSite(NameValueCollection config)
-        {
-            if (config == null) return;
-
-            _dependenciesWebSite = config["website"];
-            if (!string.IsNullOrEmpty(_dependenciesWebSite))
-                _dependenciesWebSite = _dependenciesWebSite.TrimEnd('/');
-        }
-
-        /// <summary>
-        /// Checks if the "website" config param has been passed in, if so this formats the url
-        /// to be an absolute URL with the pre-pended domain
-        /// </summary>
-        /// <param name="url"></param>
-        /// <returns></returns>
-        string MapToDependenciesWebSite(string url)
-        {
-            if (!string.IsNullOrEmpty(_dependenciesWebSite))
-            {
-                if (url.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase)
-                    || url.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase))
-                    return url;
-
-                // make sure the url begins with a /
-                string slashedUrl = (url[0] != '/' ? "/" : string.Empty) + url;
-
-                return _dependenciesWebSite + slashedUrl;
-            }
-            return url;
-        }
+       
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Text;
 using System.Web.UI;
 using System.Configuration.Provider;
@@ -32,6 +33,11 @@ namespace ClientDependency.Core.FileRegistration.Providers
         /// </summary>
         public bool EnableCompositeFiles { get; set; }
 
+        ///// <summary>
+        ///// By default this is empty, but if you want to explicity define a base url for dependencies you can
+        ///// </summary>
+        //public string WebsiteBaseUrl { get; set; }
+
         #region Abstract methods/properties
 
         protected abstract string RenderJsDependencies(IEnumerable<IClientDependencyFile> jsDependencies, HttpContextBase http, IDictionary<string, string> htmlAttributes);
@@ -52,6 +58,13 @@ namespace ClientDependency.Core.FileRegistration.Providers
             {
                 EnableCompositeFiles = bool.Parse(config["enableCompositeFiles"]);
             }
+
+            //if (config != null && config["websiteBaseUrl"] != null && !string.IsNullOrEmpty(config["websiteBaseUrl"]))
+            //{
+            //    WebsiteBaseUrl = config["website"];
+            //    if (!string.IsNullOrEmpty(WebsiteBaseUrl))
+            //        WebsiteBaseUrl = WebsiteBaseUrl.TrimEnd('/');
+            //}
         }
 
         #endregion
@@ -265,7 +278,29 @@ namespace ClientDependency.Core.FileRegistration.Providers
             return url;
         }
 
-        #endregion
+        #endregion        
+
+        ///// <summary>
+        ///// Checks if the "website" config param has been passed in, if so this formats the url
+        ///// to be an absolute URL with the pre-pended domain
+        ///// </summary>
+        ///// <param name="url"></param>
+        ///// <returns></returns>
+        //protected string MapToWebsiteBaseUrl(string url)
+        //{
+        //    if (!string.IsNullOrEmpty(WebsiteBaseUrl))
+        //    {
+        //        if (url.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase)
+        //            || url.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase))
+        //            return url;
+
+        //        // make sure the url begins with a /
+        //        string slashedUrl = (url[0] != '/' ? "/" : string.Empty) + url;
+
+        //        return WebsiteBaseUrl + slashedUrl;
+        //    }
+        //    return url;
+        //}
 
 
         /// <summary>
