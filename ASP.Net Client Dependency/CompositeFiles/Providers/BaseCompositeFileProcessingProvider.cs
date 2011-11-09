@@ -368,7 +368,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                     }
                     
                     //if this is a call for a web resource, we should http get it
-                    if(url.StartsWith("/webresource.axd", StringComparison.InvariantCultureIgnoreCase))
+                    if(url.StartsWith(http.Request.ApplicationPath.TrimEnd('/') + "/webresource.axd", StringComparison.InvariantCultureIgnoreCase))
                     {
                         bundleExternalUri = true;
                     }
