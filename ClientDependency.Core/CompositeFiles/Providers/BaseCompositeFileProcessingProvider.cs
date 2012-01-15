@@ -30,7 +30,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             EnableCssMinify = true;
             EnableJsMinify = true;
             UrlType = CompositeUrlType.MappedId;
-
+            PathBasedUrlFormat = "{dependencyId}.{version}.{type}";
             _compositeFilePath = DefaultDependencyPath;
         }
 
@@ -50,6 +50,19 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         /// The Url type to use for the dependency handler 
         /// </summary>
         public CompositeUrlType UrlType { get; protected set; }
+
+        /// <summary>
+        /// The format of a path based URL (either a MappedId or a Base64Paths URL). The string format is a tokenized string such as:
+        /// {dependencyId}.{version}.{type} 
+        /// or
+        /// {dependencyId}/{version}/{type}
+        /// </summary>
+        /// <remarks>
+        /// By defaut this is just:
+        /// {dependencyId}.{version}.{type} 
+        /// but Cassini doesn't support '.' in the URL so some people may want to change this to use '/'
+        /// </remarks>
+        public string PathBasedUrlFormat { get; protected set; }
 
         /// <summary>
         /// Returns the CompositeFilePath
@@ -188,34 +201,37 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                 default:
 
                     //Create a URL based on base64 paths instead of a query string
-
-
-                    //this used to be a "." but this causes problems with mvc and ignore routes for 
-                    //some very strange reason, so we'll just use normal paths.
-                    var versionDelimiter = ".";
-
+                    
                     url.Append(ClientDependencySettings.Instance.CompositeFileHandlerPath);
+
+                    //create the path based on the path format...
+
+                    var pathUrl = PathBasedUrlFormat;
+                    var dependencyId = new StringBuilder();
                     int pos = 0;
+                    //split paths at a max of 240 chars to not exceed the max path length of a URL
                     while (fileKey.Length > pos)
                     {
                         url.Append("/");
                         int len = Math.Min(fileKey.Length - pos, 240);
-                        url.Append(fileKey.Substring(pos, len));
+                        dependencyId.Append(fileKey.Substring(pos, len));
                         pos += 240;
                     }
-                    url.Append(versionDelimiter);
-                    url.Append(version.ToString());
+                    pathUrl = pathUrl.Replace("{dependencyId}", dependencyId.ToString());
+                    pathUrl = pathUrl.Replace("{version}", version.ToString());
                     switch (type)
                     {
                         case ClientDependencyType.Css:
-                            url.Append(versionDelimiter);
-                            url.Append("css");
+                            pathUrl = pathUrl.Replace("{type}", "css");
                             break;
                         case ClientDependencyType.Javascript:
-                            url.Append(versionDelimiter);
-                            url.Append("js");
+                            pathUrl = pathUrl.Replace("{type}", "js");
                             break;
                     }
+
+                    //append the path formatted
+                    url.Append(pathUrl);
+
                     break;
             }
 
@@ -258,6 +274,25 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                 catch (ArgumentException)
                 {
                     //swallow exception, we've set the default
+                }
+            }
+            if (config["pathUrlFormat"] != null)
+            {
+                PathBasedUrlFormat = config["pathUrlFormat"];
+                //now we need to validate it:
+                var requiredTokens = new[] {"{dependencyId}", "{version}", "{type}"};
+                foreach(var r in requiredTokens)
+                {
+                    if (!PathBasedUrlFormat.Contains(r))
+                        throw new FormatException("The value specified for pathUrlFormat does not contain an " + r + " token");
+                }
+                if (PathBasedUrlFormat.ToCharArray().Count(x => x == '{') > 3)
+                {
+                    throw new FormatException("The value specified for pathUrlFormat contains a '{' character outside of the token declaration which is invalid");
+                }
+                if (PathBasedUrlFormat.ToCharArray().Count(x => x == '}') > 3)
+                {
+                    throw new FormatException("The value specified for pathUrlFormat contains a '}' character outside of the token declaration which is invalid");
                 }
             }
 
