@@ -253,7 +253,7 @@
     <Content Include="Views\Test\Default.aspx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ASP.Net Client Dependency\ClientDependency.Core.csproj">
+    <ProjectReference Include="..\ClientDependency.Core\ClientDependency.Core.csproj">
       <Project>{EA35B06D-0CC8-4830-A3F7-9BB3D36D0FAF}</Project>
       <Name>ClientDependency.Core</Name>
     </ProjectReference>

@@ -309,7 +309,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         {
             var folder = _xmlMapFolder.FullName;
             var folderMd5 = folder.GenerateMd5();
-            return Path.Combine(folder, Environment.MachineName + "-" + folderMd5 + "-" + MapFileName);
+            return Path.Combine(folder, System.Net.Dns.GetHostName() + "-" + folderMd5 + "-" + MapFileName);
         }
 
         private void CreateNewXmlFile()
