@@ -77,6 +77,7 @@
     <Compile Include="CompositeFiles\Providers\BaseFileMapProvider.cs" />
     <Compile Include="CompositeFiles\Providers\CompositeUrlType.cs" />
     <Compile Include="CompositeFiles\Providers\FileMapProviderCollection.cs" />
+    <Compile Include="CompositeFiles\Providers\PathBasedUrlFormatter.cs" />
     <Compile Include="CompressionType.cs" />
     <Compile Include="Config\MimeTypeCompressionCollection.cs" />
     <Compile Include="Config\MimeTypeCompressionElement.cs" />

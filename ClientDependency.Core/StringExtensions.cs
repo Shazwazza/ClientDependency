@@ -8,6 +8,13 @@ namespace ClientDependency.Core
     public static class StringExtensions
     {
 
+        public static string ReverseString(this string s)
+        {
+            char[] charArray = s.ToCharArray();
+            Array.Reverse(charArray);
+            return new string(charArray);
+        }
+
         public static string EncodeTo64Url(this string toEncode)
         {
             string returnValue = EncodeTo64(toEncode);

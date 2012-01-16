@@ -59,6 +59,12 @@ namespace ClientDependency.Core.CompositeFiles
             else
             {
 
+                //get path to parse
+                var path = context.Request.PathInfo;
+                var pathFormat = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.PathBasedUrlFormat;
+                //start parsing from the end
+
+
                 // path format
                 var segs = context.Request.PathInfo.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
                 fileset = "";

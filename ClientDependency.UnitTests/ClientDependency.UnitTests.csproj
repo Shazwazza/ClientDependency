@@ -68,6 +68,7 @@
     <Compile Include="CssMinTest.cs" />
     <Compile Include="FakeHttpContextFactory.cs" />
     <Compile Include="JsMinifyTest.cs" />
+    <Compile Include="PathBasedUrlFormatValidatorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CssTransformTest.cs" />
     <Compile Include="RogueFileFilterTest.cs" />

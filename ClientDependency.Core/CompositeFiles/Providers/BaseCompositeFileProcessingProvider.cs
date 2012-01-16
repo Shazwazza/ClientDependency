@@ -203,31 +203,10 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                     //Create a URL based on base64 paths instead of a query string
                     
                     url.Append(ClientDependencySettings.Instance.CompositeFileHandlerPath);
+                    url.Append('/');
 
                     //create the path based on the path format...
-
-                    var pathUrl = PathBasedUrlFormat;
-                    var dependencyId = new StringBuilder();
-                    int pos = 0;
-                    //split paths at a max of 240 chars to not exceed the max path length of a URL
-                    while (fileKey.Length > pos)
-                    {
-                        url.Append("/");
-                        int len = Math.Min(fileKey.Length - pos, 240);
-                        dependencyId.Append(fileKey.Substring(pos, len));
-                        pos += 240;
-                    }
-                    pathUrl = pathUrl.Replace("{dependencyId}", dependencyId.ToString());
-                    pathUrl = pathUrl.Replace("{version}", version.ToString());
-                    switch (type)
-                    {
-                        case ClientDependencyType.Css:
-                            pathUrl = pathUrl.Replace("{type}", "css");
-                            break;
-                        case ClientDependencyType.Javascript:
-                            pathUrl = pathUrl.Replace("{type}", "js");
-                            break;
-                    }
+                    var pathUrl = PathBasedUrlFormatter.CreatePath(PathBasedUrlFormat, fileKey, type, version);
 
                     //append the path formatted
                     url.Append(pathUrl);
@@ -279,21 +258,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             if (config["pathUrlFormat"] != null)
             {
                 PathBasedUrlFormat = config["pathUrlFormat"];
-                //now we need to validate it:
-                var requiredTokens = new[] {"{dependencyId}", "{version}", "{type}"};
-                foreach(var r in requiredTokens)
-                {
-                    if (!PathBasedUrlFormat.Contains(r))
-                        throw new FormatException("The value specified for pathUrlFormat does not contain an " + r + " token");
-                }
-                if (PathBasedUrlFormat.ToCharArray().Count(x => x == '{') > 3)
-                {
-                    throw new FormatException("The value specified for pathUrlFormat contains a '{' character outside of the token declaration which is invalid");
-                }
-                if (PathBasedUrlFormat.ToCharArray().Count(x => x == '}') > 3)
-                {
-                    throw new FormatException("The value specified for pathUrlFormat contains a '}' character outside of the token declaration which is invalid");
-                }
+                PathBasedUrlFormatter.Validate(PathBasedUrlFormat);                
             }
 
             _compositeFilePath = config["compositeFilePath"] ?? DefaultDependencyPath;
