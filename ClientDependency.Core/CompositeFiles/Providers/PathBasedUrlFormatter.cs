@@ -24,6 +24,8 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             }
             typeAsString = typeAsString.ReverseString();
 
+
+
             fileKey = "";
             type = typeAsString == "js" ? ClientDependencyType.Javascript : ClientDependencyType.Css;
             version = 10;
