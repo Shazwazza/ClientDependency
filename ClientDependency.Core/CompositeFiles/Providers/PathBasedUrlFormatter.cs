@@ -13,10 +13,8 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             //start parsing from the end
             var typeIndex = pathBasedUrlFormat.IndexOf("{type}");
             var versionIndex = pathBasedUrlFormat.IndexOf("{version}");
-            var dependencyIdIndex = pathBasedUrlFormat.IndexOf("{dependencyId}");
 
             var typeDelimiter = pathBasedUrlFormat.Substring(versionIndex + "{version}".Length, typeIndex - (versionIndex + "{version}".Length));
-
             var typeAsString = "";            
             for (var i = path.Length - 1; i > path.LastIndexOf(typeDelimiter); i--)
             {
@@ -24,7 +22,13 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             }
             typeAsString = typeAsString.ReverseString();
 
-
+            var versionDelimiter = pathBasedUrlFormat.Substring("{dependencyId}".Length, versionIndex - ("{dependencyId}".Length));
+            var versionAsString = "";
+            for (var i = path.Length - 1; i > path.LastIndexOf(versionDelimiter); i--)
+            {
+                versionAsString += path[i];
+            }
+            versionAsString = versionAsString.ReverseString();
 
             fileKey = "";
             type = typeAsString == "js" ? ClientDependencyType.Javascript : ClientDependencyType.Css;
