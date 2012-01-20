@@ -24,7 +24,8 @@ namespace ClientDependency.Core.Module
     /// the output into a memory stream and so increases memory usage.
     /// </remarks>
     /// </summary>    
-    public class ResponseFilterStream : Stream
+    public class 
+        ResponseFilterStream : Stream
     {
         /// <summary>
         /// The original stream
@@ -375,7 +376,7 @@ namespace ClientDependency.Core.Module
                 buffer = OnTransformWriteStringInternal(buffer);
 
             if (!IsOutputDelayed)
-                _stream.Write(buffer, offset, buffer.Length);
+                _stream.Write(buffer, offset, count);
 
         }
 

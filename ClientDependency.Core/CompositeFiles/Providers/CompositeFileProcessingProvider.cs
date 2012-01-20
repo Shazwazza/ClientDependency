@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web.Hosting;
 using ClientDependency.Core.Config;
 using System.IO;
@@ -21,6 +22,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 	{
 
 	    public const string DefaultName = "CompositeFileProcessor";
+		private static Regex _importCssRegex = new Regex("@import url\\((.+?)\\);?", RegexOptions.Compiled);
 
 	    /// <summary>
 	    /// Saves the file's bytes to disk with a hash of the byte array
@@ -152,7 +154,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 			if (rVal)
 			{
 				//write the contents of the external request.
-                sw.WriteLine(MinifyFile(ParseCssFilePaths(requestOutput, type, url, http), type));
+				WriteContentToStream(ref sw, MinifyFile(ParseCssFilePaths(requestOutput, type, url, http), type), type, http);
 				fileDefs.Add(new CompositeFileDefinition(url, false));
 			}
 	        return;
@@ -165,7 +167,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 				//if it is a file based dependency then read it				
                 var fileContents = File.ReadAllText(fi.FullName, Encoding.UTF8); //read as utf 8
 
-                sw.WriteLine(MinifyFile(ParseCssFilePaths(fileContents, type, origUrl, http), type));
+				WriteContentToStream(ref sw, MinifyFile(ParseCssFilePaths(fileContents, type, origUrl, http), type), type, http);
 				fileDefs.Add(new CompositeFileDefinition(origUrl, true));
 			    return;
 			}
@@ -176,5 +178,67 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 			}
 		}
 
+		private void WriteContentToStream(ref StreamWriter sw, string content, ClientDependencyType type, HttpContextBase context)
+		{
+			//need to parse
+			if (type == ClientDependencyType.Css && ClientDependencySettings.Instance.DefaultFileRegistrationProvider.EnableCompositeFiles)
+			{
+				while(_importCssRegex.IsMatch(content))
+				{
+					var match = _importCssRegex.Match(content);
+					//write the previous content
+					sw.WriteLine(content.Substring(0, match.Index));
+					//write import css content
+					var filePath = match.Groups[1].Value.Trim('\'', '"');
+					try
+					{
+						var importContent = string.Empty;
+						if(filePath.StartsWith("http"))
+						{
+							importContent = ParseCssFilePaths(DownloadString(filePath), ClientDependencyType.Css, filePath, context);
+						}
+						else
+						{
+							importContent = ParseCssFilePaths(File.ReadAllText(context.Server.MapPath(filePath)), ClientDependencyType.Css, filePath, context);
+						}
+						
+						sw.WriteLine(importContent);
+					}
+					catch
+					{
+						sw.WriteLine(string.Format("/*Invalid CSS: {0}*/", filePath));
+					}
+
+					content = content.Substring(match.Index + match.Length);
+				}
+				sw.WriteLine(content);
+			}
+			else
+			{
+				sw.WriteLine(MinifyFile(content, type));
+			}
+		}
+
+		private string DownloadString(string url)
+		{
+			var content = string.Empty;
+			try
+			{
+				var webRequest = (HttpWebRequest)HttpWebRequest.Create(url);
+				webRequest.UserAgent = "ClientDependency Css Parser";
+				var response = webRequest.GetResponse();
+				using (var reader = new StreamReader(response.GetResponseStream()))
+				{
+					content = reader.ReadToEnd();
+				}
+				response.Close();
+			}
+			catch
+			{
+				content = string.Format("/*Invalid CSS: {0}*/", url);
+			}
+
+			return content;
+		}
 	}
 }
