@@ -22,6 +22,15 @@ namespace ClientDependency.Web.Test.Pages {
         protected global::System.Web.UI.WebControls.ContentPlaceHolder head;
         
         /// <summary>
+        /// CssPlaceHolder control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.PlaceHolder CssPlaceHolder;
+        
+        /// <summary>
         /// Loader control.
         /// </summary>
         /// <remarks>
@@ -83,5 +92,14 @@ namespace ClientDependency.Web.Test.Pages {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClientDependency.Web.Test.Controls.Footer Footer1;
+        
+        /// <summary>
+        /// JavaScriptPlaceHolder control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.PlaceHolder JavaScriptPlaceHolder;
     }
 }

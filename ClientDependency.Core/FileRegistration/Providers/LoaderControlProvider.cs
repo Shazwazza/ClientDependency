@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
@@ -10,6 +9,9 @@ using System.Web;
 
 namespace ClientDependency.Core.FileRegistration.Providers
 {
+    /// <summary>
+    /// Uses the LoaderControl to render the CSS and JS specified.
+    /// </summary>
     public class LoaderControlProvider : WebFormsFileRegistrationProvider
     {
 

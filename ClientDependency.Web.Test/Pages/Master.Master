@@ -12,6 +12,8 @@
     <title></title>
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
+    <%--Renders the CSS here--%>
+    <asp:PlaceHolder runat="server" ID="CssPlaceHolder"></asp:PlaceHolder>
 </head>
 <body>	
 	<form runat="server">
@@ -39,5 +41,7 @@
 	<uc3:Footer ID="Footer1" runat="server" />
 
     </form>
+    
+    <asp:PlaceHolder runat="server" ID="JavaScriptPlaceHolder"></asp:PlaceHolder>
 </body>
 </html>
