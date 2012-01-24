@@ -10,30 +10,50 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 
         public static bool Parse(string pathBasedUrlFormat, string path, out string fileKey, out ClientDependencyType type, out int version)
         {
-            //start parsing from the end
-            var typeIndex = pathBasedUrlFormat.IndexOf("{type}");
-            var versionIndex = pathBasedUrlFormat.IndexOf("{version}");
-
-            var typeDelimiter = pathBasedUrlFormat.Substring(versionIndex + "{version}".Length, typeIndex - (versionIndex + "{version}".Length));
-            var typeAsString = "";            
-            for (var i = path.Length - 1; i > path.LastIndexOf(typeDelimiter); i--)
+            try
             {
-                typeAsString += path[i];
-            }
-            typeAsString = typeAsString.ReverseString();
+                //start parsing from the end
+                var typeIndex = pathBasedUrlFormat.IndexOf("{type}");
+                var versionIndex = pathBasedUrlFormat.IndexOf("{version}");
 
-            var versionDelimiter = pathBasedUrlFormat.Substring("{dependencyId}".Length, versionIndex - ("{dependencyId}".Length));
-            var versionAsString = "";
-            for (var i = path.Length - 1; i > path.LastIndexOf(versionDelimiter); i--)
+                var typeDelimiter = pathBasedUrlFormat.Substring(versionIndex + "{version}".Length, typeIndex - (versionIndex + "{version}".Length));
+                var typeAsString = "";
+                for (var i = path.Length - 1; i > path.LastIndexOf(typeDelimiter) + (typeDelimiter.Length - 1); i--)
+                {
+                    typeAsString += path[i];
+                }
+                typeAsString = typeAsString.ReverseString().ToUpper();
+
+                var versionDelimiter = pathBasedUrlFormat.Substring("{dependencyId}".Length, versionIndex - ("{dependencyId}".Length));
+                var versionAsString = "";
+                for (var i = path.LastIndexOf(typeDelimiter) - 1;
+                    i > path.Substring(0, path.LastIndexOf(typeDelimiter)).LastIndexOf(versionDelimiter) + (typeDelimiter.Length - 1); i--)
+                {
+                    versionAsString += path[i];
+                }
+                versionAsString = versionAsString.ReverseString();
+
+                fileKey = "";
+                for (var i = 0; i < path.IndexOf(versionDelimiter); i++)
+                {
+                    fileKey += path[i];
+                }
+
+                type = typeAsString == "js".ToUpper() ? ClientDependencyType.Javascript : ClientDependencyType.Css;
+                if (!int.TryParse(versionAsString, out version))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch (ArgumentOutOfRangeException)
             {
-                versionAsString += path[i];
+                fileKey = "";
+                version = -1;
+                type = ClientDependencyType.Javascript;
+                return false;
             }
-            versionAsString = versionAsString.ReverseString();
-
-            fileKey = "";
-            type = typeAsString == "js" ? ClientDependencyType.Javascript : ClientDependencyType.Css;
-            version = 10;
-            return true;
 
         }
 

@@ -38,13 +38,13 @@ namespace ClientDependency.Core.CompositeFiles
             var contextBase = new HttpContextWrapper(context);
             
             ClientDependencyType type;
-            string fileset;
+            string fileKey;
             int version = 0;
 
             if (string.IsNullOrEmpty(context.Request.PathInfo))
             {
                 // querystring format
-                fileset = context.Request["s"];
+                fileKey = context.Request["s"];
                 if (!string.IsNullOrEmpty(context.Request["cdv"]) && !Int32.TryParse(context.Request["cdv"], out version))
                     throw new ArgumentException("Could not parse the version in the request");
                 try
@@ -60,43 +60,18 @@ namespace ClientDependency.Core.CompositeFiles
             {
 
                 //get path to parse
-                var path = context.Request.PathInfo;
+                var path = context.Request.PathInfo.TrimStart('/');
                 var pathFormat = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.PathBasedUrlFormat;
-                //start parsing from the end
-
-
-                // path format
-                var segs = context.Request.PathInfo.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-                fileset = "";
-                int i = 0;
-                while (i < segs.Length - 1)
-                    fileset += segs[i++];
-                int pos;
-                pos = segs[i].IndexOf('.');
-                if (pos < 0)
-                    throw new ArgumentException("Could not parse the type set in the request");
-                fileset += segs[i].Substring(0, pos);
-                string ext = segs[i].Substring(pos + 1);
-                pos = ext.IndexOf('.');
-                if (pos > 0)
+                //parse using the parser
+                if (!PathBasedUrlFormatter.Parse(pathFormat, path, out fileKey, out type, out version))
                 {
-                    if (!Int32.TryParse(ext.Substring(0, pos), out version))
-                        throw new ArgumentException("Could not parse the version in the request");
-                    ext = ext.Substring(pos + 1);
+                    throw new FormatException("Could not parse the URL path: " + path + " with the format specified: " + pathFormat);
                 }
-                ext = ext.ToLower();
-                if (ext == "js")
-                    type = ClientDependencyType.Javascript;
-                else if (ext == "css")
-                    type = ClientDependencyType.Css;
-                else
-                    throw new ArgumentException("Could not parse the type set in the request");
-                
             }
 
-            fileset = context.Server.UrlDecode(fileset);
+            fileKey = context.Server.UrlDecode(fileKey);
 
-            if (string.IsNullOrEmpty(fileset))
+            if (string.IsNullOrEmpty(fileKey))
                 throw new ArgumentException("Must specify a fileset in the request");
 
             byte[] outputBytes = null;
@@ -105,18 +80,18 @@ namespace ClientDependency.Core.CompositeFiles
             //result. To date, it can't be replicated in VS, but we'll leave it here for error handling support... can't hurt
             for (int i = 0; i < 5; i++)
             {
-                outputBytes = ProcessRequestInternal(contextBase, fileset, type, version, outputBytes);
+                outputBytes = ProcessRequestInternal(contextBase, fileKey, type, version, outputBytes);
                 if (outputBytes != null && outputBytes.Length > 0)
                     break;
 
-                ClientDependencySettings.Instance.Logger.Error(string.Format("No bytes were returned, this is attempt {0}. Fileset: {1}, Type: {2}, Version: {3}", i, fileset, type, version), null);
+                ClientDependencySettings.Instance.Logger.Error(string.Format("No bytes were returned, this is attempt {0}. Fileset: {1}, Type: {2}, Version: {3}", i, fileKey, type, version), null);
             }
 
             if (outputBytes == null || outputBytes.Length == 0)
             {
-                ClientDependencySettings.Instance.Logger.Fatal(string.Format("No bytes were returned after 5 attempts. Fileset: {0}, Type: {1}, Version: {2}", fileset, type, version), null);
+                ClientDependencySettings.Instance.Logger.Fatal(string.Format("No bytes were returned after 5 attempts. Fileset: {0}, Type: {1}, Version: {2}", fileKey, type, version), null);
                 List<CompositeFileDefinition> fDefs;
-                outputBytes = GetCombinedFiles(contextBase, fileset, type, out fDefs);
+                outputBytes = GetCombinedFiles(contextBase, fileKey, type, out fDefs);
             }
 
             context.Response.ContentType = type == ClientDependencyType.Javascript ? "application/x-javascript" : "text/css";

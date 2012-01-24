@@ -12,13 +12,42 @@ namespace ClientDependency.UnitTests
     public class PathBasedUrlFormatValidatorTest
     {
         [TestMethod]
-        public void PathBasedUrlFormat_Parse()
+        public void PathBasedUrlFormat_Parse_1()
         {
             string fileKey;
             int version;
             ClientDependencyType type;
             var output = PathBasedUrlFormatter.Parse("{dependencyId}.{version}.{type}", "123456789.10.js", out fileKey, out type, out version);
             Assert.AreEqual(true, output);
+            Assert.AreEqual("123456789", fileKey);
+            Assert.AreEqual(10, version);
+            Assert.AreEqual(ClientDependencyType.Javascript, type);
+        }
+
+        [TestMethod]
+        public void PathBasedUrlFormat_Parse_2()
+        {
+            string fileKey;
+            int version;
+            ClientDependencyType type;
+            var output = PathBasedUrlFormatter.Parse("{dependencyId}/{version}/{type}", "123456789/1234/css", out fileKey, out type, out version);
+            Assert.AreEqual(true, output);
+            Assert.AreEqual("123456789", fileKey);
+            Assert.AreEqual(1234, version);
+            Assert.AreEqual(ClientDependencyType.Css, type);
+        }
+
+        [TestMethod]
+        public void PathBasedUrlFormat_Parse_3()
+        {
+            string fileKey;
+            int version;
+            ClientDependencyType type;
+            var output = PathBasedUrlFormatter.Parse("{dependencyId}|@#{version}$%^{type}", "123456789|@#1234$%^css", out fileKey, out type, out version);
+            Assert.AreEqual(true, output);
+            Assert.AreEqual("123456789", fileKey);
+            Assert.AreEqual(1234, version);
+            Assert.AreEqual(ClientDependencyType.Css, type);
         }
 
         [TestMethod]
