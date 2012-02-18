@@ -17,8 +17,9 @@ namespace ClientDependency.Core.Config
         /// <summary>
         /// used for singleton
         /// </summary>
-        private static ClientDependencySettings _settings;
+        private static volatile ClientDependencySettings _settings;
         private static readonly object Lock = new object();
+        private static Action _loadProviders = null;
 
         /// <summary>
         /// Default constructor, for use with a web context app
@@ -31,15 +32,18 @@ namespace ClientDependency.Core.Config
                     "HttpContext.Current must exist when using the empty constructor for ClientDependencySettings, otherwise use the alternative constructor");
             }
 
-            LoadProviders((ClientDependencySection)ConfigurationManager.GetSection("clientDependency"), new HttpContextWrapper(HttpContext.Current));
-            
+            _loadProviders = () =>
+                LoadProviders((ClientDependencySection)ConfigurationManager.GetSection("clientDependency"), new HttpContextWrapper(HttpContext.Current));
+
         }
 
         internal ClientDependencySettings(FileInfo configFile, HttpContextBase ctx)
         {
             var fileMap = new ExeConfigurationFileMap { ExeConfigFilename = configFile.FullName };
             var configuration = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
-            LoadProviders((ClientDependencySection)configuration.GetSection("clientDependency"), ctx);            
+
+            _loadProviders = () =>
+                LoadProviders((ClientDependencySection)configuration.GetSection("clientDependency"), ctx);
         }
 
         /// <summary>
@@ -51,12 +55,13 @@ namespace ClientDependency.Core.Config
             {
                 if (_settings == null)
                 {
-                    lock(Lock)
+                    lock (Lock)
                     {
                         //double check
                         if (_settings == null)
                         {
                             _settings = new ClientDependencySettings();
+                            _loadProviders();
                         }
                     }
                 }
@@ -76,7 +81,12 @@ namespace ClientDependency.Core.Config
         /// If this is not explicitly set, then the extensions 'js' and 'css' are the defaults.
         /// </remarks>
         public List<string> FileBasedDependencyExtensionList { get; set; }
-        
+
+        /// <summary>
+        /// Indicates whether CDF should enforce the policy to create only Federal Information Processing Standard (FIPS) certified algorithms.
+        /// </summary>
+        public bool AllowOnlyFipsAlgorithms { get; set; }
+
         public int Version { get; set; }
 
         public ILogger Logger { get; private set; }
@@ -122,12 +132,12 @@ namespace ClientDependency.Core.Config
         public FileMapProviderCollection FileMapProviderCollection { get; private set; }
 
         public ClientDependencySection ConfigSection { get; private set; }
-       
+
         public string CompositeFileHandlerPath { get; set; }
-       
+
         internal void LoadProviders(ClientDependencySection section, HttpContextBase http)
         {
-         
+
             ConfigSection = section;
 
             FileRegistrationProviderCollection = new FileRegistrationProviderCollection();
@@ -139,7 +149,7 @@ namespace ClientDependency.Core.Config
             if (ConfigSection == null)
             {
                 //create a new section with the default settings
-                ConfigSection = new ClientDependencySection();                            
+                ConfigSection = new ClientDependencySection();
             }
 
             //need to check if it's an http path or a lambda path
@@ -149,10 +159,11 @@ namespace ClientDependency.Core.Config
                 : ConfigSection.CompositeFileElement.CompositeFileHandlerPath;
             Version = ConfigSection.Version;
             FileBasedDependencyExtensionList = ConfigSection.FileBasedDependencyExtensionList.ToList();
+            AllowOnlyFipsAlgorithms = ConfigSection.AllowOnlyFipsAlgorithms;
 
             //load the providers from the config, if there isn't config sections then add default providers
             // and then load the defaults.
-            
+
             LoadDefaultCompositeFileConfig(ConfigSection, http);
 
             DefaultCompositeFileProcessingProvider = CompositeFileProcessingProviderCollection[ConfigSection.CompositeFileElement.DefaultFileProcessingProvider];
@@ -191,7 +202,7 @@ namespace ClientDependency.Core.Config
 
                 Logger = (ILogger)Activator.CreateInstance(t);
             }
-                    
+
         }
 
         private void LoadDefaultFileRegConfig(ClientDependencySection section)
@@ -253,12 +264,12 @@ namespace ClientDependency.Core.Config
             {
                 ProvidersHelper.InstantiateProviders(section.CompositeFileElement.FileProcessingProviders, CompositeFileProcessingProviderCollection, typeof(BaseCompositeFileProcessingProvider));
                 //since the BaseCompositeFileProcessingProvider is an IHttpProvider, we need to do the http init
-                foreach(var p in CompositeFileProcessingProviderCollection.Cast<BaseCompositeFileProcessingProvider>())
+                foreach (var p in CompositeFileProcessingProviderCollection.Cast<BaseCompositeFileProcessingProvider>())
                 {
                     p.Initialize(http);
                 }
             }
-            
+
         }
 
         private void LoadDefaultMvcFileConfig(ClientDependencySection section)

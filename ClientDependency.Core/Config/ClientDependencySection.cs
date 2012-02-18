@@ -89,10 +89,20 @@ namespace ClientDependency.Core.Config
         /// If this is not explicitly set, then the extensions 'js' and 'css' are the defaults.
         /// </remarks>
         [ConfigurationProperty("fileDependencyExtensions", DefaultValue = ".js,.css")]
-        protected string FileBasedDepdendenyExtensions
+        public string FileBasedDepdendenyExtensions
         {
             get { return (string)base["fileDependencyExtensions"]; }
             set { base["fileDependencyExtensions"] = value; }
+        }
+
+        /// <summary>
+        /// Indicates whether CDF should enforce the policy to create only Federal Information Processing Standard (FIPS) certified algorithms.
+        /// </summary>
+        [ConfigurationProperty("allowOnlyFipsAlgorithms", DefaultValue = false)]
+        public bool AllowOnlyFipsAlgorithms
+        {
+            get { return (bool)base["allowOnlyFipsAlgorithms"]; }
+            set { base["allowOnlyFipsAlgorithms"] = value; }
         }
 
         /// <summary>

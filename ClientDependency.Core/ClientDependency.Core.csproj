@@ -70,6 +70,7 @@
     <Compile Include="BaseLoader.cs" />
     <Compile Include="BasicFile.cs" />
     <Compile Include="BasicPath.cs" />
+    <Compile Include="ClientDependencyResourceHandler.cs" />
     <Compile Include="CompositeFiles\CSSMin.cs" />
     <Compile Include="CompositeFiles\JSMin.cs" />
     <Compile Include="CompositeFiles\Providers\BaseCompositeFileProcessingProvider.cs" />

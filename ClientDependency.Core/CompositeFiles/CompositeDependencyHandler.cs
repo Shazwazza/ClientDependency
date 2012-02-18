@@ -219,7 +219,7 @@ namespace ClientDependency.Core.CompositeFiles
             cache.SetValidUntilExpires(true);
             cache.SetLastModified(DateTime.Now);
 
-            cache.SetETag("\"" + FormsAuthentication.HashPasswordForStoringInConfigFile(fileset + compressionType.ToString(), "MD5") + "\"");
+            cache.SetETag("\"" + (fileset + compressionType.ToString()).GenerateHash() + "\"");
 
             //set server OutputCache to vary by our params
 

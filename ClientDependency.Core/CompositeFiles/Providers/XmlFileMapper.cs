@@ -169,7 +169,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             var combinedFiles = builder.ToString();
             combinedFiles = combinedFiles.TrimEnd(new[] { ';' });
 
-            var fileKey = (combinedFiles + version).GenerateMd5();
+            var fileKey = (combinedFiles + version).GenerateHash();
 
             var x = FindItem(fileKey, version);
             
@@ -308,8 +308,8 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         private string GetXmlMapPath()
         {
             var folder = _xmlMapFolder.FullName;
-            var folderMd5 = folder.GenerateMd5();
-            return Path.Combine(folder, System.Net.Dns.GetHostName() + "-" + folderMd5 + "-" + MapFileName);
+            var folderHash = folder.GenerateHash();
+            return Path.Combine(folder, System.Net.Dns.GetHostName() + "-" + folderHash + "-" + MapFileName);
         }
 
         private void CreateNewXmlFile()

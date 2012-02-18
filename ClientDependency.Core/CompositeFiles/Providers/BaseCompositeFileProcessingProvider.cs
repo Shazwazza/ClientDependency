@@ -137,7 +137,11 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                         base64Builder.Append(a.FilePath.EncodeTo64());
 
                         //test if the current base64 string exceeds the max length, if so we need to split
-                        if ((base64Builder.Length + ClientDependencySettings.Instance.CompositeFileHandlerPath.Length + stringType.Length + 10) 
+                        if ((base64Builder.Length 
+                            + ClientDependencySettings.Instance.CompositeFileHandlerPath.Length 
+                            + stringType.Length 
+                            + ClientDependencySettings.Instance.Version 
+                            + 10) 
                             >= (CompositeDependencyHandler.MaxHandlerUrlLength))
                         {
                             //add the current output to the array
