@@ -144,12 +144,22 @@ namespace ClientDependency.Core
             RegisterDependency(priority, filePath, "", type);
         }
 
-        public void RegisterDependency(int priority, string filePath, ClientDependencyType type, object htmlAttributes)
+		public void RegisterDependency(int group, int priority, string filePath, ClientDependencyType type)
+		{
+			RegisterDependency(group, priority, filePath, "", type);
+		}
+		
+		public void RegisterDependency(int priority, string filePath, ClientDependencyType type, object htmlAttributes)
         {
             RegisterDependency(priority, filePath, "", type, htmlAttributes);
         }
 
-        public void RegisterDependency(string filePath, string pathNameAlias, ClientDependencyType type)
+		public void RegisterDependency(int group, int priority, string filePath, ClientDependencyType type, object htmlAttributes)
+		{
+			RegisterDependency(group, priority, filePath, "", type, htmlAttributes);
+		}
+		
+		public void RegisterDependency(string filePath, string pathNameAlias, ClientDependencyType type)
         {
             RegisterDependency(Constants.DefaultPriority, filePath, pathNameAlias, type);
         }
@@ -159,15 +169,6 @@ namespace ClientDependency.Core
             RegisterDependency(Constants.DefaultPriority, filePath, pathNameAlias, type, htmlAttributes);
         }
 
-        /// <summary>
-        /// Dynamically registers a dependency into the loader at runtime.
-        /// This is similar to ScriptManager.RegisterClientScriptInclude.
-        /// Registers a file dependency with the default provider.
-        /// </summary>
-        /// <param name="priority"></param>
-        /// <param name="filePath"></param>
-        /// <param name="pathNameAlias"></param>
-        /// <param name="type"></param>
         public void RegisterDependency(int priority, string filePath, string pathNameAlias, ClientDependencyType type)
         {
             RegisterDependency(Constants.DefaultGroup, priority, filePath, pathNameAlias, type);
@@ -178,13 +179,37 @@ namespace ClientDependency.Core
             RegisterDependency(Constants.DefaultGroup, priority, filePath, pathNameAlias, type, htmlAttributes);
         }
 
-        public void RegisterDependency(int group, int priority, string filePath, string pathNameAlias, ClientDependencyType type)
+		// those two methods below actually do the work
+		// everything else above is just overloads
+
+		/// <summary>
+		/// Dynamically registers a dependency into the loader at runtime.
+		/// This is similar to ScriptManager.RegisterClientScriptInclude.
+		/// Registers a file dependency with the default provider.
+		/// </summary>
+		/// <param name="group">The dependencies group identifier.</param>
+		/// <param name="priority">The dependency priority.</param>
+		/// <param name="filePath">The dependency file.</param>
+		/// <param name="pathNameAlias">The dependency files path alias.</param>
+		/// <param name="type">The type of the dependency.</param>
+		public void RegisterDependency(int group, int priority, string filePath, string pathNameAlias, ClientDependencyType type)
         {
-            IClientDependencyFile file = new BasicFile(type) { Group = group, Priority = priority, FilePath = filePath, PathNameAlias = pathNameAlias };
+            var file = new BasicFile(type) { Group = group, Priority = priority, FilePath = filePath, PathNameAlias = pathNameAlias };
             RegisterClientDependencies(new List<IClientDependencyFile> { file }, new List<IClientDependencyPath>()); //send an empty paths collection
         }
 
-        public void RegisterDependency(int group, int priority, string filePath, string pathNameAlias, ClientDependencyType type, object htmlAttributes)
+		/// <summary>
+		/// Dynamically registers a dependency into the loader at runtime.
+		/// This is similar to ScriptManager.RegisterClientScriptInclude.
+		/// Registers a file dependency with the default provider.
+		/// </summary>
+		/// <param name="group">The dependencies group identifier.</param>
+		/// <param name="priority">The dependency priority.</param>
+		/// <param name="filePath">The dependency file.</param>
+		/// <param name="pathNameAlias">The dependency files path alias.</param>
+		/// <param name="type">The type of the dependency.</param>
+		/// <param name="htmlAttributes"></param>
+		public void RegisterDependency(int group, int priority, string filePath, string pathNameAlias, ClientDependencyType type, object htmlAttributes)
         {
             var file = new BasicFile(type) { Group = group, Priority = priority, FilePath = filePath, PathNameAlias = pathNameAlias };
 

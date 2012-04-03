@@ -37,7 +37,7 @@ namespace ClientDependency.Core.Mvc
 
 
         #region RequiresJsResource Extensions
-        public static HtmlHelper RequiresJsResource(this HtmlHelper html, Type resourceType, string resourcePath, int priority)
+        public static HtmlHelper RequiresJsResource(this HtmlHelper html, Type resourceType, string resourcePath, int priority, int group)
         {
             var page = new Page();
             var resourceUrl = page.ClientScript.GetWebResourceUrl(resourceType, resourcePath);
@@ -46,9 +46,14 @@ namespace ClientDependency.Core.Mvc
                 throw new NullReferenceException("Could not find embedded resource " + resourcePath + " in assembly " + resourceType.Assembly.FullName);
             }
 
-            html.ViewContext.GetLoader().RegisterDependency(priority, resourceUrl, ClientDependencyType.Javascript);
+            html.ViewContext.GetLoader().RegisterDependency(group, priority, resourceUrl, ClientDependencyType.Javascript);
             return html;
         }
+
+		public static HtmlHelper RequiresJsResource(this HtmlHelper html, Type resourceType, string resourcePath, int priority)
+		{
+			return html.RequiresJsResource(resourceType, resourcePath, priority, Constants.DefaultGroup);
+		}
 
         public static HtmlHelper RequiresJsResource(this HtmlHelper html, Type resourceType, string resourcePath)
         {
@@ -57,7 +62,7 @@ namespace ClientDependency.Core.Mvc
         #endregion
 
         #region RequiresCssResource Extensions
-        public static HtmlHelper RequiresCssResource(this HtmlHelper html, Type resourceType, string resourcePath, int priority)
+        public static HtmlHelper RequiresCssResource(this HtmlHelper html, Type resourceType, string resourcePath, int priority, int group)
         {
             var page = new Page();
             var resourceUrl = page.ClientScript.GetWebResourceUrl(resourceType, resourcePath);
@@ -66,9 +71,14 @@ namespace ClientDependency.Core.Mvc
                 throw new NullReferenceException("Could not find embedded resource " + resourcePath + " in assembly " + resourceType.Assembly.FullName);
             }
 
-            html.ViewContext.GetLoader().RegisterDependency(priority, resourceUrl, ClientDependencyType.Css);
+            html.ViewContext.GetLoader().RegisterDependency(group, priority, resourceUrl, ClientDependencyType.Css);
             return html;
         }
+
+		public static HtmlHelper RequiresCssResource(this HtmlHelper html, Type resourceType, string resourcePath, int priority)
+		{
+			return html.RequiresCssResource(resourceType, resourcePath, priority, Constants.DefaultGroup);
+		}
 
         public static HtmlHelper RequiresCssResource(this HtmlHelper html, Type resourceType, string resourcePath)
         {
@@ -92,11 +102,21 @@ namespace ClientDependency.Core.Mvc
             html.ViewContext.GetLoader().RegisterDependency(priority, filePath, pathNameAlias, ClientDependencyType.Javascript);
             return html;
         }
-        public static HtmlHelper RequiresJs(this HtmlHelper html, string filePath, int priority)
+		public static HtmlHelper RequiresJs(this HtmlHelper html, string filePath, string pathNameAlias, int priority, int group)
+		{
+			html.ViewContext.GetLoader().RegisterDependency(group, priority, filePath, pathNameAlias, ClientDependencyType.Javascript);
+			return html;
+		}
+		public static HtmlHelper RequiresJs(this HtmlHelper html, string filePath, int priority)
         {
             html.ViewContext.GetLoader().RegisterDependency(priority, filePath, ClientDependencyType.Javascript);
             return html;
         }
+		public static HtmlHelper RequiresJs(this HtmlHelper html, string filePath, int priority, int group)
+		{
+			html.ViewContext.GetLoader().RegisterDependency(group, priority, filePath, ClientDependencyType.Javascript);
+			return html;
+		}
 
 
         public static HtmlHelper RequiresJs(this HtmlHelper html, string filePath, object htmlAttributes)
@@ -114,11 +134,21 @@ namespace ClientDependency.Core.Mvc
             html.ViewContext.GetLoader().RegisterDependency(priority, filePath, pathNameAlias, ClientDependencyType.Javascript, htmlAttributes);
             return html;
         }
-        public static HtmlHelper RequiresJs(this HtmlHelper html, string filePath, int priority, object htmlAttributes)
+		public static HtmlHelper RequiresJs(this HtmlHelper html, string filePath, string pathNameAlias, int priority, int group, object htmlAttributes)
+		{
+			html.ViewContext.GetLoader().RegisterDependency(group, priority, filePath, pathNameAlias, ClientDependencyType.Javascript, htmlAttributes);
+			return html;
+		}
+		public static HtmlHelper RequiresJs(this HtmlHelper html, string filePath, int priority, object htmlAttributes)
         {
             html.ViewContext.GetLoader().RegisterDependency(priority, filePath, ClientDependencyType.Javascript, htmlAttributes);
             return html;
-        } 
+        }
+		public static HtmlHelper RequiresJs(this HtmlHelper html, string filePath, int priority, int group, object htmlAttributes)
+		{
+			html.ViewContext.GetLoader().RegisterDependency(group, priority, filePath, ClientDependencyType.Javascript, htmlAttributes);
+			return html;
+		} 
 
         #endregion
 
@@ -138,11 +168,21 @@ namespace ClientDependency.Core.Mvc
             html.ViewContext.GetLoader().RegisterDependency(priority, filePath, pathNameAlias, ClientDependencyType.Css);
             return html;
         }
-        public static HtmlHelper RequiresCss(this HtmlHelper html, string filePath, int priority)
+		public static HtmlHelper RequiresCss(this HtmlHelper html, string filePath, string pathNameAlias, int priority, int group)
+		{
+			html.ViewContext.GetLoader().RegisterDependency(group, priority, filePath, pathNameAlias, ClientDependencyType.Css);
+			return html;
+		}
+		public static HtmlHelper RequiresCss(this HtmlHelper html, string filePath, int priority)
         {
             html.ViewContext.GetLoader().RegisterDependency(priority, filePath, ClientDependencyType.Css);
             return html;
         }
+		public static HtmlHelper RequiresCss(this HtmlHelper html, string filePath, int priority, int group)
+		{
+			html.ViewContext.GetLoader().RegisterDependency(group, priority, filePath, ClientDependencyType.Css);
+			return html;
+		}
 
         public static HtmlHelper RequiresCss(this HtmlHelper html, string filePath, object htmlAttributes)
         {
@@ -159,9 +199,14 @@ namespace ClientDependency.Core.Mvc
             html.ViewContext.GetLoader().RegisterDependency(priority, filePath, pathNameAlias, ClientDependencyType.Css, htmlAttributes);
             return html;
         }
-        public static HtmlHelper RequiresCss(this HtmlHelper html, string filePath, int priority, object htmlAttributes)
+		public static HtmlHelper RequiresCss(this HtmlHelper html, string filePath, string pathNameAlias, int priority, int group, object htmlAttributes)
+		{
+			html.ViewContext.GetLoader().RegisterDependency(group, priority, filePath, pathNameAlias, ClientDependencyType.Css, htmlAttributes);
+			return html;
+		}
+		public static HtmlHelper RequiresCss(this HtmlHelper html, string filePath, int priority, int group, object htmlAttributes)
         {
-            html.ViewContext.GetLoader().RegisterDependency(priority, filePath, ClientDependencyType.Css, htmlAttributes);
+            html.ViewContext.GetLoader().RegisterDependency(group, priority, filePath, ClientDependencyType.Css, htmlAttributes);
             return html;
         } 
         #endregion
