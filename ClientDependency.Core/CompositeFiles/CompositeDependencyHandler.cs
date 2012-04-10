@@ -103,6 +103,11 @@ namespace ClientDependency.Core.CompositeFiles
             //get the compression type supported
             var clientCompression = context.GetClientCompression();
 
+			var x1 = ClientDependencySettings.Instance;
+			if (x1 == null) throw new Exception("x1");
+			var x2 = x1.DefaultFileMapProvider;
+			if (x2 == null) throw new Exception("x2");
+
             //get the map to the composite file for this file set, if it exists.
             var map = ClientDependencySettings.Instance.DefaultFileMapProvider.GetCompositeFile(fileset, version, clientCompression.ToString());
 

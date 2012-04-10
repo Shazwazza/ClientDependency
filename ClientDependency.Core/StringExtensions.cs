@@ -64,7 +64,7 @@ namespace ClientDependency.Core
         /// <returns></returns>
         public static string GenerateHash(this string str)
         {
-            return ClientDependencySettings.Instance.AllowOnlyFipsAlgorithms 
+            return ClientDependencySettings.UnsafeInstance.AllowOnlyFipsAlgorithms 
                 ? str.GenerateSha256Hash() 
                 : str.GenerateMd5();
         }

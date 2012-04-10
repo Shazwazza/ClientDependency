@@ -18,6 +18,7 @@ namespace ClientDependency.Core.Config
         /// used for singleton
         /// </summary>
         private static volatile ClientDependencySettings _settings;
+		private static volatile ClientDependencySettings _usettings;
         private static readonly object Lock = new object();
         private static Action _loadProviders = null;
 
@@ -60,14 +61,37 @@ namespace ClientDependency.Core.Config
                         //double check
                         if (_settings == null)
                         {
-                            _settings = new ClientDependencySettings();
+							// we should _not_ set _settings before it's been loaded else
+							// it's going to be used before it is ready, which causes some
+							// nasty NullRefs here and there.
+							// BUT
+							// _loadProviders relies on StringExtension that expects some
+							// settings to be available. There's a loop here ?!
+							// SO
+							// we rely on the UnsafeInstance trick and use it in StringExtension
+							// but that is not really clean...
+                            _usettings = new ClientDependencySettings();
                             _loadProviders();
+							_settings = _usettings;
                         }
                     }
                 }
                 return _settings;
             }
         }
+
+		public static ClientDependencySettings UnsafeInstance
+		{
+			get
+			{
+				if (_usettings == null)
+				{
+					var ignored = Instance;
+				}
+
+				return _usettings;
+			}
+		}
 
         /// <summary>
         /// The file extensions of Client Dependencies that are file based as opposed to request based.
