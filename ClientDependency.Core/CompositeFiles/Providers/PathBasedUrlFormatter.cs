@@ -33,11 +33,9 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                 }
                 versionAsString = versionAsString.ReverseString();
 
-                fileKey = "";
-                for (var i = 0; i < path.IndexOf(versionDelimiter); i++)
-                {
-                    fileKey += path[i];
-                }
+				var p = path.IndexOf(versionDelimiter);
+				fileKey = p > 0 ? path.Substring(0, p) : "";
+				fileKey = fileKey.Replace("/", "");
 
                 type = typeAsString == "js".ToUpper() ? ClientDependencyType.Javascript : ClientDependencyType.Css;
                 if (!int.TryParse(versionAsString, out version))
