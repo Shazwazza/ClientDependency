@@ -190,7 +190,16 @@ namespace ClientDependency.Core.Controls
             return this;
         }
 
-        /// <summary>
+		/// <summary>
+		/// Registers a file dependency
+		/// </summary>
+		public ClientDependencyLoader RegisterDependency(int group, int priority, string filePath, ClientDependencyType type)
+		{
+			_base.RegisterDependency(group, priority, filePath, type);
+			return this;
+		}
+		
+		/// <summary>
         /// Registers a file dependency
         /// </summary>
         public ClientDependencyLoader RegisterDependency(int priority, string filePath, string pathNameAlias, ClientDependencyType type)
@@ -198,6 +207,15 @@ namespace ClientDependency.Core.Controls
             _base.RegisterDependency(priority, filePath, pathNameAlias, type);
             return this;
         }
+
+		/// <summary>
+		/// Registers a file dependency
+		/// </summary>
+		public ClientDependencyLoader RegisterDependency(int group, int priority, string filePath, string pathNameAlias, ClientDependencyType type)
+		{
+			_base.RegisterDependency(group, priority, filePath, pathNameAlias, type);
+			return this;
+		}
 
 		/// <summary>
 		/// Registers a file dependency 
