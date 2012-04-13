@@ -103,13 +103,24 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         /// <param name="http"></param>
         /// <returns>An array containing the list of composite file URLs. This will generally only contain 1 value unless
         /// the number of files registered exceeds the maximum length, then it will return more than one file.</returns>
+		public virtual string[] ProcessCompositeList(
+			IEnumerable<IClientDependencyFile> dependencies,
+			ClientDependencyType type,
+			HttpContextBase http)
+		{
+			return ProcessCompositeList(dependencies, type, http, null);
+		}
+
         public virtual string[] ProcessCompositeList(
             IEnumerable<IClientDependencyFile> dependencies, 
             ClientDependencyType type, 
-            HttpContextBase http)
+            HttpContextBase http,
+			string compositeFileHandlerPath)
         {
             if (!dependencies.Any())
                 return new string[] { };
+
+			compositeFileHandlerPath = compositeFileHandlerPath ?? ClientDependencySettings.Instance.CompositeFileHandlerPath;
 
             switch (UrlType)
             {
@@ -120,7 +131,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                                                                                                         ClientDependencySettings.Instance.Version);
 
                     //create the url
-                    return new[] { GetCompositeFileUrl(fileKey, type, http, CompositeUrlType.MappedId) };
+                    return new[] { GetCompositeFileUrl(fileKey, type, http, CompositeUrlType.MappedId, compositeFileHandlerPath) };
 
                 default:
                     
@@ -138,7 +149,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 
                         //test if the current base64 string exceeds the max length, if so we need to split
                         if ((base64Builder.Length 
-                            + ClientDependencySettings.Instance.CompositeFileHandlerPath.Length 
+                            + compositeFileHandlerPath.Length 
                             + stringType.Length 
                             + ClientDependencySettings.Instance.Version 
                             + 10) 
@@ -166,7 +177,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                     {
                         //append our version to the combined url 
                         var encodedFile = files[i].EncodeTo64Url();
-                        files[i] = GetCompositeFileUrl(encodedFile, type, http, UrlType);
+                        files[i] = GetCompositeFileUrl(encodedFile, type, http, UrlType, compositeFileHandlerPath);
                     }
 
                     return files.ToArray();
@@ -185,7 +196,8 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             string fileKey, 
             ClientDependencyType type, 
             HttpContextBase http, 
-            CompositeUrlType urlType)
+            CompositeUrlType urlType,
+			string compositeFileHandlerPath)
         {
             var url = new StringBuilder();
             int version = ClientDependencySettings.Instance.Version;
@@ -197,7 +209,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 
                     const string handler = "{0}?s={1}&t={2}";
                     url.Append(string.Format(handler,
-                                             ClientDependencySettings.Instance.CompositeFileHandlerPath,
+                                             compositeFileHandlerPath,
                                              http.Server.UrlEncode(fileKey), type));
                     url.Append("&cdv=");
                     url.Append(version.ToString());
@@ -206,7 +218,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 
                     //Create a URL based on base64 paths instead of a query string
                     
-                    url.Append(ClientDependencySettings.Instance.CompositeFileHandlerPath);
+                    url.Append(compositeFileHandlerPath);
                     url.Append('/');
 
                     //create the path based on the path format...

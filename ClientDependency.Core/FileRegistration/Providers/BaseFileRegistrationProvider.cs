@@ -48,9 +48,31 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         #endregion
 
-        #region Provider Initialization
+		#region CompositeFileHandlerPath config
 
-        public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
+		string _compositeFileHandlerPath;
+		bool _compositeFileHandlerPathInitialized;
+
+		protected string GetCompositeFileHandlerPath(HttpContextBase http)
+		{
+			lock (this)
+			{
+				if (!_compositeFileHandlerPathInitialized)
+				{
+					//if (_compositeFileHandlerPath != null && _compositeFileHandlerPath.StartsWith("~/"))
+					_compositeFileHandlerPath = VirtualPathUtility.ToAbsolute(_compositeFileHandlerPath, http.Request.ApplicationPath);
+					_compositeFileHandlerPathInitialized = true;
+				}
+
+				return _compositeFileHandlerPath;
+			}
+		}
+
+		#endregion
+
+		#region Provider Initialization
+
+		public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
         {
             base.Initialize(name, config);
 
@@ -65,7 +87,19 @@ namespace ClientDependency.Core.FileRegistration.Providers
             //    if (!string.IsNullOrEmpty(WebsiteBaseUrl))
             //        WebsiteBaseUrl = WebsiteBaseUrl.TrimEnd('/');
             //}
-        }
+
+			_compositeFileHandlerPath = null;
+			_compositeFileHandlerPathInitialized = true;
+
+			if (config != null)
+			{
+				_compositeFileHandlerPath = config["compositeFileHandlerPath"];
+				if (string.IsNullOrEmpty(_compositeFileHandlerPath))
+					_compositeFileHandlerPath = null;
+				else if (_compositeFileHandlerPath.StartsWith("~/"))
+					_compositeFileHandlerPathInitialized = false;
+			}
+		}
 
         #endregion
 
