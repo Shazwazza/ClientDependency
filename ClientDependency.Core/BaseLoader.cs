@@ -198,6 +198,12 @@ namespace ClientDependency.Core
             RegisterClientDependencies(new List<IClientDependencyFile> { file }, new List<IClientDependencyPath>()); //send an empty paths collection
         }
 
+		public void RegisterDependencyWithProvider(int group, int priority, string filePath, string pathNameAlias, ClientDependencyType type, string provider)
+		{
+			var file = new BasicFile(type) { Group = group, Priority = priority, FilePath = filePath, PathNameAlias = pathNameAlias, ForceProvider = provider };
+			RegisterClientDependencies(new List<IClientDependencyFile> { file }, new List<IClientDependencyPath>()); //send an empty paths collection
+		}
+
 		/// <summary>
 		/// Dynamically registers a dependency into the loader at runtime.
 		/// This is similar to ScriptManager.RegisterClientScriptInclude.
