@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web;
+using System.Web.UI;
 using ClientDependency.Core.Controls;
 using ClientDependency.Core.FileRegistration.Providers;
 using ClientDependency.Core.Config;
@@ -117,12 +118,34 @@ namespace ClientDependency.Core
 
         public void RegisterClientDependencies(List<IClientDependencyFile> dependencies, params IClientDependencyPath[] paths)
         {
-            RegisterClientDependencies(Provider, dependencies, paths, ClientDependencySettings.Instance.MvcRendererCollection);
+            //We will combine both the MVC and web forms providers here to pass in to the method since this method could be executing
+            //under the webforms context or the mvc context. This list as a parameter is used only for forced providers and wont
+            //matter if it includes the webforms and mvc ones together since they will only ever render when they are in their own
+            //context. This is better than checking if it is a System.Web.UI.Page handler currently IMO, plus the provider names
+            //between mvc and webforms are generally different.
+            var combinedCollection = new ProviderCollection();
+            foreach (ProviderBase p in ClientDependencySettings.Instance.MvcRendererCollection)
+                combinedCollection.Add(p);
+            foreach (ProviderBase p in ClientDependencySettings.Instance.FileRegistrationProviderCollection)
+                combinedCollection.Add(p);
+
+            RegisterClientDependencies(Provider, dependencies, paths, combinedCollection);
         }
 
         public void RegisterClientDependencies(List<IClientDependencyFile> dependencies, IEnumerable<IClientDependencyPath> paths)
         {
-            RegisterClientDependencies(Provider, dependencies, paths, ClientDependencySettings.Instance.MvcRendererCollection);
+            //We will combine both the MVC and web forms providers here to pass in to the method since this method could be executing
+            //under the webforms context or the mvc context. This list as a parameter is used only for forced providers and wont
+            //matter if it includes the webforms and mvc ones together since they will only ever render when they are in their own
+            //context. This is better than checking if it is a System.Web.UI.Page handler currently IMO, plus the provider names
+            //between mvc and webforms are generally different.
+            var combinedCollection = new ProviderCollection();
+            foreach (ProviderBase p in ClientDependencySettings.Instance.MvcRendererCollection)
+                combinedCollection.Add(p);
+            foreach (ProviderBase p in ClientDependencySettings.Instance.FileRegistrationProviderCollection)
+                combinedCollection.Add(p);
+
+            RegisterClientDependencies(Provider, dependencies, paths, combinedCollection);
         }
 
 
