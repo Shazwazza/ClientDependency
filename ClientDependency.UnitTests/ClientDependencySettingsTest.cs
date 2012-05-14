@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System.Configuration;
+using System.Reflection;
+using ClientDependency.Core;
 using ClientDependency.Core.Config;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -23,6 +25,17 @@ namespace ClientDependency.UnitTests
     public class SettingsTest
     {
         
+        private static ClientDependencySection GetSection(string fileName)
+        {
+            var codeBase = Assembly.GetExecutingAssembly().CodeBase;
+            var uri = new UriBuilder(codeBase);
+            var path = Uri.UnescapeDataString(uri.Path);
+            var binFolder = Path.GetDirectoryName(path);
+            var configFile = new FileInfo(binFolder + "\\..\\..\\" + fileName);
+            var fileMap = new ExeConfigurationFileMap { ExeConfigFilename = configFile.FullName };
+            var configuration = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
+            return (ClientDependencySection)configuration.GetSection("clientDependency");
+        }
 
         /// <summary>
         ///A test for all sections defined
@@ -32,17 +45,13 @@ namespace ClientDependency.UnitTests
         {
             //Arrange
 
-            var codeBase = Assembly.GetExecutingAssembly().CodeBase;
-            var uri = new UriBuilder(codeBase);
-            var path = Uri.UnescapeDataString(uri.Path);
-            var binFolder = Path.GetDirectoryName(path);
+            var ctxFactory = new FakeHttpContextFactory("~/somesite/hello");
+            var configSection = GetSection("AllSections.Config");
+            StringExtensions.GetConfigSection = () => configSection;
 
-            var ctxFactory = new FakeHttpContextFactory("~/somesite/hello");            
-            var configFile = new FileInfo(binFolder + "\\..\\..\\AllSections.Config");            
-            
             //Act
 
-            var settings = new ClientDependencySettings(configFile, ctxFactory.Context);
+            var settings = new ClientDependencySettings(configSection, ctxFactory.Context);
 
             //Assert
 
@@ -62,17 +71,13 @@ namespace ClientDependency.UnitTests
         {
             //Arrange
 
-            var codeBase = Assembly.GetExecutingAssembly().CodeBase;
-            var uri = new UriBuilder(codeBase);
-            var path = Uri.UnescapeDataString(uri.Path);
-            var binFolder = Path.GetDirectoryName(path);
-
             var ctxFactory = new FakeHttpContextFactory("~/somesite/hello");
-            var configFile = new FileInfo(binFolder + "\\..\\..\\MinSections.Config");
+            var configSection = GetSection("MinSections.Config");
+            StringExtensions.GetConfigSection = () => configSection;            
 
             //Act
 
-            var settings = new ClientDependencySettings(configFile, ctxFactory.Context);
+            var settings = new ClientDependencySettings(configSection, ctxFactory.Context);
 
             //Assert
 

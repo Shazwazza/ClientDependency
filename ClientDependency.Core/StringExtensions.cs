@@ -9,6 +9,10 @@ namespace ClientDependency.Core
 {
     public static class StringExtensions
     {
+        /// <summary>
+        /// Generally used for unit tests to get access to the settings
+        /// </summary>
+        internal static Func<ClientDependencySection> GetConfigSection; 
 
         public static string ReverseString(this string s)
         {
@@ -64,9 +68,30 @@ namespace ClientDependency.Core
         /// <returns></returns>
         public static string GenerateHash(this string str)
         {
-            return ClientDependencySettings.UnsafeInstance.AllowOnlyFipsAlgorithms 
-                ? str.GenerateSha256Hash() 
-                : str.GenerateMd5();
+            try
+            {
+                ClientDependencySection section;
+                if (GetConfigSection == null)
+                {
+                    //getting section will result in an error if not in a context that has a proper config mgr (like a unit test)
+                    section = ClientDependencySettings.GetDefaultSection();    
+                }
+                else
+                {
+                    section = GetConfigSection();
+                }
+
+                return section.AllowOnlyFipsAlgorithms
+                    ? str.GenerateSha256Hash()
+                    : str.GenerateMd5();
+            }
+            catch (Exception)
+            {
+                //default to MD5
+                return str.GenerateMd5();
+            }
+
+            
         }
 
         /// <summary>
