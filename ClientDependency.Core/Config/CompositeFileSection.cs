@@ -18,6 +18,13 @@ namespace ClientDependency.Core.Config
             get { return (ProviderSettingsCollection)base["fileProcessingProviders"]; }
         }
 
+        [Obsolete("Use FileProcessingProviders instead")]
+        [ConfigurationProperty("providers")]
+        public ProviderSettingsCollection FileProcessingProvidersLegacy
+        {
+            get { return (ProviderSettingsCollection)base["fileProcessingProviders"]; }
+        }
+
         /// <summary>
         /// All of the File map providers registered
         /// </summary>
@@ -36,6 +43,20 @@ namespace ClientDependency.Core.Config
         {
             get { return (string)base["defaultFileProcessingProvider"]; }
             set { base["defaultFileProcessingProvider"] = value; }
+        }
+
+        [Obsolete("Use DefaultFileProcessingProvider instead")]
+        [ConfigurationProperty("defaultProvider", DefaultValue = "CompositeFileProcessor")]
+        public string DefaultFileProcessingProviderLegacy
+        {
+            get
+            {
+                return (string)base["defaultFileProcessingProvider"];
+            }
+            set
+            {
+                base["defaultFileProcessingProvider"] = value;
+            }
         }
 
         /// <summary>

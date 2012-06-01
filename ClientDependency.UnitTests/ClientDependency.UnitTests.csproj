@@ -83,9 +83,14 @@
       <Project>{5A8B1824-80CD-4187-B870-384D77892A77}</Project>
       <Name>ClientDependency.Core.Mvc</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Umbraco4.ClientDependency\Umbraco4.ClientDependency.csproj">
+      <Project>{08DFBA02-97A5-496C-9272-09CE98C50BF5}</Project>
+      <Name>Umbraco4.ClientDependency</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="AllSections.config" />
+    <None Include="LegacyConfig1.3.config" />
     <None Include="MinSections.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

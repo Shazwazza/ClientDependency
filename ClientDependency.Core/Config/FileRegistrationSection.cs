@@ -23,5 +23,29 @@ namespace ClientDependency.Core.Config
 			set { base["defaultProvider"] = value; }
 		}
 
+        [Obsolete("Use the ClientDependencySection.FileBasedDepdendenyExtensions instead")]
+        [ConfigurationProperty("fileDependencyExtensions", DefaultValue = ".js,.css")]
+        public string FileBasedDepdendenyExtensions
+        {
+            get
+            {
+                return (string)base["fileDependencyExtensions"];
+            }
+            set
+            {
+                base["fileDependencyExtensions"] = value;
+            }
+        }
+
+        [Obsolete("Use the ClientDependencySection.FileBasedDependencyExtensionList instead")]
+        public IEnumerable<string> FileBasedDependencyExtensionList
+        {
+            get
+            {
+                return FileBasedDepdendenyExtensions.Split(',')
+                    .Select(x => x.Trim().ToUpper());
+            }
+        }
+
 	}
 }

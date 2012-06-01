@@ -37,6 +37,33 @@ namespace ClientDependency.UnitTests
             return (ClientDependencySection)configuration.GetSection("clientDependency");
         }
 
+        [TestMethod()]
+        public void Settings_Legacy_Pre_13()
+        {
+            //Arrange
+
+            var ctxFactory = new FakeHttpContextFactory("~/somesite/hello");
+            var configSection = GetSection("LegacyConfig1.3.Config");
+            StringExtensions.GetConfigSection = () => configSection;
+
+            //Act
+
+            var settings = new ClientDependencySettings(configSection, ctxFactory.Context);
+
+            //Assert
+
+            Assert.AreEqual(typeof(LoaderControlProvider), settings.DefaultFileRegistrationProvider.GetType());
+            Assert.AreEqual(123456, settings.Version);
+            foreach(var i in ".js,.css,.less".Split(','))
+            {
+                Assert.IsTrue(settings.FileBasedDependencyExtensionList.Contains(i.ToUpper()));                
+            }
+            Assert.AreEqual(typeof(StandardRenderer), settings.DefaultMvcRenderer.GetType());
+            Assert.AreEqual(typeof(CompositeFileProcessingProvider), settings.DefaultCompositeFileProcessingProvider.GetType());
+            Assert.AreEqual(1, settings.ConfigSection.CompositeFileElement.MimeTypeCompression.Count);
+            Assert.AreEqual(0, settings.ConfigSection.CompositeFileElement.RogueFileCompression.Count);
+        }
+
         /// <summary>
         ///A test for all sections defined
         ///</summary>

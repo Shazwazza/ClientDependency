@@ -132,7 +132,18 @@ namespace ClientDependency.Core.Config
             {
                 if (_fileBasedDependencyExtensionList == null)
                 {
-                    _fileBasedDependencyExtensionList = ConfigSection.FileBasedDependencyExtensionList.ToList();
+                    //Here we are checking for backwards compatibility config sections.
+                    if (ConfigSection.FileRegistrationElement.FileBasedDepdendenyExtensions != ".js,.css"
+                        && ConfigSection.FileBasedDepdendenyExtensions == ".js,.css")
+                    {
+                        //if the legacy section is not the default and the non-legacy section IS the default, 
+                        //then we will use the legacy settings.
+                        _fileBasedDependencyExtensionList = ConfigSection.FileRegistrationElement.FileBasedDependencyExtensionList.ToList();    
+                    }
+                    else
+                    {
+                        _fileBasedDependencyExtensionList = ConfigSection.FileBasedDependencyExtensionList.ToList();    
+                    }
                 }
                 return _fileBasedDependencyExtensionList;
             }
@@ -245,7 +256,18 @@ namespace ClientDependency.Core.Config
 
             LoadDefaultCompositeFileConfig(ConfigSection, http);
 
-            DefaultCompositeFileProcessingProvider = CompositeFileProcessingProviderCollection[ConfigSection.CompositeFileElement.DefaultFileProcessingProvider];
+            ////Here we need to detect legacy settings
+            //if (ConfigSection.CompositeFileElement.DefaultFileProcessingProviderLegacy != "CompositeFileProcessor"
+            //    && ConfigSection.CompositeFileElement.DefaultFileProcessingProvider == "CompositeFileProcessor")
+            //{
+            //    //if the legacy section is not the default and the non-legacy section IS the default, then use the legacy section
+            //    DefaultCompositeFileProcessingProvider = CompositeFileProcessingProviderCollection[ConfigSection.CompositeFileElement.DefaultFileProcessingProviderLegacy];
+            //}
+            //else
+            //{
+            //    DefaultCompositeFileProcessingProvider = CompositeFileProcessingProviderCollection[ConfigSection.CompositeFileElement.DefaultFileProcessingProvider];   
+            //}            
+            DefaultCompositeFileProcessingProvider = CompositeFileProcessingProviderCollection[ConfigSection.CompositeFileElement.DefaultFileProcessingProvider];   
             if (DefaultCompositeFileProcessingProvider == null)
                 throw new ProviderException("Unable to load default composite file provider");
 
