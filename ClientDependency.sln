@@ -25,8 +25,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{C5D95718
 		build\ClientDependency.nuspec = build\ClientDependency.nuspec
 		SolutionInfo.cs = SolutionInfo.cs
 		UpgradingUmbraco.txt = UpgradingUmbraco.txt
-		build\nuget-transforms\web.config.mvc.transform = build\nuget-transforms\web.config.mvc.transform
-		build\nuget-transforms\web.config.transform = build\nuget-transforms\web.config.transform
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Config Transforms", "Config Transforms", "{37C50F26-9EDE-45F6-BDCC-39F51E0E312C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mvc", "Mvc", "{D8142A9E-6FDC-46BC-9767-F63767C46887}"
+	ProjectSection(SolutionItems) = preProject
+		build\nuget-transforms\Mvc\web.config.transform = build\nuget-transforms\Mvc\web.config.transform
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{4D8DC7DA-0202-4338-B154-72A077FA88E8}"
+	ProjectSection(SolutionItems) = preProject
+		build\nuget-transforms\Core\web.config.transform = build\nuget-transforms\Core\web.config.transform
 	EndProjectSection
 EndProject
 Global
@@ -61,5 +71,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{37C50F26-9EDE-45F6-BDCC-39F51E0E312C} = {C5D95718-11A7-4F12-A41A-10229A87F428}
+		{D8142A9E-6FDC-46BC-9767-F63767C46887} = {37C50F26-9EDE-45F6-BDCC-39F51E0E312C}
+		{4D8DC7DA-0202-4338-B154-72A077FA88E8} = {37C50F26-9EDE-45F6-BDCC-39F51E0E312C}
 	EndGlobalSection
 EndGlobal
