@@ -50,13 +50,13 @@ if (-not $?)
 	throw "The MSBuild process returned an error code."
 }
 
-$CoreFolder = Join-Path -Path $ReleaseFolder -ChildPath "Library";
-$MvcFolder = Join-Path -Path $CoreFolder -ChildPath "Mvc";
+$CoreFolder = Join-Path -Path $ReleaseFolder -ChildPath "Core";
+$MvcFolder = Join-Path -Path $ReleaseFolder -ChildPath "Mvc";
 
 New-Item $CoreFolder -Type directory
 New-Item $MvcFolder -Type directory
 
-$CoreBinFolder = Join-Path -Path $SolutionRoot -ChildPath "ASP.Net Client Dependency\bin\Release";
+$CoreBinFolder = Join-Path -Path $SolutionRoot -ChildPath "ClientDependency.Core\bin\Release";
 Copy-Item "$CoreBinFolder\*.dll" -Destination $CoreFolder
 
 $MvcBinFolder = Join-Path -Path $SolutionRoot -ChildPath "ClientDependency.Mvc\bin\Release";
@@ -64,7 +64,8 @@ Copy-Item "$MvcBinFolder\*.dll" -Destination $MvcFolder -Include "ClientDependen
 
 $CoreNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency.nuspec";
 Copy-Item $CoreNuSpecSource -Destination $CoreFolder
-Copy-Item "$BuildFolder\nuget-transforms\*.transform" -Destination (New-Item (Join-Path -Path $CoreFolder -ChildPath "nuget-transforms") -Type directory);
+Copy-Item "$BuildFolder\nuget-transforms\Core\web.config.transform" -Destination (New-Item (Join-Path -Path $CoreFolder -ChildPath "nuget-transforms") -Type directory);
+Copy-Item "$BuildFolder\nuget-transforms\Mvc\web.config.transform" -Destination (New-Item (Join-Path -Path $MvcFolder -ChildPath "nuget-transforms") -Type directory);
 
 $CoreNuSpec = Join-Path -Path $CoreFolder -ChildPath "ClientDependency.nuspec";
 

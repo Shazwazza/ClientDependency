@@ -5,25 +5,23 @@
 
   <clientDependency version="1">
 
+    <!-- Full config documentation is here: http://clientdependency.codeplex.com/wikipage?title=Configuration&referringTitle=Documentation -->
+
     <!-- This section is used for Web Forms only, the enableCompositeFiles="true" is optional and by default is set to true -->
     <fileRegistration defaultProvider="LoaderControlProvider">
       <providers>
-        <add name="PageHeaderProvider" type="ClientDependency.Core.FileRegistration.Providers.PageHeaderProvider, ClientDependency.Core"
-             enableCompositeFiles="true"/>
-        <add name="LazyLoadProvider" type="ClientDependency.Core.FileRegistration.Providers.LazyLoadProvider, ClientDependency.Core"
-             enableCompositeFiles="true"/>
-        <add name="LoaderControlProvider" type="ClientDependency.Core.FileRegistration.Providers.LoaderControlProvider, ClientDependency.Core"
-             enableCompositeFiles="true"/>
+        <add name="PageHeaderProvider" type="ClientDependency.Core.FileRegistration.Providers.PageHeaderProvider, ClientDependency.Core" enableCompositeFiles="true"/>
+        <add name="LazyLoadProvider" type="ClientDependency.Core.FileRegistration.Providers.LazyLoadProvider, ClientDependency.Core" enableCompositeFiles="true"/>
+        <add name="LoaderControlProvider" type="ClientDependency.Core.FileRegistration.Providers.LoaderControlProvider, ClientDependency.Core" enableCompositeFiles="true"/>
+        <add name="PlaceHolderProvider" type="ClientDependency.Core.FileRegistration.Providers.PlaceHolderProvider, ClientDependency.Core" enableCompositeFiles="true" javascriptPlaceHolderId="JavaScriptPlaceHolder" cssPlaceHolderId="CssPlaceHolder"/>
       </providers>
     </fileRegistration>
 
     <!-- This section is used for MVC only -->
     <mvc defaultRenderer="StandardRenderer">
       <renderers>
-        <add name="StandardRenderer" type="ClientDependency.Core.FileRegistration.Providers.StandardRenderer, ClientDependency.Core"
-             enableCompositeFiles="true"/>
-        <add name="LazyLoadRenderer" type="ClientDependency.Core.FileRegistration.Providers.LazyLoadRenderer, ClientDependency.Core"
-             enableCompositeFiles="true"/>
+        <add name="StandardRenderer" type="ClientDependency.Core.FileRegistration.Providers.StandardRenderer, ClientDependency.Core" enableCompositeFiles="true"/>
+        <add name="LazyLoadRenderer" type="ClientDependency.Core.FileRegistration.Providers.LazyLoadRenderer, ClientDependency.Core" enableCompositeFiles="true"/>
       </renderers>
     </mvc>
 
@@ -43,16 +41,16 @@
              persistFiles="true"
              compositeFilePath="~/App_Data/ClientDependency"/>
       </fileProcessingProviders>
-	  
-	  <!-- 
+
+      <!-- 
       A file map provider stores references to dependency files by an id to be used in the handler URL when using the MappedId Url type
       -->
       <fileMapProviders>
-        <add name="XmlFileMap" 
-             type="ClientDependency.Core.CompositeFiles.Providers.XmlFileMapper, ClientDependency.Core" 
+        <add name="XmlFileMap"
+             type="ClientDependency.Core.CompositeFiles.Providers.XmlFileMapper, ClientDependency.Core"
              mapPath="~/App_Data/ClientDependency"/>
       </fileMapProviders>
-	  
+
       <!-- 
     Defines the mime types to compress when requested by the client.
     Path is a regex selector, or a * can be used as in place of 'any'.
@@ -63,7 +61,7 @@
         <add type="application/json" path="^.*?/Services/.*"/>
       </mimeTypeCompression>
 	  -->
-	  
+
       <!-- 
     Defines the paths to match on to enable rogue file compression.
     Path is a regex selector, or a * can be used as in place of 'any'.
@@ -83,6 +81,11 @@
   </clientDependency>
 
   <system.web>
+    <pages>
+      <namespaces>
+        <add namespace="ClientDependency.Core"/>
+      </namespaces>
+    </pages>
     <httpModules>
       <!-- ** Need to add the dependency module -->
       <add name="ClientDependencyModule" type="ClientDependency.Core.Module.ClientDependencyModule, ClientDependency.Core"/>

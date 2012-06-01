@@ -30,7 +30,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             EnableCssMinify = true;
             EnableJsMinify = true;
             UrlType = CompositeUrlType.MappedId;
-            PathBasedUrlFormat = "{dependencyId}.{version}.{type}";
+            PathBasedUrlFormat = "{dependencyId}/{version}/{type}";
             _compositeFilePath = DefaultDependencyPath;
         }
 

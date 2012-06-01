@@ -7,13 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientDependency.Web.Test",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientDependency.Core.Mvc", "ClientDependency.Mvc\ClientDependency.Core.Mvc.csproj", "{5A8B1824-80CD-4187-B870-384D77892A77}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RELEASES", "RELEASES", "{6AFC27C7-1F6B-42E5-AC52-120AD3ACA8BA}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "v1.0", "v1.0", "{DD8BA6D3-CF54-4F1A-8555-46D733FDC296}"
-	ProjectSection(SolutionItems) = preProject
-		RELEASE\v1.0\ClientDependency.zip = RELEASE\v1.0\ClientDependency.zip
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientDependency.UnitTests", "ClientDependency.UnitTests\ClientDependency.UnitTests.csproj", "{2AAE497E-577F-4ABB-99E3-41CB80B5773E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{09017A90-7F59-40F8-8121-8B4284697BBD}"
@@ -23,9 +16,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "v1.4", "v1.4", "{E1785FD4-6C59-4962-9E34-8964B1469D73}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umbraco4.ClientDependency", "Umbraco4.ClientDependency\Umbraco4.ClientDependency.csproj", "{08DFBA02-97A5-496C-9272-09CE98C50BF5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{C5D95718-11A7-4F12-A41A-10229A87F428}"
+	ProjectSection(SolutionItems) = preProject
+		Build-Release.ps1 = Build-Release.ps1
+		build\ClientDependency-Mvc.nuspec = build\ClientDependency-Mvc.nuspec
+		build\ClientDependency.nuspec = build\ClientDependency.nuspec
+		SolutionInfo.cs = SolutionInfo.cs
+		UpgradingUmbraco.txt = UpgradingUmbraco.txt
+		build\nuget-transforms\web.config.mvc.transform = build\nuget-transforms\web.config.mvc.transform
+		build\nuget-transforms\web.config.transform = build\nuget-transforms\web.config.transform
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
@@ -59,9 +61,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{DD8BA6D3-CF54-4F1A-8555-46D733FDC296} = {6AFC27C7-1F6B-42E5-AC52-120AD3ACA8BA}
-		{E1785FD4-6C59-4962-9E34-8964B1469D73} = {6AFC27C7-1F6B-42E5-AC52-120AD3ACA8BA}
 	EndGlobalSection
 EndGlobal
