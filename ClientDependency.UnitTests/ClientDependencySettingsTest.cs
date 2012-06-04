@@ -48,10 +48,10 @@ namespace ClientDependency.UnitTests
 
             //Act
 
-            var settings = new ClientDependencySettings(configSection, ctxFactory.Context);
             //set the xml file mapper folder to be the default for file processing provider at runtime
             XmlFileMapper.FileMapVirtualFolder = "~/App_Data/TEMP/ClientDependency";
-
+            BaseCompositeFileProcessingProvider.UrlTypeDefault = CompositeUrlType.Base64QueryStrings;
+            var settings = new ClientDependencySettings(configSection, ctxFactory.Context);            
 
             //Assert
 
@@ -68,6 +68,7 @@ namespace ClientDependency.UnitTests
 
             Assert.AreEqual(settings.DefaultCompositeFileProcessingProvider.CompositeFilePathAsString, "~/App_Data/TEMP/ClientDependency");
             Assert.AreEqual(settings.DefaultCompositeFileProcessingProvider.CompositeFilePathAsString, XmlFileMapper.FileMapVirtualFolder);
+            Assert.AreEqual(CompositeUrlType.Base64QueryStrings, settings.DefaultCompositeFileProcessingProvider.UrlType);
         }
 
         /// <summary>

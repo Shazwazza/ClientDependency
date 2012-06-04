@@ -17,6 +17,11 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         private readonly string _byteOrderMarkUtf8 = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
 
         /// <summary>
+        /// Defines the UrlType default value, this can be set at startup
+        /// </summary>
+        public static CompositeUrlType UrlTypeDefault = CompositeUrlType.MappedId;
+
+        /// <summary>
         /// The path specified in the config
         /// </summary>
         internal string CompositeFilePathAsString;
@@ -29,7 +34,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             PersistCompositeFiles = true;
             EnableCssMinify = true;
             EnableJsMinify = true;
-            UrlType = CompositeUrlType.MappedId;
+            UrlType = UrlTypeDefault;
             PathBasedUrlFormat = "{dependencyId}/{version}/{type}";
             CompositeFilePathAsString = DefaultDependencyPath;
         }

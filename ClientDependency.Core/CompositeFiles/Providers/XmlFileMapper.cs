@@ -35,7 +35,6 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 
         /// <summary>
         /// Specifies the default folder to store the file map in, this allows for dynamically changing the folder on startup
-        /// instead of relying on config.
         /// </summary>
         public static string FileMapVirtualFolder = FileMapVirtualFolderDefault;
 
