@@ -206,13 +206,7 @@ namespace ClientDependency.Core.CompositeFiles
         /// <param name="fileset">The Base64 encoded string supplied in the query string for the handler</param>
         /// <param name="compressionType"></param>
         private void SetCaching(HttpContextBase context, string fileName, string fileset, CompressionType compressionType)
-        {
-            if (string.IsNullOrEmpty(fileName))
-            {
-                ClientDependencySettings.Instance.Logger.Error("ClientDependency handler path is null", new Exception());
-                return;
-            }
-
+        {            
             //This ensures OutputCaching is set for this handler and also controls
             //client side caching on the browser side. Default is 10 days.
             var duration = TimeSpan.FromDays(10);
