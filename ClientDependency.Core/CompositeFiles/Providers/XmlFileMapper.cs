@@ -33,12 +33,13 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         private const string FileMapVirtualFolderDefault = "~/App_Data/ClientDependency";        
         private static readonly object Locker = new object();
 
+        /// <summary>
+        /// Specifies the default folder to store the file map in, this allows for dynamically changing the folder on startup
+        /// instead of relying on config.
+        /// </summary>
         public static string FileMapVirtualFolder = FileMapVirtualFolderDefault;
 
-        /// <summary>
-        /// Gets/sets the folder to use to store the map
-        /// </summary>
-        public DirectoryInfo XmlMapFolder { get; set; }
+        private DirectoryInfo XmlMapFolder { get; set; }
 
         public override void Initialize(HttpContextBase http)
         {
