@@ -132,11 +132,19 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                 case CompositeUrlType.MappedId:
                     
                     //use the file mapper to create us a file key/id for the file set
-                    var fileKey = ClientDependencySettings.Instance.DefaultFileMapProvider.CreateNewMap(http, dependencies,
-                                                                                                        ClientDependencySettings.Instance.Version);
+                    var fileKey = ClientDependencySettings.Instance.DefaultFileMapProvider.CreateNewMap(
+                        http, 
+                        dependencies,
+                        ClientDependencySettings.Instance.Version);
 
                     //create the url
-                    return new[] { GetCompositeFileUrl(fileKey, type, http, CompositeUrlType.MappedId, compositeFileHandlerPath) };
+                    return new[] { GetCompositeFileUrl(
+                        fileKey, 
+                        type, 
+                        http, 
+                        CompositeUrlType.MappedId, 
+                        compositeFileHandlerPath,
+                        ClientDependencySettings.Instance.Version) };
 
                 default:
                     
@@ -156,7 +164,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                         if ((base64Builder.Length 
                             + compositeFileHandlerPath.Length 
                             + stringType.Length 
-                            + ClientDependencySettings.Instance.Version 
+                            + ClientDependencySettings.Instance.Version.ToString().Length 
                             + 10) 
                             >= (CompositeDependencyHandler.MaxHandlerUrlLength))
                         {
@@ -182,7 +190,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                     {
                         //append our version to the combined url 
                         var encodedFile = files[i].EncodeTo64Url();
-                        files[i] = GetCompositeFileUrl(encodedFile, type, http, UrlType, compositeFileHandlerPath);
+                        files[i] = GetCompositeFileUrl(encodedFile, type, http, UrlType, compositeFileHandlerPath, ClientDependencySettings.Instance.Version);
                     }
 
                     return files.ToArray();
@@ -196,16 +204,18 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         /// <param name="type"></param>
         /// <param name="http"></param>
         /// <param name="urlType"></param>
+        /// <param name="compositeFileHandlerPath"> </param>
+        /// <param name="version"> </param>
         /// <returns></returns>
         public virtual string GetCompositeFileUrl(
             string fileKey, 
             ClientDependencyType type, 
             HttpContextBase http, 
             CompositeUrlType urlType,
-			string compositeFileHandlerPath)
+			string compositeFileHandlerPath,
+            int version)
         {
             var url = new StringBuilder();
-            int version = ClientDependencySettings.Instance.Version;
             switch (urlType)
             {
                 case CompositeUrlType.Base64QueryStrings:
