@@ -49,6 +49,9 @@ namespace ClientDependency.UnitTests
             //Act
 
             var settings = new ClientDependencySettings(configSection, ctxFactory.Context);
+            //set the xml file mapper folder to be the default for file processing provider at runtime
+            ((XmlFileMapper) settings.DefaultFileMapProvider).XmlMapFolder = settings.DefaultCompositeFileProcessingProvider.CompositeFilePath;
+
 
             //Assert
 
@@ -64,6 +67,7 @@ namespace ClientDependency.UnitTests
             Assert.AreEqual(0, settings.ConfigSection.CompositeFileElement.RogueFileCompression.Count);
 
             Assert.AreEqual(settings.DefaultCompositeFileProcessingProvider.CompositeFilePathAsString, "~/App_Data/TEMP/ClientDependency");
+            Assert.AreEqual(settings.DefaultCompositeFileProcessingProvider.CompositeFilePath, ((XmlFileMapper)settings.DefaultFileMapProvider).XmlMapFolder);
         }
 
         /// <summary>
