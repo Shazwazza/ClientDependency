@@ -133,7 +133,7 @@ namespace ClientDependency.Core.Config
                 if (_fileBasedDependencyExtensionList == null)
                 {
                     //Here we are checking for backwards compatibility config sections.
-                    if (ConfigSection.FileRegistrationElement.FileBasedDepdendenyExtensions != ".js,.css"
+                    if (ConfigSection.FileRegistrationElement.FileBasedDependencyExtensions != ".js,.css"
                         && ConfigSection.FileBasedDepdendenyExtensions == ".js,.css")
                     {
                         //if the legacy section is not the default and the non-legacy section IS the default, 

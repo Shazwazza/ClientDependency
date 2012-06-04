@@ -19,7 +19,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         /// <summary>
         /// The path specified in the config
         /// </summary>
-        private string _compositeFilePath;
+        internal string CompositeFilePathAsString;
 
         /// <summary>
         /// constructor sets defaults
@@ -31,7 +31,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             EnableJsMinify = true;
             UrlType = CompositeUrlType.MappedId;
             PathBasedUrlFormat = "{dependencyId}/{version}/{type}";
-            _compositeFilePath = DefaultDependencyPath;
+            CompositeFilePathAsString = DefaultDependencyPath;
         }
 
         #region Public Properties
@@ -81,7 +81,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 
         public void Initialize(HttpContextBase http)
         {
-            CompositeFilePath = new DirectoryInfo(http.Server.MapPath(_compositeFilePath));
+            CompositeFilePath = new DirectoryInfo(http.Server.MapPath(CompositeFilePathAsString));
         }
 
         #endregion
@@ -277,7 +277,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                 PathBasedUrlFormatter.Validate(PathBasedUrlFormat);                
             }
 
-            _compositeFilePath = config["compositeFilePath"] ?? DefaultDependencyPath;
+            CompositeFilePathAsString = config["compositeFilePath"] ?? DefaultDependencyPath;
 
             string bundleDomains = config["bundleDomains"];
             if (bundleDomains != null)

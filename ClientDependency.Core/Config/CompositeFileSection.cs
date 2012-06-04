@@ -15,14 +15,26 @@ namespace ClientDependency.Core.Config
         [ConfigurationProperty("fileProcessingProviders")]
         public ProviderSettingsCollection FileProcessingProviders
         {
-            get { return (ProviderSettingsCollection)base["fileProcessingProviders"]; }
+            get
+            {
+                //We need to check for legacy settings here:
+                var collection = (ProviderSettingsCollection)base["fileProcessingProviders"];
+                var legacyCollection = (ProviderSettingsCollection)base["providers"];
+                if (collection.Count == 0 && legacyCollection.Count > 0)
+                {
+                    //need to return the legacy collection
+                    return legacyCollection;
+                }
+
+                return collection;
+            }
         }
 
         [Obsolete("Use FileProcessingProviders instead")]
         [ConfigurationProperty("providers")]
         public ProviderSettingsCollection FileProcessingProvidersLegacy
         {
-            get { return (ProviderSettingsCollection)base["fileProcessingProviders"]; }
+            get { return (ProviderSettingsCollection)base["providers"]; }
         }
 
         /// <summary>
@@ -51,11 +63,11 @@ namespace ClientDependency.Core.Config
         {
             get
             {
-                return (string)base["defaultFileProcessingProvider"];
+                return (string)base["defaultProvider"];
             }
             set
             {
-                base["defaultFileProcessingProvider"] = value;
+                base["defaultProvider"] = value;
             }
         }
 

@@ -25,7 +25,7 @@ namespace ClientDependency.Core.Config
 
         [Obsolete("Use the ClientDependencySection.FileBasedDepdendenyExtensions instead")]
         [ConfigurationProperty("fileDependencyExtensions", DefaultValue = ".js,.css")]
-        public string FileBasedDepdendenyExtensions
+        public string FileBasedDependencyExtensions
         {
             get
             {
@@ -42,7 +42,7 @@ namespace ClientDependency.Core.Config
         {
             get
             {
-                return FileBasedDepdendenyExtensions.Split(',')
+                return FileBasedDependencyExtensions.Split(',')
                     .Select(x => x.Trim().ToUpper());
             }
         }

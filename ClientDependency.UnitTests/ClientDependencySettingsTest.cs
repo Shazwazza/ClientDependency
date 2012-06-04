@@ -62,6 +62,8 @@ namespace ClientDependency.UnitTests
             Assert.AreEqual(typeof(CompositeFileProcessingProvider), settings.DefaultCompositeFileProcessingProvider.GetType());
             Assert.AreEqual(1, settings.ConfigSection.CompositeFileElement.MimeTypeCompression.Count);
             Assert.AreEqual(0, settings.ConfigSection.CompositeFileElement.RogueFileCompression.Count);
+
+            Assert.AreEqual(settings.DefaultCompositeFileProcessingProvider.CompositeFilePathAsString, "~/App_Data/TEMP/ClientDependency");
         }
 
         /// <summary>
