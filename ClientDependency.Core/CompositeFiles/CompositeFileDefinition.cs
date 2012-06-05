@@ -36,7 +36,7 @@ namespace ClientDependency.Core.CompositeFiles
         /// <returns></returns>
 		public override int GetHashCode()
 		{
-            return (System.Net.Dns.GetHostName() + Uri).GetHashCode();
+            return (NetworkHelper.MachineName + Uri).GetHashCode();
 		}
 	}
 }

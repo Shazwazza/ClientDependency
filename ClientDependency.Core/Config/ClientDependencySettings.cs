@@ -19,7 +19,7 @@ namespace ClientDependency.Core.Config
         /// </summary>
         private static volatile ClientDependencySettings _settings;
         private static readonly object Lock = new object();
-        private static Action _loadProviders = null;        
+        private static Action _loadProviders = null;
 
         /// <summary>
         /// Default constructor for use with the Singletone instance with a web context app
@@ -49,7 +49,7 @@ namespace ClientDependency.Core.Config
             var fileMap = new ExeConfigurationFileMap { ExeConfigFilename = configFile.FullName };
             var configuration = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
 
-            ConfigSection = (ClientDependencySection) configuration.GetSection("clientDependency");
+            ConfigSection = (ClientDependencySection)configuration.GetSection("clientDependency");
 
             _loadProviders = () =>
                 LoadProviders(ctx);
@@ -97,7 +97,7 @@ namespace ClientDependency.Core.Config
 
         internal static ClientDependencySection GetDefaultSection()
         {
-            return (ClientDependencySection) ConfigurationManager.GetSection("clientDependency");
+            return (ClientDependencySection)ConfigurationManager.GetSection("clientDependency");
         }
 
         private ClientDependencySection _configSection;
@@ -106,12 +106,14 @@ namespace ClientDependency.Core.Config
             get { return _configSection; }
             internal set
             {
-                lock(Lock)
+                lock (Lock)
                 {
                     _configSection = value;
-                }                
+                }
             }
         }
+
+        
 
         private List<string> _fileBasedDependencyExtensionList;
 
@@ -138,11 +140,11 @@ namespace ClientDependency.Core.Config
                     {
                         //if the legacy section is not the default and the non-legacy section IS the default, 
                         //then we will use the legacy settings.
-                        _fileBasedDependencyExtensionList = ConfigSection.FileRegistrationElement.FileBasedDependencyExtensionList.ToList();    
+                        _fileBasedDependencyExtensionList = ConfigSection.FileRegistrationElement.FileBasedDependencyExtensionList.ToList();
                     }
                     else
                     {
-                        _fileBasedDependencyExtensionList = ConfigSection.FileBasedDependencyExtensionList.ToList();    
+                        _fileBasedDependencyExtensionList = ConfigSection.FileBasedDependencyExtensionList.ToList();
                     }
                 }
                 return _fileBasedDependencyExtensionList;
@@ -169,7 +171,7 @@ namespace ClientDependency.Core.Config
         }
 
         private int? _version;
-        
+
         /// <summary>
         /// Gets/sets the file version
         /// </summary>
@@ -249,7 +251,7 @@ namespace ClientDependency.Core.Config
             var path = ConfigSection.CompositeFileElement.CompositeFileHandlerPath;
             CompositeFileHandlerPath = path.StartsWith("~/")
                 ? VirtualPathUtility.ToAbsolute(ConfigSection.CompositeFileElement.CompositeFileHandlerPath, http.Request.ApplicationPath)
-                : ConfigSection.CompositeFileElement.CompositeFileHandlerPath;                        
+                : ConfigSection.CompositeFileElement.CompositeFileHandlerPath;
 
             //load the providers from the config, if there isn't config sections then add default providers
             // and then load the defaults.
@@ -267,7 +269,7 @@ namespace ClientDependency.Core.Config
             //{
             //    DefaultCompositeFileProcessingProvider = CompositeFileProcessingProviderCollection[ConfigSection.CompositeFileElement.DefaultFileProcessingProvider];   
             //}            
-            DefaultCompositeFileProcessingProvider = CompositeFileProcessingProviderCollection[ConfigSection.CompositeFileElement.DefaultFileProcessingProvider];   
+            DefaultCompositeFileProcessingProvider = CompositeFileProcessingProviderCollection[ConfigSection.CompositeFileElement.DefaultFileProcessingProvider];
             if (DefaultCompositeFileProcessingProvider == null)
                 throw new ProviderException("Unable to load default composite file provider");
 

@@ -20,6 +20,16 @@ namespace ClientDependency.Core.Config
             get { return (int)base["version"]; }
             set { base["version"] = value; }
         }
+
+        /// <summary>
+        /// explicitly sets the machine name if it cannot be resolved
+        /// </summary>
+        [ConfigurationProperty("machineName", DefaultValue = "")]
+        public string MachineName
+        {
+            get { return (string)base["machineName"]; }
+            set { base["machineName"] = value; }
+        }
        
 		[ConfigurationProperty("compositeFiles")]
 		public CompositeFileSection CompositeFileElement

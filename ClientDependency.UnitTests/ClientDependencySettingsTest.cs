@@ -45,6 +45,7 @@ namespace ClientDependency.UnitTests
             var ctxFactory = new FakeHttpContextFactory("~/somesite/hello");
             var configSection = GetSection("LegacyConfig1.3.Config");
             StringExtensions.GetConfigSection = () => configSection;
+            NetworkHelper.GetConfigSection = () => configSection;
 
             //Act
 
@@ -82,6 +83,7 @@ namespace ClientDependency.UnitTests
             var ctxFactory = new FakeHttpContextFactory("~/somesite/hello");
             var configSection = GetSection("AllSections.Config");
             StringExtensions.GetConfigSection = () => configSection;
+            NetworkHelper.GetConfigSection = () => configSection;
 
             //Act
 
@@ -107,7 +109,8 @@ namespace ClientDependency.UnitTests
 
             var ctxFactory = new FakeHttpContextFactory("~/somesite/hello");
             var configSection = GetSection("MinSections.Config");
-            StringExtensions.GetConfigSection = () => configSection;            
+            StringExtensions.GetConfigSection = () => configSection;
+            NetworkHelper.GetConfigSection = () => configSection;
 
             //Act
 

@@ -14,6 +14,23 @@ namespace ClientDependency.UnitTests
     public class CssTransformTest
     {
 
+        [TestMethod]
+        public void CssTransform_Ensure_Inline_Images_Retained()
+        {
+            //refer to this:http://clientdependency.codeplex.com/workitem/13173
+
+            var css = @"ul li.expanded {
+  background: transparent url(data:image/gif;base64,
+  R0lGODlhCgAKAMQUAM/Q0vT09Ojr7s7Q0dLU1f7+/u/z9+Dj5tfX1+Dg4MrKyu
+  fq7tfZ27m5uba2tsLCwvv7+7W1tbS0tP////P3+wAAAAAAAAAAAAAAAAAAAAAA
+  AAAAAAAAAAAAAAAAAAAAACH5BAEAABQALAAAAAAKAAoAAAU0ICWOZGkCkaRKEU
+  AtTzHNU/Es1JDQUzKIggZkBmkIRgTEDEEgGRyBgMNQYigUDBPlcCCFAAA7) no-repeat 1px .35em;
+}";
+
+            var output = CssFileUrlFormatter.TransformCssFile(css, new Uri("http://MySite/MySubFolder"));
+
+            Assert.AreEqual(css, output);
+        }
 
         [TestMethod]
         public void CssTransform_Ensure_Query_Strings_Retained()
