@@ -19,11 +19,11 @@ namespace ClientDependency.Core
 		{
 			string str = Regex.Replace(
 				fileContent,
-                @"url\((.+?)\)",
+                @"url\(((?!(""|')data:).+?)\)",
 				new MatchEvaluator(
 					delegate(Match m)
 					{
-						if (m.Groups.Count == 2)
+						if (m.Groups.Count == 3)
 						{
 							var match = m.Groups[1].Value.Trim('\'', '"');
 						    var hashSplit = match.Split(new[] {'#'}, StringSplitOptions.RemoveEmptyEntries);

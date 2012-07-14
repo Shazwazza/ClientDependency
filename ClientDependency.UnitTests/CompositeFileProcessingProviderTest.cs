@@ -15,6 +15,19 @@ namespace ClientDependency.UnitTests
     public class CompositeFileProcessingProviderTest
     {
 
+        //[TestMethod()]
+        //public void Get_Composite_File_Url()
+        //{
+        //    var files = "/VirtualFolderTest/Pages/relative.css;/VirtualFolderTest/Css/Site.css;/VirtualFolderTest/Css/ColorScheme.css;/VirtualFolderTest/Css/Controls.css;/VirtualFolderTest/Css/CustomControl.css;/VirtualFolderTest/Css/Content.css;";
+        //    var encodedFiles = files.EncodeTo64Url();
+        //    var provider = new CompositeFileProcessingProvider();
+        //    var ctxFactory = new FakeHttpContextFactory("~/somesite/hello");
+        //    var url = provider.GetCompositeFileUrl(encodedFiles, ClientDependencyType.Css, ctxFactory.Context, CompositeUrlType.Base64Paths, 
+        //        "/DependencyHandler.axd", 123);
+
+        //    Assert.AreEqual("", url);
+        //}
+
         /// <summary>
         ///A test for CombineFiles
         ///</summary>

@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System.Configuration;
+using System.Reflection;
+using ClientDependency.Core;
 using ClientDependency.Core.Config;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -23,6 +25,52 @@ namespace ClientDependency.UnitTests
     public class SettingsTest
     {
         
+        private static ClientDependencySection GetSection(string fileName)
+        {
+            var codeBase = Assembly.GetExecutingAssembly().CodeBase;
+            var uri = new UriBuilder(codeBase);
+            var path = Uri.UnescapeDataString(uri.Path);
+            var binFolder = Path.GetDirectoryName(path);
+            var configFile = new FileInfo(binFolder + "\\..\\..\\" + fileName);
+            var fileMap = new ExeConfigurationFileMap { ExeConfigFilename = configFile.FullName };
+            var configuration = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
+            return (ClientDependencySection)configuration.GetSection("clientDependency");
+        }
+
+        [TestMethod()]
+        public void Settings_Legacy_Pre_13()
+        {
+            //Arrange
+
+            var ctxFactory = new FakeHttpContextFactory("~/somesite/hello");
+            var configSection = GetSection("LegacyConfig1.3.Config");
+            StringExtensions.GetConfigSection = () => configSection;
+            NetworkHelper.GetConfigSection = () => configSection;
+
+            //Act
+
+            //set the xml file mapper folder to be the default for file processing provider at runtime
+            XmlFileMapper.FileMapVirtualFolder = "~/App_Data/TEMP/ClientDependency";
+            BaseCompositeFileProcessingProvider.UrlTypeDefault = CompositeUrlType.Base64QueryStrings;
+            var settings = new ClientDependencySettings(configSection, ctxFactory.Context);            
+
+            //Assert
+
+            Assert.AreEqual(typeof(LoaderControlProvider), settings.DefaultFileRegistrationProvider.GetType());
+            Assert.AreEqual(123456, settings.Version);
+            foreach(var i in ".js,.css,.less".Split(','))
+            {
+                Assert.IsTrue(settings.FileBasedDependencyExtensionList.Contains(i.ToUpper()));                
+            }
+            Assert.AreEqual(typeof(StandardRenderer), settings.DefaultMvcRenderer.GetType());
+            Assert.AreEqual(typeof(CompositeFileProcessingProvider), settings.DefaultCompositeFileProcessingProvider.GetType());
+            Assert.AreEqual(1, settings.ConfigSection.CompositeFileElement.MimeTypeCompression.Count);
+            Assert.AreEqual(0, settings.ConfigSection.CompositeFileElement.RogueFileCompression.Count);
+
+            Assert.AreEqual(settings.DefaultCompositeFileProcessingProvider.CompositeFilePathAsString, "~/App_Data/TEMP/ClientDependency");
+            Assert.AreEqual(settings.DefaultCompositeFileProcessingProvider.CompositeFilePathAsString, XmlFileMapper.FileMapVirtualFolder);
+            Assert.AreEqual(CompositeUrlType.Base64QueryStrings, settings.DefaultCompositeFileProcessingProvider.UrlType);
+        }
 
         /// <summary>
         ///A test for all sections defined
@@ -32,17 +80,14 @@ namespace ClientDependency.UnitTests
         {
             //Arrange
 
-            var codeBase = Assembly.GetExecutingAssembly().CodeBase;
-            var uri = new UriBuilder(codeBase);
-            var path = Uri.UnescapeDataString(uri.Path);
-            var binFolder = Path.GetDirectoryName(path);
+            var ctxFactory = new FakeHttpContextFactory("~/somesite/hello");
+            var configSection = GetSection("AllSections.Config");
+            StringExtensions.GetConfigSection = () => configSection;
+            NetworkHelper.GetConfigSection = () => configSection;
 
-            var ctxFactory = new FakeHttpContextFactory("~/somesite/hello");            
-            var configFile = new FileInfo(binFolder + "\\..\\..\\AllSections.Config");            
-            
             //Act
 
-            var settings = new ClientDependencySettings(configFile, ctxFactory.Context);
+            var settings = new ClientDependencySettings(configSection, ctxFactory.Context);
 
             //Assert
 
@@ -62,17 +107,14 @@ namespace ClientDependency.UnitTests
         {
             //Arrange
 
-            var codeBase = Assembly.GetExecutingAssembly().CodeBase;
-            var uri = new UriBuilder(codeBase);
-            var path = Uri.UnescapeDataString(uri.Path);
-            var binFolder = Path.GetDirectoryName(path);
-
             var ctxFactory = new FakeHttpContextFactory("~/somesite/hello");
-            var configFile = new FileInfo(binFolder + "\\..\\..\\MinSections.Config");
+            var configSection = GetSection("MinSections.Config");
+            StringExtensions.GetConfigSection = () => configSection;
+            NetworkHelper.GetConfigSection = () => configSection;
 
             //Act
 
-            var settings = new ClientDependencySettings(configFile, ctxFactory.Context);
+            var settings = new ClientDependencySettings(configSection, ctxFactory.Context);
 
             //Assert
 

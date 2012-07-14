@@ -33,9 +33,11 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                 }
                 versionAsString = versionAsString.ReverseString();
 
-				var p = path.IndexOf(versionDelimiter);
-				fileKey = p > 0 ? path.Substring(0, p) : "";
-				fileKey = fileKey.Replace("/", "");
+				//var p = path.IndexOf(versionDelimiter);
+				//fileKey = p > 0 ? path.Substring(0, p) : "";
+                fileKey = path.Substring(0, path.Substring(0, path.LastIndexOf(typeDelimiter)).LastIndexOf(versionDelimiter));
+                //there may be '/' in the fileKey since we add additional paths when the max path length is exceeded
+                fileKey = fileKey.Replace("/", "");
 
                 type = typeAsString == "js".ToUpper() ? ClientDependencyType.Javascript : ClientDependencyType.Css;
                 if (!int.TryParse(versionAsString, out version))

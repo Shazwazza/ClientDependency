@@ -1,6 +1,6 @@
 ﻿function doSomething() {
     
-    if (!$.isReady) {
+    if (!$ && !$.isReady) {
         $(document).ready(function() {
             writeStuff();
         });

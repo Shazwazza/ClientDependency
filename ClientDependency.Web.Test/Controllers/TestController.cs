@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using ClientDependency.Core.Config;
+﻿using System.Web.Mvc;
 using ClientDependency.Core.Mvc;
-using ClientDependency.Web.Models;
+using ClientDependency.Web.Test.Models;
 
-namespace ClientDependency.Web.Controllers
+namespace ClientDependency.Web.Test.Controllers
 {
 
     //NOTE: Yes i realize this text shouldn't be hard coded here, but it's an example website!
