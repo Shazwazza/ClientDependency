@@ -107,10 +107,7 @@ namespace ClientDependency.Core.Mvc
                     var grp = m.Groups["renderer"];
                     if (grp != null)
                     {
-                        return m_Output
-                            .Where(x => x.Name == grp.ToString())
-                            .Single()
-                            .OutputJs;
+                        return _output.Single(x => x.Name == grp.ToString()).OutputJs;
                     }
                     return m.ToString();
                 }, RegexOptions.Compiled);
@@ -121,10 +118,7 @@ namespace ClientDependency.Core.Mvc
                     var grp = m.Groups["renderer"];
                     if (grp != null)
                     {
-                        return m_Output
-                            .Where(x => x.Name == grp.ToString())
-                            .Single()
-                            .OutputCss;
+                        return _output.Single(x => x.Name == grp.ToString()).OutputCss;
                     }
                     return m.ToString();
                 }, RegexOptions.Compiled);
@@ -162,7 +156,7 @@ namespace ClientDependency.Core.Mvc
         #endregion
 
 
-        private List<RendererOutput> m_Output = new List<RendererOutput>();
+        private readonly List<RendererOutput> _output = new List<RendererOutput>();
 
         /// <summary>
         /// Loop through each object and
@@ -185,7 +179,7 @@ namespace ClientDependency.Core.Mvc
                     renderer.RegisterDependencies(x.Dependencies, Paths, out js, out css, CurrentContext);
 
                     //store the output in a new output object
-                    m_Output.Add(new RendererOutput()
+                    _output.Add(new RendererOutput()
                     {
                         Name = x.Provider.Name,
                         OutputCss = css.Replace("&", "&amp;"),

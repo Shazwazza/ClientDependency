@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Security;
 using System.Web.SessionState;
 using System.Web.Mvc;
 using System.Web.Routing;
+using System.Xml.Linq;
+using ClientDependency.Core.Config;
+using ClientDependency.Core.Mvc;
 
 namespace ClientDependency.Web.Test
 {
@@ -31,6 +35,11 @@ namespace ClientDependency.Web.Test
             AreaRegistration.RegisterAllAreas();
 
             RegisterRoutes(RouteTable.Routes);
+
+            ViewEngines.Engines.ReplaceDefaultRazorEngine(new CdfRazorViewEngine());
+
+            //remove MVC filter (to test the view engines) (if you want to test)
+            //ClientDependencySettings.Instance.ConfigSection.Filters.Remove("MvcFilter");
         }
     }
 

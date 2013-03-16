@@ -67,6 +67,7 @@ namespace ClientDependency.Core.Config
             }
         }
 
+        private ProviderSettingsCollection _filters;
         /// <summary>
         /// Not really supposed to be used by public, but can implement at your own risk!
         /// This by default assigns the MvcFilter and RogueFileFilter.
@@ -76,19 +77,23 @@ namespace ClientDependency.Core.Config
         {
             get
             {
-                var obj = base["filters"];
+                if (_filters == null)
+                {
+                    var obj = base["filters"];
 
-                if (obj == null || ((obj is ConfigurationElementCollection) && ((ConfigurationElementCollection)obj).Count == 0))
-                {
-                    var col = new ProviderSettingsCollection();
-                    col.Add(new ProviderSettings("MvcFilter", "ClientDependency.Core.Mvc.MvcFilter, ClientDependency.Core.Mvc"));
-                    col.Add(new ProviderSettings("RogueFileFilter", "ClientDependency.Core.Module.RogueFileFilter, ClientDependency.Core"));                    
-                    return col;
+                    if (obj == null || ((obj is ConfigurationElementCollection) && ((ConfigurationElementCollection)obj).Count == 0))
+                    {
+                        var col = new ProviderSettingsCollection();
+                        col.Add(new ProviderSettings("MvcFilter", "ClientDependency.Core.Mvc.MvcFilter, ClientDependency.Core.Mvc"));
+                        col.Add(new ProviderSettings("RogueFileFilter", "ClientDependency.Core.Module.RogueFileFilter, ClientDependency.Core"));
+                        _filters = col;
+                    }
+                    else
+                    {
+                        _filters = (ProviderSettingsCollection)obj;
+                    }
                 }
-                else
-                {
-                    return (ProviderSettingsCollection)obj;
-                }
+                return _filters;
             }
         }
 
