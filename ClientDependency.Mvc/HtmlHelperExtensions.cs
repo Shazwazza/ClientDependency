@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.UI;
 using ClientDependency.Core.Controls;
@@ -212,53 +213,57 @@ namespace ClientDependency.Core.Mvc
         #endregion
 
         #region RenderJsHere Extensions
-        public static string RenderJsHere(this HtmlHelper html)
+        public static IHtmlString RenderJsHere(this HtmlHelper html)
         {
-            return html.ViewContext.GetLoader().RenderPlaceholder(
-                ClientDependencyType.Javascript, new List<IClientDependencyPath>());
+            return new HtmlString(
+                html.ViewContext.GetLoader().RenderPlaceholder(
+                    ClientDependencyType.Javascript, new List<IClientDependencyPath>()));
         }
-        public static string RenderJsHere(this HtmlHelper html, params IClientDependencyPath[] path)
+        public static IHtmlString RenderJsHere(this HtmlHelper html, params IClientDependencyPath[] path)
         {
-            return html.ViewContext.GetLoader().RenderPlaceholder(
-                ClientDependencyType.Javascript, path);
+            return new HtmlString(
+                html.ViewContext.GetLoader().RenderPlaceholder(
+                    ClientDependencyType.Javascript, path));
         }
-        public static string RenderJsHere(this HtmlHelper html, IEnumerable<IClientDependencyPath> paths)
+        public static IHtmlString RenderJsHere(this HtmlHelper html, IEnumerable<IClientDependencyPath> paths)
         {
-            return html.ViewContext.GetLoader().RenderPlaceholder(
-                ClientDependencyType.Javascript, paths);
+            return new HtmlString(
+                html.ViewContext.GetLoader().RenderPlaceholder(
+                    ClientDependencyType.Javascript, paths));
         }
-        public static string RenderJsHere(this HtmlHelper html, string rendererName, IEnumerable<IClientDependencyPath> paths)
+        public static IHtmlString RenderJsHere(this HtmlHelper html, string rendererName, IEnumerable<IClientDependencyPath> paths)
         {
-            return html.ViewContext.GetLoader().RenderPlaceholder(
-                ClientDependencyType.Javascript, rendererName, paths);
+            return new HtmlString(
+                html.ViewContext.GetLoader().RenderPlaceholder(
+                    ClientDependencyType.Javascript, rendererName, paths));
         } 
         #endregion
         
         #region RenderCssHere Extensions
-        public static string RenderCssHere(this HtmlHelper html)
+        public static IHtmlString RenderCssHere(this HtmlHelper html)
         {
-            return html.ViewContext.GetLoader().RenderPlaceholder(
-                ClientDependencyType.Css, new List<IClientDependencyPath>());
+            return new HtmlString(html.ViewContext.GetLoader().RenderPlaceholder(
+                ClientDependencyType.Css, new List<IClientDependencyPath>()));
         }
-        public static string RenderCssHere(this HtmlHelper html, params IClientDependencyPath[] path)
+        public static IHtmlString RenderCssHere(this HtmlHelper html, params IClientDependencyPath[] path)
         {
-            return html.ViewContext.GetLoader().RenderPlaceholder(
-                ClientDependencyType.Css, path);
+            return new HtmlString(html.ViewContext.GetLoader().RenderPlaceholder(
+                ClientDependencyType.Css, path));
         }
-        public static string RenderCssHere(this HtmlHelper html, IEnumerable<IClientDependencyPath> paths)
+        public static IHtmlString RenderCssHere(this HtmlHelper html, IEnumerable<IClientDependencyPath> paths)
         {
-            return html.ViewContext.GetLoader().RenderPlaceholder(
-                ClientDependencyType.Css, paths);
+            return new HtmlString(html.ViewContext.GetLoader().RenderPlaceholder(
+                ClientDependencyType.Css, paths));
         }
-        public static string RenderCssHere(this HtmlHelper html, string rendererName, IEnumerable<IClientDependencyPath> paths)
+        public static IHtmlString RenderCssHere(this HtmlHelper html, string rendererName, IEnumerable<IClientDependencyPath> paths)
         {
-            return html.ViewContext.GetLoader().RenderPlaceholder(
-                ClientDependencyType.Css, rendererName, paths);
+            return new HtmlString(html.ViewContext.GetLoader().RenderPlaceholder(
+                ClientDependencyType.Css, rendererName, paths));
         }
-        public static string RenderCssHere(this HtmlHelper html, string rendererName, params IClientDependencyPath[] paths)
+        public static IHtmlString RenderCssHere(this HtmlHelper html, string rendererName, params IClientDependencyPath[] paths)
         {
-            return html.ViewContext.GetLoader().RenderPlaceholder(
-                ClientDependencyType.Css, rendererName, paths);
+            return new HtmlString(html.ViewContext.GetLoader().RenderPlaceholder(
+                ClientDependencyType.Css, rendererName, paths));
         } 
         #endregion
     }

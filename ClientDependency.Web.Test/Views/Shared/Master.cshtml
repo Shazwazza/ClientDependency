@@ -8,12 +8,12 @@
     <title>
         @RenderSection("TitleContent")
     </title>
-    @Html.Raw(Html.RenderCssHere(new BasicPath("Styles", "~/Css")))
+    @Html.RenderCssHere(new BasicPath("Styles", "~/Css"))
 </head>
 
 <body>
 
-    @Html.Raw(Html.RenderJsHere(new BasicPath("Scripts", "~/Js")))
+    @Html.RenderJsHere(new BasicPath("Scripts", "~/Js"))
 
     @{
         Html.RequiresCss("ColorScheme.css", "Styles");
