@@ -97,7 +97,7 @@ namespace ClientDependency.Core.Mvc
         /// </summary>
         /// <param name="html"></param>
         /// <returns></returns>
-        internal string ParseHtmlPlaceholders(string html)
+        public string ParseHtmlPlaceholders(string html)
         {
             GenerateOutput();
 
