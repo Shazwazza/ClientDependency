@@ -346,15 +346,17 @@ namespace ClientDependency.Core.FileRegistration.Providers
         {
             IDictionary<string, string> attributes = new Dictionary<string, string>();
 
-            if (file is IHaveHtmlAttributes)
+            var htmlAttributes = file as IHaveHtmlAttributes;
+            if (htmlAttributes != null)
             {
-                var fileWithAttributes = (IHaveHtmlAttributes)file;
+                var fileWithAttributes = htmlAttributes;
                 attributes = fileWithAttributes.HtmlAttributes;
 
-                if (file is IRequiresHtmlAttributesParsing)
+                var parsing = file as IRequiresHtmlAttributesParsing;
+                if (parsing != null)
                 {
                     //we need to parse the attributes into the dictionary
-                    HtmlAttributesStringParser.ParseIntoDictionary(((IRequiresHtmlAttributesParsing)file).HtmlAttributesAsString, attributes);                    
+                    HtmlAttributesStringParser.ParseIntoDictionary(parsing.HtmlAttributesAsString, attributes);                    
                 }                
             }
 

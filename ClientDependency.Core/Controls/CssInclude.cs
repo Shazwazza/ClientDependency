@@ -7,7 +7,8 @@ namespace ClientDependency.Core.Controls
 {
 	public class CssInclude : ClientDependencyInclude
 	{
-        internal bool EncodeImages { get; set; }
+	    private CssMediaType _cssMedia;
+	    internal bool EncodeImages { get; set; }
 
 		public CssInclude()
 		{
@@ -27,6 +28,19 @@ namespace ClientDependency.Core.Controls
             CssMedia = mediaType;
         }
 
-        public CssMediaType CssMedia { get; set; }
+        public CssMediaType CssMedia
+        {
+            get { return _cssMedia; }
+            set
+            {
+                if (value != CssMediaType.All)
+                {
+                    HtmlAttributes.Remove("media");
+                    HtmlAttributes.Remove("Media");
+                    HtmlAttributes["media"] = value.ToString().ToLowerInvariant();
+                }
+                _cssMedia = value;
+            }
+        }
 	}
 }

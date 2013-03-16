@@ -7,16 +7,11 @@ namespace ClientDependency.Core
 {
     internal static class HtmlAttributesStringParser
     {
-
         internal static void ParseIntoDictionary(string attributes, IDictionary<string, string> destination)
         {
-            destination.Clear();
-
             if (string.IsNullOrEmpty(attributes))
                 return;
-            if (destination == null)
-                return;
-            
+
             var key = "";
             var val = "";
             var isKey = true;
@@ -51,8 +46,8 @@ namespace ClientDependency.Core
                             isValDelimited = false;
                             if ((i == attributes.Length - 1))
                             {
-                                //if it the end, add the value
-                                destination.Add(key, val);
+                                //if it the end, add/replace the value
+                                destination[key] = val;                                
                             }
                             continue;
                         }
@@ -64,8 +59,8 @@ namespace ClientDependency.Core
                         isKey = true;
                         isVal = false;
 
-                        //now we can add the current value to the dictionary
-                        destination.Add(key, val);
+                        //now we can add/replace the current value to the dictionary
+                        destination[key] = val;
                         continue;
                     }
                     
@@ -73,8 +68,8 @@ namespace ClientDependency.Core
 
                     if ((i == attributes.Length - 1))
                     {
-                        //if it the end, add the value
-                        destination.Add(key, val);
+                        //if it the end, add/replace the value
+                        destination[key] = val;
                     }
                 }
             }
