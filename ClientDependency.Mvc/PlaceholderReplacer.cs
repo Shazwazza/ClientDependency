@@ -8,7 +8,7 @@ namespace ClientDependency.Core.Mvc
     /// <summary>
     /// Replaces the placeholders in the view
     /// </summary>
-    internal class PlaceholderReplacer : IDisposable
+    public class PlaceholderReplacer : IDisposable
     {
         private readonly TextWriter _originalWriter;
         private readonly HttpContextBase _httpContext;
