@@ -20,7 +20,7 @@ namespace ClientDependency.Core
             for (var i = 0; i < attributes.Length; i++)
             {
                 var c = attributes.ToCharArray()[i];
-                if (c == ':')
+                if (isKey && c == ':')
                 {
                     isKey = false;
                     isVal = true;
