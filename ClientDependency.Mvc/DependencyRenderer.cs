@@ -105,7 +105,7 @@ namespace ClientDependency.Core.Mvc
                 (m) =>
                 {
                     var grp = m.Groups["renderer"];
-                    if (grp != null)
+                    if (grp != null && _output.Any())
                     {
                         return _output.Single(x => x.Name == grp.ToString()).OutputJs;
                     }
