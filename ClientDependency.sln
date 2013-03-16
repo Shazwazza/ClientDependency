@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientDependency.Core", "ClientDependency.Core\ClientDependency.Core.csproj", "{EA35B06D-0CC8-4830-A3F7-9BB3D36D0FAF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientDependency.Web.Test", "ClientDependency.Web.Test\ClientDependency.Web.Test.csproj", "{D2DA8882-0CCE-4AE0-87BF-9947B0D19CC6}"
@@ -37,6 +37,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{4D8DC7DA-0202-4338-B154-72A077FA88E8}"
 	ProjectSection(SolutionItems) = preProject
 		build\nuget-transforms\Core\web.config.transform = build\nuget-transforms\Core\web.config.transform
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{86C3F7CD-2FDA-4025-805B-7DC6C8A44DDA}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
 Global

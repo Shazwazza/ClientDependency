@@ -3,7 +3,7 @@
   <metadata>
     <id>ClientDependency</id>
     <version>0.0.0.0</version>
-    <authors>Aaron Powell, Shannon Deminick</authors>
+    <authors>Shannon Deminick</authors>
     <description>ClientDependency is a framework for simplifying colaborative development of ASP.NET components, allowing components to state what CSS and JavaScript files they require, and ensuring that each file only is only added once to the response. ClientDependency also handles combination, minification and compression of CSS and JavaScript.</description>
     <summary>A library for handling CSS and JavaScript dependencies in a file</summary>
     <language>en-US</language>

@@ -2,15 +2,15 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using ClientDependency.Core.CompositeFiles;
 
 namespace ClientDependency.UnitTests
 {
-    [TestClass]
+    [TestFixture]
     public class JsMinifyTest
     {
-        [TestMethod]
+        [Test]
         public void JsMinify_Minify()
         {
             //Arrange
@@ -47,7 +47,7 @@ namespace ClientDependency.UnitTests
                 output);
         }
 
-        [TestMethod]
+        [Test]
         public void JsMinify_Minify_With_Unary_Operator()
         {
             //see: http://clientdependency.codeplex.com/workitem/13162

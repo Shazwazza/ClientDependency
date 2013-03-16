@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using ClientDependency.Core;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 
@@ -8,10 +8,10 @@ namespace ClientDependency.UnitTests
 {
     
     
-    [TestClass()]
+    [TestFixture]
     public class HtmlAttributesStringParserTest
     {
-        [TestMethod()]
+        [Test]
         public void Parse_Delimited_String_With_Comma()
         {
             const string attributes = "media:'print, projection'";
@@ -25,7 +25,7 @@ namespace ClientDependency.UnitTests
 
         }
 
-        [TestMethod()]
+        [Test]
         public void Parse_Normal_String()
         {
             const string attributes = "media:print";

@@ -1,15 +1,15 @@
 ﻿using ClientDependency.Core.CompositeFiles;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace ClientDependency.UnitTests
 {
-    [TestClass]
+    [TestFixture]
     public class CssMinTest
     {
         /// <summary>
         /// CSSs the transform_ ensure_ element_ with_ id_ selector.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void CssMin_Ensure_Element_With_Id_Selector()
         {
             //refer to this: http://clientdependency.codeplex.com/workitem/13181

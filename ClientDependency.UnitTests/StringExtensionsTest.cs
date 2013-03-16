@@ -1,13 +1,13 @@
 using ClientDependency.Core;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace ClientDependency.UnitTests
 {
 
-    [TestClass]
+    [TestFixture]
     public class StringExtensionsTest
     {
-        [TestMethod]
+        [Test]
         public void Decode_From_64_Url()
         {
             var files = "/VirtualFolderTest/Pages/relative.css;/VirtualFolderTest/Css/Site.css;/VirtualFolderTest/Css/ColorScheme.css;/VirtualFolderTest/Css/Controls.css;/VirtualFolderTest/Css/CustomControl.css;/VirtualFolderTest/Css/Content.css;";

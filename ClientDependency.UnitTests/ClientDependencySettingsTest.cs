@@ -2,7 +2,7 @@
 using System.Reflection;
 using ClientDependency.Core;
 using ClientDependency.Core.Config;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System;
 using ClientDependency.Core.CompositeFiles.Providers;
 using ClientDependency.Core.FileRegistration.Providers;
@@ -21,7 +21,7 @@ namespace ClientDependency.UnitTests
     ///This is a test class for ClientDependencySettingsTest and is intended
     ///to contain all ClientDependencySettingsTest Unit Tests
     ///</summary>
-    [TestClass()]
+    [TestFixture]
     public class SettingsTest
     {
         
@@ -37,7 +37,7 @@ namespace ClientDependency.UnitTests
             return (ClientDependencySection)configuration.GetSection("clientDependency");
         }
 
-        [TestMethod()]
+        [Test]
         public void Settings_Legacy_Pre_13()
         {
             //Arrange
@@ -75,7 +75,7 @@ namespace ClientDependency.UnitTests
         /// <summary>
         ///A test for all sections defined
         ///</summary>
-        [TestMethod()]
+        [Test]
         public void Settings_All_Sections_Defined()
         {
             //Arrange
@@ -102,7 +102,7 @@ namespace ClientDependency.UnitTests
         /// <summary>
         ///A test for CompositeFileProcessingProviderCollection
         ///</summary>
-        [TestMethod()]
+        [Test]
         public void Settings_Min_Sections_Defined()
         {
             //Arrange

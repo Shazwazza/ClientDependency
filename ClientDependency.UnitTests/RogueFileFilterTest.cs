@@ -1,5 +1,5 @@
 ﻿using ClientDependency.Core.Module;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System;
 
 namespace ClientDependency.UnitTests
@@ -10,14 +10,14 @@ namespace ClientDependency.UnitTests
     ///This is a test class for RogueFileFilterTest and is intended
     ///to contain all RogueFileFilterTest Unit Tests
     ///</summary>
-    [TestClass()]
+    [TestFixture]
     public class RogueFileFilterTest
     {
 
         /// <summary>
         ///A test for CanExecute
         ///</summary>
-        [TestMethod()]
+        [Test]
         public void RogueFiles_Can_Execute()
         {
            
@@ -27,7 +27,7 @@ namespace ClientDependency.UnitTests
         /// <summary>
         ///A test for UpdateOutputHtml
         ///</summary>
-        [TestMethod()]
+        [Test]
         public void RogueFiles_Update_Output_Html()
         {
            
@@ -37,7 +37,7 @@ namespace ClientDependency.UnitTests
         /// <summary>
         ///A test for ValidateCurrentHandler
         ///</summary>
-        [TestMethod()]
+        [Test]
         public void RogueFiles_Validate_Current_Handler()
         {
            

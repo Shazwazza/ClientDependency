@@ -1,5 +1,5 @@
 ﻿using ClientDependency.Core.CompositeFiles.Providers;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using System;
 using System.Web;
 using ClientDependency.Core;
@@ -7,15 +7,16 @@ using ClientDependency.Core.CompositeFiles;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using NUnit.Framework;
 
 namespace ClientDependency.UnitTests
 {
   
-    [TestClass()]
+    [TestFixture]
     public class CompositeFileProcessingProviderTest
     {
 
-        //[TestMethod()]
+        //[Test]
         //public void Get_Composite_File_Url()
         //{
         //    var files = "/VirtualFolderTest/Pages/relative.css;/VirtualFolderTest/Css/Site.css;/VirtualFolderTest/Css/ColorScheme.css;/VirtualFolderTest/Css/Controls.css;/VirtualFolderTest/Css/CustomControl.css;/VirtualFolderTest/Css/Content.css;";
@@ -31,7 +32,7 @@ namespace ClientDependency.UnitTests
         /// <summary>
         ///A test for CombineFiles
         ///</summary>
-        [TestMethod()]
+        [Test]
         public void CompositeFiles_Combine_Files()
         {
             //Arrange
@@ -50,7 +51,7 @@ namespace ClientDependency.UnitTests
         /// <summary>
         ///A test for CompressBytes
         ///</summary>
-        [TestMethod()]
+        [Test]
         public void CompositeFiles_Compress_Bytes()
         {
           
@@ -60,7 +61,7 @@ namespace ClientDependency.UnitTests
         /// <summary>
         ///A test for SaveCompositeFile
         ///</summary>
-        [TestMethod()]
+        [Test]
         public void CompositeFiles_Save_Composite_File()
         {
             

@@ -2,19 +2,20 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using ClientDependency.Core;
+using NUnit.Framework;
 
 namespace ClientDependency.UnitTests
 {
     /// <summary>
     /// Summary description for UnitTest1
     /// </summary>
-    [TestClass]
+    [TestFixture]
     public class CssTransformTest
     {
 
-        [TestMethod]
+        [Test]
         public void CssTransform_Ensure_Inline_Images_Retained()
         {
             //refer to this:http://clientdependency.codeplex.com/workitem/13173
@@ -32,7 +33,7 @@ namespace ClientDependency.UnitTests
             Assert.AreEqual(css, output);
         }
 
-        [TestMethod]
+        [Test]
         public void CssTransform_Ensure_Query_Strings_Retained()
         {
             //refer to this:http://clientdependency.codeplex.com/workitem/13184
@@ -45,7 +46,7 @@ namespace ClientDependency.UnitTests
 
         }
 
-        [TestMethod]
+        [Test]
         public void CssTransform_Parse_Urls()
         {
             var css = @"
