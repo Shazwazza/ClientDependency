@@ -24,7 +24,7 @@ namespace ClientDependency.Web.Test.Controls
             base.CreateChildControls();
 
             m_MainDiv = new HtmlGenericControl();
-            m_MainDiv.ID = "myControl";
+            //m_MainDiv.ID = "myControl";
             m_MainDiv.Attributes.Add("class", "myControl");
             m_MainDiv.Controls.Add(new LiteralControl("<div>My Custom Control</div>"));
 

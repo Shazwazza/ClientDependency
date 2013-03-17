@@ -10,7 +10,19 @@ namespace ClientDependency.Web.Test.Controllers
     [HandleError]
     public class TestController : Controller
     {
-       
+
+        public ActionResult ImportsCss()
+        {
+            var model = new TestModel()
+            {
+                Heading = "This tests @import statement in css",
+                BodyContent = @"<p>The Imports.css file is used here which also imports the Content.css and the OverrideStyles.css</p>"
+            };
+
+            return View(model);
+
+        }
+
         public ActionResult Default()
         {
 

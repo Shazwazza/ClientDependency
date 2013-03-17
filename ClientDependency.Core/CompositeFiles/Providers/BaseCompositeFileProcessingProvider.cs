@@ -257,13 +257,13 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 
             if (config["enableCssMinify"] != null)
             {
-                bool enableCssMinify;
+                bool enableCssMinify = true;
                 if (bool.TryParse(config["enableCssMinify"], out enableCssMinify))
                     EnableCssMinify = enableCssMinify;
             }
             if (config["enableJsMinify"] != null)
             {
-                bool enableJsMinify;
+                bool enableJsMinify = true; 
                 if (bool.TryParse(config["enableJsMinify"], out enableJsMinify))
                     EnableJsMinify = enableJsMinify;
             }
@@ -350,7 +350,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             if (type == ClientDependencyType.Css)
             {
                 var uri = new Uri(url, UriKind.RelativeOrAbsolute);
-                fileContents = CssFileUrlFormatter.TransformCssFile(fileContents, uri.MakeAbsoluteUri(http));
+                fileContents = CssHelper.ReplaceUrlsWithAbsolutePaths(fileContents, uri.MakeAbsoluteUri(http));
             }
             return fileContents;
         }

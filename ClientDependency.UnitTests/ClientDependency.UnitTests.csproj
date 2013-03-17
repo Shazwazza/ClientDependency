@@ -103,6 +103,7 @@
   <ItemGroup>
     <Compile Include="ClientDependencySettingsTest.cs" />
     <Compile Include="CompositeFileProcessingProviderTest.cs" />
+    <Compile Include="CssImportStatementsTest.cs" />
     <Compile Include="CssMinTest.cs" />
     <Compile Include="FakeHttpContextFactory.cs" />
     <Compile Include="HtmlAttributesStringParserTest.cs" />

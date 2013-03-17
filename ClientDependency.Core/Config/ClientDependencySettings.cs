@@ -296,7 +296,7 @@ namespace ClientDependency.Core.Config
 
             if (string.IsNullOrEmpty(ConfigSection.LoggerType))
             {
-                Logger = new NullLogger();
+                Logger = new TraceLogger();
             }
             else
             {
