@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web;
@@ -205,6 +206,11 @@ namespace ClientDependency.Core.Mvc
 			html.ViewContext.GetLoader().RegisterDependency(group, priority, filePath, pathNameAlias, ClientDependencyType.Css, htmlAttributes);
 			return html;
 		}
+        public static HtmlHelper RequiresCss(this HtmlHelper html, string filePath, int priority, object htmlAttributes)
+        {
+            html.ViewContext.GetLoader().RegisterDependency(priority, filePath, ClientDependencyType.Css, htmlAttributes);
+            return html;
+        } 
 		public static HtmlHelper RequiresCss(this HtmlHelper html, string filePath, int priority, int group, object htmlAttributes)
         {
             html.ViewContext.GetLoader().RegisterDependency(group, priority, filePath, ClientDependencyType.Css, htmlAttributes);
@@ -265,6 +271,184 @@ namespace ClientDependency.Core.Mvc
             return new HtmlString(html.ViewContext.GetLoader().RenderPlaceholder(
                 ClientDependencyType.Css, rendererName, paths));
         } 
+        #endregion
+
+        #region RequiresJsFolder/RequiresCssFolder
+
+        #region RequiresJsFolder
+        /// <summary>
+        /// Puts a dependency on an entire folder
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="folderPath"></param>
+        /// <returns></returns>
+        public static HtmlHelper RequiresJsFolder(this HtmlHelper html, string folderPath)
+        {
+            return html.RequiresJsFolder(folderPath, 100);
+        }
+
+        /// <summary>
+        /// Puts a dependency on an entire folder
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="folderPath"></param>
+        /// <param name="priority"></param>
+        /// <returns></returns>
+        public static HtmlHelper RequiresJsFolder(this HtmlHelper html, string folderPath, int priority)
+        {
+            return html.RequiresFolder(folderPath, priority, "*.js", (absPath, pri) => html.RequiresJs(absPath, pri));
+        }
+
+        /// <summary>
+        /// Puts a dependency on an entire folder
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="folderPath"></param>
+        /// <param name="priority"></param>
+        /// <param name="group"></param>
+        /// <returns></returns>
+        public static HtmlHelper RequiresJsFolder(this HtmlHelper html, string folderPath, int priority, int group)
+        {
+            return html.RequiresFolder(folderPath, priority, "*.js", (absPath, pri) => html.RequiresJs(absPath, pri, group));
+        }
+
+        /// <summary>
+        /// Puts a dependency on an entire folder
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="folderPath"></param>
+        /// <param name="priority"></param>
+        /// <param name="group"></param>
+        /// <param name="htmlAttributes"></param>
+        /// <returns></returns>
+        public static HtmlHelper RequiresJsFolder(this HtmlHelper html, string folderPath, int priority, int group, object htmlAttributes)
+        {
+            return html.RequiresFolder(folderPath, priority, "*.js", (absPath, pri) => html.RequiresJs(absPath, pri, group, htmlAttributes));
+        }
+
+        /// <summary>
+        /// Puts a dependency on an entire folder
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="folderPath"></param>
+        /// <param name="priority"></param>
+        /// <param name="htmlAttributes"></param>
+        /// <returns></returns>
+        public static HtmlHelper RequiresJsFolder(this HtmlHelper html, string folderPath, int priority, object htmlAttributes)
+        {
+            return html.RequiresFolder(folderPath, priority, "*.js", (absPath, pri) => html.RequiresJs(absPath, pri, htmlAttributes));
+        }
+
+        /// <summary>
+        /// Puts a dependency on an entire folder
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="folderPath"></param>
+        /// <param name="htmlAttributes"></param>
+        /// <returns></returns>
+        public static HtmlHelper RequiresJsFolder(this HtmlHelper html, string folderPath, object htmlAttributes)
+        {
+            return html.RequiresFolder(folderPath, 100, "*.js", (absPath, pri) => html.RequiresJs(absPath, pri, htmlAttributes));
+        } 
+        #endregion
+
+        #region RequireCssFolder
+        /// <summary>
+        /// Puts a dependency on an entire folder
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="folderPath"></param>
+        /// <returns></returns>
+        public static HtmlHelper RequiresCssFolder(this HtmlHelper html, string folderPath)
+        {
+            return html.RequiresJsFolder(folderPath, 100);
+        }
+
+        /// <summary>
+        /// Puts a dependency on an entire folder
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="folderPath"></param>
+        /// <param name="priority"></param>
+        /// <returns></returns>
+        public static HtmlHelper RequiresCssFolder(this HtmlHelper html, string folderPath, int priority)
+        {
+            return html.RequiresFolder(folderPath, priority, "*.css", (absPath, pri) => html.RequiresCss(absPath, pri));
+        }
+
+        /// <summary>
+        /// Puts a dependency on an entire folder
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="folderPath"></param>
+        /// <param name="priority"></param>
+        /// <param name="group"></param>
+        /// <returns></returns>
+        public static HtmlHelper RequiresCssFolder(this HtmlHelper html, string folderPath, int priority, int group)
+        {
+            return html.RequiresFolder(folderPath, priority, "*.css", (absPath, pri) => html.RequiresCss(absPath, pri, group));
+        }
+
+        /// <summary>
+        /// Puts a dependency on an entire folder
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="folderPath"></param>
+        /// <param name="priority"></param>
+        /// <param name="group"></param>
+        /// <param name="htmlAttributes"></param>
+        /// <returns></returns>
+        public static HtmlHelper RequiresCssFolder(this HtmlHelper html, string folderPath, int priority, int group, object htmlAttributes)
+        {
+            return html.RequiresFolder(folderPath, priority, "*.css", (absPath, pri) => html.RequiresCss(absPath, pri, group, htmlAttributes));
+        }
+
+        /// <summary>
+        /// Puts a dependency on an entire folder
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="folderPath"></param>
+        /// <param name="priority"></param>
+        /// <param name="htmlAttributes"></param>
+        /// <returns></returns>
+        public static HtmlHelper RequiresCssFolder(this HtmlHelper html, string folderPath, int priority, object htmlAttributes)
+        {
+            return html.RequiresFolder(folderPath, priority, "*.css", (absPath, pri) => html.RequiresCss(absPath, pri, htmlAttributes));
+        }
+
+        /// <summary>
+        /// Puts a dependency on an entire folder
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="folderPath"></param>
+        /// <param name="htmlAttributes"></param>
+        /// <returns></returns>
+        public static HtmlHelper RequiresCssFolder(this HtmlHelper html, string folderPath, object htmlAttributes)
+        {
+            return html.RequiresFolder(folderPath, 100, "*.css", (absPath, pri) => html.RequiresCss(absPath, pri, htmlAttributes));
+        } 
+        #endregion
+
+        private static HtmlHelper RequiresFolder(this HtmlHelper html, string folderPath, int priority, string fileSearch, Action<string, int> requiresAction)
+        {
+            var httpContext = html.ViewContext.HttpContext;
+            var systemRootPath = httpContext.Server.MapPath("~/");
+            var folderMappedPath = httpContext.Server.MapPath(folderPath);
+
+            if (folderMappedPath.StartsWith(systemRootPath))
+            {
+                var files = Directory.GetFiles(folderMappedPath, fileSearch, SearchOption.TopDirectoryOnly);
+                foreach (var file in files)
+                {
+                    var absoluteFilePath = "~/" + file.Substring(systemRootPath.Length).Replace("\\", "/");
+                    requiresAction(absoluteFilePath, priority);
+                    html.RequiresJs(absoluteFilePath, priority);
+                }
+            }
+
+            return html;
+        }
+
         #endregion
     }
 }

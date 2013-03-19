@@ -1,10 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace ClientDependency.Core.Controls
 {
+    /// <summary>
+    /// A control used to add a Css file dependency
+    /// </summary>
 	public class CssInclude : ClientDependencyInclude
 	{
 	    private CssMediaType _cssMedia;

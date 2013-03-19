@@ -95,7 +95,10 @@
     <Compile Include="Config\RogueFileCompressionExcludeElement.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="ControlExtensions.cs" />
+    <Compile Include="Controls\CssFolderInclude.cs" />
+    <Compile Include="Controls\DependencyFolderInclude.cs" />
     <Compile Include="Controls\HtmlInclude.cs" />
+    <Compile Include="Controls\JsFolderInclude.cs" />
     <Compile Include="CssHelper.cs" />
     <Compile Include="CssMediaType.cs" />
     <Compile Include="DependencyHtmlElement.cs" />
