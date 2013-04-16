@@ -1,7 +1,7 @@
 
 ![ClientDependency Framework](http://shazwazza.com/Content/Downloads/ClientDependencyLogo.png)
 
-<style>
+<style >
 .nuget-badge code {
 background-color: #202020;
 border: 4px solid silver;
@@ -15,7 +15,7 @@ font: normal normal normal 1.5em/normal 'andale mono', 'lucida console', monospa
 line-height: 1.5em;
 overflow: auto;
 padding: 15px;
-</style>
+</style >
 
 ## What is *ClientDependency Framework (CDF)* ?
 
