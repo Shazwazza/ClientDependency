@@ -21,6 +21,12 @@ namespace ClientDependency.Core
         public BaseLoader(HttpContextBase http)
         {
             CurrentContext = http;
+
+            //add the pre-defined paths to the instance collection
+            foreach (var p in PathsCollection.GetPaths())
+            {
+                AddPath(p);
+            }
         }
 
         protected HttpContextBase CurrentContext { get; private set; }

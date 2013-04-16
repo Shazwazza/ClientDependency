@@ -150,6 +150,7 @@
     <Compile Include="Module\RogueFileFilter.cs" />
     <Compile Include="NetworkHelper.cs" />
     <Compile Include="ObjectExtensions.cs" />
+    <Compile Include="PathsCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProviderDependencyList.cs" />
     <Compile Include="FileRegistration\Providers\BaseFileRegistrationProvider.cs" />
