@@ -23,17 +23,9 @@ CDF is a framework for managing dependencies for JavaScript and CSS files in you
 
 ## Nuget
 
-<div style="background-color: #202020;border: 4px solid silver;border-bottom-left-radius: 5px 5px;border-bottom-right-radius: 5px 5px;border-top-left-radius: 5px 5px;border-top-right-radius: 5px 5px;color: #E2E2E2;display: block;font: normal normal normal 1.5em/normal 'andale mono', 'lucida console', monospace;line-height: 1.5em;overflow: auto;padding: 15px;" >
-   <p>
-         <code>PM&gt; Install-Package ClientDependency</code>
-   </p>
-</div>
+	PM> Install-Package ClientDependency
 
-<div  style="background-color: #202020;border: 4px solid silver;border-bottom-left-radius: 5px 5px;border-bottom-right-radius: 5px 5px;border-top-left-radius: 5px 5px;border-top-right-radius: 5px 5px;color: #E2E2E2;display: block;font: normal normal normal 1.5em/normal 'andale mono', 'lucida console', monospace;line-height: 1.5em;overflow: auto;padding: 15px;">
-   <p>
-         <code>PM&gt; Install-Package ClientDependency-Mvc</code>
-   </p>
-</div>
+	PM> Install-Package ClientDependency-Mvc
 
 ## [Documentation](https://github.com/Shandem/ClientDependency/wiki)
 
