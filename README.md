@@ -22,6 +22,8 @@ This hugely simplifies collaborative development since any developer who is work
 * Pre-defined file paths - great for theming!
 * Detecting script and styles that are not explicitly registered with CDF and have the output compressed
 * Provider Model so you can choose how you would like your JS and CSS files rendered, combined, compressed & minified
+* MIME type compression outpu for things like JSON services, or anything you want
+* Control over how composite file URLs are structured if you need a custom format
 
 ## Nuget
 

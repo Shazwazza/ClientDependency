@@ -16,7 +16,7 @@ namespace ClientDependency.Core.Config
 		}
 
 		[StringValidator(MinLength = 1)]
-        [ConfigurationProperty("defaultProvider", DefaultValue = "LoaderControlProvider")]
+        [ConfigurationProperty("defaultProvider", DefaultValue = "PlaceHolderProvider")]
 		public string DefaultProvider
 		{
 			get { return (string)base["defaultProvider"]; }

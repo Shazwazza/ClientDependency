@@ -118,7 +118,7 @@ namespace ClientDependency.UnitTests
 
             //Assert
 
-            Assert.AreEqual(typeof(LoaderControlProvider), settings.DefaultFileRegistrationProvider.GetType());
+            Assert.AreEqual(typeof(PlaceHolderProvider), settings.DefaultFileRegistrationProvider.GetType());
             Assert.AreEqual(11111, settings.Version);
             Assert.AreEqual(typeof(StandardRenderer), settings.DefaultMvcRenderer.GetType());
             Assert.AreEqual(typeof(CompositeFileProcessingProvider), settings.DefaultCompositeFileProcessingProvider.GetType());

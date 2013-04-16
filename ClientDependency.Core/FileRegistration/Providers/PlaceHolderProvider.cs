@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -25,13 +26,16 @@ namespace ClientDependency.Core.FileRegistration.Providers
         public string JavaScriptPlaceHolderId { get; set; }
         public string CssPlaceHolderId { get; set; }
 
-        public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
+        public override void Initialize(string name, NameValueCollection config)
         {
             // Assign the provider a default name if it doesn't have one
             if (string.IsNullOrEmpty(name))
                 name = DefaultName;
 
             base.Initialize(name, config);
+
+            //for some stupid reason r# says this will never be null, but it certainly can be!
+            if (config == null) return;
 
             if (config["javascriptPlaceHolderId"] != null)
             {

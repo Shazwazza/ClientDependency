@@ -327,6 +327,10 @@ namespace ClientDependency.Core.Config
                 var lcp = new LoaderControlProvider();
                 lcp.Initialize(LoaderControlProvider.DefaultName, null);
                 FileRegistrationProviderCollection.Add(lcp);
+
+                var plhp = new PlaceHolderProvider();
+                plhp.Initialize(PlaceHolderProvider.DefaultName, null);
+                FileRegistrationProviderCollection.Add(plhp);
             }
             else
             {
