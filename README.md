@@ -5,6 +5,8 @@
 
 CDF is a framework for managing dependencies for JavaScript and CSS files in your web application (client files). It allows for each individual component in your web application to declare what CSS and JavaScript files they require instead of relying on a single master page to include all dependencies for all modules. 
 
+This hugely simplifies collaborative development since any developer who is working on a component doesn't need to worry about what CSS/JavaScript is being included on the main page. CDF will automagically wire everything up, ensure that your dependencies are ordered correctly, that there are no duplicates and render your CSS and JavaScript html tags properly on to the rendering page.
+
 ## Out of the box you get
 
 * MVC support - Any view engine
