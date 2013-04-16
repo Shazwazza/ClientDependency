@@ -107,6 +107,7 @@
     <Compile Include="CssHelper.cs" />
     <Compile Include="CssMediaType.cs" />
     <Compile Include="DependencyHtmlElement.cs" />
+    <Compile Include="DependencySorter.cs" />
     <Compile Include="DictionaryExtensions.cs" />
     <Compile Include="FileRegistration\Providers\BaseRenderer.cs" />
     <Compile Include="FileRegistration\Providers\LazyLoadRenderer.cs" />

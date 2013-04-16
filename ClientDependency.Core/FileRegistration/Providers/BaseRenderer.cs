@@ -13,50 +13,42 @@ namespace ClientDependency.Core.FileRegistration.Providers
     public abstract class BaseRenderer : BaseFileRegistrationProvider
     {
 
-
-        public virtual void RegisterDependencies(List<IClientDependencyFile> allDependencies, 
+        public virtual void RegisterDependencies(List<IClientDependencyFile> allDependencies,
             HashSet<IClientDependencyPath> paths,
             out string jsOutput,
             out string cssOutput,
             HttpContextBase http)
-        {            
-            var folderPaths = paths;
+        {
+            //we may have already processed this so don't do it again
+            if (http.Items["BaseRenderer.RegisterDependencies"] == null)
+            {
+                http.Items["BaseRenderer.RegisterDependencies"] = true;
 
-            UpdateFilePaths(allDependencies, folderPaths, http);
-            EnsureNoDuplicates(allDependencies, folderPaths);
+                var folderPaths = paths;
+
+                UpdateFilePaths(allDependencies, folderPaths, http);
+                EnsureNoDuplicates(allDependencies, folderPaths);
+            }
 
             var cssBuilder = new StringBuilder();
-			var jsBuilder = new StringBuilder();
+            var jsBuilder = new StringBuilder();
 
-            // find the groups
-            var groups = allDependencies
-                .Select(x => x.Group)
-                .Distinct()
-                .ToList();
-
-            // sort them
-            groups.Sort((a, b) => a.CompareTo(b));
-
-            foreach (var group in groups)
+            //group by the group and order by the value
+            foreach (var group in allDependencies.GroupBy(x => x.Group).OrderBy(x => x))
             {
-                var g = group;
-                var jsDependencies = allDependencies
-                    .Where(x => x.Group == g && x.DependencyType == ClientDependencyType.Javascript)
-                    .ToList();
+                //sort both the js and css dependencies properly
 
-                var cssDependencies = allDependencies
-                    .Where(x => x.Group == g && x.DependencyType == ClientDependencyType.Css)
-                    .ToList();
+                var jsDependencies = DependencySorter.SortItems(
+                    group.Where(x => x.DependencyType == ClientDependencyType.Javascript).ToList());
 
-                // sort by priority
-                jsDependencies.Sort((a, b) => a.Priority.CompareTo(b.Priority));
-                cssDependencies.Sort((a, b) => a.Priority.CompareTo(b.Priority));
+                var cssDependencies = DependencySorter.SortItems(
+                    allDependencies.Where(x => x.DependencyType == ClientDependencyType.Css).ToList());
 
                 //render
                 WriteStaggeredDependencies(cssDependencies, http, cssBuilder, RenderCssDependencies, RenderSingleCssFile);
-                WriteStaggeredDependencies(jsDependencies, http, jsBuilder, RenderJsDependencies, RenderSingleJsFile);                
-                
+                WriteStaggeredDependencies(jsDependencies, http, jsBuilder, RenderJsDependencies, RenderSingleJsFile);
             }
+            
             cssOutput = cssBuilder.ToString();
             jsOutput = jsBuilder.ToString();
         }

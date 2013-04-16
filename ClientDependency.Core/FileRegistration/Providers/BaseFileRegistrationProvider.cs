@@ -199,11 +199,11 @@ namespace ClientDependency.Core.FileRegistration.Providers
         protected virtual void UpdateFilePaths(IEnumerable<IClientDependencyFile> dependencies,
             HashSet<IClientDependencyPath> folderPaths, HttpContextBase http)
         {
+            var paths = folderPaths.ToList();
             foreach (var dependency in dependencies)
             {
                 if (!string.IsNullOrEmpty(dependency.PathNameAlias))
-                {
-                    var paths = folderPaths.ToList();
+                {                    
                     var d = dependency;
                     var path = paths.Find(
                         (p) => p.Name == d.PathNameAlias);
@@ -247,9 +247,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
             foreach (var d in dependencies)
             {
                 //check if it is a duplicate
-                if (dependencies
-                    .Where(x => x.FilePath.ToUpper().Trim().Equals(d.FilePath.ToUpper().Trim()))
-                    .Any())
+                if (dependencies.Count(x => x.FilePath.ToUpper().Trim().Equals(d.FilePath.ToUpper().Trim())) > 1)
                 {
                     //find the dups and return an object with the associated index
                     var dups = dependencies
@@ -263,18 +261,12 @@ namespace ClientDependency.Core.FileRegistration.Providers
                     //instead of by index
                     if (priorities.Count() > 1)
                     {
-                        toKeep.Add(dups
-                            .Where(x => x.File.Priority == priorities.Min())
-                            .First().File);
+                        toKeep.Add(dups.First(x => x.File.Priority == priorities.Min()).File);
                     }
                     else
                     {
                         //if not by priority, we just need to keep the first on in the list
-                        toKeep.Add(dups
-                            .Where(x => x.Index == dups
-                                .Select(p => p.Index)
-                                .Min())
-                            .First().File);
+                        toKeep.Add(dups.First(x => x.Index == dups.Select(p => p.Index).Min()).File);
                     }
                 }
                 else
@@ -282,8 +274,6 @@ namespace ClientDependency.Core.FileRegistration.Providers
                     //if there's only one found, then just add it to our output
                     toKeep.Add(d);
                 }
-
-
             }
 
             dependencies.Clear();
@@ -299,6 +289,10 @@ namespace ClientDependency.Core.FileRegistration.Providers
             if ((http.IsDebuggingEnabled || !EnableCompositeFiles)
                 || ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.UrlType == CompositeUrlType.Base64QueryStrings)
             {
+                //don't append if it is already there!
+                if (url.Contains("cdv=" + ClientDependencySettings.Instance.Version))
+                    return url;
+
                 //ensure there's not duplicated query string syntax
                 url += url.Contains('?') ? "&" : "?";
                 //append a version
@@ -306,6 +300,9 @@ namespace ClientDependency.Core.FileRegistration.Providers
             }
             else
             {
+                if (url.EndsWith(ClientDependencySettings.Instance.Version.ToString()))
+                    return url;
+
                 //the URL should end with a '0'
                 url = url.TrimEnd('0') + ClientDependencySettings.Instance.Version;
             }

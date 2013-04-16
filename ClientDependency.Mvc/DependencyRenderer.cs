@@ -172,24 +172,20 @@ namespace ClientDependency.Core.Mvc
         /// </remarks>
         private void GenerateOutput()
         {
+            foreach (var x in Dependencies)
+            {
+                var renderer = ((BaseRenderer)x.Provider);
+                string js, css;
+                renderer.RegisterDependencies(x.Dependencies, Paths, out js, out css, CurrentContext);
 
-            Dependencies
-                .ToList()
-                .ForEach(x =>
+                //store the output in a new output object
+                _output.Add(new RendererOutput()
                 {
-                    var renderer = ((BaseRenderer)x.Provider);
-                    string js, css;
-                    renderer.RegisterDependencies(x.Dependencies, Paths, out js, out css, CurrentContext);
-
-                    //store the output in a new output object
-                    _output.Add(new RendererOutput()
-                    {
-                        Name = x.Provider.Name,
-                        OutputCss = css.Replace("&", "&amp;"),
-                        OutputJs = js.Replace("&", "&amp;")
-                    });
+                    Name = x.Provider.Name,
+                    OutputCss = css.Replace("&", "&amp;"),
+                    OutputJs = js.Replace("&", "&amp;")
                 });
-
+            }
         }
 
         private class RendererOutput
