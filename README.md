@@ -1,22 +1,6 @@
 
 ![ClientDependency Framework](http://shazwazza.com/Content/Downloads/ClientDependencyLogo.png)
 
-<style >
-.nuget-badge code {
-background-color: #202020;
-border: 4px solid silver;
-border-bottom-left-radius: 5px 5px;
-border-bottom-right-radius: 5px 5px;
-border-top-left-radius: 5px 5px;
-border-top-right-radius: 5px 5px;
-color: #E2E2E2;
-display: block;
-font: normal normal normal 1.5em/normal 'andale mono', 'lucida console', monospace;
-line-height: 1.5em;
-overflow: auto;
-padding: 15px;
-</style >
-
 ## What is *ClientDependency Framework (CDF)* ?
 
 CDF is a framework for managing dependencies for JavaScript and CSS files in your web application (client files). It allows for each individual component in your web application to declare what CSS and JavaScript files they require instead of relying on a single master page to include all dependencies for all modules. 
@@ -39,13 +23,13 @@ CDF is a framework for managing dependencies for JavaScript and CSS files in you
 
 ## Nuget
 
-<div class="nuget-badge" >
+<div style="background-color: #202020;border: 4px solid silver;border-bottom-left-radius: 5px 5px;border-bottom-right-radius: 5px 5px;border-top-left-radius: 5px 5px;border-top-right-radius: 5px 5px;color: #E2E2E2;display: block;font: normal normal normal 1.5em/normal 'andale mono', 'lucida console', monospace;line-height: 1.5em;overflow: auto;padding: 15px;" >
    <p>
          <code>PM&gt; Install-Package ClientDependency</code>
    </p>
 </div>
 
-<div class="nuget-badge" >
+<div  style="background-color: #202020;border: 4px solid silver;border-bottom-left-radius: 5px 5px;border-bottom-right-radius: 5px 5px;border-top-left-radius: 5px 5px;border-top-right-radius: 5px 5px;color: #E2E2E2;display: block;font: normal normal normal 1.5em/normal 'andale mono', 'lucida console', monospace;line-height: 1.5em;overflow: auto;padding: 15px;">
    <p>
          <code>PM&gt; Install-Package ClientDependency-Mvc</code>
    </p>
