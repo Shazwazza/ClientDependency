@@ -8,6 +8,7 @@ using System.Web.SessionState;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml.Linq;
+using ClientDependency.Core;
 using ClientDependency.Core.Config;
 using ClientDependency.Core.Mvc;
 
@@ -27,7 +28,14 @@ namespace ClientDependency.Web.Test
                 "{controller}/{action}", // URL with parameters
                 new { controller = "Test" } // Parameter defaults
             );
+        }
 
+        public static void CreateBundles()
+        {
+            BundleManager.CreateCssBundle("CssBundle", 
+                new CssFile("~/Css/BundleTest/css1.css"),
+                new CssFile("~/Css/BundleTest/css2.css"),
+                new CssFile("~/Css/BundleTest/css3.css"));
         }
 
         protected void Application_Start()
@@ -40,6 +48,8 @@ namespace ClientDependency.Web.Test
 
             //remove MVC filter (to test the view engines) (if you want to test)
             //ClientDependencySettings.Instance.ConfigSection.Filters.Remove("MvcFilter");
+
+            CreateBundles();
         }
     }
 

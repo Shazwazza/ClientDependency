@@ -37,6 +37,10 @@ namespace ClientDependency.Core.Controls
 		/// </summary>
 		public string ForceProvider { get; set; }
 
+        /// <summary>
+        /// If the resources is an external resource then normally it will be rendered as it's own download unless
+        /// this is set to true. In that case the system will download the external resource and include it in the local bundle.
+        /// </summary>
 		public bool ForceBundle { get; set; }
 
         /// <summary>

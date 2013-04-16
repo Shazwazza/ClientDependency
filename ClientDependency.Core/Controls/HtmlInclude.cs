@@ -12,6 +12,17 @@ namespace ClientDependency.Core.Controls
         public const string TagPattern = @"<{0}((\s+\w+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)+\s*|\s*)/?>";
         public const string AttributePattern = @"{0}(\s*=\s*(?:""(?<val>.*?)""|'(?<val>.*?)'|(?<val>[^'"">\s]+)))";
 
+        public string ForceProvider { get; set; }
+        public int Priority { get; set; }
+        public int Group { get; set; }
+
+        public HtmlInclude()
+        {
+            Priority = Constants.DefaultPriority;
+            Group = Constants.DefaultGroup;
+            ForceProvider = null;
+        }
+
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -24,13 +35,13 @@ namespace ClientDependency.Core.Controls
             Text = string.Empty;
         }
 
-        private static void RegisterIncludes(string innerHtml, ClientDependencyLoader loader)
+        private void RegisterIncludes(string innerHtml, ClientDependencyLoader loader)
         {
             RegisterCssIncludes(innerHtml, loader);
             RegisterJsIncludes(innerHtml, loader);
         }
 
-        private static void RegisterCssIncludes(string innerHtml, ClientDependencyLoader loader)
+        private void RegisterCssIncludes(string innerHtml, ClientDependencyLoader loader)
         {
             var tagPattern = string.Format(TagPattern, "link");
             var typeAttributePattern = string.Format(AttributePattern, "type");
@@ -51,9 +62,9 @@ namespace ClientDependency.Core.Controls
 
                     if (srcMatch.Success)
                     {
-                        loader.RegisterDependency(Constants.DefaultPriority + count,
-                            srcMatch.Groups["val"].Value,
-                            ClientDependencyType.Css);
+                        loader.RegisterDependency(Group, Priority + count,
+                            srcMatch.Groups["val"].Value, "",
+                            ClientDependencyType.Css, ForceProvider);
 
                         count++;
                     }
@@ -61,7 +72,7 @@ namespace ClientDependency.Core.Controls
             }
         }
 
-        private static void RegisterJsIncludes(string innerHtml, ClientDependencyLoader loader)
+        private void RegisterJsIncludes(string innerHtml, ClientDependencyLoader loader)
         {
             var tagPattern = string.Format(TagPattern, "script");
             var typeAttributePattern = string.Format(AttributePattern, "type");
@@ -82,9 +93,9 @@ namespace ClientDependency.Core.Controls
 
                     if (srcMatch.Success)
                     {
-                        loader.RegisterDependency(Constants.DefaultPriority + count,
-                            srcMatch.Groups["val"].Value,
-                            ClientDependencyType.Javascript);
+                        loader.RegisterDependency(Group, Priority + count,
+                            srcMatch.Groups["val"].Value, "",
+                            ClientDependencyType.Javascript, ForceProvider);
 
                         count++;
                     }

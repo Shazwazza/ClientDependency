@@ -9,6 +9,9 @@ using ClientDependency.Core.FileRegistration.Providers;
 
 namespace ClientDependency.Core.Controls
 {
+    /// <summary>
+    /// This is the master control for loading in dependencies in web forms
+    /// </summary>
 	[ParseChildren(typeof(ClientDependencyPath), ChildrenAsProperties = true)]
 	public class ClientDependencyLoader : Control
 	{
@@ -59,6 +62,7 @@ namespace ClientDependency.Core.Controls
             else
                 throw new InvalidOperationException("ClientDependencyLoader requires an HttpContext");
         }
+
 
 		public const string ContextKey = "ClientDependencyLoader";
 
@@ -130,7 +134,8 @@ namespace ClientDependency.Core.Controls
 		{
 			base.OnPreRender(e);
 
-            _base.Paths.UnionWith(Paths.Cast<IClientDependencyPath>());
+            _base.Paths.UnionWith(Paths);
+
             RegisterClientDependencies((WebFormsFileRegistrationProvider)_base.Provider, Page, _base.Paths);
 			RenderDependencies();
 		}
@@ -237,7 +242,7 @@ namespace ClientDependency.Core.Controls
             _base.RegisterDependency(Constants.DefaultGroup, Constants.DefaultPriority, filePath, pathNameAlias, type);
 			return this;
 		}
-		
+
 		/// <summary>
 		/// Adds a path to the current loader
 		/// </summary>

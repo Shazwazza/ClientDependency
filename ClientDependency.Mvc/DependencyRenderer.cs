@@ -13,6 +13,9 @@ using System.Text.RegularExpressions;
 
 namespace ClientDependency.Core.Mvc
 {
+    /// <summary>
+    /// This is the class that controls rendering dependencies for MVC
+    /// </summary>
     public class DependencyRenderer : BaseLoader
     {
         /// <summary>
@@ -89,7 +92,7 @@ namespace ClientDependency.Core.Mvc
         #endregion
 
         #region Internal Methods
-
+        
         /// <summary>
         /// This replaces the HTML placeholders that we're rendered into the html
         /// markup before the module calls this method to update the placeholders with 
@@ -116,7 +119,7 @@ namespace ClientDependency.Core.Mvc
                 (m) =>
                 {
                     var grp = m.Groups["renderer"];
-                    if (grp != null)
+                    if (grp != null && _output.Any())
                     {
                         return _output.Single(x => x.Name == grp.ToString()).OutputCss;
                     }

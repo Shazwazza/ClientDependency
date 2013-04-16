@@ -111,6 +111,9 @@
     <Content Include="Controls\Footer.ascx" />
     <Content Include="Controls\Header.ascx" />
     <Content Include="Controls\Sidebar.ascx" />
+    <Content Include="Css\BundleTest\css1.css" />
+    <Content Include="Css\BundleTest\css2.css" />
+    <Content Include="Css\BundleTest\css3.css" />
     <Content Include="Css\Controls.css" />
     <Content Include="Css\Imports.css" />
     <Content Include="Css\Print.css" />
@@ -287,6 +290,7 @@
     <Content Include="Views\Test\RogueDependencies.aspx" />
     <None Include="Views\Shared\Master.cshtml" />
     <Content Include="Views\Test\ImportsCss.cshtml" />
+    <Content Include="Views\Test\Bundles.cshtml" />
     <None Include="Views\Test\Default.cshtml" />
   </ItemGroup>
   <ItemGroup>

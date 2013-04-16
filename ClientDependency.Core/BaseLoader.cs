@@ -12,7 +12,9 @@ using System.Runtime.CompilerServices;
 
 namespace ClientDependency.Core
 {
-    
+    /// <summary>
+    /// The base class that exposees all of the basic operations used for rendering dependencies in a request
+    /// </summary>
     public class BaseLoader
     {
 
@@ -69,14 +71,18 @@ namespace ClientDependency.Core
         /// </remarks>
         public void RegisterClientDependencies(BaseFileRegistrationProvider provider, IEnumerable<IClientDependencyFile> dependencies, IEnumerable<IClientDependencyPath> paths, ProviderCollection currProviders)
         {
+            var asList = dependencies.ToList();
+
             //find or create the ProviderDependencyList for the provider
             ProviderDependencyList currList = Dependencies
                 .Where(x => x.ProviderIs(provider))
                 .DefaultIfEmpty(new ProviderDependencyList(provider))
                 .SingleOrDefault();
+
+            if (currList == null) return;
             
             //add the dependencies that don't have a provider specified
-            currList.AddDependencies(dependencies
+            currList.AddDependencies(asList
                 .Where(x => string.IsNullOrEmpty(x.ForceProvider)));
             
             //add the list if it is new
@@ -86,7 +92,7 @@ namespace ClientDependency.Core
             //we need to look up all of the dependencies that have forced providers, 
             //check if we've got a provider list for it, create one if not and add the dependencies
             //to it.
-            var allProviderNamesInList = dependencies
+            var allProviderNamesInList = asList
                 .Select(x => x.ForceProvider)
                 .Where(x => !string.IsNullOrEmpty(x))
                 .Distinct();
@@ -101,8 +107,11 @@ namespace ClientDependency.Core
                     .Where(x => x.ProviderIs(prov))
                     .DefaultIfEmpty(new ProviderDependencyList(prov))
                     .SingleOrDefault();
+
+                if (forceList == null) continue;
+
                 //add the dependencies that don't have a force provider specified
-                forceList.AddDependencies(dependencies
+                forceList.AddDependencies(asList
                     .Where(x => x.ForceProvider == p.Name));
                 //add the list if it is new
                 if (!Dependencies.Contains(forceList))
@@ -144,10 +153,18 @@ namespace ClientDependency.Core
 
             RegisterClientDependencies(Provider, dependencies, paths, combinedCollection);
         }
-
-
-
+        
         #region RegisterDependency overloads
+
+        public void RegisterDependency(IClientDependencyFile file)
+        {
+            RegisterDependency(file.Group, file.Priority, file.FilePath, file.PathNameAlias, file.DependencyType);
+        }
+
+        public void RegisterDependency(IClientDependencyFile file, object htmlAttributes)
+        {
+            RegisterDependency(file.Group, file.Priority, file.FilePath, file.PathNameAlias, file.DependencyType, htmlAttributes);
+        }
 
         public void RegisterDependency(string filePath, ClientDependencyType type)
         {
@@ -250,6 +267,42 @@ namespace ClientDependency.Core
 
         #endregion
 
+        private readonly List<BundleDefinition> _registeredBundles = new List<BundleDefinition>();
+        
+        /// <summary>
+        /// Ensures that the bundle with the specified name is registered for output
+        /// </summary>
+        /// <param name="bundleName"></param>
+        internal void EnsureJsBundleRegistered(string bundleName)
+        {
+            var found = BundleManager.GetJsBundle(bundleName);
+            EnsureBundleRegistered(found);
+        }
 
+        /// <summary>
+        /// Ensures that the bundle with the specified name is registered for output
+        /// </summary>
+        internal void EnsureCssBundleRegistered(string bundleName)
+        {
+            var found = BundleManager.GetCssBundle(bundleName);
+            EnsureBundleRegistered(found);
+        }
+
+        private void EnsureBundleRegistered(BundleResult result)
+        {
+            var found = result;
+            if (found == null) return;
+
+            //only register once
+            if (_registeredBundles.Contains(found.Definition)) return;
+
+            //set the flag so it doesn't get registered for output again
+            _registeredBundles.Add(found.Definition);
+
+            foreach (var file in found.Files)
+            {
+                RegisterDependency(file);
+            }
+        }
     }
 }

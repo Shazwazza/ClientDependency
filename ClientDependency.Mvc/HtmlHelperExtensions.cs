@@ -89,6 +89,11 @@ namespace ClientDependency.Core.Mvc
         #endregion
 
         #region RequiresJs Extensions
+        public static HtmlHelper RequiresJsBundle(this HtmlHelper html, string bundleName)
+        {
+            html.ViewContext.GetLoader().EnsureJsBundleRegistered(bundleName);
+            return html;
+        }
         public static HtmlHelper RequiresJs(this HtmlHelper html, string filePath)
         {
             html.ViewContext.GetLoader().RegisterDependency(filePath, ClientDependencyType.Javascript);
@@ -155,6 +160,12 @@ namespace ClientDependency.Core.Mvc
         #endregion
 
         #region RequiresCss Extensions
+        public static HtmlHelper RequiresCssBundle(this HtmlHelper html, string bundleName)
+        {
+            html.ViewContext.GetLoader().EnsureCssBundleRegistered(bundleName);
+            return html;
+        }
+
         public static HtmlHelper RequiresCss(this HtmlHelper html, string filePath)
         {
             html.ViewContext.GetLoader().RegisterDependency(filePath, ClientDependencyType.Css);
@@ -276,6 +287,88 @@ namespace ClientDependency.Core.Mvc
         #region RequiresJsFolder/RequiresCssFolder
 
         #region RequiresJsFolder
+
+        /// <summary>
+        /// Puts a dependency on an entire folder
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="folderPath"></param>
+        /// <param name="searchFilter"></param>
+        /// <returns></returns>
+        public static HtmlHelper RequiresJsFolder(this HtmlHelper html, string folderPath, string searchFilter)
+        {
+            return html.RequiresFolder(folderPath, 100, searchFilter, (absPath, pri) => html.RequiresJs(absPath, pri));        
+        }
+
+        /// <summary>
+        /// Puts a dependency on an entire folder
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="folderPath"></param>
+        /// <param name="searchFilter"></param>
+        /// <param name="priority"></param>
+        /// <returns></returns>
+        public static HtmlHelper RequiresJsFolder(this HtmlHelper html, string folderPath, string searchFilter, int priority)
+        {
+            return html.RequiresFolder(folderPath, priority, searchFilter, (absPath, pri) => html.RequiresJs(absPath, pri));
+        }
+
+        /// <summary>
+        /// Puts a dependency on an entire folder
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="folderPath"></param>
+        /// <param name="searchFilter"></param>
+        /// <param name="priority"></param>
+        /// <param name="group"></param>
+        /// <returns></returns>
+        public static HtmlHelper RequiresJsFolder(this HtmlHelper html, string folderPath, string searchFilter, int priority, int group)
+        {
+            return html.RequiresFolder(folderPath, priority, searchFilter, (absPath, pri) => html.RequiresJs(absPath, pri, group));
+        }
+
+        /// <summary>
+        /// Puts a dependency on an entire folder
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="folderPath"></param>
+        /// <param name="searchFilter"></param>
+        /// <param name="priority"></param>
+        /// <param name="group"></param>
+        /// <param name="htmlAttributes"></param>
+        /// <returns></returns>
+        public static HtmlHelper RequiresJsFolder(this HtmlHelper html, string folderPath, string searchFilter, int priority, int group, object htmlAttributes)
+        {
+            return html.RequiresFolder(folderPath, priority, searchFilter, (absPath, pri) => html.RequiresJs(absPath, pri, group, htmlAttributes));
+        }
+
+        /// <summary>
+        /// Puts a dependency on an entire folder
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="folderPath"></param>
+        /// <param name="searchFilter"></param>
+        /// <param name="priority"></param>
+        /// <param name="htmlAttributes"></param>
+        /// <returns></returns>
+        public static HtmlHelper RequiresJsFolder(this HtmlHelper html, string folderPath, string searchFilter, int priority, object htmlAttributes)
+        {
+            return html.RequiresFolder(folderPath, priority, searchFilter, (absPath, pri) => html.RequiresJs(absPath, pri, htmlAttributes));
+        }
+
+        /// <summary>
+        /// Puts a dependency on an entire folder
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="folderPath"></param>
+        /// <param name="searchFilter"></param>
+        /// <param name="htmlAttributes"></param>
+        /// <returns></returns>
+        public static HtmlHelper RequiresJsFolder(this HtmlHelper html, string folderPath, string searchFilter, object htmlAttributes)
+        {
+            return html.RequiresFolder(folderPath, 100, searchFilter, (absPath, pri) => html.RequiresJs(absPath, pri, htmlAttributes));
+        }
+
         /// <summary>
         /// Puts a dependency on an entire folder
         /// </summary>
@@ -350,9 +443,91 @@ namespace ClientDependency.Core.Mvc
         {
             return html.RequiresFolder(folderPath, 100, "*.js", (absPath, pri) => html.RequiresJs(absPath, pri, htmlAttributes));
         } 
+
         #endregion
 
         #region RequireCssFolder
+        /// <summary>
+        /// Puts a dependency on an entire folder
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="folderPath"></param>
+        /// <param name="searchFilter"></param>
+        /// <returns></returns>
+        public static HtmlHelper RequiresCssFolder(this HtmlHelper html, string folderPath, string searchFilter)
+        {
+            return html.RequiresFolder(folderPath, 100, searchFilter, (absPath, pri) => html.RequiresCss(absPath, pri));
+        }
+
+        /// <summary>
+        /// Puts a dependency on an entire folder
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="folderPath"></param>
+        /// <param name="searchFilter"></param>
+        /// <param name="priority"></param>
+        /// <returns></returns>
+        public static HtmlHelper RequiresCssFolder(this HtmlHelper html, string folderPath, string searchFilter, int priority)
+        {
+            return html.RequiresFolder(folderPath, priority, searchFilter, (absPath, pri) => html.RequiresCss(absPath, pri));
+        }
+
+        /// <summary>
+        /// Puts a dependency on an entire folder
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="folderPath"></param>
+        /// <param name="searchFilter"></param>
+        /// <param name="priority"></param>
+        /// <param name="group"></param>
+        /// <returns></returns>
+        public static HtmlHelper RequiresCssFolder(this HtmlHelper html, string folderPath, string searchFilter, int priority, int group)
+        {
+            return html.RequiresFolder(folderPath, priority, searchFilter, (absPath, pri) => html.RequiresCss(absPath, pri, group));
+        }
+
+        /// <summary>
+        /// Puts a dependency on an entire folder
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="folderPath"></param>
+        /// <param name="searchFilter"></param>
+        /// <param name="priority"></param>
+        /// <param name="group"></param>
+        /// <param name="htmlAttributes"></param>
+        /// <returns></returns>
+        public static HtmlHelper RequiresCssFolder(this HtmlHelper html, string folderPath, string searchFilter, int priority, int group, object htmlAttributes)
+        {
+            return html.RequiresFolder(folderPath, priority, searchFilter, (absPath, pri) => html.RequiresCss(absPath, pri, group, htmlAttributes));
+        }
+
+        /// <summary>
+        /// Puts a dependency on an entire folder
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="folderPath"></param>
+        /// <param name="searchFilter"></param>
+        /// <param name="priority"></param>
+        /// <param name="htmlAttributes"></param>
+        /// <returns></returns>
+        public static HtmlHelper RequiresCssFolder(this HtmlHelper html, string folderPath, string searchFilter, int priority, object htmlAttributes)
+        {
+            return html.RequiresFolder(folderPath, priority, searchFilter, (absPath, pri) => html.RequiresCss(absPath, pri, htmlAttributes));
+        }
+
+        /// <summary>
+        /// Puts a dependency on an entire folder
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="folderPath"></param>
+        /// <param name="searchFilter"></param>
+        /// <param name="htmlAttributes"></param>
+        /// <returns></returns>
+        public static HtmlHelper RequiresCssFolder(this HtmlHelper html, string folderPath, string searchFilter, object htmlAttributes)
+        {
+            return html.RequiresFolder(folderPath, 100, searchFilter, (absPath, pri) => html.RequiresCss(absPath, pri, htmlAttributes));
+        } 
+
         /// <summary>
         /// Puts a dependency on an entire folder
         /// </summary>

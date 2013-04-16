@@ -1,0 +1,22 @@
+﻿@model ClientDependency.Web.Test.Models.TestModel
+@using ClientDependency.Core.Mvc
+
+@{
+    Layout = "~/Views/Shared/Master.cshtml";
+}
+
+@section TitleContent
+{
+Home Page
+}
+
+@{ Html.RequiresCss("Content.css", "Styles")
+       .RequiresCssBundle("CssBundle"); }
+
+<div class="mainContent">
+    <h2>
+        @this.Model.Heading</h2>
+    <div>
+        @Html.Raw(this.Model.BodyContent)
+    </div>
+</div>

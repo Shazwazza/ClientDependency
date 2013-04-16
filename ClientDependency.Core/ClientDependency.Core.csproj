@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ClientDependency.Core</RootNamespace>
     <AssemblyName>ClientDependency.Core</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>
     </SccProjectName>
@@ -24,6 +24,7 @@
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -76,6 +77,9 @@
     <Compile Include="BaseLoader.cs" />
     <Compile Include="BasicFile.cs" />
     <Compile Include="BasicPath.cs" />
+    <Compile Include="BundleDefinition.cs" />
+    <Compile Include="BundleManager.cs" />
+    <Compile Include="BundleResult.cs" />
     <Compile Include="ClientDependencyResourceHandler.cs" />
     <Compile Include="CompositeFiles\CSSMin.cs" />
     <Compile Include="CompositeFiles\JSMin.cs" />
@@ -99,6 +103,7 @@
     <Compile Include="Controls\DependencyFolderInclude.cs" />
     <Compile Include="Controls\HtmlInclude.cs" />
     <Compile Include="Controls\JsFolderInclude.cs" />
+    <Compile Include="CssFile.cs" />
     <Compile Include="CssHelper.cs" />
     <Compile Include="CssMediaType.cs" />
     <Compile Include="DependencyHtmlElement.cs" />
@@ -116,6 +121,7 @@
     <Compile Include="IHaveHtmlAttributes.cs" />
     <Compile Include="IHttpProvider.cs" />
     <Compile Include="IRequiresHtmlAttributesParsing.cs" />
+    <Compile Include="JavascriptFile.cs" />
     <Compile Include="Logging\TraceLogger.cs" />
     <Compile Include="Module\ClientDependencyModule.cs" />
     <Compile Include="Config\CompositeFileSection.cs" />

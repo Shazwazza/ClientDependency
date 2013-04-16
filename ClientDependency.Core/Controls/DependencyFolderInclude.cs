@@ -18,11 +18,16 @@ namespace ClientDependency.Core.Controls
         }
 
         public string FolderVirtualPath { get; set; }
+        public string ForceProvider { get; set; }
         public int Priority { get; set; }
         public int Group { get; set; }
 
         protected abstract ClientDependencyType DependencyType { get; }
-        protected abstract string FileSearchPattern { get; }
+        
+        /// <summary>
+        /// Gets/sets the search pattern for css files
+        /// </summary>
+        protected string FileSearchPattern { get; set; }
 
         /// <summary>
         /// Used to set the HtmlAttributes on this class via a string which is parsed
@@ -52,6 +57,7 @@ namespace ClientDependency.Core.Controls
                             Priority = Priority,
                             FilePath = absoluteFilePath,
                             DependencyType = DependencyType,
+                            ForceProvider = ForceProvider,
                             Group = Group,
                             HtmlAttributesAsString = HtmlAttributesAsString
                         });

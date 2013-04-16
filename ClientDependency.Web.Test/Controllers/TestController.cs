@@ -11,6 +11,18 @@ namespace ClientDependency.Web.Test.Controllers
     public class TestController : Controller
     {
 
+        public ActionResult Bundles()
+        {
+            var model = new TestModel()
+            {
+                Heading = "This tests pre-defined bundles",
+                BodyContent = @"<p>We've defined a pre-defined css bundle in the global.asax called CssBundle and we have put a dependency on that bundle in this view</p>"
+            };
+
+            return View(model);
+
+        }
+
         public ActionResult ImportsCss()
         {
             var model = new TestModel()

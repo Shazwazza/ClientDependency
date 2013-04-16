@@ -2,6 +2,6 @@
 @import url("../Css/OverrideStyles.css");
 @import url('/VirtualFolderTest/Css/Print.css');
 
-body {
-    font-size: 1.5em !important;
+html * {
+     border-style: dotted !important;
 }
