@@ -44,6 +44,8 @@ namespace ClientDependency.Core.CompositeFiles
         int theA;
         int theB;
         int theLookahead = EOF;
+        static int theX = EOF;
+        static int theY = EOF;
 
         public static string CompressJS(string body)
         {
@@ -70,6 +72,12 @@ namespace ClientDependency.Core.CompositeFiles
         */
         void jsmin()
         {
+            if (peek() == 0xEF)
+            {
+                get();
+                get();
+                get();
+            }
             theA = '\n';
             action(3);
             while (theA != EOF)
@@ -77,102 +85,57 @@ namespace ClientDependency.Core.CompositeFiles
                 switch (theA)
                 {
                     case ' ':
-                        {
-                            if (isAlphanum(theB))
-                            {
-                                action(1);
-                            }
-                            else
-                            {
-                                action(2);
-                            }
-                            break;
-                        }
+                        action(isAlphanum(theB) ? 1 : 2);
+                        break;
                     case '\n':
+                        switch (theB)
                         {
-                            switch (theB)
-                            {
-                                case '{':
-                                case '[':
-                                case '(':
-                                case '+':
-                                case '-':
-                                    {
-                                        action(1);
-                                        break;
-                                    }
-                                case ' ':
-                                    {
-                                        action(3);
-                                        break;
-                                    }
-                                default:
-                                    {
-                                        if (isAlphanum(theB))
-                                        {
-                                            action(1);
-                                        }
-                                        else
-                                        {
-                                            action(2);
-                                        }
-                                        break;
-                                    }
-                            }
-                            break;
+                            case '{':
+                            case '[':
+                            case '(':
+                            case '+':
+                            case '-':
+                            case '!':
+                            case '~':
+                                action(1);
+                                break;
+                            case ' ':
+                                action(3);
+                                break;
+                            default:
+                                action(isAlphanum(theB) ? 1 : 2);
+                                break;
                         }
+                        break;
                     default:
+                        switch (theB)
                         {
-                            switch (theB)
-                            {
-                                case ' ':
-                                    {
-                                        if (isAlphanum(theA))
-                                        {
-                                            action(1);
-                                            break;
-                                        }
-                                        action(3);
-                                        break;
-                                    }
-                                case '\n':
-                                    {
-                                        switch (theA)
-                                        {
-                                            case '}':
-                                            case ']':
-                                            case ')':
-                                            case '+':
-                                            case '-':
-                                            case '"':
-                                            case '\'':
-                                                {
-                                                    action(1);
-                                                    break;
-                                                }
-                                            default:
-                                                {
-                                                    if (isAlphanum(theA))
-                                                    {
-                                                        action(1);
-                                                    }
-                                                    else
-                                                    {
-                                                        action(3);
-                                                    }
-                                                    break;
-                                                }
-                                        }
-                                        break;
-                                    }
-                                default:
-                                    {
+                            case ' ':
+                                action(isAlphanum(theA) ? 1 : 3);
+                                break;
+                            case '\n':
+                                switch (theA)
+                                {
+                                    case '}':
+                                    case ']':
+                                    case ')':
+                                    case '+':
+                                    case '-':
+                                    case '"':
+                                    case '\'':
+                                    case '`':
                                         action(1);
                                         break;
-                                    }
-                            }
-                            break;
+                                    default:
+                                        action(isAlphanum(theA) ? 1 : 3);
+                                        break;
+                                }
+                                break;
+                            default:
+                                action(1);
+                                break;
                         }
+                        break;
                 }
             }
         }
@@ -185,72 +148,115 @@ namespace ClientDependency.Core.CompositeFiles
         */
         void action(int d)
         {
-            if (d <= 1)
+            switch (d)
             {
-                put(theA);
-            }
-            if (d <= 2)
-            {
-                theA = theB;
-                if (theA == '\'' || theA == '"')
-                {
-                    for (; ; )
-                    {
-                        put(theA);
-                        theA = get();
-                        if (theA == theB)
-                        {
-                            break;
-                        }
-                        if (theA <= '\n')
-                        {
-                            throw new Exception(string.Format("Error: JSMIN unterminated string literal: {0}\n", theA));
-                        }
-                        if (theA == '\\')
-                        {
-                            put(theA);
-                            theA = get();
-                        }
-                    }
-                }
-            }
-            if (d <= 3)
-            {
-                theB = next();
-                if (theB == '/' && (theA == '(' || theA == ',' || theA == '=' ||
-                                    theA == '[' || theA == '!' || theA == ':' ||
-                                    theA == '&' || theA == '|' || theA == '?' ||
-                                    theA == '{' || theA == '}' || theA == ';' ||
-                                    theA == '\n'))
-                {
+                case 1:
                     put(theA);
-                    put(theB);
-                    for (; ; )
+                    if (
+                        (theY == '\n' || theY == ' ') &&
+                        (theA == '+' || theA == '-' || theA == '*' || theA == '/') &&
+                        (theB == '+' || theB == '-' || theB == '*' || theB == '/')
+                        )
                     {
-                        theA = get();
-                        if (theA == '/')
-                        {
-                            break;
-                        }
-                        else if (theA == '\\')
+                        put(theY);
+                    }
+                    goto case 2;
+                case 2:
+                    theA = theB;
+                    if (theA == '\'' || theA == '"' || theA == '`')
+                    {
+                        for (;;)
                         {
                             put(theA);
                             theA = get();
+                            if (theA == theB)
+                            {
+                                break;
+                            }
+                            if (theA == '\\')
+                            {
+                                put(theA);
+                                theA = get();
+                            }
+                            if (theA == EOF)
+                            {
+                                throw new Exception(string.Format("Error: JSMIN unterminated string literal: {0}\n", theA));
+                            }
                         }
-                        else if (theA <= '\n')
-                        {
-                            throw new Exception(string.Format("Error: JSMIN unterminated Regular Expression literal : {0}.\n", theA));
-                        }
-                        put(theA);
                     }
+                    goto case 3;
+                case 3:
                     theB = next();
-                }
+                    if (theB == '/' && (
+                                           theA == '(' || theA == ',' || theA == '=' || theA == ':' ||
+                                           theA == '[' || theA == '!' || theA == '&' || theA == '|' ||
+                                           theA == '?' || theA == '+' || theA == '-' || theA == '~' ||
+                                           theA == '*' || theA == '/' || theA == '{' || theA == '\n'
+                                       ))
+                    {
+                        put(theA);
+                        if (theA == '/' || theA == '*')
+                        {
+                            put(' ');
+                        }
+                        put(theB);
+                        for (;;)
+                        {
+                            theA = get();
+                            if (theA == '[')
+                            {
+                                for (;;)
+                                {
+                                    put(theA);
+                                    theA = get();
+                                    if (theA == ']')
+                                    {
+                                        break;
+                                    }
+                                    if (theA == '\\')
+                                    {
+                                        put(theA);
+                                        theA = get();
+                                    }
+                                    if (theA == EOF)
+                                    {
+                                        throw new Exception(string.Format("Error: JSMIN Unterminated set in Regular Expression literal: {0}\n", theA));
+                                    }
+                                }
+                            }
+                            else if (theA == '/')
+                            {
+                                switch (peek())
+                                {
+                                    case '/':
+                                    case '*':
+                                        throw new Exception(string.Format("Error: JSMIN Unterminated set in Regular Expression literal: {0}\n", theA));
+                                }
+                                break;
+                            }
+                            else if (theA == '\\')
+                            {
+                                put(theA);
+                                theA = get();
+                            }
+                            if (theA == EOF)
+                            {
+                                throw new Exception(string.Format("Error: JSMIN Unterminated Regular Expression literal: {0}\n", theA));
+                            }
+                            put(theA);
+                        }
+                        theB = next();
+                    }
+                    goto default;
+                default:
+                    break;
             }
         }
         /* next -- get the next character, excluding comments. peek() is used to see
                 if a '/' is followed by a '/' or '*'.
         */
-        int next()
+
+        private int next()
         {
             int c = get();
             if (c == '/')
@@ -258,47 +264,41 @@ namespace ClientDependency.Core.CompositeFiles
                 switch (peek())
                 {
                     case '/':
+                        for (;;)
                         {
-                            for (; ; )
+                            c = get();
+                            if (c <= '\n')
                             {
-                                c = get();
-                                if (c <= '\n')
-                                {
-                                    return c;
-                                }
+                                break;
                             }
                         }
+                        break;
                     case '*':
+                        get();
+                        while (c != ' ')
                         {
-                            get();
-                            for (; ; )
+                            switch (get())
                             {
-                                switch (get())
-                                {
-                                    case '*':
-                                        {
-                                            if (peek() == '/')
-                                            {
-                                                get();
-                                                return ' ';
-                                            }
-                                            break;
-                                        }
-                                    case EOF:
-                                        {
-                                            throw new Exception("Error: JSMIN Unterminated comment.\n");
-                                        }
-                                }
+                                case '*':
+                                    if (peek() == '/')
+                                    {
+                                        get();
+                                        c = ' ';
+                                    }
+                                    break;
+                                case EOF:
+                                    throw new Exception("Error: JSMIN Unterminated comment.\n");
                             }
                         }
-                    default:
-                        {
-                            return c;
-                        }
+                        break;
                 }
             }
+            //return c;
+            theY = theX;
+            theX = c;
             return c;
         }
+
         /* peek -- get the next character without getting it.
         */
         int peek()
@@ -338,8 +338,8 @@ namespace ClientDependency.Core.CompositeFiles
         bool isAlphanum(int c)
         {
             return ((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') ||
-                (c >= 'A' && c <= 'Z') || c == '_' || c == '$' || c == '\\' || c == '+' ||
-                c > 126);
+                    (c >= 'A' && c <= 'Z') || c == '_' || c == '$' || c == '\\' ||
+                    c > 126);
         }
     }
 }

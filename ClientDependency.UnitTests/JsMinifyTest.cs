@@ -43,7 +43,7 @@ namespace ClientDependency.UnitTests
             var output = minifier.Minify(script);
 
             Assert.AreEqual(
-                "\nvar Messaging={GetMessage:function(callback){$.ajax({type:\"POST\",url:\"/Services/MessageService.asmx/HelloWorld\",data:\"{}\",contentType:\"application/json; charset=utf-8\",dataType:\"json\",success:function(msg){callback.apply(this,[msg.d]);}});}\nvar blah=1;blah++;blah=blah + 2;var newBlah=++blah;newBlah +=234 +4;};",
+                "\nvar Messaging={GetMessage:function(callback){$.ajax({type:\"POST\",url:\"/Services/MessageService.asmx/HelloWorld\",data:\"{}\",contentType:\"application/json; charset=utf-8\",dataType:\"json\",success:function(msg){callback.apply(this,[msg.d]);}});}\nvar blah=1;blah++;blah=blah+2;var newBlah=++blah;newBlah+=234+4;};",
                 output);
         }
 
@@ -70,6 +70,29 @@ alert(c.name);";
             //Assert
 
             Assert.AreEqual("\nvar c={};var c.name=0;var i=1;c.name=i+ +new Date;alert(c.name);", output);
+        }
+
+        [Test]
+        public void JsMinify_Backslash_Line_Escapes()
+        {
+            var script = @"function Test() {
+jQuery(this).append('<div>\
+		<div>\
+			<a href=""http://google.com"" /></a>\
+		</div>\
+	</div>');
+}";
+
+            var minifier = new JSMin();
+
+            //Act
+
+            var output = minifier.Minify(script);
+
+            //Assert
+
+            Assert.AreEqual("\nfunction Test(){jQuery(this).append('<div>\\\n\n  <div>\\\n\n   <a href=\"http://google.com\" /></a>\\\n\n  </div>\\\n\n </div>');}", output);
+
         }
     }
 }
