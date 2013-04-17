@@ -11,6 +11,18 @@ namespace ClientDependency.Web.Test.Controllers
     public class TestController : Controller
     {
 
+        public ActionResult ForcedProvider()
+        {
+            var model = new TestModel()
+            {
+                Heading = "This tests forcing providers",
+                BodyContent = @"<p>On this page all JS will be rendered normally except for one which we've forced to use the lazy load provider</p>"
+            };
+
+            return View(model);
+
+        }
+
         public ActionResult Bundles()
         {
             var model = new TestModel()

@@ -19,6 +19,8 @@ namespace ClientDependency.Core
         {
             //first check if each item's order is the same, if this is the case we'll make sure that we order them 
             //by the way they were defined
+            if (!files.Any()) return files;
+
             var firstPriority = files.First().Priority;
 
             if (files.Any(x => x.Priority != firstPriority))

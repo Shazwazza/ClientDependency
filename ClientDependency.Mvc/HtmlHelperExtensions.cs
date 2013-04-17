@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.UI;
 using ClientDependency.Core.Controls;
+using ClientDependency.Core.FileRegistration.Providers;
 
 namespace ClientDependency.Core.Mvc
 {
@@ -92,6 +93,11 @@ namespace ClientDependency.Core.Mvc
         public static HtmlHelper RequiresJsBundle(this HtmlHelper html, string bundleName)
         {
             html.ViewContext.GetLoader().EnsureJsBundleRegistered(bundleName);
+            return html;
+        }
+        public static HtmlHelper RequiresJs(this HtmlHelper html, IClientDependencyFile file, object htmlAttributes = null)
+        {
+            html.ViewContext.GetLoader().RegisterDependency(file, htmlAttributes);
             return html;
         }
         public static HtmlHelper RequiresJs(this HtmlHelper html, string filePath)
@@ -253,6 +259,12 @@ namespace ClientDependency.Core.Mvc
             return new HtmlString(
                 html.ViewContext.GetLoader().RenderPlaceholder(
                     ClientDependencyType.Javascript, rendererName, paths));
+        }
+        public static IHtmlString RenderJsHere(this HtmlHelper html, string rendererName)
+        {
+            return new HtmlString(
+                html.ViewContext.GetLoader().RenderPlaceholder(
+                    ClientDependencyType.Javascript, rendererName, Enumerable.Empty<IClientDependencyPath>()));
         } 
         #endregion
         

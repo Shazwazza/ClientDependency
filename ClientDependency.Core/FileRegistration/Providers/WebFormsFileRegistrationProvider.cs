@@ -33,40 +33,10 @@ namespace ClientDependency.Core.FileRegistration.Providers
             HashSet<IClientDependencyPath> paths, 
             HttpContextBase http)
         {
-
-            //we may have already processed this so don't do it again
-            if (http.Items["WebFormsFileRegistrationProvider.RegisterDependencies"] == null)
-            {
-                http.Items["WebFormsFileRegistrationProvider.RegisterDependencies"] = true;
-
-                var folderPaths = paths;
-
-                UpdateFilePaths(allDependencies, folderPaths, http);
-                EnsureNoDuplicates(allDependencies, folderPaths);
-            }
-
-			var cssBuilder = new StringBuilder();
-			var jsBuilder = new StringBuilder();
-
-            //group by the group and order by the value
-            foreach (var group in allDependencies.GroupBy(x => x.Group).OrderBy(x => x))
-            {
-                //sort both the js and css dependencies properly
-
-                var jsDependencies = DependencySorter.SortItems(
-                    group.Where(x => x.DependencyType == ClientDependencyType.Javascript).ToList());
-
-                var cssDependencies = DependencySorter.SortItems(
-                    allDependencies.Where(x => x.DependencyType == ClientDependencyType.Css).ToList());
-
-                //render
-                WriteStaggeredDependencies(cssDependencies, http, cssBuilder, RenderCssDependencies, RenderSingleCssFile);
-                WriteStaggeredDependencies(jsDependencies, http, jsBuilder, RenderJsDependencies, RenderSingleJsFile);
-            }
-
-			var cssOutput = cssBuilder.ToString();
-			var jsOutput = jsBuilder.ToString();
-            RegisterDependencies(http, jsOutput, cssOutput);
+            string js;
+            string css;
+            WriteDependencies(allDependencies, paths, out js, out css, http);
+            RegisterDependencies(http, js, css);
         }
     }
 }

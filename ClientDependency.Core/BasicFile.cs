@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -8,6 +9,7 @@ namespace ClientDependency.Core
     /// <summary>
     /// Represents a dependency file
     /// </summary>
+    [DebuggerDisplay("Type: {DependencyType}, File: {FilePath}")]
 	public class BasicFile : IClientDependencyFile, IHaveHtmlAttributes
 	{
 		public BasicFile(ClientDependencyType type)
@@ -43,7 +45,7 @@ namespace ClientDependency.Core
 
         protected bool Equals(BasicFile other)
         {
-            return string.Equals(FilePath, other.FilePath) && DependencyType == other.DependencyType && Priority == other.Priority && Group == other.Group && string.Equals(PathNameAlias, other.PathNameAlias) && string.Equals(ForceProvider, other.ForceProvider) && Equals(HtmlAttributes, other.HtmlAttributes);
+            return string.Equals(FilePath, other.FilePath, StringComparison.InvariantCultureIgnoreCase) && DependencyType == other.DependencyType && Priority == other.Priority && Group == other.Group && string.Equals(PathNameAlias, other.PathNameAlias, StringComparison.InvariantCultureIgnoreCase) && string.Equals(ForceProvider, other.ForceProvider) && Equals(HtmlAttributes, other.HtmlAttributes);
         }
 
         public override bool Equals(object obj)

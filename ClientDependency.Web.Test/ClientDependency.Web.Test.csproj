@@ -291,6 +291,7 @@
     <None Include="Views\Shared\Master.cshtml" />
     <Content Include="Views\Test\ImportsCss.cshtml" />
     <Content Include="Views\Test\Bundles.cshtml" />
+    <Content Include="Views\Test\ForcedProvider.cshtml" />
     <None Include="Views\Test\Default.cshtml" />
   </ItemGroup>
   <ItemGroup>

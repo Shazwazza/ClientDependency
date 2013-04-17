@@ -164,12 +164,20 @@ namespace ClientDependency.Core
 
         public void RegisterDependency(IClientDependencyFile file)
         {
-            RegisterDependency(file.Group, file.Priority, file.FilePath, file.PathNameAlias, file.DependencyType);
+            RegisterDependency(file, null);
         }
 
         public void RegisterDependency(IClientDependencyFile file, object htmlAttributes)
         {
-            RegisterDependency(file.Group, file.Priority, file.FilePath, file.PathNameAlias, file.DependencyType, htmlAttributes);
+            RegisterDependency(
+                file.Group,
+                file.Priority,
+                file.FilePath,
+                file.PathNameAlias,
+                file.DependencyType,
+                htmlAttributes,
+                file.ForceProvider,
+                file.ForceBundle);
         }
 
         public void RegisterDependency(string filePath, ClientDependencyType type)
@@ -241,11 +249,21 @@ namespace ClientDependency.Core
             RegisterClientDependencies(new List<IClientDependencyFile> { file }, new List<IClientDependencyPath>()); //send an empty paths collection
         }
 
+        [Obsolete("Use the overloaded RegisterDependency method instead")]
 		public void RegisterDependencyWithProvider(int group, int priority, string filePath, string pathNameAlias, ClientDependencyType type, string provider)
-		{
-			var file = new BasicFile(type) { Group = group, Priority = priority, FilePath = filePath, PathNameAlias = pathNameAlias, ForceProvider = provider };
-			RegisterClientDependencies(new List<IClientDependencyFile> { file }, new List<IClientDependencyPath>()); //send an empty paths collection
-		}
+        {
+            RegisterDependency(group, priority, filePath, pathNameAlias, type, provider);
+        }
+
+        public void RegisterDependency(int group, int priority, string filePath, string pathNameAlias, ClientDependencyType type, string provider)
+        {
+            RegisterDependency(group, priority, filePath, pathNameAlias, type, provider, false);
+        }
+
+        public void RegisterDependency(int group, int priority, string filePath, string pathNameAlias, ClientDependencyType type, string provider, bool forceBundle)
+        {
+            RegisterDependency(group, priority, filePath, pathNameAlias, type, null, provider, forceBundle);
+        }
 
 		/// <summary>
 		/// Dynamically registers a dependency into the loader at runtime.
@@ -259,17 +277,35 @@ namespace ClientDependency.Core
 		/// <param name="type">The type of the dependency.</param>
 		/// <param name="htmlAttributes"></param>
 		public void RegisterDependency(int group, int priority, string filePath, string pathNameAlias, ClientDependencyType type, object htmlAttributes)
+		{
+		    RegisterDependency(group, priority, filePath, pathNameAlias, type, htmlAttributes, null);
+		}
+
+        public void RegisterDependency(int group, int priority, string filePath, string pathNameAlias, ClientDependencyType type, object htmlAttributes, string provider)
         {
-            var file = new BasicFile(type) { Group = group, Priority = priority, FilePath = filePath, PathNameAlias = pathNameAlias };
+            RegisterDependency(group, priority, filePath, pathNameAlias, type, htmlAttributes, null, false);
+        }
+
+        public void RegisterDependency(int group, int priority, string filePath, string pathNameAlias, ClientDependencyType type, object htmlAttributes, string provider, bool forceBundle)
+        {
+            var file = new BasicFile(type)
+            {
+                Group = group,
+                Priority = priority,
+                FilePath = filePath,
+                PathNameAlias = pathNameAlias,
+                ForceProvider = provider,
+                ForceBundle = forceBundle
+            };
 
             //now add the attributes to the list
-            foreach(var d in htmlAttributes.ToDictionary())
+            foreach (var d in htmlAttributes.ToDictionary())
             {
                 file.HtmlAttributes.Add(d.Key, d.Value.ToString());
             }
 
             RegisterClientDependencies(new List<IClientDependencyFile> { file }, new List<IClientDependencyPath>()); //send an empty paths collection
-        } 
+        }
 
         #endregion
 

@@ -74,6 +74,8 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
             var sb = new StringBuilder();
 
+            RegisterLazyLoadScript(sb, http);
+
             if (http.IsDebuggingEnabled || !EnableCompositeFiles)
 			{
 				foreach (var dependency in jsDependencies)
@@ -83,9 +85,6 @@ namespace ClientDependency.Core.FileRegistration.Providers
 			}
 			else
 			{
-
-                RegisterLazyLoadScript(sb, http);
-
 				var comp = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript, http, GetCompositeFileHandlerPath(http));
                 foreach (var s in comp)
                 {

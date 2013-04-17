@@ -24,19 +24,11 @@ namespace ClientDependency.Core.FileRegistration.Providers
             EnableCompositeFiles = true;
         }
 
-        //protected HashSet<IClientDependencyPath> FolderPaths { get; set; }
-        //protected List<IClientDependencyFile> AllDependencies { get; set; }
-
         /// <summary>
         /// By default this is true but can be overriden (in either config or code). 
         /// Composite files are never enabled with compilation debug="true" however.
         /// </summary>
         public bool EnableCompositeFiles { get; set; }
-
-        ///// <summary>
-        ///// By default this is empty, but if you want to explicity define a base url for dependencies you can
-        ///// </summary>
-        //public string WebsiteBaseUrl { get; set; }
 
         #region Abstract methods/properties
 
@@ -311,29 +303,6 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         #endregion        
 
-        ///// <summary>
-        ///// Checks if the "website" config param has been passed in, if so this formats the url
-        ///// to be an absolute URL with the pre-pended domain
-        ///// </summary>
-        ///// <param name="url"></param>
-        ///// <returns></returns>
-        //protected string MapToWebsiteBaseUrl(string url)
-        //{
-        //    if (!string.IsNullOrEmpty(WebsiteBaseUrl))
-        //    {
-        //        if (url.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase)
-        //            || url.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase))
-        //            return url;
-
-        //        // make sure the url begins with a /
-        //        string slashedUrl = (url[0] != '/' ? "/" : string.Empty) + url;
-
-        //        return WebsiteBaseUrl + slashedUrl;
-        //    }
-        //    return url;
-        //}
-
-
         /// <summary>
         /// Checks if the current file implements the html attribute interfaces and returns the appropriate html attributes
         /// </summary>
@@ -380,6 +349,71 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
             //just return an empty dictionary
             return attributes;
+        }
+
+        
+
+        /// <summary>
+        /// Called to write the js and css to string output
+        /// </summary>
+        /// <param name="allDependencies"></param>
+        /// <param name="paths"></param>
+        /// <param name="jsOutput"></param>
+        /// <param name="cssOutput"></param>
+        /// <param name="http"></param>
+        internal void WriteDependencies(List<IClientDependencyFile> allDependencies,
+            HashSet<IClientDependencyPath> paths,
+            out string jsOutput,
+            out string cssOutput,
+            HttpContextBase http)
+        {
+            //create the hash to see if we've already stored it
+            var hashCodeCombiner = new HashCodeCombiner();
+            foreach (var d in allDependencies)
+            {
+                hashCodeCombiner.AddObject(d);
+            }
+            var hash = hashCodeCombiner.GetCombinedHashCode();
+            
+            //we may have already processed this so don't do it again
+            if (http.Items["BaseRenderer.RegisterDependencies." + hash] == null)
+            {
+                var folderPaths = paths;
+                UpdateFilePaths(allDependencies, folderPaths, http);
+                EnsureNoDuplicates(allDependencies, folderPaths);
+
+                //now we regenerate the hash since dependencies have been removed/etc.. 
+                // and update the context items so it's not run again
+                hashCodeCombiner = new HashCodeCombiner();
+                foreach (var d in allDependencies)
+                {
+                    hashCodeCombiner.AddObject(d);
+                }
+                hash = hashCodeCombiner.GetCombinedHashCode();
+                http.Items["BaseRenderer.RegisterDependencies." + hash] = true;
+            }
+
+            var cssBuilder = new StringBuilder();
+            var jsBuilder = new StringBuilder();
+
+            //group by the group and order by the value
+            foreach (var group in allDependencies.GroupBy(x => x.Group).OrderBy(x => x))
+            {
+                //sort both the js and css dependencies properly
+
+                var jsDependencies = DependencySorter.SortItems(
+                    group.Where(x => x.DependencyType == ClientDependencyType.Javascript).ToList());
+
+                var cssDependencies = DependencySorter.SortItems(
+                    allDependencies.Where(x => x.DependencyType == ClientDependencyType.Css).ToList());
+
+                //render
+                WriteStaggeredDependencies(cssDependencies, http, cssBuilder, RenderCssDependencies, RenderSingleCssFile);
+                WriteStaggeredDependencies(jsDependencies, http, jsBuilder, RenderJsDependencies, RenderSingleJsFile);
+            }
+
+            cssOutput = cssBuilder.ToString();
+            jsOutput = jsBuilder.ToString();
         }
     }
 }

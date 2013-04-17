@@ -117,6 +117,7 @@
     <Compile Include="FileRegistration\Providers\RendererCollection.cs" />
     <Compile Include="FileRegistration\Providers\StandardRenderer.cs" />
     <Compile Include="FileRegistration\Providers\WebFormsFileRegistrationProvider.cs" />
+    <Compile Include="HashCodeCombiner.cs" />
     <Compile Include="HtmlAttributesStringParser.cs" />
     <Compile Include="HttpContextBaseExtensions.cs" />
     <Compile Include="IClientDependencyFileExtensions.cs" />
