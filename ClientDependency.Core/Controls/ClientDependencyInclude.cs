@@ -66,7 +66,7 @@ namespace ClientDependency.Core.Controls
 				throw new NullReferenceException("Both File and Type properties must be set");
 		}
 
-        protected bool Equals(BasicFile other)
+        protected bool Equals(ClientDependencyInclude other)
         {
             return string.Equals(FilePath, other.FilePath, StringComparison.InvariantCultureIgnoreCase) && DependencyType == other.DependencyType && Priority == other.Priority && Group == other.Group && string.Equals(PathNameAlias, other.PathNameAlias, StringComparison.InvariantCultureIgnoreCase) && string.Equals(ForceProvider, other.ForceProvider) && Equals(HtmlAttributes, other.HtmlAttributes);
         }
@@ -76,7 +76,7 @@ namespace ClientDependency.Core.Controls
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((BasicFile)obj);
+            return Equals((ClientDependencyInclude)obj);
         }
 
         public override int GetHashCode()

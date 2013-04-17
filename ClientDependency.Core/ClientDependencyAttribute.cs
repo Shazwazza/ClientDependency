@@ -133,7 +133,7 @@ namespace ClientDependency.Core
         /// <value>The type of the dependency.</value>
         public ClientDependencyType DependencyType { get; set; }
 
-        protected bool Equals(BasicFile other)
+        protected bool Equals(ClientDependencyAttribute other)
         {
             return string.Equals(FilePath, other.FilePath, StringComparison.InvariantCultureIgnoreCase) && DependencyType == other.DependencyType && Priority == other.Priority && Group == other.Group && string.Equals(PathNameAlias, other.PathNameAlias, StringComparison.InvariantCultureIgnoreCase) && string.Equals(ForceProvider, other.ForceProvider) && Equals(HtmlAttributes, other.HtmlAttributes);
         }
@@ -143,7 +143,7 @@ namespace ClientDependency.Core
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((BasicFile)obj);
+            return Equals((ClientDependencyAttribute)obj);
         }
 
         public override int GetHashCode()

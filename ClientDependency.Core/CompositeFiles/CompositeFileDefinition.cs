@@ -25,7 +25,7 @@ namespace ClientDependency.Core.CompositeFiles
 
 		public override bool Equals(object obj)
 		{
-			return (obj.GetType().Equals(this.GetType())
+			return (obj.GetType() == this.GetType()
 				&& ((CompositeFileDefinition)obj).IsLocalFile.Equals(IsLocalFile)
 				&& ((CompositeFileDefinition)obj).Uri.Equals(Uri));
 		}
