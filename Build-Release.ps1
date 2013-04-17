@@ -45,11 +45,13 @@ $MvcFolder = Join-Path -Path $ReleaseFolder -ChildPath "Mvc";
 New-Item $CoreFolder -Type directory
 New-Item $MvcFolder -Type directory
 
+$include = @('ClientDependency.Core.dll','ClientDependency.Core.pdb')
 $CoreBinFolder = Join-Path -Path $SolutionRoot -ChildPath "ClientDependency.Core\bin\Release";
-Copy-Item "$CoreBinFolder\*.dll" -Destination $CoreFolder
+Copy-Item "$CoreBinFolder\*.*" -Destination $CoreFolder -Include $include
 
+$include = @('ClientDependency.Core.Mvc.dll','ClientDependency.Core.Mvc.pdb')
 $MvcBinFolder = Join-Path -Path $SolutionRoot -ChildPath "ClientDependency.Mvc\bin\Release";
-Copy-Item "$MvcBinFolder\*.dll" -Destination $MvcFolder -Include "ClientDependency.Core.Mvc.dll" 
+Copy-Item "$MvcBinFolder\*.*" -Destination $MvcFolder -Include $include
 
 $CoreNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency.nuspec";
 Copy-Item $CoreNuSpecSource -Destination $CoreFolder
