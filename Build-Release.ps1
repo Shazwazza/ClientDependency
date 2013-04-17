@@ -9,18 +9,7 @@ $PSScriptFilePath = (Get-Item $MyInvocation.MyCommand.Path).FullName
 
 $SolutionRoot = Split-Path -Path $PSScriptFilePath -Parent
 
-$Is64BitSystem = (Get-WmiObject -Class Win32_OperatingSystem).OsArchitecture -eq "64-bit"
-$Is64BitProcess = [IntPtr]::Size -eq 8
-
-$RegistryArchitecturePath = ""
-if ($Is64BitProcess) { $RegistryArchitecturePath = "\Wow6432Node" }
-
-$FrameworkArchitecturePath = ""
-if ($Is64BitSystem) { $FrameworkArchitecturePath = "64" }
-
-$ClrVersion = (Get-ItemProperty -path "HKLM:\SOFTWARE$RegistryArchitecturePath\Microsoft\VisualStudio\10.0")."CLR Version"
-
-$MSBuild = "$Env:SYSTEMROOT\Microsoft.NET\Framework$FrameworkArchitecturePath\$ClrVersion\MSBuild.exe"
+$MSBuild = "$Env:SYSTEMROOT\Microsoft.NET\Framework\v4.0.30319\msbuild.exe"
 
 # Make sure we don't have a release folder for this version already
 $BuildFolder = Join-Path -Path $SolutionRoot -ChildPath "build";
