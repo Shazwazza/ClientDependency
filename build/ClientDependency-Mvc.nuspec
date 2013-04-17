@@ -3,7 +3,7 @@
   <metadata>
     <id>ClientDependency-Mvc</id>
     <version>0.0.0.0</version>
-    <authors>Aaron Powell, Shannon Deminick</authors>
+    <authors>Shannon Deminick</authors>
     <description>An extension for the ClientDependency framework to support ASP.NET MVC.</description>
     <summary>ClientDependency for MVC</summary>
     <language>en-US</language>
@@ -12,7 +12,7 @@
     <tags>mvc css html javascript</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <dependencies>
-      <dependency id="ClientDependency" version="1.5" />
+      <dependency id="ClientDependency" version="1.6" />
     </dependencies>
   </metadata>
   <files>
