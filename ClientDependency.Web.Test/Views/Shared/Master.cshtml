@@ -8,7 +8,7 @@
     <title>
         @RenderSection("TitleContent")
     </title>
-    @RenderSection("HeadContent")
+    @RenderSection("HeadContent", false)
     @Html.RenderCssHere(new BasicPath("Styles", "~/Css"))
 </head>
 
