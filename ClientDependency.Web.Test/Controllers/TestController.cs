@@ -11,6 +11,30 @@ namespace ClientDependency.Web.Test.Controllers
     public class TestController : Controller
     {
 
+        public ActionResult FromAspx()
+        {
+            var model = new TestModel()
+            {
+                Heading = "This tests results from an aspx page",
+                BodyContent = @"In some strange cases people return JavaScript or CSS from an ASPX page, this tests that it works."
+            };
+
+            return View(model);
+
+        }
+
+        public ActionResult Less()
+        {
+            var model = new TestModel()
+            {
+                Heading = "This tests DotLess",
+                BodyContent = @"<h5>This is the color #CC0000 which is the result of styling with a dotless stylesheet</h5>"
+            };
+
+            return View(model);
+
+        }
+
         public ActionResult ForcedProvider()
         {
             var model = new TestModel()

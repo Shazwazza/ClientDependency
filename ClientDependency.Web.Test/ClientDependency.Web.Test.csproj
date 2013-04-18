@@ -55,6 +55,9 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="dotless.Core">
+      <HintPath>..\packages\dotless.1.3.1.0\lib\dotless.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
@@ -116,6 +119,12 @@
     <Content Include="Css\BundleTest\css3.css" />
     <Content Include="Css\Controls.css" />
     <Content Include="Css\Imports.css" />
+    <Content Include="Css\MyFirstLess.css">
+      <DependentUpon>MyFirstLess.less</DependentUpon>
+    </Content>
+    <Content Include="Css\MyFirstLess.min.css">
+      <DependentUpon>MyFirstLess.less</DependentUpon>
+    </Content>
     <Content Include="Css\Print.css" />
     <Content Include="Css\Site.css" />
     <Content Include="Css\TestPath\BodyGradient.css" />
@@ -128,6 +137,7 @@
     <Content Include="Js\HtmlIncludeTest1.js" />
     <EmbeddedResource Include="Pages\embedded.css" />
     <Content Include="Js\jquery-ui-1.8.13.custom.min.js" />
+    <Content Include="Js\JsFromAspx.aspx" />
     <Content Include="Js\TestPath\HeaderOrange.js" />
     <Content Include="Pages\HtmlAttributes.aspx" />
     <Content Include="Pages\DependencyGroups.aspx" />
@@ -288,10 +298,13 @@
     <Content Include="Pages\Master.Master" />
     <Content Include="Pages\RogueScriptDetectionTest.aspx" />
     <Content Include="Views\Test\RogueDependencies.aspx" />
+    <Content Include="Css\MyFirstLess.less" />
     <None Include="Views\Shared\Master.cshtml" />
     <Content Include="Views\Test\ImportsCss.cshtml" />
     <Content Include="Views\Test\Bundles.cshtml" />
     <Content Include="Views\Test\ForcedProvider.cshtml" />
+    <Content Include="Views\Test\Less.cshtml" />
+    <Content Include="Views\Test\FromAspx.cshtml" />
     <None Include="Views\Test\Default.cshtml" />
   </ItemGroup>
   <ItemGroup>

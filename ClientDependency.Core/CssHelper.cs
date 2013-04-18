@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace ClientDependency.Core
 {
@@ -31,6 +32,20 @@ namespace ClientDependency.Core
            
             importedPaths = pathsFound;
             return content.Trim();
+        }
+
+        /// <summary>
+        /// Returns the CSS file with all of the url's formatted to be absolute locations
+        /// </summary>
+        /// <param name="fileContents"></param>
+        /// <param name="url"></param>
+        /// <param name="http"></param>
+        /// <returns></returns>
+        public static string ReplaceUrlsWithAbsolutePaths(string fileContents, string url, HttpContextBase http)
+        {
+            var uri = new Uri(url, UriKind.RelativeOrAbsolute);
+            fileContents = CssHelper.ReplaceUrlsWithAbsolutePaths(fileContents, uri.MakeAbsoluteUri(http));
+            return fileContents;
         }
 
         /// <summary>

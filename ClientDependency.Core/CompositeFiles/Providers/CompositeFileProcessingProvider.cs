@@ -68,20 +68,12 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 	    /// <returns></returns>
 	    public override byte[] CombineFiles(string[] filePaths, HttpContextBase context, ClientDependencyType type, out List<CompositeFileDefinition> fileDefs)
 		{
-			var fDefs = new List<CompositeFileDefinition>();
-
-			var ms = new MemoryStream(5000);            
+	        var ms = new MemoryStream(5000);            
             var sw = new StreamWriter(ms, Encoding.UTF8);
 
-			foreach (var s in filePaths)
-			{
-			    var def = WritePathToStream(type, s, context, sw);
-                if (def != null)
-                {
-                    fDefs.Add(def);
-                }
-			}
-			sw.Flush();
+	        var fDefs = filePaths.Select(s => WritePathToStream(type, s, context, sw)).Where(def => def != null).ToList();
+
+	        sw.Flush();
 			byte[] outputBytes = ms.ToArray();
 			sw.Close();
 			ms.Close();
@@ -96,61 +88,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 		{
             return SimpleCompressor.CompressBytes(type, fileBytes);
 		}
-
-        /// <summary>
-        /// Writes a given path to the stream
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="path">The path could be a local url or an absolute url</param>
-        /// <param name="context"></param>
-        /// <param name="sw"></param>
-        /// <returns>If successful returns a CompositeFileDefinition, otherwise returns null</returns>
-        private CompositeFileDefinition WritePathToStream(ClientDependencyType type, string path, HttpContextBase context, StreamWriter sw)
-        {
-            CompositeFileDefinition def = null;
-            if (!string.IsNullOrEmpty(path))
-            {                
-                try
-                {
-                    var fi = new FileInfo(context.Server.MapPath(path));
-                    if (ClientDependencySettings.Instance.FileBasedDependencyExtensionList.Contains(fi.Extension.ToUpper()))
-                    {
-                        //if the file doesn't exist, then we'll assume it is a URI external request
-                        def = !fi.Exists 
-                            ? WriteFileToStream(sw, path, type, context) //external request
-                            : WriteFileToStream(sw, fi, type, path, context); //internal request
-                    }
-                    else
-                    {
-                        //if it's not a file based dependency, try to get the request output.
-                        def = WriteFileToStream(sw, path, type, context);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    if (ex is NotSupportedException
-                        || ex is ArgumentException
-                        || ex is HttpException)
-                    {
-                        //could not parse the string into a fileinfo or couldn't mappath, so we assume it is a URI
-                        def = WriteFileToStream(sw, path, type, context);
-                    }
-                    else
-                    {
-                        //if this fails, log the exception, but continue
-                        ClientDependencySettings.Instance.Logger.Error(string.Format("Could not load file contents from {0}. EXCEPTION: {1}", path, ex.Message), ex);
-                    }
-                }                
-            }
-
-            if (type == ClientDependencyType.Javascript)
-            {
-                sw.Write(";;;"); //write semicolons in case the js isn't formatted correctly. This also helps for debugging.
-            }
-
-            return def;
-        }
-
+        
 	    /// <summary>
 	    /// Writes the output of an external request to the stream
 	    /// </summary>
@@ -170,25 +108,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                 fileDefs.Add(def);
             }
 	    }
-
-        /// <summary>
-        /// Writes the output of an external request to the stream
-        /// </summary>
-        /// <param name="sw"></param>
-        /// <param name="url"></param>
-        /// <param name="type"></param>
-        /// <param name="http"></param>
-        protected virtual CompositeFileDefinition WriteFileToStream(StreamWriter sw, string url, ClientDependencyType type, HttpContextBase http)
-        {
-            string requestOutput;
-            var rVal = TryReadUri(url, out requestOutput, http);
-            if (!rVal) return null;
-
-            //write the contents of the external request.
-            WriteContentToStream(sw, requestOutput, type, http, url);
-            return new CompositeFileDefinition(url, false);
-        }
-
+        
         /// <summary>
         ///  Writes the output of a local file to the stream
         /// </summary>
@@ -208,65 +128,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                 fileDefs.Add(def);
             }
         }
-
-        /// <summary>
-        /// Writes the output of a local file to the stream
-        /// </summary>
-        /// <param name="sw"></param>
-        /// <param name="fi"></param>
-        /// <param name="type"></param>
-        /// <param name="origUrl"></param>
-        /// <param name="http"></param>
-        protected virtual CompositeFileDefinition WriteFileToStream(StreamWriter sw, FileInfo fi, ClientDependencyType type, string origUrl, HttpContextBase http)
-        {
-            try
-            {
-                //if it is a file based dependency then read it				
-                var fileContents = File.ReadAllText(fi.FullName, Encoding.UTF8); //read as utf 8
-                WriteContentToStream(sw, fileContents, type, http, origUrl);
-                return new CompositeFileDefinition(origUrl, true);
-            }
-            catch (Exception ex)
-            {
-                ClientDependencySettings.Instance.Logger.Error(string.Format("Could not write file {0} contents to stream. EXCEPTION: {1}", fi.FullName, ex.Message), ex);
-                return null;
-            }
-        }
-
-	    /// <summary>
-	    /// Writes the actual contents of a file or request result to the stream and ensures the contents are minified if necessary
-	    /// </summary>
-	    /// <param name="sw"></param>
-	    /// <param name="content"></param>
-	    /// <param name="type"></param>
-	    /// <param name="context"></param>
-	    /// <param name="originalUrl">The original Url that the content is related to</param>
-	    private void WriteContentToStream(StreamWriter sw, string content, ClientDependencyType type, HttpContextBase context, string originalUrl)
-		{
-			if (type == ClientDependencyType.Css)
-			{
-                IEnumerable<string> importedPaths;
-                var removedImports = CssHelper.ParseImportStatements(content, out importedPaths);
-
-                //need to write the imported sheets first since these theoretically should *always* be at the top for browser to support them
-                foreach (var importPath in importedPaths)
-                {
-                    var uri = new Uri(originalUrl, UriKind.RelativeOrAbsolute)
-                        .MakeAbsoluteUri(context);
-                    var absolute = uri.ToAbsolutePath(importPath);                    
-                    WritePathToStream(ClientDependencyType.Css, absolute, context, sw);
-                }
-
-                //ensure the Urls in the css are changed to absolute
-                var parsedUrls = ParseCssFilePaths(removedImports, ClientDependencyType.Css, originalUrl, context);
-
-                //then we write the css with the removed import statements
-                sw.WriteLine(MinifyFile(parsedUrls, ClientDependencyType.Css));
-			}
-			else
-			{
-				sw.WriteLine(MinifyFile(content, type));
-			}
-		}
+        
+	    
 	}
 }

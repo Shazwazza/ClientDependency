@@ -12,6 +12,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{09017A90-7F59-40F8-8121-8B4284697BBD}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
+		SolutionInfo.cs = SolutionInfo.cs
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umbraco4.ClientDependency", "Umbraco4.ClientDependency\Umbraco4.ClientDependency.csproj", "{08DFBA02-97A5-496C-9272-09CE98C50BF5}"
@@ -44,6 +45,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{86C3F7
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientDependency.Less", "ClientDependency.Less\ClientDependency.Less.csproj", "{849F6123-925B-459C-80E6-FD5CA8B9896A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -70,6 +73,10 @@ Global
 		{08DFBA02-97A5-496C-9272-09CE98C50BF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{08DFBA02-97A5-496C-9272-09CE98C50BF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{08DFBA02-97A5-496C-9272-09CE98C50BF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{849F6123-925B-459C-80E6-FD5CA8B9896A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{849F6123-925B-459C-80E6-FD5CA8B9896A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{849F6123-925B-459C-80E6-FD5CA8B9896A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{849F6123-925B-459C-80E6-FD5CA8B9896A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

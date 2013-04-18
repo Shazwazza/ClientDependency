@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text;
 using System.Configuration;
 using System.Linq;
@@ -113,11 +114,15 @@ namespace ClientDependency.Core.Config
         /// <summary>
         /// Indicates whether CDF should enforce the policy to create only Federal Information Processing Standard (FIPS) certified algorithms.
         /// </summary>
+        [Obsolete("Use the built in .Net CryptoConfig.AllowOnlyFipsAlgorithms")]
         [ConfigurationProperty("allowOnlyFipsAlgorithms", DefaultValue = false)]
         public bool AllowOnlyFipsAlgorithms
         {
-            get { return (bool)base["allowOnlyFipsAlgorithms"]; }
-            set { base["allowOnlyFipsAlgorithms"] = value; }
+            get { return CryptoConfig.AllowOnlyFipsAlgorithms; }
+            set
+            {
+                //this does nothing now                
+            }
         }
 
         /// <summary>

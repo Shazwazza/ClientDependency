@@ -14,8 +14,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
     {
 
         private const string DefaultDependencyPath = "~/App_Data/ClientDependency";
-        private readonly string _byteOrderMarkUtf8 = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
-
+        
         /// <summary>
         /// Defines the UrlType default value, this can be set at startup
         /// </summary>
@@ -94,6 +93,103 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         public abstract FileInfo SaveCompositeFile(byte[] fileContents, ClientDependencyType type, HttpServerUtilityBase server);
         public abstract byte[] CombineFiles(string[] filePaths, HttpContextBase context, ClientDependencyType type, out List<CompositeFileDefinition> fileDefs);
         public abstract byte[] CompressBytes(CompressionType type, byte[] fileBytes);
+
+        /// <summary>
+        /// Writes a given path to the stream
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="path">The path could be a local url or an absolute url</param>
+        /// <param name="context"></param>
+        /// <param name="sw"></param>
+        /// <returns>If successful returns a CompositeFileDefinition, otherwise returns null</returns>
+        public CompositeFileDefinition WritePathToStream(ClientDependencyType type, string path, HttpContextBase context, StreamWriter sw)
+        {
+            CompositeFileDefinition def = null;
+            if (!string.IsNullOrEmpty(path))
+            {
+                try
+                {
+                    var fi = new FileInfo(context.Server.MapPath(path));
+                    if (ClientDependencySettings.Instance.FileBasedDependencyExtensionList.Contains(fi.Extension.ToUpper()))
+                    {
+                        //if the file doesn't exist, then we'll assume it is a URI external request
+                        def = !fi.Exists
+                            ? WriteFileToStream(sw, path, type, context) //external request
+                            : WriteFileToStream(sw, fi, type, path, context); //internal request
+                    }
+                    else
+                    {
+                        //if it's not a file based dependency, try to get the request output.
+                        def = WriteFileToStream(sw, path, type, context);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (ex is NotSupportedException
+                        || ex is ArgumentException
+                        || ex is HttpException)
+                    {
+                        //could not parse the string into a fileinfo or couldn't mappath, so we assume it is a URI
+                        def = WriteFileToStream(sw, path, type, context);
+                    }
+                    else
+                    {
+                        //if this fails, log the exception, but continue
+                        ClientDependencySettings.Instance.Logger.Error(string.Format("Could not load file contents from {0}. EXCEPTION: {1}", path, ex.Message), ex);
+                    }
+                }
+            }
+
+            if (type == ClientDependencyType.Javascript)
+            {
+                sw.Write(";;;"); //write semicolons in case the js isn't formatted correctly. This also helps for debugging.
+            }
+
+            return def;
+        }
+
+        /// <summary>
+        /// Writes the output of an external request to the stream
+        /// </summary>
+        /// <param name="sw"></param>
+        /// <param name="url"></param>
+        /// <param name="type"></param>
+        /// <param name="http"></param>
+        protected virtual CompositeFileDefinition WriteFileToStream(StreamWriter sw, string url, ClientDependencyType type, HttpContextBase http)
+        {   
+            string requestOutput;
+            Uri resultUri;
+            var rVal = RequestHelper.TryReadUri(url, http, BundleDomains, out requestOutput, out resultUri);
+            if (!rVal) return null;
+          
+            //write the contents of the external request.
+            DefaultFileWriter.WriteContentToStream(this, sw, requestOutput, type, http, url);
+            return new CompositeFileDefinition(url, false);
+        }
+
+        /// <summary>
+        /// Writes the output of a local file to the stream
+        /// </summary>
+        /// <param name="sw"></param>
+        /// <param name="fi"></param>
+        /// <param name="type"></param>
+        /// <param name="origUrl"></param>
+        /// <param name="http"></param>
+        protected virtual CompositeFileDefinition WriteFileToStream(StreamWriter sw, FileInfo fi, ClientDependencyType type, string origUrl, HttpContextBase http)
+        {
+            //get a writer for the file, first check if there's a specific file writer
+            //then check for an extension writer.
+            var writer = FileWriters.GetWriterForFile(origUrl);
+            if (writer is DefaultFileWriter)
+            {
+                writer = FileWriters.GetWriterForExtension(fi.Extension);
+            }
+            return writer.WriteToStream(this, sw, fi, type, origUrl, http) 
+                ? new CompositeFileDefinition(origUrl, true) 
+                : null;
+        }
+
+        
 
         /// <summary>
         /// Returns a URL used to return a compbined/compressed/optimized version of all dependencies.
@@ -323,12 +419,12 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         /// <param name="fileContents"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        protected virtual string MinifyFile(string fileContents, ClientDependencyType type)
+        public virtual string MinifyFile(string fileContents, ClientDependencyType type)
         {
             switch (type)
             {
                 case ClientDependencyType.Css:
-                    return EnableCssMinify ? CssMin.CompressCSS(fileContents) : fileContents;
+                    return EnableCssMinify ? CssHelper.MinifyCss(fileContents) : fileContents;
                 case ClientDependencyType.Javascript:
                     return EnableJsMinify ? JSMin.CompressJS(fileContents) : fileContents;
                 default:
@@ -349,8 +445,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             //if it is a CSS file we need to parse the URLs
             if (type == ClientDependencyType.Css)
             {
-                var uri = new Uri(url, UriKind.RelativeOrAbsolute);
-                fileContents = CssHelper.ReplaceUrlsWithAbsolutePaths(fileContents, uri.MakeAbsoluteUri(http));
+                fileContents = CssHelper.ReplaceUrlsWithAbsolutePaths(fileContents, url, http);
             }
             return fileContents;
         }
@@ -367,111 +462,12 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         /// if the path is a relative local path, the we use Server.Execute to get the request output, otherwise
         /// if it is an absolute path, a WebClient request is made to fetch the contents.
         /// </remarks>
+        [Obsolete("This is no longer used in the codebase and will be removed in future versions")]
         protected bool TryReadUri(string url, out string requestContents, HttpContextBase http)
         {
             Uri uri;
-            if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out uri))
-            {
-                //flag of whether or not to make a request to get the external resource (used below)
-                bool bundleExternalUri = false;
-
-                //if its a relative path, then check if we should execute/retreive contents,
-                //otherwise change it to an absolute path and try to request it.
-                if (!uri.IsAbsoluteUri)
-                {
-                    //if this is an ASPX page, we should execute it instead of http getting it.
-                    if (uri.ToString().EndsWith(".aspx", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        var sw = new StringWriter();
-                        try
-                        {
-                            http.Server.Execute(url, sw);
-                            requestContents = sw.ToString();
-                            sw.Close();
-                            return true;
-                        }
-                        catch (Exception ex)
-                        {
-                            ClientDependencySettings.Instance.Logger.Error(string.Format("Could not load file contents from {0}. EXCEPTION: {1}", url, ex.Message), ex);
-                            requestContents = "";
-                            return false;
-                        }
-                    }
-                    
-                    //if this is a call for a web resource, we should http get it
-                    if(url.StartsWith(http.Request.ApplicationPath.TrimEnd('/') + "/webresource.axd", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        bundleExternalUri = true;
-                    }
-                }
-
-                try
-                {
-                    //we've gotten this far, make the URI absolute and try to load it
-                    uri = uri.MakeAbsoluteUri(http);
-
-                    //if this isn't a web resource, we need to check if its approved
-                    if (!bundleExternalUri)
-                    {
-                        // get the domain to test, with starting dot and trailing port, then compare with
-                        // declared (authorized) domains. the starting dot is here to allow for subdomain
-                        // approval, eg '.maps.google.com:80' will be approved by rule '.google.com:80', yet
-                        // '.roguegoogle.com:80' will not.
-                        var domain = string.Format(".{0}:{1}", uri.Host, uri.Port);
-
-                        foreach (string bundleDomain in BundleDomains)
-                        {
-                            if (domain.EndsWith(bundleDomain))
-                            {
-                                bundleExternalUri = true;
-                                break;
-                            }
-                        }
-                    }
-                    
-                    if (bundleExternalUri)
-                    {
-                        requestContents = GetXmlResponse(uri);
-                        return true;
-                    }
-                    else
-                    {
-                        ClientDependencySettings.Instance.Logger.Error(string.Format("Could not load file contents from {0}. Domain is not white-listed.", url), null);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    ClientDependencySettings.Instance.Logger.Error(string.Format("Could not load file contents from {0}. EXCEPTION: {1}", url, ex.Message), ex);
-                }
-
-
-            }
-            requestContents = "";
-            return false;
+            return RequestHelper.TryReadUri(url, http, BundleDomains, out requestContents, out uri);
         }
 
-        /// <summary>
-        /// Gets the web response and ensures that the BOM is not present not matter what encoding is specified.
-        /// </summary>
-        /// <param name="resource"></param>
-        /// <returns></returns>
-        private string GetXmlResponse(Uri resource)
-        {
-            string xml;
-
-            using (var client = new WebClient())
-            {
-                client.Credentials = CredentialCache.DefaultNetworkCredentials;
-                client.Encoding = Encoding.UTF8;
-                xml = client.DownloadString(resource);
-            }
-
-            if (xml.StartsWith(_byteOrderMarkUtf8))
-            {
-                xml = xml.Remove(0, _byteOrderMarkUtf8.Length - 1);
-            }
-
-            return xml;
-        }
     }
 }

@@ -184,7 +184,7 @@ namespace ClientDependency.Core.CompositeFiles
         private byte[] GetCombinedFiles(HttpContextBase context, string fileset, ClientDependencyType type, out List<CompositeFileDefinition> fDefs)
         {
             //get the file list
-            string[] filePaths = fileset.DecodeFrom64Url().Split(';');
+            string[] filePaths = fileset.DecodeFrom64Url().Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             //combine files and get the definition types of them (internal vs external resources)
             return ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CombineFiles(filePaths, context, type, out fDefs);
         }

@@ -79,19 +79,8 @@ namespace ClientDependency.Core
         public static string GenerateHash(this string str)
         {
             try
-            {
-                ClientDependencySection section;
-                if (GetConfigSection == null)
-                {
-                    //getting section will result in an error if not in a context that has a proper config mgr (like a unit test)
-                    section = ClientDependencySettings.GetDefaultSection();    
-                }
-                else
-                {
-                    section = GetConfigSection();
-                }
-
-                return section.AllowOnlyFipsAlgorithms
+            {                
+                return CryptoConfig.AllowOnlyFipsAlgorithms
                     ? str.GenerateSha256Hash()
                     : str.GenerateMd5();
             }
@@ -100,8 +89,6 @@ namespace ClientDependency.Core
                 //default to MD5
                 return str.GenerateMd5();
             }
-
-            
         }
 
         /// <summary>

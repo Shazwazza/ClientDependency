@@ -91,6 +91,8 @@
     <Compile Include="CompositeFiles\Providers\CompositeUrlType.cs" />
     <Compile Include="CompositeFiles\Providers\FileMapProviderCollection.cs" />
     <Compile Include="CompositeFiles\Providers\PathBasedUrlFormatter.cs" />
+    <Compile Include="CompositeFiles\DefaultFileWriter.cs" />
+    <Compile Include="CompositeFiles\IFileWriter.cs" />
     <Compile Include="CompressionType.cs" />
     <Compile Include="Config\MimeTypeCompressionCollection.cs" />
     <Compile Include="Config\MimeTypeCompressionElement.cs" />
@@ -117,6 +119,7 @@
     <Compile Include="FileRegistration\Providers\RendererCollection.cs" />
     <Compile Include="FileRegistration\Providers\StandardRenderer.cs" />
     <Compile Include="FileRegistration\Providers\WebFormsFileRegistrationProvider.cs" />
+    <Compile Include="FileWriters.cs" />
     <Compile Include="HashCodeCombiner.cs" />
     <Compile Include="HtmlAttributesStringParser.cs" />
     <Compile Include="HttpContextBaseExtensions.cs" />
@@ -165,6 +168,7 @@
     <Compile Include="CompositeFiles\CompositeDependencyHandler.cs" />
     <Compile Include="CompositeFiles\Providers\CompositeFileProcessingProviderCollection.cs" />
     <Compile Include="FileRegistration\Providers\PageHeaderProvider.cs" />
+    <Compile Include="RequestHelper.cs" />
     <Compile Include="SimpleCompressor.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="UriExtensions.cs" />
