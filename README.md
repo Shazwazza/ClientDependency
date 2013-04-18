@@ -35,5 +35,6 @@ This hugely simplifies collaborative development since any developer who is work
 
 Click the link to see the documentation on how to get started and more advanced techniques
 
+## [Releases](https://github.com/Shandem/ClientDependency/wiki/All-Releases)
 
-
+Shows information about all CDF releases
