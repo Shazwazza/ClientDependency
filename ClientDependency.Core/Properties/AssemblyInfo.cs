@@ -26,3 +26,4 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("ClientDependency.UnitTests")]
 [assembly: InternalsVisibleTo("ClientDependency.Core.Mvc")]
 [assembly: InternalsVisibleTo("ClientDependency.Less")]
+[assembly: InternalsVisibleTo("ClientDependency.SASS")]

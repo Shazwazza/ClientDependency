@@ -1,4 +1,5 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl" %>
+<%@ Import Namespace="System.IO" %>
 <%@ Import Namespace="ClientDependency.Core.Mvc" %>
 
 <% Html.RequiresJs("~/Js/jquery-1.3.2.min.js", 1); %>
@@ -12,14 +13,8 @@
 <div class="control header bg-primary-3 white">
 	This is a header
 	<ul >
-		<li><%= Html.ActionLink("Default Renderer", "Default", null, new { @class = "white" }) %></li>
-		<li><%= Html.ActionLink("Rogue script detection test", "RogueDependencies", null, new { @class = "white" })%></li>
-        <li><%= Html.ActionLink("Remote dependencies test", "RemoteDependencies", null, new { @class = "white" })%></li>
-        <li><%= Html.ActionLink("Html attributes test", "HtmlAttributes", null, new { @class = "white" })%></li>
-        <li><%= Html.ActionLink("Dynamic path registration test", "DynamicPathRegistration", null, new { @class = "white" })%></li>
-        <li><%= Html.ActionLink("Css @imports test", "ImportsCss", null, new { @class = "white" })%></li>
-        <li><%= Html.ActionLink("Pre defined bundle test", "Bundles", null, new { @class = "white" })%></li>
-        <li><%= Html.ActionLink("Less test", "Less", null, new { @class = "white" })%></li>
-        <li><%= Html.ActionLink("ASPX test", "FromAspx", null, new { @class = "white" })%></li>
+	    <%foreach(var f in Directory.GetFiles(Server.MapPath("~/Views/Test")).Where(x => x.EndsWith(".cshtml") || x.EndsWith(".aspx"))) { %>
+            <li><%= Html.ActionLink(Path.GetFileNameWithoutExtension(f), Path.GetFileNameWithoutExtension(f), null, new { @class = "white" }) %></li>
+        <%} %>
 	</ul>
 </div>

@@ -13,9 +13,8 @@ Home Page
 @{ Html.RequiresCss("Content.css", "Styles").RequiresJs("~/Js/JsFromAspx.aspx");}
 
 <div class="mainContent">
-    <h2>
-        @this.Model.Heading</h2>
+    <h2>This tests results from an aspx page</h2>
     <div>
-        @Html.Raw(this.Model.BodyContent)
+        In some strange cases people return JavaScript or CSS from an ASPX page, this tests that it works.
     </div>
 </div>

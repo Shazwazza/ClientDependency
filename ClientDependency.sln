@@ -48,6 +48,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{86C3F7
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientDependency.Less", "ClientDependency.Less\ClientDependency.Less.csproj", "{849F6123-925B-459C-80E6-FD5CA8B9896A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientDependency.SASS", "ClientDependency.SASS\ClientDependency.SASS.csproj", "{0114D544-4976-4650-BB62-16AD228D43BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +80,10 @@ Global
 		{849F6123-925B-459C-80E6-FD5CA8B9896A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{849F6123-925B-459C-80E6-FD5CA8B9896A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{849F6123-925B-459C-80E6-FD5CA8B9896A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0114D544-4976-4650-BB62-16AD228D43BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0114D544-4976-4650-BB62-16AD228D43BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0114D544-4976-4650-BB62-16AD228D43BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0114D544-4976-4650-BB62-16AD228D43BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
