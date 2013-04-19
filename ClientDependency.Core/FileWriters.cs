@@ -27,6 +27,15 @@ namespace ClientDependency.Core
         }
 
         /// <summary>
+        /// returns all extensions that have been registered
+        /// </summary>
+        /// <returns></returns>
+        internal static IEnumerable<string> GetRegisteredExtensions()
+        {
+            return ExtensionWriters.Select(x => x.Key.ToUpper());
+        }
+
+        /// <summary>
         /// This will add or update a writer for a specific file extension
         /// </summary>
         /// <param name="fileExtension"></param>

@@ -110,7 +110,12 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                 try
                 {
                     var fi = new FileInfo(context.Server.MapPath(path));
-                    if (ClientDependencySettings.Instance.FileBasedDependencyExtensionList.Contains(fi.Extension.ToUpper()))
+
+                    //all config based extensions and all extensions registered by file writers
+                    var fileBasedExtensions = ClientDependencySettings.Instance.FileBasedDependencyExtensionList
+                                                                      .Union(FileWriters.GetRegisteredExtensions());
+
+                    if (fileBasedExtensions.Contains(fi.Extension.ToUpper()))
                     {
                         //if the file doesn't exist, then we'll assume it is a URI external request
                         def = !fi.Exists

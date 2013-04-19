@@ -146,10 +146,18 @@ namespace ClientDependency.Core.Config
                     {
                         _fileBasedDependencyExtensionList = ConfigSection.FileBasedDependencyExtensionList.ToList();
                     }
+
+                    //always force uppercase
+                    _fileBasedDependencyExtensionList = _fileBasedDependencyExtensionList.Select(x => x.ToUpper()).Distinct().ToList();
+
                 }
                 return _fileBasedDependencyExtensionList;
             }
-            set { _fileBasedDependencyExtensionList = value; }
+            set
+            {
+                //always force uppercase
+                _fileBasedDependencyExtensionList = value.Select(x => x.ToUpper()).Distinct().ToList();
+            }
         }
 
         private bool? _allowOnlyFipsAlgorithms;
