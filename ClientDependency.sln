@@ -20,6 +20,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{C5D95718-11A7-4F12-A41A-10229A87F428}"
 	ProjectSection(SolutionItems) = preProject
 		Build-Release.ps1 = Build-Release.ps1
+		build\ClientDependency-Less.nuspec = build\ClientDependency-Less.nuspec
 		build\ClientDependency-Mvc.nuspec = build\ClientDependency-Mvc.nuspec
 		build\ClientDependency.nuspec = build\ClientDependency.nuspec
 		SolutionInfo.cs = SolutionInfo.cs

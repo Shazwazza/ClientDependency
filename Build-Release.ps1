@@ -41,9 +41,11 @@ if (-not $?)
 
 $CoreFolder = Join-Path -Path $ReleaseFolder -ChildPath "Core";
 $MvcFolder = Join-Path -Path $ReleaseFolder -ChildPath "Mvc";
+$LessFolder = Join-Path -Path $ReleaseFolder -ChildPath "Less";
 
 New-Item $CoreFolder -Type directory
 New-Item $MvcFolder -Type directory
+New-Item $LessFolder -Type directory
 
 $include = @('ClientDependency.Core.dll','ClientDependency.Core.pdb')
 $CoreBinFolder = Join-Path -Path $SolutionRoot -ChildPath "ClientDependency.Core\bin\Release";
@@ -53,27 +55,40 @@ $include = @('ClientDependency.Core.Mvc.dll','ClientDependency.Core.Mvc.pdb')
 $MvcBinFolder = Join-Path -Path $SolutionRoot -ChildPath "ClientDependency.Mvc\bin\Release";
 Copy-Item "$MvcBinFolder\*.*" -Destination $MvcFolder -Include $include
 
-$CoreNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency.nuspec";
-Copy-Item $CoreNuSpecSource -Destination $CoreFolder
+$include = @('ClientDependency.Less.dll','ClientDependency.Less.pdb')
+$LessBinFolder = Join-Path -Path $SolutionRoot -ChildPath "ClientDependency.Less\bin\Release";
+Copy-Item "$LessBinFolder\*.*" -Destination $LessFolder -Include $include
+
+# COPY THE TRANSFORMS OVER
 Copy-Item "$BuildFolder\nuget-transforms\Core\web.config.transform" -Destination (New-Item (Join-Path -Path $CoreFolder -ChildPath "nuget-transforms") -Type directory);
 Copy-Item "$BuildFolder\nuget-transforms\Mvc\web.config.transform" -Destination (New-Item (Join-Path -Path $MvcFolder -ChildPath "nuget-transforms") -Type directory);
+Copy-Item "$BuildFolder\nuget-transforms\Less\web.config.transform" -Destination (New-Item (Join-Path -Path $LessFolder -ChildPath "nuget-transforms") -Type directory);
 
+# COPY OVER THE CORE NUSPEC AND BUILD THE NUGET PACKAGE
+$CoreNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency.nuspec";
+Copy-Item $CoreNuSpecSource -Destination $CoreFolder
 $CoreNuSpec = Join-Path -Path $CoreFolder -ChildPath "ClientDependency.nuspec";
-
 $NuGet = Join-Path $SolutionRoot -ChildPath "Dependencies\NuGet.exe" 
 & $NuGet pack $CoreNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber
 
-
+# COPY OVER THE MVC NUSPEC AND BUILD THE NUGET PACKAGE
 $MvcNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency-Mvc.nuspec";
 Copy-Item $MvcNuSpecSource -Destination $MvcFolder
-
 $MvcNuSpec = Join-Path -Path $MvcFolder -ChildPath "ClientDependency-Mvc.nuspec"
-(gc -Path (Join-Path -Path $MvcFolder -ChildPath "ClientDependency-Mvc.nuspec")) `
-	-replace "(?<=dependency id=`"ClientDependency`" version=`")[.\d]*(?=`")", $ReleaseVersionNumber |
-	sc -Path $MvcNuSpec -Encoding UTF8
-  
 $NuGet = Join-Path $SolutionRoot -ChildPath "Dependencies\NuGet.exe"
 & $NuGet pack $MvcNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber
+
+# COPY OVER THE LESS NUSPEC AND BUILD THE NUGET PACKAGE
+$LessNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency-Less.nuspec";
+Copy-Item $LessNuSpecSource -Destination $LessFolder
+$LessNuSpec = Join-Path -Path $LessFolder -ChildPath "ClientDependency-Less.nuspec"
+$NuGet = Join-Path $SolutionRoot -ChildPath "Dependencies\NuGet.exe"
+& $NuGet pack $LessNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber
+
+# NOT SURE WHAT THIS WAS DOING BUT SEEMS TO BE WORKING WITHOUT IT!
+# (gc -Path (Join-Path -Path $MvcFolder -ChildPath "ClientDependency-Mvc.nuspec")) `
+# 	-replace "(?<=dependency id=`"ClientDependency`" version=`")[.\d]*(?=`")", $ReleaseVersionNumber |
+# 	sc -Path $MvcNuSpec -Encoding UTF8
 
 ""
 "Build $ReleaseVersionNumber is done!"
