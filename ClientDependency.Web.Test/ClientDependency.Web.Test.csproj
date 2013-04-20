@@ -88,6 +88,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\SassAndCoffee.Core.2.0.2.0\lib\net40-Client\SassAndCoffee.Core.dll</HintPath>
     </Reference>
+    <Reference Include="SassAndCoffee.JavaScript">
+      <HintPath>..\packages\SassAndCoffee.JavaScript.2.0.2.0\lib\net40-Client\SassAndCoffee.JavaScript.dll</HintPath>
+    </Reference>
     <Reference Include="SassAndCoffee.Ruby, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\SassAndCoffee.Ruby.2.0.2.0\lib\net40-Client\SassAndCoffee.Ruby.dll</HintPath>
@@ -162,6 +165,12 @@
     <EmbeddedResource Include="Pages\embedded.css" />
     <Content Include="Js\jquery-ui-1.8.13.custom.min.js" />
     <Content Include="Js\JsFromAspx.aspx" />
+    <Content Include="Js\MyFirstCoffee.js">
+      <DependentUpon>MyFirstCoffee.coffee</DependentUpon>
+    </Content>
+    <Content Include="Js\MyFirstCoffee.min.js">
+      <DependentUpon>MyFirstCoffee.coffee</DependentUpon>
+    </Content>
     <Content Include="Js\TestPath\HeaderOrange.js" />
     <Content Include="Pages\HtmlAttributes.aspx" />
     <Content Include="Pages\DependencyGroups.aspx" />
@@ -323,7 +332,9 @@
     <Content Include="Pages\RogueScriptDetectionTest.aspx" />
     <Content Include="Views\Test\RogueDependencies.aspx" />
     <Content Include="Css\MyFirstLess.less" />
-    <Content Include="Css\MyFirstSass.scss" />
+    <Content Include="Css\MyFirstScss.scss" />
+    <Content Include="Css\MyFirstSass.sass" />
+    <Content Include="Js\MyFirstCoffee.coffee" />
     <None Include="Views\Shared\Master.cshtml" />
     <Content Include="Views\Test\ImportsCss.cshtml" />
     <Content Include="Views\Test\Bundles.cshtml" />
@@ -331,6 +342,7 @@
     <Content Include="Views\Test\Less.cshtml" />
     <Content Include="Views\Test\FromAspx.cshtml" />
     <Content Include="Views\Test\Sass.cshtml" />
+    <Content Include="Views\Test\Coffee.cshtml" />
     <None Include="Views\Test\Default.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -357,6 +369,10 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ClientDependency.Coffee\ClientDependency.Coffee.csproj">
+      <Project>{643ca6c1-f9e6-4078-a80d-0841fed68096}</Project>
+      <Name>ClientDependency.Coffee</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ClientDependency.Core\ClientDependency.Core.csproj">
       <Project>{EA35B06D-0CC8-4830-A3F7-9BB3D36D0FAF}</Project>
       <Name>ClientDependency.Core</Name>

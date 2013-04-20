@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package>
   <metadata>
-    <id>ClientDependency-Mvc</id>
+    <id>ClientDependency-SASS</id>
     <version>0.0.0.0</version>
     <authors>Shannon Deminick</authors>
-    <description>An extension for the ClientDependency framework to support ASP.NET MVC.</description>
-    <summary>ClientDependency for MVC</summary>
+    <description>An extension for the ClientDependency framework to support SASS</description>
+    <summary>ClientDependency for SASS</summary>
     <language>en-US</language>
     <licenseUrl>http://www.opensource.org/licenses/ms-pl</licenseUrl>
     <projectUrl>https://github.com/Shandem/ClientDependency</projectUrl>
-    <tags>mvc css html javascript clientdependency cdf minification compression</tags>
+    <tags>SASS scss css html clientdependency cdf minification compression</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <dependencies>
+      <dependency id="SassAndCoffee.Ruby" version="2.0.2" />
       <dependency id="ClientDependency" version="1.7" />
     </dependencies>
   </metadata>

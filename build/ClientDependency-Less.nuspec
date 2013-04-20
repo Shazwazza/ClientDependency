@@ -9,7 +9,7 @@
     <language>en-US</language>
     <licenseUrl>http://www.opensource.org/licenses/ms-pl</licenseUrl>
     <projectUrl>https://github.com/Shandem/ClientDependency</projectUrl>
-    <tags>.less dotless css html</tags>
+    <tags>.less dotless css html clientdependency cdf minification compression</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <dependencies>
       <dependency id="dotless" version="1.3" />

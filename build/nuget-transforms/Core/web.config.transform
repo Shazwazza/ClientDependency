@@ -19,7 +19,7 @@
     </httpModules>
     <httpHandlers>
       <!-- ** Need to add the dependency handler -->
-      <add verb="*" path="DependencyHandler.axd"  type="ClientDependency.Core.CompositeFiles.CompositeDependencyHandler, ClientDependency.Core "/>
+      <add verb="GET" path="DependencyHandler.axd"  type="ClientDependency.Core.CompositeFiles.CompositeDependencyHandler, ClientDependency.Core "/>
     </httpHandlers>
   </system.web>
   <system.webServer>
@@ -32,7 +32,7 @@
     <handlers>
       <!-- ** Need to add the dependency handler -->
       <remove name="DependencyHandler"/>
-      <add name="DependencyHandler" preCondition="integratedMode" verb="*" path="DependencyHandler.axd"  type="ClientDependency.Core.CompositeFiles.CompositeDependencyHandler, ClientDependency.Core "/>
+      <add name="DependencyHandler" preCondition="integratedMode" verb="GET" path="DependencyHandler.axd"  type="ClientDependency.Core.CompositeFiles.CompositeDependencyHandler, ClientDependency.Core "/>
     </handlers>
   </system.webServer>
 </configuration>

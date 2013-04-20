@@ -20,8 +20,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{C5D95718-11A7-4F12-A41A-10229A87F428}"
 	ProjectSection(SolutionItems) = preProject
 		Build-Release.ps1 = Build-Release.ps1
+		build\ClientDependency-Coffee.nuspec = build\ClientDependency-Coffee.nuspec
 		build\ClientDependency-Less.nuspec = build\ClientDependency-Less.nuspec
 		build\ClientDependency-Mvc.nuspec = build\ClientDependency-Mvc.nuspec
+		build\ClientDependency-SASS.nuspec = build\ClientDependency-SASS.nuspec
 		build\ClientDependency.nuspec = build\ClientDependency.nuspec
 		SolutionInfo.cs = SolutionInfo.cs
 		UpgradingUmbraco.txt = UpgradingUmbraco.txt
@@ -49,6 +51,23 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientDependency.Less", "ClientDependency.Less\ClientDependency.Less.csproj", "{849F6123-925B-459C-80E6-FD5CA8B9896A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientDependency.SASS", "ClientDependency.SASS\ClientDependency.SASS.csproj", "{0114D544-4976-4650-BB62-16AD228D43BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientDependency.Coffee", "ClientDependency.Coffee\ClientDependency.Coffee.csproj", "{643CA6C1-F9E6-4078-A80D-0841FED68096}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Less", "Less", "{3EAA2D5D-A830-4BA8-90AE-FBB8B307B3FD}"
+	ProjectSection(SolutionItems) = preProject
+		build\nuget-transforms\Less\web.config.transform = build\nuget-transforms\Less\web.config.transform
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Coffee", "Coffee", "{761DC809-2861-4C89-8EA2-CF55304A1FD1}"
+	ProjectSection(SolutionItems) = preProject
+		build\nuget-transforms\Coffee\web.config.transform = build\nuget-transforms\Coffee\web.config.transform
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sass", "Sass", "{9598A99A-018C-405C-ACAA-75D7165F3104}"
+	ProjectSection(SolutionItems) = preProject
+		build\nuget-transforms\SASS\web.config.transform = build\nuget-transforms\SASS\web.config.transform
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -84,6 +103,10 @@ Global
 		{0114D544-4976-4650-BB62-16AD228D43BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0114D544-4976-4650-BB62-16AD228D43BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0114D544-4976-4650-BB62-16AD228D43BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{643CA6C1-F9E6-4078-A80D-0841FED68096}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{643CA6C1-F9E6-4078-A80D-0841FED68096}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{643CA6C1-F9E6-4078-A80D-0841FED68096}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{643CA6C1-F9E6-4078-A80D-0841FED68096}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,5 +115,8 @@ Global
 		{37C50F26-9EDE-45F6-BDCC-39F51E0E312C} = {C5D95718-11A7-4F12-A41A-10229A87F428}
 		{D8142A9E-6FDC-46BC-9767-F63767C46887} = {37C50F26-9EDE-45F6-BDCC-39F51E0E312C}
 		{4D8DC7DA-0202-4338-B154-72A077FA88E8} = {37C50F26-9EDE-45F6-BDCC-39F51E0E312C}
+		{3EAA2D5D-A830-4BA8-90AE-FBB8B307B3FD} = {37C50F26-9EDE-45F6-BDCC-39F51E0E312C}
+		{761DC809-2861-4C89-8EA2-CF55304A1FD1} = {37C50F26-9EDE-45F6-BDCC-39F51E0E312C}
+		{9598A99A-018C-405C-ACAA-75D7165F3104} = {37C50F26-9EDE-45F6-BDCC-39F51E0E312C}
 	EndGlobalSection
 EndGlobal

@@ -5,10 +5,10 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ClientDependency.SASS")]
-[assembly: AssemblyDescription("An extension for the ClientDependency framework to support SASS")]
+[assembly: AssemblyTitle("ClientDependency.Coffee")]
+[assembly: AssemblyDescription("An extension for the ClientDependency framework to support Coffee Script")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyProduct("ClientDependency.SASS")]
+[assembly: AssemblyProduct("ClientDependency.Coffee")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -16,4 +16,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("f4187611-9507-40b1-9ff2-2dbfa965be2a")]
+[assembly: Guid("6a35904f-545f-4289-bbb8-d41de75f9477")]

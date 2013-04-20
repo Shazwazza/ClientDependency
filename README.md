@@ -24,6 +24,7 @@ This hugely simplifies collaborative development since any developer who is work
 * Provider Model so you can choose how you would like your JS and CSS files rendered, combined, compressed & minified
 * MIME type compression outpu for things like JSON services, or anything you want
 * Control over how composite file URLs are structured if you need a custom format
+* Medium trust compatible
 
 ## Nuget
 
@@ -38,3 +39,7 @@ Click the link to see the documentation on how to get started and more advanced 
 ## [Releases](https://github.com/Shandem/ClientDependency/wiki/All-Releases)
 
 Shows information about all CDF releases
+
+## Roadmap
+
+Native .Less, SASS & CoffeeScript support

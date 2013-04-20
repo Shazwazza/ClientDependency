@@ -1,12 +1,13 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("ClientDependency.Mvc")]
-[assembly: AssemblyDescription("Script file and Css file management for web sites")]
+[assembly: AssemblyDescription("An extension for the ClientDependency framework to support ASP.Net MVC")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyProduct("ClientDependency.Mvc")]
 
@@ -18,3 +19,4 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("edff80c4-ff38-4468-9f25-088e4c54ebbb")]
 
+[assembly: AllowPartiallyTrustedCallers]

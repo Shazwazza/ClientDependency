@@ -36,10 +36,16 @@ namespace ClientDependency.SASS
                 ClientDependencySettings.Instance.Logger.Error(string.Format("Could not write file {0} contents to stream. EXCEPTION: {1}", fi.FullName, ex.Message), ex);
                 return false;
             }
+        }
 
-
-
-
+        /// <summary>
+        /// Get the Sass compiled string output from the file
+        /// </summary>
+        /// <param name="fi"></param>
+        /// <returns></returns>
+        public string GetOutput(FileInfo fi)
+        {
+            return Compiler.Compile(fi.FullName, false, new List<string>());            
         }
     }
 }
