@@ -43,3 +43,9 @@ Click the link to see the documentation on how to get started and more advanced 
 ## [Releases](https://github.com/Shandem/ClientDependency/wiki/All-Releases)
 
 Shows information about all CDF releases
+
+## Copyright & Licence
+
+&copy; 2013 by Shannon Deminick
+
+This is free software and is licensed under the [Microsoft Public License (Ms-PL)](http://opensource.org/licenses/MS-PL)
