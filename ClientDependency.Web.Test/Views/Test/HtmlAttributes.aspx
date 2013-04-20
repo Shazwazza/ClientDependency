@@ -23,7 +23,7 @@
             </p>
             <ul>
                 <li>A print style sheet with a custom media='print' attribute</li>
-                <li>A js dependency with a type='text/jquery' which could be used as a jquery template</li>
+                <li>A js dependency with a type='text/html' which could be used as a jquery template</li>
             </ul>
         </div>
     </div>
