@@ -16,7 +16,7 @@ namespace ClientDependency.SASS
     /// <summary>
     /// A file writer for dotLess
     /// </summary>
-    public class SassWriter : IFileWriter
+    public sealed class SassWriter : IFileWriter
     {
         private static readonly ISassCompiler Compiler = new SassCompiler();
 

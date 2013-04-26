@@ -15,7 +15,7 @@ namespace ClientDependency.Coffee
     /// <summary>
     /// A file writer for CoffeeScript
     /// </summary>
-    public class CoffeeWriter : IFileWriter
+    public sealed class CoffeeWriter : IFileWriter
     {
         public bool WriteToStream(BaseCompositeFileProcessingProvider provider, StreamWriter sw, FileInfo fi, ClientDependencyType type, string origUrl, HttpContextBase http)
         {
@@ -44,3 +44,5 @@ namespace ClientDependency.Coffee
         }
     }
 }
+
+

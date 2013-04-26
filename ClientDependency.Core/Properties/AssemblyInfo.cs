@@ -31,3 +31,4 @@ using System.Security;
 [assembly: InternalsVisibleTo("ClientDependency.Less")]
 [assembly: InternalsVisibleTo("ClientDependency.SASS")]
 [assembly: InternalsVisibleTo("ClientDependency.Coffee")]
+[assembly: InternalsVisibleTo("ClientDependency.TypeScript")]

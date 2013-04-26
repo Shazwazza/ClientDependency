@@ -17,7 +17,7 @@ namespace ClientDependency.Less
     /// <summary>
     /// A file writer for dotLess
     /// </summary>
-    public class LessWriter : IFileWriter
+    public sealed class LessWriter : IFileWriter
     {        
         public bool WriteToStream(BaseCompositeFileProcessingProvider provider, StreamWriter sw, FileInfo fi, ClientDependencyType type, string origUrl, HttpContextBase http)
         {

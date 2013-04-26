@@ -60,6 +60,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
     </Reference>
+    <Reference Include="SassAndCoffee.Core">
+      <HintPath>..\packages\SassAndCoffee.Core.2.0.2.0\lib\net40-Client\SassAndCoffee.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SassAndCoffee.JavaScript">
+      <HintPath>..\packages\SassAndCoffee.JavaScript.2.0.2.0\lib\net40-Client\SassAndCoffee.JavaScript.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
@@ -114,6 +120,7 @@
     <Compile Include="CssTransformTest.cs" />
     <Compile Include="RogueFileFilterTest.cs" />
     <Compile Include="StringExtensionsTest.cs" />
+    <Compile Include="TypeScriptTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ClientDependency.Core\ClientDependency.Core.csproj">
@@ -123,6 +130,10 @@
     <ProjectReference Include="..\ClientDependency.Mvc\ClientDependency.Core.Mvc.csproj">
       <Project>{5A8B1824-80CD-4187-B870-384D77892A77}</Project>
       <Name>ClientDependency.Core.Mvc</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ClientDependency.TypeScript\ClientDependency.TypeScript.csproj">
+      <Project>{DDB92A7D-879A-4314-83DA-55D0535B3539}</Project>
+      <Name>ClientDependency.TypeScript</Name>
     </ProjectReference>
     <ProjectReference Include="..\Umbraco4.ClientDependency\Umbraco4.ClientDependency.csproj">
       <Project>{08DFBA02-97A5-496C-9272-09CE98C50BF5}</Project>

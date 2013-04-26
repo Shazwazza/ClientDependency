@@ -76,6 +76,7 @@ Copy-Item "$BuildFolder\nuget-transforms\Core\web.config.transform" -Destination
 Copy-Item "$BuildFolder\nuget-transforms\Mvc\web.config.transform" -Destination (New-Item (Join-Path -Path $MvcFolder -ChildPath "nuget-transforms") -Type directory);
 Copy-Item "$BuildFolder\nuget-transforms\Less\web.config.transform" -Destination (New-Item (Join-Path -Path $LessFolder -ChildPath "nuget-transforms") -Type directory);
 Copy-Item "$BuildFolder\nuget-transforms\Coffee\web.config.transform" -Destination (New-Item (Join-Path -Path $CoffeeFolder -ChildPath "nuget-transforms") -Type directory);
+Copy-Item "$BuildFolder\nuget-transforms\Sass\web.config.transform" -Destination (New-Item (Join-Path -Path $SassFolder -ChildPath "nuget-transforms") -Type directory);
 
 # COPY OVER THE CORE NUSPEC AND BUILD THE NUGET PACKAGE
 $CoreNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency.nuspec";

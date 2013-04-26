@@ -69,6 +69,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sass", "Sass", "{9598A99A-0
 		build\nuget-transforms\SASS\web.config.transform = build\nuget-transforms\SASS\web.config.transform
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientDependency.TypeScript", "ClientDependency.TypeScript\ClientDependency.TypeScript.csproj", "{DDB92A7D-879A-4314-83DA-55D0535B3539}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -107,6 +109,10 @@ Global
 		{643CA6C1-F9E6-4078-A80D-0841FED68096}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{643CA6C1-F9E6-4078-A80D-0841FED68096}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{643CA6C1-F9E6-4078-A80D-0841FED68096}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDB92A7D-879A-4314-83DA-55D0535B3539}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDB92A7D-879A-4314-83DA-55D0535B3539}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDB92A7D-879A-4314-83DA-55D0535B3539}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDB92A7D-879A-4314-83DA-55D0535B3539}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
