@@ -44,12 +44,14 @@ $MvcFolder = Join-Path -Path $ReleaseFolder -ChildPath "Mvc";
 $LessFolder = Join-Path -Path $ReleaseFolder -ChildPath "Less";
 $SassFolder = Join-Path -Path $ReleaseFolder -ChildPath "SASS";
 $CoffeeFolder = Join-Path -Path $ReleaseFolder -ChildPath "Coffee";
+$TypeScriptFolder = Join-Path -Path $ReleaseFolder -ChildPath "TypeScript";
 
 New-Item $CoreFolder -Type directory
 New-Item $MvcFolder -Type directory
 New-Item $LessFolder -Type directory
 New-Item $SassFolder -Type directory
 New-Item $CoffeeFolder -Type directory
+New-Item $TypeScriptFolder -Type directory
 
 $include = @('ClientDependency.Core.dll','ClientDependency.Core.pdb')
 $CoreBinFolder = Join-Path -Path $SolutionRoot -ChildPath "ClientDependency.Core\bin\Release";
@@ -71,12 +73,17 @@ $include = @('ClientDependency.Coffee.dll','ClientDependency.Coffee.pdb')
 $CoffeeBinFolder = Join-Path -Path $SolutionRoot -ChildPath "ClientDependency.Coffee\bin\Release";
 Copy-Item "$CoffeeBinFolder\*.*" -Destination $CoffeeFolder -Include $include
 
+$include = @('ClientDependency.TypeScript.dll','ClientDependency.TypeScript.pdb')
+$TypeScriptBinFolder = Join-Path -Path $SolutionRoot -ChildPath "ClientDependency.TypeScript\bin\Release";
+Copy-Item "$TypeScriptBinFolder\*.*" -Destination $TypeScriptFolder -Include $include
+
 # COPY THE TRANSFORMS OVER
 Copy-Item "$BuildFolder\nuget-transforms\Core\web.config.transform" -Destination (New-Item (Join-Path -Path $CoreFolder -ChildPath "nuget-transforms") -Type directory);
 Copy-Item "$BuildFolder\nuget-transforms\Mvc\web.config.transform" -Destination (New-Item (Join-Path -Path $MvcFolder -ChildPath "nuget-transforms") -Type directory);
 Copy-Item "$BuildFolder\nuget-transforms\Less\web.config.transform" -Destination (New-Item (Join-Path -Path $LessFolder -ChildPath "nuget-transforms") -Type directory);
 Copy-Item "$BuildFolder\nuget-transforms\Coffee\web.config.transform" -Destination (New-Item (Join-Path -Path $CoffeeFolder -ChildPath "nuget-transforms") -Type directory);
 Copy-Item "$BuildFolder\nuget-transforms\Sass\web.config.transform" -Destination (New-Item (Join-Path -Path $SassFolder -ChildPath "nuget-transforms") -Type directory);
+Copy-Item "$BuildFolder\nuget-transforms\TypeScript\web.config.transform" -Destination (New-Item (Join-Path -Path $TypeScriptFolder -ChildPath "nuget-transforms") -Type directory);
 
 # COPY OVER THE CORE NUSPEC AND BUILD THE NUGET PACKAGE
 $CoreNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency.nuspec";
@@ -112,6 +119,13 @@ Copy-Item $CoffeeNuSpecSource -Destination $CoffeeFolder
 $CoffeeNuSpec = Join-Path -Path $CoffeeFolder -ChildPath "ClientDependency-Coffee.nuspec"
 $NuGet = Join-Path $SolutionRoot -ChildPath "Dependencies\NuGet.exe"
 & $NuGet pack $CoffeeNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber
+
+# COPY OVER THE TypeScript NUSPEC AND BUILD THE NUGET PACKAGE
+$TypeScriptNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency-TypeScript.nuspec";
+Copy-Item $TypeScriptNuSpecSource -Destination $TypeScriptFolder
+$TypeScriptNuSpec = Join-Path -Path $TypeScriptFolder -ChildPath "ClientDependency-TypeScript.nuspec"
+$NuGet = Join-Path $SolutionRoot -ChildPath "Dependencies\NuGet.exe"
+& $NuGet pack $TypeScriptNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber
 
 # NOT SURE WHAT THIS WAS DOING BUT SEEMS TO BE WORKING WITHOUT IT!
 # (gc -Path (Join-Path -Path $MvcFolder -ChildPath "ClientDependency-Mvc.nuspec")) `

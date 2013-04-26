@@ -28,7 +28,7 @@ CDF is flexible. It allows you to make any web component dependent on any CSS or
 * MIME type compression output for things like JSON services, or anything you want
 * Control over how composite file URLs are structured if you need a custom format
 * Medium trust compatible
-* *COMING SOON:* native .Less, SASS & CoffeeScript support
+* *COMING SOON:* native TypeScript, .Less, SASS & CoffeeScript support
 
 ## Nuget
 
