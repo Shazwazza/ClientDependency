@@ -171,6 +171,7 @@
     <Content Include="Js\MyFirstCoffee.min.js">
       <DependentUpon>MyFirstCoffee.coffee</DependentUpon>
     </Content>
+    <Content Include="Js\MyFirstTypeScript.ts" />
     <Content Include="Js\TestPath\HeaderOrange.js" />
     <Content Include="Pages\HtmlAttributes.aspx" />
     <Content Include="Pages\DependencyGroups.aspx" />
@@ -343,6 +344,7 @@
     <Content Include="Views\Test\FromAspx.cshtml" />
     <Content Include="Views\Test\Sass.cshtml" />
     <Content Include="Views\Test\Coffee.cshtml" />
+    <Content Include="Views\Test\TypeScript.cshtml" />
     <None Include="Views\Test\Default.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -388,6 +390,10 @@
     <ProjectReference Include="..\ClientDependency.SASS\ClientDependency.SASS.csproj">
       <Project>{0114d544-4976-4650-bb62-16ad228d43bf}</Project>
       <Name>ClientDependency.SASS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ClientDependency.TypeScript\ClientDependency.TypeScript.csproj">
+      <Project>{ddb92a7d-879a-4314-83da-55d0535b3539}</Project>
+      <Name>ClientDependency.TypeScript</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

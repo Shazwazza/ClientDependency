@@ -24,6 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{C5D95718
 		build\ClientDependency-Less.nuspec = build\ClientDependency-Less.nuspec
 		build\ClientDependency-Mvc.nuspec = build\ClientDependency-Mvc.nuspec
 		build\ClientDependency-SASS.nuspec = build\ClientDependency-SASS.nuspec
+		build\ClientDependency-TypeScript.nuspec = build\ClientDependency-TypeScript.nuspec
 		build\ClientDependency.nuspec = build\ClientDependency.nuspec
 		SolutionInfo.cs = SolutionInfo.cs
 		UpgradingUmbraco.txt = UpgradingUmbraco.txt
@@ -70,6 +71,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sass", "Sass", "{9598A99A-0
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientDependency.TypeScript", "ClientDependency.TypeScript\ClientDependency.TypeScript.csproj", "{DDB92A7D-879A-4314-83DA-55D0535B3539}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TypeScript", "TypeScript", "{CABF4276-D3DD-4497-BF63-B7527A91A1D8}"
+	ProjectSection(SolutionItems) = preProject
+		build\nuget-transforms\TypeScript\web.config.transform = build\nuget-transforms\TypeScript\web.config.transform
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -124,5 +130,6 @@ Global
 		{3EAA2D5D-A830-4BA8-90AE-FBB8B307B3FD} = {37C50F26-9EDE-45F6-BDCC-39F51E0E312C}
 		{761DC809-2861-4C89-8EA2-CF55304A1FD1} = {37C50F26-9EDE-45F6-BDCC-39F51E0E312C}
 		{9598A99A-018C-405C-ACAA-75D7165F3104} = {37C50F26-9EDE-45F6-BDCC-39F51E0E312C}
+		{CABF4276-D3DD-4497-BF63-B7527A91A1D8} = {37C50F26-9EDE-45F6-BDCC-39F51E0E312C}
 	EndGlobalSection
 EndGlobal
