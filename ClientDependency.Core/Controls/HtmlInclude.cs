@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -11,6 +13,8 @@ namespace ClientDependency.Core.Controls
     {
         public const string TagPattern = @"<{0}((\s+\w+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)+\s*|\s*)/?>";
         public const string AttributePattern = @"{0}(\s*=\s*(?:""(?<val>.*?)""|'(?<val>.*?)'|(?<val>[^'"">\s]+)))";
+
+        private const string MatchAllAttributes = "(\\S+)=[\"']?((?:.(?![\"']?\\s+(?:\\S+)=|[>\"']))+.)[\"']?";
 
         public string ForceProvider { get; set; }
         public int Priority { get; set; }
@@ -37,70 +41,81 @@ namespace ClientDependency.Core.Controls
 
         private void RegisterIncludes(string innerHtml, ClientDependencyLoader loader)
         {
-            RegisterCssIncludes(innerHtml, loader);
-            RegisterJsIncludes(innerHtml, loader);
+            RegisterIncludes(GetIncludes(innerHtml, ClientDependencyType.Css), loader, ClientDependencyType.Css);
+            RegisterIncludes(GetIncludes(innerHtml, ClientDependencyType.Javascript), loader, ClientDependencyType.Javascript);
         }
 
-        private void RegisterCssIncludes(string innerHtml, ClientDependencyLoader loader)
+        private void RegisterIncludes(IEnumerable<BasicFile> files, ClientDependencyLoader loader, ClientDependencyType dependencyType)
         {
-            var tagPattern = string.Format(TagPattern, "link");
-            var typeAttributePattern = string.Format(AttributePattern, "type");
-            var srcAttributePattern = string.Format(AttributePattern, "href");
-
-            var count = 0;
-            foreach (Match match in Regex.Matches(innerHtml, tagPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+            foreach (var file in files)
             {
-                var typeMatch = Regex.Match(match.Value, typeAttributePattern,
-                                            RegexOptions.Compiled | RegexOptions.IgnoreCase |
-                                            RegexOptions.CultureInvariant);
-
-                if (typeMatch.Success && typeMatch.Groups["val"].Value == "text/css")
-                {
-                    var srcMatch = Regex.Match(match.Value, srcAttributePattern,
-                                            RegexOptions.Compiled | RegexOptions.IgnoreCase |
-                                            RegexOptions.CultureInvariant);
-
-                    if (srcMatch.Success)
-                    {
-                        loader.RegisterDependency(Group, Priority + count,
-                            srcMatch.Groups["val"].Value, "",
-                            ClientDependencyType.Css, ForceProvider);
-
-                        count++;
-                    }
-                }
+                loader.RegisterDependency(file.Group, file.Priority, file.FilePath, "", dependencyType, file.HtmlAttributes, file.ForceProvider);
             }
         }
 
-        private void RegisterJsIncludes(string innerHtml, ClientDependencyLoader loader)
+        internal IEnumerable<BasicFile> GetIncludes(string innerHtml, ClientDependencyType dependencyType)
         {
-            var tagPattern = string.Format(TagPattern, "script");
-            var typeAttributePattern = string.Format(AttributePattern, "type");
-            var srcAttributePattern = string.Format(AttributePattern, "src");
+            string tag, sourceAttribute, mime;
+            if (dependencyType == ClientDependencyType.Css)
+            {
+                tag = "link";
+                sourceAttribute = "href";
+                mime = "text/css";
+            }
+            else
+            {
+                tag = "script";
+                sourceAttribute = "src";
+                mime = "text/javascript";
+            }
 
-            var count = 0;
+            var tagPattern = string.Format(TagPattern, tag);
+
+            var files = new List<BasicFile>();
             foreach (Match match in Regex.Matches(innerHtml, tagPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
             {
-                var typeMatch = Regex.Match(match.Value, typeAttributePattern,
-                                            RegexOptions.Compiled | RegexOptions.IgnoreCase |
-                                            RegexOptions.CultureInvariant);
+                var allAttributes = Regex.Matches(match.Value, MatchAllAttributes,
+                                                  RegexOptions.Compiled | RegexOptions.IgnoreCase |
+                                                  RegexOptions.CultureInvariant)
+                                         .Cast<Match>()
+                                         .ToArray();
 
-                if (typeMatch.Success && typeMatch.Groups["val"].Value == "text/javascript")
+                var type = allAttributes.FirstOrDefault(x =>
                 {
-                    var srcMatch = Regex.Match(match.Value, srcAttributePattern,
-                                            RegexOptions.Compiled | RegexOptions.IgnoreCase |
-                                            RegexOptions.CultureInvariant);
+                    if (x.Groups.Count < 3) return false;
+                    return x.Groups[1].Value == "type";
+                });
 
-                    if (srcMatch.Success)
+                var href = allAttributes.FirstOrDefault(x =>
+                {
+                    if (x.Groups.Count < 3) return false;
+                    return x.Groups[1].Value == sourceAttribute;
+                });
+
+                if (type == null || href == null || type.Groups[2].Value != mime) continue;
+
+                var attributes = allAttributes.Where(x =>
+                {
+                    if (x.Groups.Count < 3) return false;
+                    return x.Groups[1].Value != sourceAttribute && x.Groups[1].Value != "type";
+                }).ToDictionary(x => x.Groups[1].Value, x => x.Groups[2].Value);
+
+                var file = new BasicFile(dependencyType)
                     {
-                        loader.RegisterDependency(Group, Priority + count,
-                            srcMatch.Groups["val"].Value, "",
-                            ClientDependencyType.Javascript, ForceProvider);
+                        FilePath = href.Groups[2].Value,
+                        Group = Group,
+                        Priority = Priority,
+                        ForceProvider = ForceProvider
+                    };
 
-                        count++;
-                    }
+                foreach (var a in attributes)
+                {
+                    file.HtmlAttributes.Add(a.Key, a.Value);
                 }
+
+                files.Add(file);
             }
+            return files;
         }
     }
 }

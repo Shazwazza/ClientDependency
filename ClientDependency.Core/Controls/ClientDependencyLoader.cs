@@ -227,9 +227,26 @@ namespace ClientDependency.Core.Controls
 		/// </summary>
 		public ClientDependencyLoader RegisterDependency(int group, int priority, string filePath, string pathNameAlias, ClientDependencyType type, string provider)
 		{
-			_base.RegisterDependencyWithProvider(group, priority, filePath, pathNameAlias, type, provider);
+			_base.RegisterDependency(group, priority, filePath, pathNameAlias, type, provider);
 			return this;
 		}
+
+        /// <summary>
+        /// Registers a file dependency
+        /// </summary>
+        /// <param name="group"></param>
+        /// <param name="priority"></param>
+        /// <param name="filePath"></param>
+        /// <param name="pathNameAlias"></param>
+        /// <param name="type"></param>
+        /// <param name="htmlAttributes"></param>
+        /// <param name="provider"></param>
+        /// <returns></returns>
+        public ClientDependencyLoader RegisterDependency(int group, int priority, string filePath, string pathNameAlias, ClientDependencyType type, object htmlAttributes, string provider)
+        {
+            _base.RegisterDependency(group, priority, filePath, pathNameAlias, type, htmlAttributes, provider);
+            return this;
+        }
 
 		/// <summary>
 		/// Registers a file dependency 

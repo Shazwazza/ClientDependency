@@ -114,6 +114,7 @@
     <Compile Include="CssMinTest.cs" />
     <Compile Include="FakeHttpContextFactory.cs" />
     <Compile Include="HtmlAttributesStringParserTest.cs" />
+    <Compile Include="HtmlIncludeTests.cs" />
     <Compile Include="JsMinifyTest.cs" />
     <Compile Include="PathBasedUrlFormatValidatorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
