@@ -324,7 +324,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         {
             var folder = XmlMapFolder.FullName;
             var folderHash = folder.GenerateHash();
-            return Path.Combine(folder, NetworkHelper.MachineName + "-" + folderHash + "-" + MapFileName);
+            return Path.Combine(folder, NetworkHelper.FileSafeMachineName + "-" + folderHash + "-" + MapFileName);
         }
 
         private void CreateNewXmlFile()

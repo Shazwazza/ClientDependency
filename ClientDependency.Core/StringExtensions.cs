@@ -12,7 +12,18 @@ namespace ClientDependency.Core
         /// <summary>
         /// Generally used for unit tests to get access to the settings
         /// </summary>
-        internal static Func<ClientDependencySection> GetConfigSection; 
+        internal static Func<ClientDependencySection> GetConfigSection;
+
+        internal static string ReplaceNonAlphanumericChars(this string input, char replacement)
+        {
+            //any character that is not alphanumeric, convert to a hyphen
+            var mName = input;
+            foreach (var c in mName.ToCharArray().Where(c => !char.IsLetterOrDigit(c)))
+            {
+                mName = mName.Replace(c, replacement);
+            }
+            return mName;
+        }
 
         public static string ReverseString(this string s)
         {

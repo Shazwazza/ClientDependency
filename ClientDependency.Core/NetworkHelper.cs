@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ClientDependency.Core.Config;
 
 namespace ClientDependency.Core
@@ -10,11 +11,24 @@ namespace ClientDependency.Core
         /// </summary>
         internal static Func<ClientDependencySection> GetConfigSection;
 
+        
+
+        /// <summary>
+        /// Returns the machine name that is safe to use in file paths.
+        /// </summary>
+        /// <remarks>
+        /// see: https://github.com/Shandem/ClientDependency/issues/4
+        /// </remarks>
+        public static string FileSafeMachineName 
+        {
+            get { return MachineName.ReplaceNonAlphanumericChars('-'); }
+        }
+
         /// <summary>
         /// Returns the current machine name
         /// </summary>
         /// <remarks>
-        /// Tries to resolve the machine name, if it cannot it uses the config section
+        /// Tries to resolve the machine name, if it cannot it uses the config section.
         /// </remarks>
         public static string MachineName
         {
