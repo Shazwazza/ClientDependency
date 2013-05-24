@@ -27,14 +27,22 @@ CDF is flexible. It allows you to make any web component dependent on any CSS or
 * Provider Model so you can choose how you would like your JS and CSS files rendered, combined, compressed & minified
 * MIME type compression output for things like JSON services, or anything you want
 * Control over how composite file URLs are structured if you need a custom format
-* Medium trust compatible
-* *COMING SOON:* native TypeScript, .Less, SASS & CoffeeScript support
+* Medium trust compatible (Core, MVC and .Less projects)
+* Native .Less, TypeScript, SASS & CoffeeScript support
 
 ## Nuget
 
 	PM> Install-Package ClientDependency
 
 	PM> Install-Package ClientDependency-Mvc
+
+	PM> Install-Package ClientDependency-Less
+
+	PM> Install-Package ClientDependency-TypeScript
+
+	PM> Install-Package ClientDependency-Sass
+
+	PM> Install-Package ClientDependency-Coffee
 
 ## [Documentation](https://github.com/Shandem/ClientDependency/wiki)
 

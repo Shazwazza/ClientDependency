@@ -26,7 +26,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{C5D95718
 		build\ClientDependency-SASS.nuspec = build\ClientDependency-SASS.nuspec
 		build\ClientDependency-TypeScript.nuspec = build\ClientDependency-TypeScript.nuspec
 		build\ClientDependency.nuspec = build\ClientDependency.nuspec
-		SolutionInfo.cs = SolutionInfo.cs
 		UpgradingUmbraco.txt = UpgradingUmbraco.txt
 	EndProjectSection
 EndProject

@@ -1,2 +1,3 @@
 packages/*.nupkg
 packages/*
+ClientDependency.Web.Test/App_Data/ClientDependency/*

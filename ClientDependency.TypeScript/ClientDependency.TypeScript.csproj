@@ -53,6 +53,7 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="StartupHandler.cs" />
     <Compile Include="TypeScriptHandler.cs" />
     <Compile Include="TypeScriptCompilationError.cs" />
     <Compile Include="TypeScriptCompilationErrorParser.cs" />
