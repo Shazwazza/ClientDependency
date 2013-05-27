@@ -75,7 +75,7 @@ namespace ClientDependency.Core
                     if (url.StartsWith(http.Request.ApplicationPath.TrimEnd('/') + "/webresource.axd", StringComparison.InvariantCultureIgnoreCase))
                     {
                         bundleExternalUri = true;
-                    }
+                    }                                       
                 }
 
                 try
@@ -86,15 +86,23 @@ namespace ClientDependency.Core
                     //if this isn't a web resource, we need to check if its approved
                     if (!bundleExternalUri)
                     {
-                        // get the domain to test, with starting dot and trailing port, then compare with
-                        // declared (authorized) domains. the starting dot is here to allow for subdomain
-                        // approval, eg '.maps.google.com:80' will be approved by rule '.google.com:80', yet
-                        // '.roguegoogle.com:80' will not.
-                        var domain = string.Format(".{0}:{1}", uri.Host, uri.Port);
-
-                        if (approvedDomains.Any(bundleDomain => domain.EndsWith(bundleDomain)))
+                        //first, we will just allow local requests
+                        if (uri.IsLocalUri(http))
                         {
                             bundleExternalUri = true;
+                        }
+                        else
+                        {
+                            // get the domain to test, with starting dot and trailing port, then compare with
+                            // declared (authorized) domains. the starting dot is here to allow for subdomain
+                            // approval, eg '.maps.google.com:80' will be approved by rule '.google.com:80', yet
+                            // '.roguegoogle.com:80' will not.
+                            var domain = string.Format(".{0}:{1}", uri.Host, uri.Port);
+
+                            if (approvedDomains.Any(bundleDomain => domain.EndsWith(bundleDomain)))
+                            {
+                                bundleExternalUri = true;
+                            }
                         }
                     }
 
