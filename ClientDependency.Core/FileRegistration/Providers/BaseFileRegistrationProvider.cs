@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using System.Text;
 using System.Web.UI;
 using System.Configuration.Provider;
@@ -144,16 +145,24 @@ namespace ClientDependency.Core.FileRegistration.Providers
                     builder.Append(renderCompositeFiles(sameAttributes, http, currHtmlAttr));
             };
 
+            var fileBasedExtensions = ClientDependencySettings.Instance.FileBasedDependencyExtensionList
+                                                              .Union(FileWriters.GetRegisteredExtensions())
+                                                              .ToArray();
+
             var currNonRemoteFiles = new List<IClientDependencyFile>();
             foreach (var f in dependencies)
             {
-                //if it is an external resource, then we need to break the sequence
+                // if it is an external resource OR
+                // if it is a non-standard JS/CSS resource (i.e. a server request)
+                // then we need to break the sequence
                 // unless it has been explicitely required that the dependency be bundled
-                if (http.IsAbsolutePath(f.FilePath)
-                    //remote dependencies aren't local
-                    && !new Uri(f.FilePath, UriKind.RelativeOrAbsolute).IsLocalUri(http)
-                    // not required to be bundled
-                    && !f.ForceBundle)
+                if (!http.IsAbsolutePath(f.FilePath) && !fileBasedExtensions.Contains(Path.GetExtension(f.FilePath).ToUpper())
+                    //now check for external resources
+                    || (http.IsAbsolutePath(f.FilePath)
+                        //remote dependencies aren't local
+                        && !new Uri(f.FilePath, UriKind.RelativeOrAbsolute).IsLocalUri(http)
+                        // not required to be bundled
+                        && !f.ForceBundle))
                 {
                     //we've encountered an external dependency, so we need to break the sequence and restart it after
                     //we output the raw script tag
