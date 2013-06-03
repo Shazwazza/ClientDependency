@@ -406,7 +406,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
             var jsBuilder = new StringBuilder();
 
             //group by the group and order by the value
-            foreach (var group in allDependencies.GroupBy(x => x.Group).OrderBy(x => x))
+            foreach (var group in allDependencies.GroupBy(x => x.Group).OrderBy(x => x.Key))
             {
                 //sort both the js and css dependencies properly
 
