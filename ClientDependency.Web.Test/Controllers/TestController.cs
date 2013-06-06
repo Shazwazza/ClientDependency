@@ -6,7 +6,7 @@ using ClientDependency.Web.Test.Models;
 namespace ClientDependency.Web.Test.Controllers
 {
 
-    [HandleError]
+    
     public class TestController : Controller
     {
         /// <summary>
@@ -21,10 +21,11 @@ namespace ClientDependency.Web.Test.Controllers
             }
             catch (InvalidOperationException ieox)
             {
-                ViewData["error"] = "Unknown Action: \"" +
-                    Server.HtmlEncode(actionName) + "\"";
-                ViewData["exMessage"] = ieox.Message;
-                this.View("Error").ExecuteResult(this.ControllerContext);
+                throw;
+                //ViewData["error"] = "Unknown Action: \"" +
+                //    Server.HtmlEncode(actionName) + "\"";
+                //ViewData["exMessage"] = ieox.Message;
+                //this.View("Error").ExecuteResult(this.ControllerContext);
             }
         }                
 
