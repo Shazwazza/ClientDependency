@@ -73,14 +73,18 @@ namespace ClientDependency.Core.FileRegistration.Providers
 				return string.Empty;
 
             var sb = new StringBuilder();
+            var strClientLoader = new StringBuilder();
 
             RegisterLazyLoadScript(sb, http);
 
             if (http.IsDebuggingEnabled || !EnableCompositeFiles)
 			{
 				foreach (var dependency in jsDependencies)
-				{
-                    sb.Append(RenderSingleJsFile(string.Format("'{0}','{1}'", dependency.FilePath, string.Empty), htmlAttributes));
+                {
+                    strClientLoader.Append("CDLazyLoader");
+                    strClientLoader.AppendFormat(".AddCss('{0}')", dependency.FilePath);
+                    strClientLoader.AppendLine(";");
+                    //sb.Append(RenderSingleJsFile(string.Format("'{0}','{1}'", dependency.FilePath, string.Empty), htmlAttributes));
 				}
 			}
 			else
@@ -88,9 +92,14 @@ namespace ClientDependency.Core.FileRegistration.Providers
 				var comp = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript, http, GetCompositeFileHandlerPath(http));
                 foreach (var s in comp)
                 {
-                    sb.Append(RenderSingleJsFile(string.Format("'{0}','{1}'", s, string.Empty), htmlAttributes));
+                    strClientLoader.Append("CDLazyLoader");
+                    strClientLoader.AppendFormat(".AddCss('{0}')", s);
+                    strClientLoader.AppendLine(";");
+                    //sb.Append(RenderSingleJsFile(string.Format("'{0}','{1}'", s, string.Empty), htmlAttributes));
                 }   
 			}
+
+            sb.Append(string.Format(HtmlEmbedContants.ScriptEmbedWithCode, strClientLoader.ToString()));
 
             return sb.ToString();
         }
@@ -108,45 +117,63 @@ namespace ClientDependency.Core.FileRegistration.Providers
                 return string.Empty;
 
             var sb = new StringBuilder();
+            var strClientLoader = new StringBuilder();
+
+            RegisterLazyLoadScript(sb, http);
 
             if (http.IsDebuggingEnabled || !EnableCompositeFiles)
             {
                 foreach (var dependency in cssDependencies)
                 {
-                    sb.Append(RenderSingleCssFile(dependency.FilePath, htmlAttributes));
+                    strClientLoader.Append("CDLazyLoader");
+                    strClientLoader.AppendFormat(".AddJs('{0}')", dependency.FilePath);
+                    strClientLoader.AppendLine(";");
+                    //sb.Append(RenderSingleCssFile(dependency.FilePath, htmlAttributes));
                 }
             }
             else
             {
-
-                RegisterLazyLoadScript(sb, http);
-
 				var comp = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.ProcessCompositeList(cssDependencies, ClientDependencyType.Css, http, GetCompositeFileHandlerPath(http));
                 foreach (var s in comp)
                 {
-                    sb.Append(RenderSingleCssFile(s, htmlAttributes));
+                    strClientLoader.Append("CDLazyLoader");
+                    strClientLoader.AppendFormat(".AddJs('{0}')", s);
+                    strClientLoader.AppendLine(";");
+                    //sb.Append(RenderSingleCssFile(s, htmlAttributes));
                 }
             }
+
+            sb.Append(string.Format(HtmlEmbedContants.ScriptEmbedWithCode, strClientLoader.ToString()));
 
             return sb.ToString();
         }
 
         protected override string RenderSingleJsFile(string js, IDictionary<string, string> htmlAttributes)
         {
+            var sb = new StringBuilder();
+            RegisterLazyLoadScript(sb, new HttpContextWrapper(HttpContext.Current));
+
             var strClientLoader = new StringBuilder("CDLazyLoader");
             strClientLoader.AppendFormat(".AddJs('{0}')", js);
             strClientLoader.Append(';');
 
-            return string.Format(HtmlEmbedContants.ScriptEmbedWithCode, strClientLoader.ToString());
+            sb.AppendFormat(HtmlEmbedContants.ScriptEmbedWithCode, strClientLoader.ToString());
+
+            return sb.ToString();
         }
 
         protected override string RenderSingleCssFile(string css, IDictionary<string, string> htmlAttributes)
         {
+            var sb = new StringBuilder();
+            RegisterLazyLoadScript(sb, new HttpContextWrapper(HttpContext.Current));
+
             var strClientLoader = new StringBuilder("CDLazyLoader");
             strClientLoader.AppendFormat(".AddCss('{0}')", css);
             strClientLoader.Append(';');
 
-            return string.Format(HtmlEmbedContants.ScriptEmbedWithCode, strClientLoader);
+            sb.AppendFormat(HtmlEmbedContants.ScriptEmbedWithCode, strClientLoader.ToString());
+
+            return sb.ToString();
         }
     }
 }
