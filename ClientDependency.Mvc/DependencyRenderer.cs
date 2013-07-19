@@ -155,8 +155,8 @@ namespace ClientDependency.Core.Mvc
                 _output.Add(new RendererOutput()
                 {
                     Name = x.Provider.Name,
-                    OutputCss = css.Replace("&", "&amp;"),
-                    OutputJs = js.Replace("&", "&amp;")
+                    OutputCss = css,
+                    OutputJs = js
                 });
             }
         }

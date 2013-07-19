@@ -33,10 +33,38 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         #region Abstract methods/properties
 
+        /// <summary>
+        /// This is called when rendering many js dependencies
+        /// </summary>
+        /// <param name="jsDependencies"></param>
+        /// <param name="http"></param>
+        /// <param name="htmlAttributes"></param>
+        /// <returns></returns>
         protected abstract string RenderJsDependencies(IEnumerable<IClientDependencyFile> jsDependencies, HttpContextBase http, IDictionary<string, string> htmlAttributes);
+
+        /// <summary>
+        /// This is called when rendering many css dependencies
+        /// </summary>
+        /// <param name="cssDependencies"></param>
+        /// <param name="http"></param>
+        /// <param name="htmlAttributes"></param>
+        /// <returns></returns>
         protected abstract string RenderCssDependencies(IEnumerable<IClientDependencyFile> cssDependencies, HttpContextBase http, IDictionary<string, string> htmlAttributes);
 
+        /// <summary>
+        /// Called to render a single js file
+        /// </summary>
+        /// <param name="js"></param>
+        /// <param name="htmlAttributes"></param>
+        /// <returns></returns>
         protected abstract string RenderSingleJsFile(string js, IDictionary<string, string> htmlAttributes);
+
+        /// <summary>
+        /// Called to render a single css file
+        /// </summary>
+        /// <param name="css"></param>
+        /// <param name="htmlAttributes"></param>
+        /// <returns></returns>
         protected abstract string RenderSingleCssFile(string css, IDictionary<string, string> htmlAttributes);
 
         #endregion
@@ -98,6 +126,38 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         #region Protected Methods
 
+        private void StaggerOnDifferentAttributes(
+            HttpContextBase http,
+            StringBuilder builder,
+            IEnumerable<IClientDependencyFile> list,
+            Func<IEnumerable<IClientDependencyFile>, HttpContextBase, IDictionary<string, string>, string> renderCompositeFiles)
+        {
+            var sameAttributes = new List<IClientDependencyFile>();
+            var currHtmlAttr = GetHtmlAttributes(list.ElementAt(0));
+            foreach (var c in list)
+            {
+                if (!currHtmlAttr.IsEqualTo(GetHtmlAttributes(c)))
+                {
+                    //if the attributes are different we need to stagger
+                    if (sameAttributes.Any())
+                    {
+                        //render the current buffer
+                        builder.Append(renderCompositeFiles(sameAttributes, http, currHtmlAttr));
+                        //clear the buffer
+                        sameAttributes.Clear();
+                    }
+                }
+
+                //add the item to the buffer and set the current html attributes
+                sameAttributes.Add(c);
+                currHtmlAttr = GetHtmlAttributes(c);
+            }
+
+            //if there's anything in the buffer then write the remaining
+            if (sameAttributes.Any())
+                builder.Append(renderCompositeFiles(sameAttributes, http, currHtmlAttr));
+        }
+
         /// <summary>
         /// Because we can have both internal and external dependencies rendered, we need to stagger the script tag output... if they are external, we need to stop the compressing/combining
         /// and write out the external dependency, then resume the compressing/combining handler.
@@ -114,37 +174,6 @@ namespace ClientDependency.Core.FileRegistration.Providers
             Func<IEnumerable<IClientDependencyFile>, HttpContextBase, IDictionary<string, string>, string> renderCompositeFiles,
             Func<string, IDictionary<string, string>, string> renderSingle)
         {
-
-
-            //This action will stagger the output based on whether or not the html attribute declarations are the same for each dependency
-            Action<IEnumerable<IClientDependencyFile>> staggerOnDifferentAttributes = (list) =>
-            {
-                var sameAttributes = new List<IClientDependencyFile>();
-                var currHtmlAttr = GetHtmlAttributes(list.ElementAt(0));
-                foreach (var c in list)
-                {
-                    if (!currHtmlAttr.IsEqualTo(GetHtmlAttributes(c)))
-                    {
-                        //if the attributes are different we need to stagger
-                        if (sameAttributes.Any())
-                        {
-                            //render the current buffer
-                            builder.Append(renderCompositeFiles(sameAttributes, http, currHtmlAttr));
-                            //clear the buffer
-                            sameAttributes.Clear();
-                        }
-                    }
-
-                    //add the item to the buffer and set the current html attributes
-                    sameAttributes.Add(c);
-                    currHtmlAttr = GetHtmlAttributes(c);
-                }
-
-                //if there's anything in the buffer then write the remaining
-                if (sameAttributes.Any())
-                    builder.Append(renderCompositeFiles(sameAttributes, http, currHtmlAttr));
-            };
-
             var fileBasedExtensions = ClientDependencySettings.Instance.FileBasedDependencyExtensionList
                                                               .Union(FileWriters.GetRegisteredExtensions())
                                                               .ToArray();
@@ -152,11 +181,19 @@ namespace ClientDependency.Core.FileRegistration.Providers
             var currNonRemoteFiles = new List<IClientDependencyFile>();
             foreach (var f in dependencies)
             {
+                //need to parse out the request's extensions and remove query strings
+                var extension = Path.GetExtension(f.FilePath);
+                var stringExt = "";
+                if (extension != null)
+                {
+                    stringExt = extension.ToUpper().Split(new[] {'?'}, StringSplitOptions.RemoveEmptyEntries)[0];
+                }
+
                 // if it is an external resource OR
                 // if it is a non-standard JS/CSS resource (i.e. a server request)
                 // then we need to break the sequence
                 // unless it has been explicitely required that the dependency be bundled
-                if (!http.IsAbsolutePath(f.FilePath) && !fileBasedExtensions.Contains(Path.GetExtension(f.FilePath).ToUpper())
+                if (!http.IsAbsolutePath(f.FilePath) && !fileBasedExtensions.Contains(stringExt)
                     //now check for external resources
                     || (http.IsAbsolutePath(f.FilePath)
                         //remote dependencies aren't local
@@ -169,7 +206,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
                     if (currNonRemoteFiles.Count > 0)
                     {
                         //render the current buffer
-                        staggerOnDifferentAttributes(currNonRemoteFiles);
+                        StaggerOnDifferentAttributes(http, builder, currNonRemoteFiles, renderCompositeFiles);
                         //clear the buffer
                         currNonRemoteFiles.Clear();
                     }
@@ -186,7 +223,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
             if (currNonRemoteFiles.Count > 0)
             {
                 //render the current buffer
-                staggerOnDifferentAttributes(currNonRemoteFiles);
+                StaggerOnDifferentAttributes(http, builder, currNonRemoteFiles, renderCompositeFiles);
             }
         }
 

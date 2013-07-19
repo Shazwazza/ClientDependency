@@ -8,7 +8,7 @@ ClientDependency.Sys.LazyLoader = function() {
     this.addedDependencies = [];
     this.jsQueue = new Array();
     this.jsQueueWaiting = false;
-}
+};
 
 // ********************* Dependency Loader Methods *********************
 ClientDependency.Sys.LazyLoader.prototype.AddJs = function(filePath, callbackMethod) {
@@ -33,7 +33,7 @@ ClientDependency.Sys.LazyLoader.prototype.AddJs = function(filePath, callbackMet
     }
 
     return this;
-}
+};
 
 ClientDependency.Sys.LazyLoader.prototype.RegisterCallbackMethod = function(callbackMethod) {
     /// <summary>
@@ -48,7 +48,7 @@ ClientDependency.Sys.LazyLoader.prototype.RegisterCallbackMethod = function(call
     ClientDependency.Sys.onScriptAvailable(script);
 
     return this;
-}
+};
 
 function logthis(txt) {
 
@@ -57,7 +57,7 @@ function logthis(txt) {
 ClientDependency.Sys.LazyLoader.prototype.AddCss = function(filePath) {
     if (this.addedDependencies[filePath] == undefined) {
 
-        var tempCss = document.createElement("link")
+        var tempCss = document.createElement("link");
         tempCss.setAttribute("href", filePath);
         tempCss.setAttribute("rel", "stylesheet");
         tempCss.setAttribute("type", "text/css");
@@ -70,7 +70,7 @@ ClientDependency.Sys.LazyLoader.prototype.AddCss = function(filePath) {
         //Sys.Debug.trace("LazyLoader: Css file has already been added: '" + filePath + "'.");
     }
     return this;
-}
+};
 
 ClientDependency.Sys.LazyLoader.prototype.LoadNextJs = function() {
     if (this.jsQueue.length > 0) {
@@ -96,7 +96,7 @@ ClientDependency.Sys.LazyLoader.prototype.LoadNextJs = function() {
         //Sys.Debug.trace('LazyLoader: No scripts left.');
         this.jsQueueWaiting = false;
     }
-}
+};
 
 // Initialize
 var CDLazyLoader = new ClientDependency.Sys.LazyLoader();

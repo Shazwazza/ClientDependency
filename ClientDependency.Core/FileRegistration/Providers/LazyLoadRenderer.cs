@@ -17,6 +17,14 @@ namespace ClientDependency.Core.FileRegistration.Providers
             PlaceholderParser.AllPlaceholdersReplaced += PlaceholdersReplaced;
         }
 
+        /// <summary>
+        /// This is used to ensure we render the lazy load script once before either the lazy js or css is rendered. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// See comments in PlaceholdersReplaced for more details
+        /// </remarks>
         static void PlaceholderParserPlaceholderReplaced(object sender, PlaceholderReplacementEventArgs e)
         {
             //if the replacement was for this renderer
@@ -90,12 +98,19 @@ namespace ClientDependency.Core.FileRegistration.Providers
             return page.ClientScript.GetWebResourceUrl(type, resourceId);
         }
         
+        /// <summary>
+        /// Renders many Js dependencies.
+        /// </summary>
+        /// <param name="jsDependencies"></param>
+        /// <param name="http"></param>
+        /// <param name="htmlAttributes"></param>
+        /// <returns></returns>
         protected override string RenderJsDependencies(IEnumerable<IClientDependencyFile> jsDependencies, HttpContextBase http, IDictionary<string, string> htmlAttributes)
         {
             if (!jsDependencies.Any())
 				return string.Empty;
 
-            var sb = new StringBuilder();
+            var sb = new StringBuilder();   
 
             if (http.IsDebuggingEnabled || !EnableCompositeFiles)
 			{
@@ -117,7 +132,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
         }
 
         /// <summary>
-        /// Registers the Css dependencies. 
+        /// Renders many Css dependencies. 
         /// </summary>
         /// <param name="cssDependencies"></param>
         /// <param name="http"></param>
@@ -151,8 +166,11 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
         protected override string RenderSingleJsFile(string js, IDictionary<string, string> htmlAttributes)
         {
+            if (!js.StartsWith("'"))
+                js = string.Format("'{0}'", js);
+
             var strClientLoader = new StringBuilder("CDLazyLoader");
-            strClientLoader.AppendFormat(".AddJs('{0}')", js);
+            strClientLoader.AppendFormat(".AddJs({0})", js);
             strClientLoader.Append(';');
 
             return string.Format(HtmlEmbedContants.ScriptEmbedWithCode, strClientLoader.ToString());
