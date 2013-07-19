@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Web.UI;
 using System.Web;
 using System.Linq;
 using ClientDependency.Core.Config;
 using ClientDependency.Core.FileRegistration.Providers;
-using System.Web.Mvc;
-using ClientDependency.Core.Controls;
-using System.IO;
 using System.Text.RegularExpressions;
 
 namespace ClientDependency.Core.Mvc
@@ -90,7 +85,7 @@ namespace ClientDependency.Core.Mvc
         }
 
         #endregion
-
+        
         #region Internal Methods
         
         /// <summary>
@@ -104,31 +99,7 @@ namespace ClientDependency.Core.Mvc
         {
             GenerateOutput();
 
-            html = Regex.Replace(html, JsMarkupRegex,
-                (m) =>
-                {
-                    var grp = m.Groups["renderer"];
-                    if (grp != null && _output.Any())
-                    {
-                        var rendererOutput = _output.SingleOrDefault(x => x.Name == grp.ToString());
-                        return rendererOutput != null ? rendererOutput.OutputJs : "";
-                    }
-                    return m.ToString();
-                }, RegexOptions.Compiled);
-
-            html = Regex.Replace(html, CssMarkupRegex,
-                (m) =>
-                {
-                    var grp = m.Groups["renderer"];
-                    if (grp != null && _output.Any())
-                    {
-                        var rendererOutput = _output.SingleOrDefault(x => x.Name == grp.ToString());
-                        return rendererOutput != null ? rendererOutput.OutputCss : "";
-                    }
-                    return m.ToString();
-                }, RegexOptions.Compiled);
-
-            return html;
+            return PlaceholderParser.ParseHtmlPlaceholders(CurrentContext, html, JsMarkupRegex, CssMarkupRegex, _output.ToArray());
         }
 
         /// <summary>
@@ -190,12 +161,7 @@ namespace ClientDependency.Core.Mvc
             }
         }
 
-        private class RendererOutput
-        {
-            public string Name { get; set; }
-            public string OutputJs { get; set; }
-            public string OutputCss { get; set; }
-        }
+        
 
 
     }

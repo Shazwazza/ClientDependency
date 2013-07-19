@@ -156,6 +156,9 @@
     <Compile Include="NetworkHelper.cs" />
     <Compile Include="ObjectExtensions.cs" />
     <Compile Include="PathsCollection.cs" />
+    <Compile Include="PlaceholderParser.cs" />
+    <Compile Include="PlaceholderReplacementEventArgs.cs" />
+    <Compile Include="PlaceholdersReplacedEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProviderDependencyList.cs" />
     <Compile Include="FileRegistration\Providers\BaseFileRegistrationProvider.cs" />
@@ -169,6 +172,7 @@
     <Compile Include="CompositeFiles\CompositeDependencyHandler.cs" />
     <Compile Include="CompositeFiles\Providers\CompositeFileProcessingProviderCollection.cs" />
     <Compile Include="FileRegistration\Providers\PageHeaderProvider.cs" />
+    <Compile Include="RendererOutput.cs" />
     <Compile Include="RequestHelper.cs" />
     <Compile Include="SimpleCompressor.cs" />
     <Compile Include="StringExtensions.cs" />
