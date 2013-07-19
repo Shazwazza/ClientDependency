@@ -16,9 +16,8 @@ Home Page
 }
 
 @{ Html.RequiresCss("Content.css", "Styles")
-       .RequiresJs(new JavascriptFile("~/Js/SomeLazyLoadScript.js") {ForceProvider = "LazyLoadRenderer"}); }
-       
-        @*.RequiresCss(new CssFile("Test.css") { PathNameAlias = "Styles", ForceProvider = "LazyLoadRenderer" }); }*@
+       .RequiresJs(new JavascriptFile("~/Js/SomeLazyLoadScript.js") {ForceProvider = "LazyLoadRenderer"})
+       .RequiresCss(new CssFile("Test.css") { PathNameAlias = "Styles", ForceProvider = "LazyLoadRenderer" }); }
 
 <div class="mainContent">
     <h2>
