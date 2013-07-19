@@ -6,7 +6,7 @@
 	<CD:CssInclude ID="CssInclude2" runat="server" FilePath="relative.css" />
     <CD:HtmlInclude runat="server">
       <link rel="stylesheet" type="text/css" href="/css/content.css" />
-      <link rel="stylesheet" type=text/css href=relative.css />
+      <link rel="stylesheet" type="text/css" href="relative.css" />
       <script src='/js/htmlincludetest1.js' type='text/javascript'></script>
       <script type="text/javascript" src="/js/htmlincludetest2.js"></script>
     </CD:HtmlInclude>

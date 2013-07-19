@@ -184,7 +184,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
                 //need to parse out the request's extensions and remove query strings
                 var extension = Path.GetExtension(f.FilePath);
                 var stringExt = "";
-                if (extension != null)
+                if (!string.IsNullOrWhiteSpace(extension))
                 {
                     stringExt = extension.ToUpper().Split(new[] {'?'}, StringSplitOptions.RemoveEmptyEntries)[0];
                 }
