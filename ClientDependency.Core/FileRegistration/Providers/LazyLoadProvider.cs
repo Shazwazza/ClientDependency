@@ -53,6 +53,9 @@ namespace ClientDependency.Core.FileRegistration.Providers
         
         protected override string RenderSingleJsFile(string js, IDictionary<string, string> htmlAttributes)
 		{
+            if(!js.StartsWith("'"))
+                js = String.Format("'{0}'", js);
+
             var strClientLoader = new StringBuilder("CDLazyLoader");
 			strClientLoader.AppendFormat(".AddJs({0})", js);
 			strClientLoader.Append(';');
