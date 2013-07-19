@@ -97,7 +97,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
             var page = new Page();
             return page.ClientScript.GetWebResourceUrl(type, resourceId);
         }
-        
+
         /// <summary>
         /// Renders many Js dependencies.
         /// </summary>
@@ -111,12 +111,16 @@ namespace ClientDependency.Core.FileRegistration.Providers
 				return string.Empty;
 
             var sb = new StringBuilder();   
+            var strClientLoader = new StringBuilder();
+
 
             if (http.IsDebuggingEnabled || !EnableCompositeFiles)
 			{
 				foreach (var dependency in jsDependencies)
 				{
-                    sb.Append(RenderSingleJsFile(string.Format("'{0}','{1}'", dependency.FilePath, string.Empty), htmlAttributes));
+                    strClientLoader.Append("CDLazyLoader");
+                    strClientLoader.AppendFormat(".AddJs('{0}')", dependency.FilePath);
+                    strClientLoader.AppendLine(";");
 				}
 			}
 			else
@@ -124,9 +128,13 @@ namespace ClientDependency.Core.FileRegistration.Providers
 				var comp = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.ProcessCompositeList(jsDependencies, ClientDependencyType.Javascript, http, GetCompositeFileHandlerPath(http));
                 foreach (var s in comp)
                 {
-                    sb.Append(RenderSingleJsFile(string.Format("'{0}','{1}'", s, string.Empty), htmlAttributes));
+                    strClientLoader.Append("CDLazyLoader");
+                    strClientLoader.AppendFormat(".AddJs('{0}')", s);
+                    strClientLoader.AppendLine(";");
                 }   
 			}
+
+            sb.Append(string.Format(HtmlEmbedContants.ScriptEmbedWithCode, strClientLoader.ToString()));
 
             return sb.ToString();
         }
@@ -144,12 +152,15 @@ namespace ClientDependency.Core.FileRegistration.Providers
                 return string.Empty;
 
             var sb = new StringBuilder();
+            var strClientLoader = new StringBuilder();
 
             if (http.IsDebuggingEnabled || !EnableCompositeFiles)
             {
                 foreach (var dependency in cssDependencies)
                 {
-                    sb.Append(RenderSingleCssFile(dependency.FilePath, htmlAttributes));
+                    strClientLoader.Append("CDLazyLoader");
+                    strClientLoader.AppendFormat(".AddCss('{0}')", dependency.FilePath);
+                    strClientLoader.AppendLine(";");
                 }
             }
             else
@@ -157,9 +168,13 @@ namespace ClientDependency.Core.FileRegistration.Providers
 				var comp = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.ProcessCompositeList(cssDependencies, ClientDependencyType.Css, http, GetCompositeFileHandlerPath(http));
                 foreach (var s in comp)
                 {
-                    sb.Append(RenderSingleCssFile(s, htmlAttributes));
+                    strClientLoader.Append("CDLazyLoader");
+                    strClientLoader.AppendFormat(".AddCss('{0}')", s);
+                    strClientLoader.AppendLine(";");
                 }
             }
+
+            sb.Append(string.Format(HtmlEmbedContants.ScriptEmbedWithCode, strClientLoader.ToString()));
 
             return sb.ToString();
         }
