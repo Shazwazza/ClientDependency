@@ -1,3 +1,13 @@
-packages/*.nupkg
+_ReSharper*
+*/bin/*
+*/obj/*
+TestResults/*
+*.suo
+*.vsmdi
+*.sdf
+*ReSharper.user
+*.csproj.user
+*build/[Rr]eleases/*
+*/App_Data/ClientDependency/*
 packages/*
-ClientDependency.Web.Test/App_Data/ClientDependency/*
+ClientDependency.sln.DotSettings.user

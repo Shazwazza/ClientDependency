@@ -171,7 +171,11 @@ namespace ClientDependency.Core.Mvc
             html.ViewContext.GetLoader().EnsureCssBundleRegistered(bundleName);
             return html;
         }
-
+        public static HtmlHelper RequiresCss(this HtmlHelper html, IClientDependencyFile file, object htmlAttributes = null)
+        {
+            html.ViewContext.GetLoader().RegisterDependency(file, htmlAttributes);
+            return html;
+        }
         public static HtmlHelper RequiresCss(this HtmlHelper html, string filePath)
         {
             html.ViewContext.GetLoader().RegisterDependency(filePath, ClientDependencyType.Css);
