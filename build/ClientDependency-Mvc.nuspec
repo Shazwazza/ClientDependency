@@ -12,7 +12,7 @@
     <tags>mvc css html javascript clientdependency cdf minification compression</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <dependencies>
-      <dependency id="ClientDependency" version="1.7" />
+      <dependency id="ClientDependency" version="1.7.0.4" />
     </dependencies>
   </metadata>
   <files>
