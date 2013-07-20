@@ -152,8 +152,26 @@
     <Content Include="Css\BundleTest\css3.css" />
     <Content Include="Css\Controls.css" />
     <Content Include="Css\Imports.css" />
+    <Content Include="Css\MyFirstLess.css">
+      <DependentUpon>MyFirstLess.less</DependentUpon>
+    </Content>
+    <Content Include="Css\MyFirstLess.min.css">
+      <DependentUpon>MyFirstLess.less</DependentUpon>
+    </Content>
     <Content Include="Css\Print.css" />
     <Content Include="Css\Site.css" />
+    <Content Include="Css\SubFolder\testless4.css">
+      <DependentUpon>testless4.less</DependentUpon>
+    </Content>
+    <Content Include="Css\SubFolder\testless4.min.css">
+      <DependentUpon>testless4.less</DependentUpon>
+    </Content>
+    <Content Include="Css\testless1.css">
+      <DependentUpon>testless1.less</DependentUpon>
+    </Content>
+    <Content Include="Css\testless1.min.css">
+      <DependentUpon>testless1.less</DependentUpon>
+    </Content>
     <Content Include="Css\TestPath\BodyGradient.css" />
     <Content Include="Js\JQueryTemplate.js" />
     <Content Include="Js\HtmlIncludeTest2.js" />
@@ -336,6 +354,10 @@
     <Content Include="Css\MyFirstScss.scss" />
     <Content Include="Css\MyFirstSass.sass" />
     <Content Include="Js\MyFirstCoffee.coffee" />
+    <Content Include="Css\testless1.less" />
+    <Content Include="Css\SubFolder\testless2.less" />
+    <Content Include="Css\SubFolder\testless3.less" />
+    <Content Include="Css\SubFolder\testless4.less" />
     <None Include="Views\Shared\Master.cshtml" />
     <Content Include="Views\Test\ImportsCss.cshtml" />
     <Content Include="Views\Test\Bundles.cshtml" />

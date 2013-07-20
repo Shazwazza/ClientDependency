@@ -11,6 +11,8 @@ using ClientDependency.Core.CompositeFiles.Providers;
 using ClientDependency.Core.Config;
 using ClientDependency.Less;
 using dotless.Core;
+using dotless.Core.Importers;
+using dotless.Core.configuration;
 
 namespace ClientDependency.Less
 {
@@ -23,13 +25,24 @@ namespace ClientDependency.Less
         {
             try
             {
-                
                 //if it is a file based dependency then read it				
                 var fileContents = File.ReadAllText(fi.FullName, Encoding.UTF8); //read as utf 8
-                
-                //NOTE: passing in null will automatically for the web configuration section to be loaded in!
-                var output = LessWeb.Parse(fileContents, null);
-                
+
+                //for our custom file reader to work we just need to put the origUrl into the httpcontext items so 
+                //we can retreive it in the reader to then figure out the 'real' requested path.
+                http.Items["Cdf_LessWriter_origUrl"] = origUrl;
+                //get the default less config
+                var config = DotlessConfiguration.GetDefaultWeb();
+                //set the file reader to our custom file reader
+                config.LessSource = typeof(CdfFileReader);
+                //disable cache for this engine since we are already caching our own, plus enabling this will cause errors because
+                // the import paths aren't resolved properly.
+                config.CacheEnabled = false;
+                //get the engine based on the custom config with our custom file reader
+                var lessEngine = LessWeb.GetEngine(config);
+
+                var output = lessEngine.TransformToCss(fileContents, origUrl);
+
                 DefaultFileWriter.WriteContentToStream(provider, sw, output, type, http, origUrl);
                 
                 return true;
@@ -39,10 +52,6 @@ namespace ClientDependency.Less
                 ClientDependencySettings.Instance.Logger.Error(string.Format("Could not write file {0} contents to stream. EXCEPTION: {1}", fi.FullName, ex.Message), ex);
                 return false;
             }
-
-            
-
-            
         }
     }
 }

@@ -51,6 +51,8 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="CdfFileReader.cs" />
+    <Compile Include="CdfPathResolver.cs" />
     <Compile Include="LessWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StartupHandler.cs" />
