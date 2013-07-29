@@ -451,7 +451,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
                     group.Where(x => x.DependencyType == ClientDependencyType.Javascript).ToList());
 
                 var cssDependencies = DependencySorter.SortItems(
-                    allDependencies.Where(x => x.DependencyType == ClientDependencyType.Css).ToList());
+                    group.Where(x => x.DependencyType == ClientDependencyType.Css).ToList());
 
                 //render
                 WriteStaggeredDependencies(cssDependencies, http, cssBuilder, RenderCssDependencies, RenderSingleCssFile);
