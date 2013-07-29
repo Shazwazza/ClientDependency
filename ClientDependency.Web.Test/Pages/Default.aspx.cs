@@ -11,7 +11,10 @@ namespace ClientDependency.Web.Test.Pages
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            HttpResponse Response = HttpContext.Current.Response;
+            Response.Clear();
+            Response.Filter = new System.IO.Compression.GZipStream(Response.Filter, System.IO.Compression.CompressionMode.Compress);
+            Response.AppendHeader("Content-Encoding", "gzip");
         }
     }
 }

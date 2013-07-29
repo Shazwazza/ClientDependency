@@ -6,7 +6,8 @@ namespace ClientDependency.Core.Mvc
 {
 
     /// <summary>
-    /// MvcFilter is required when using ClientDependency in MVC, without it, ClientDependency will not work.
+    /// MvcFilter is required when using ClientDependency in MVC, without it ClientDependency will not work with MVC unless you are
+    /// using razor and using the Cdf view engines.
     /// </summary>
     public class MvcFilter : IFilter
     {
@@ -90,4 +91,5 @@ namespace ClientDependency.Core.Mvc
             }
         }
     }
+
 }

@@ -60,11 +60,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
     </Reference>
-    <Reference Include="SassAndCoffee.Core">
-      <HintPath>..\packages\SassAndCoffee.Core.2.0.2.0\lib\net40-Client\SassAndCoffee.Core.dll</HintPath>
+    <Reference Include="SassAndCoffee.Core, Version=2.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\SassAndCoffee.Core.2.1.1.0\lib\net40-Client\SassAndCoffee.Core.dll</HintPath>
     </Reference>
-    <Reference Include="SassAndCoffee.JavaScript">
-      <HintPath>..\packages\SassAndCoffee.JavaScript.2.0.2.0\lib\net40-Client\SassAndCoffee.JavaScript.dll</HintPath>
+    <Reference Include="SassAndCoffee.JavaScript, Version=2.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\SassAndCoffee.JavaScript.2.1.1.0\lib\net40-Client\SassAndCoffee.JavaScript.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
