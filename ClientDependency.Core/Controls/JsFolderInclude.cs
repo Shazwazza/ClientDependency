@@ -5,10 +5,9 @@
     /// </summary>
     public class JsFolderInclude : DependencyFolderInclude
     {
-        private const string SearchPattern = "*.css";
+        private const string SearchPattern = "*.js";
 
         public JsFolderInclude()
-            : base()
         {
             FileSearchPattern = SearchPattern;
         }
