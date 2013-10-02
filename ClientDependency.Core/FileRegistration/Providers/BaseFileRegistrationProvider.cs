@@ -182,6 +182,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
             foreach (var f in dependencies)
             {
                 //need to parse out the request's extensions and remove query strings
+                //need to force non-bundled lines for items with query parameters.
                 var extension = f.FilePath.Contains('?') ? "" :  Path.GetExtension(f.FilePath);
                 var stringExt = "";
                 if (!string.IsNullOrWhiteSpace(extension))
