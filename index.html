@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Clientdependency by Shandem</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/Shandem/ClientDependency">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/Shandem/ClientDependency/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/Shandem/ClientDependency/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Clientdependency</h1>
+          <p>A library for managing CSS and JavaScript dependencies in ASP.Net</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/Shandem">Shandem</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
+        <p><img src="http://shazwazza.com/Content/Downloads/ClientDependencyLogo.png" alt="ClientDependency Framework"></p>
+
+<h2>
+<a name="what-is-clientdependency-framework-cdf-" class="anchor" href="#what-is-clientdependency-framework-cdf-"><span class="octicon octicon-link"></span></a>What is <em>ClientDependency Framework (CDF)</em> ?</h2>
+
+<p>CDF is a framework for managing dependencies for JavaScript and CSS files in your web application (client files). It allows for each individual component in your web application to declare what CSS and JavaScript files they require instead of relying on a single master page to include all dependencies for all modules. </p>
+
+<p>This hugely simplifies collaborative development since any developer who is working on a component doesn't need to worry about what CSS/JavaScript is being included on the main page. CDF will automagically wire everything up, ensure that your dependencies are ordered correctly, that there are no duplicates and render your CSS and JavaScript html tags properly on to the rendering page.</p>
+
+<p>CDF is flexible. It allows you to make any web component dependent on any CSS or JavaScript file individually. CDF does not require you to pre-define resources at startup (but you certainly can) and doesn't require you to know c# or VB. If you can write markup for Webforms or Razor then you can use CDF.</p>
+
+<h2>
+<a name="out-of-the-box-you-get" class="anchor" href="#out-of-the-box-you-get"><span class="octicon octicon-link"></span></a>Out of the box you get</h2>
+
+<ul>
+<li>MVC support - Any view engine</li>
+<li>Webforms support</li>
+<li>Runtime dependency resolution</li>
+<li>Pre-defined bundling</li>
+<li>Combining, compressing &amp; minifying output</li>
+<li>Support for external/CDN files</li>
+<li>Debug and release mode rendering</li>
+<li>OutputCaching of the combined files</li>
+<li>Persisting the combined composite files for increased performance when applications restart or when the Cache expires</li>
+<li>Versioning the files ... great for ensuring your clients' browser cache is cleared!</li>
+<li>Prioritizing dependencies</li>
+<li>Pre-defined file paths - great for theming!</li>
+<li>Detecting script and styles that are not explicitly registered with CDF and have the output compressed</li>
+<li>Provider Model so you can choose how you would like your JS and CSS files rendered, combined, compressed &amp; minified</li>
+<li>MIME type compression output for things like JSON services, or anything you want</li>
+<li>Control over how composite file URLs are structured if you need a custom format</li>
+<li>Medium trust compatible (Core, MVC and .Less projects)</li>
+<li>Native .Less, TypeScript, SASS &amp; CoffeeScript support</li>
+</ul><h2>
+<a name="nuget" class="anchor" href="#nuget"><span class="octicon octicon-link"></span></a>Nuget</h2>
+
+<pre><code>PM&gt; Install-Package ClientDependency
+
+PM&gt; Install-Package ClientDependency-Mvc
+
+PM&gt; Install-Package ClientDependency-Less
+
+PM&gt; Install-Package ClientDependency-TypeScript
+
+PM&gt; Install-Package ClientDependency-Sass
+
+PM&gt; Install-Package ClientDependency-Coffee
+</code></pre>
+
+<h2>
+<a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a><a href="https://github.com/Shandem/ClientDependency/wiki">Documentation</a>
+</h2>
+
+<p>Click the link to see the documentation on how to get started and more advanced techniques</p>
+
+<h2>
+<a name="releases" class="anchor" href="#releases"><span class="octicon octicon-link"></span></a><a href="https://github.com/Shandem/ClientDependency/wiki/All-Releases">Releases</a>
+</h2>
+
+<p>Shows information about all CDF releases</p>
+
+<h2>
+<a name="copyright--licence" class="anchor" href="#copyright--licence"><span class="octicon octicon-link"></span></a>Copyright &amp; Licence</h2>
+
+<p>© 2013 by Shannon Deminick</p>
+
+<p>This is free software and is licensed under the <a href="http://opensource.org/licenses/MS-PL">Microsoft Public License (Ms-PL)</a></p>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
