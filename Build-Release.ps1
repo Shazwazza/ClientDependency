@@ -1,8 +1,11 @@
 param (
 	[Parameter(Mandatory=$true)]
-	[ValidatePattern("\d\.\d\.\d\.\d")]
+	[ValidatePattern("^\d\.\d\.(?:\d\.\d$|\d$)")]
 	[string]
-	$ReleaseVersionNumber
+	$ReleaseVersionNumber,
+	[Parameter(Mandatory=$true)]	
+	[string]
+	$PreReleaseName
 )
 
 $PSScriptFilePath = (Get-Item $MyInvocation.MyCommand.Path).FullName
@@ -13,7 +16,7 @@ $MSBuild = "$Env:SYSTEMROOT\Microsoft.NET\Framework\v4.0.30319\msbuild.exe"
 
 # Make sure we don't have a release folder for this version already
 $BuildFolder = Join-Path -Path $SolutionRoot -ChildPath "build";
-$ReleaseFolder = Join-Path -Path $BuildFolder -ChildPath "Releases\v$ReleaseVersionNumber";
+$ReleaseFolder = Join-Path -Path $BuildFolder -ChildPath "Releases\v$ReleaseVersionNumber$PreReleaseName";
 if ((Get-Item $ReleaseFolder -ErrorAction SilentlyContinue) -ne $null)
 {
 	Write-Warning "$ReleaseFolder already exists on your local machine. It will now be deleted."
@@ -89,43 +92,44 @@ Copy-Item "$BuildFolder\nuget-transforms\TypeScript\web.config.transform" -Desti
 $CoreNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency.nuspec";
 Copy-Item $CoreNuSpecSource -Destination $CoreFolder
 $CoreNuSpec = Join-Path -Path $CoreFolder -ChildPath "ClientDependency.nuspec";
-$NuGet = Join-Path $SolutionRoot -ChildPath "Dependencies\NuGet.exe" 
-& $NuGet pack $CoreNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber
+$NuGet = Join-Path $SolutionRoot -ChildPath ".nuget\NuGet.exe"
+Write-Output "DEBUGGING: " $CoreNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName
+& $NuGet pack $CoreNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName
 
 # COPY OVER THE MVC NUSPEC AND BUILD THE NUGET PACKAGE
 $MvcNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency-Mvc.nuspec";
 Copy-Item $MvcNuSpecSource -Destination $MvcFolder
 $MvcNuSpec = Join-Path -Path $MvcFolder -ChildPath "ClientDependency-Mvc.nuspec"
-$NuGet = Join-Path $SolutionRoot -ChildPath "Dependencies\NuGet.exe"
-& $NuGet pack $MvcNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber
+$NuGet = Join-Path $SolutionRoot -ChildPath ".nuget\NuGet.exe"
+& $NuGet pack $MvcNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName
 
 # COPY OVER THE LESS NUSPEC AND BUILD THE NUGET PACKAGE
 $LessNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency-Less.nuspec";
 Copy-Item $LessNuSpecSource -Destination $LessFolder
 $LessNuSpec = Join-Path -Path $LessFolder -ChildPath "ClientDependency-Less.nuspec"
-$NuGet = Join-Path $SolutionRoot -ChildPath "Dependencies\NuGet.exe"
-& $NuGet pack $LessNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber
+$NuGet = Join-Path $SolutionRoot -ChildPath ".nuget\NuGet.exe"
+& $NuGet pack $LessNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName
 
 # COPY OVER THE SASS NUSPEC AND BUILD THE NUGET PACKAGE
 $SassNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency-SASS.nuspec";
 Copy-Item $SassNuSpecSource -Destination $SassFolder
 $SassNuSpec = Join-Path -Path $SassFolder -ChildPath "ClientDependency-SASS.nuspec"
-$NuGet = Join-Path $SolutionRoot -ChildPath "Dependencies\NuGet.exe"
-& $NuGet pack $SassNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber
+$NuGet = Join-Path $SolutionRoot -ChildPath ".nuget\NuGet.exe"
+& $NuGet pack $SassNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName
 
 # COPY OVER THE COFFEE NUSPEC AND BUILD THE NUGET PACKAGE
 $CoffeeNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency-Coffee.nuspec";
 Copy-Item $CoffeeNuSpecSource -Destination $CoffeeFolder
 $CoffeeNuSpec = Join-Path -Path $CoffeeFolder -ChildPath "ClientDependency-Coffee.nuspec"
-$NuGet = Join-Path $SolutionRoot -ChildPath "Dependencies\NuGet.exe"
-& $NuGet pack $CoffeeNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber
+$NuGet = Join-Path $SolutionRoot -ChildPath ".nuget\NuGet.exe"
+& $NuGet pack $CoffeeNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName
 
 # COPY OVER THE TypeScript NUSPEC AND BUILD THE NUGET PACKAGE
 $TypeScriptNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency-TypeScript.nuspec";
 Copy-Item $TypeScriptNuSpecSource -Destination $TypeScriptFolder
 $TypeScriptNuSpec = Join-Path -Path $TypeScriptFolder -ChildPath "ClientDependency-TypeScript.nuspec"
-$NuGet = Join-Path $SolutionRoot -ChildPath "Dependencies\NuGet.exe"
-& $NuGet pack $TypeScriptNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber
+$NuGet = Join-Path $SolutionRoot -ChildPath ".nuget\NuGet.exe"
+& $NuGet pack $TypeScriptNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName
 
 # NOT SURE WHAT THIS WAS DOING BUT SEEMS TO BE WORKING WITHOUT IT!
 # (gc -Path (Join-Path -Path $MvcFolder -ChildPath "ClientDependency-Mvc.nuspec")) `
@@ -133,7 +137,7 @@ $NuGet = Join-Path $SolutionRoot -ChildPath "Dependencies\NuGet.exe"
 # 	sc -Path $MvcNuSpec -Encoding UTF8
 
 ""
-"Build $ReleaseVersionNumber is done!"
+"Build $ReleaseVersionNumber$PreReleaseName is done!"
 "NuGet packages also created, so if you want to push them just run:"
 "  nuget push $CoreNuSpec"
 "  nuget push $MvcNuSpec"
