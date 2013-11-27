@@ -187,8 +187,9 @@ namespace ClientDependency.Core.CompositeFiles
                             {
                                 //Update the XML file map
                                 ClientDependencySettings.Instance.DefaultFileMapProvider.CreateUpdateMap(fileset, clientCompression.ToString(),
-                                    fileDefinitions.Select(x => new BasicFile(type) { FilePath = x.Uri }).Cast<IClientDependencyFile>(),
+                                    fileDefinitions.Select(x => new BasicFile(type) { FilePath = x.Uri }),
                                         compositeFileName,
+                                        //TODO: We should probably use the passed in version param?
                                         ClientDependencySettings.Instance.Version);
                             }
                         }
