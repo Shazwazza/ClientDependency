@@ -124,6 +124,8 @@ namespace ClientDependency.UnitTests
             Assert.AreEqual(typeof(CompositeFileProcessingProvider), settings.DefaultCompositeFileProcessingProvider.GetType());
             Assert.AreEqual(0, settings.ConfigSection.CompositeFileElement.MimeTypeCompression.Count);
             Assert.AreEqual(0, settings.ConfigSection.CompositeFileElement.RogueFileCompression.Count);
+
+            Assert.AreEqual("/DependencyHandler.axd", settings.DefaultFileRegistrationProvider.GetCompositeFileHandlerPath(ctxFactory.Context));
         }
 
         

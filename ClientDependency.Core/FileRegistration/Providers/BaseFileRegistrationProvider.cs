@@ -71,29 +71,41 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
 		#region CompositeFileHandlerPath config
 
-		string _compositeFileHandlerPath;
-		bool _compositeFileHandlerPathInitialized;
+        //set the default
+        private string _compositeFileHandlerPath = "~/DependencyHandler.axd";
+        private volatile bool _compositeFileHandlerPathInitialized = false;
 
-		protected string GetCompositeFileHandlerPath(HttpContextBase http)
+		protected internal string GetCompositeFileHandlerPath(HttpContextBase http)
 		{
-			lock (this)
-			{
-				if (!_compositeFileHandlerPathInitialized)
-				{
-					//if (_compositeFileHandlerPath != null && _compositeFileHandlerPath.StartsWith("~/"))
-					_compositeFileHandlerPath = VirtualPathUtility.ToAbsolute(_compositeFileHandlerPath, http.Request.ApplicationPath);
-					_compositeFileHandlerPathInitialized = true;
-				}
-
-				return _compositeFileHandlerPath;
-			}
+		    if (!_compositeFileHandlerPathInitialized)
+		    {
+                lock (this)
+                {
+                    //double check
+                    if (!_compositeFileHandlerPathInitialized)
+                    {
+                        if (string.IsNullOrWhiteSpace(_compositeFileHandlerPath))
+                        {
+                            throw new InvalidOperationException("The compositeFileHandlerPath cannot be empty");
+                        }
+                        //we may need to convert this to a real path
+                        if (_compositeFileHandlerPath.StartsWith("~/"))
+                        {
+                            _compositeFileHandlerPath = VirtualPathUtility.ToAbsolute(_compositeFileHandlerPath, http.Request.ApplicationPath);    
+                        }
+                        //set the flag, we're done
+                        _compositeFileHandlerPathInitialized = true;
+                    }                    
+                }
+		    }
+            return _compositeFileHandlerPath;
 		}
 
 		#endregion
 
 		#region Provider Initialization
 
-		public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
+		public override void Initialize(string name, NameValueCollection config)
         {
             base.Initialize(name, config);
 
@@ -109,17 +121,11 @@ namespace ClientDependency.Core.FileRegistration.Providers
             //        WebsiteBaseUrl = WebsiteBaseUrl.TrimEnd('/');
             //}
 
-			_compositeFileHandlerPath = null;
-			_compositeFileHandlerPathInitialized = true;
-
-			if (config != null)
-			{
-				_compositeFileHandlerPath = config["compositeFileHandlerPath"];
-				if (string.IsNullOrEmpty(_compositeFileHandlerPath))
-					_compositeFileHandlerPath = null;
-				else if (_compositeFileHandlerPath.StartsWith("~/"))
-					_compositeFileHandlerPathInitialized = false;
-			}
+            if (config != null && config["compositeFileHandlerPath"] != null)
+            {
+                _compositeFileHandlerPath = config["compositeFileHandlerPath"];
+            }
+            
 		}
 
         #endregion
