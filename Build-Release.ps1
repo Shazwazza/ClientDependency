@@ -3,8 +3,9 @@ param (
 	[ValidatePattern("^\d\.\d\.(?:\d\.\d$|\d$)")]
 	[string]
 	$ReleaseVersionNumber,
-	[Parameter(Mandatory=$true)]	
+	[Parameter(Mandatory=$true)]
 	[string]
+	[AllowEmptyString()]
 	$PreReleaseName
 )
 
