@@ -131,6 +131,7 @@
     <Compile Include="IRequiresHtmlAttributesParsing.cs" />
     <Compile Include="JavascriptFile.cs" />
     <Compile Include="Logging\TraceLogger.cs" />
+    <Compile Include="Module\ApplyingResponseFilterEventArgs.cs" />
     <Compile Include="Module\ClientDependencyModule.cs" />
     <Compile Include="Config\CompositeFileSection.cs" />
     <Compile Include="Config\FileRegistrationSection.cs" />
