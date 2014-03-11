@@ -49,44 +49,19 @@ namespace ClientDependency.Core
         /// <returns></returns>
         public static bool IsLocalUri(this Uri uri, HttpContextBase http)
         {
-            var isLocal = false;
-
+            if (http.Request == null)
+            {
+                throw new InvalidOperationException("The Request must be assigned to the context");
+            }
+            if (http.Request.Url == null)
+            {
+                throw new InvalidOperationException("The Url must be assigned to the Request");
+            }
             if (!uri.IsAbsoluteUri)
             {
                 uri = uri.MakeAbsoluteUri(http);
             }
-
-            try
-            {
-                var host = Dns.GetHostAddresses(uri.Host);
-                var local = Dns.GetHostAddresses(Dns.GetHostName());
-
-                foreach (var hostAddress in host)
-                {
-                    if (IPAddress.IsLoopback(hostAddress))
-                    {
-                        isLocal = true;
-                        break;
-                    }
-                    if (local.Contains(hostAddress))
-                    {
-                        isLocal = true;
-                    }
-
-                    if (isLocal)
-                    {
-                        break;
-                    }
-                }
-                return isLocal;
-            }
-            catch (SocketException ex)
-            {
-                ClientDependencySettings.Instance.Logger.Error("SocketException occurred while checking for local address. Error: " + ex.Message, ex);
-                
-                //if DNS cannot be resolved, then we'll just return false
-                return false;
-            }
+            return string.Equals(http.Request.Url.Host, uri.Host, StringComparison.OrdinalIgnoreCase);
         }
     }
 }
