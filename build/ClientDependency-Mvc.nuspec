@@ -13,12 +13,32 @@
     <tags>mvc css html javascript clientdependency cdf minification compression</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <dependencies>
-      <dependency id="ClientDependency" version="1.7.0.4" />
+      
+      <group targetFramework="net40">
+        <!--between 4 and less than version 5-->
+        <dependency id="Microsoft.AspNet.Mvc" version="(4.0.20710,5)" />
+      </group>
+
+      <group targetFramework="net45">
+        <!--between 4 and less than version 6 (who knows what'll happen then)-->
+        <dependency id="Microsoft.AspNet.Mvc" version="(4.0.0,6)" />
+      </group>
+
+      <group>
+        <dependency id="ClientDependency" version="1.7.1.2" />
+      </group>
+
     </dependencies>
   </metadata>
   <files>
-    <file src="*.dll" target="lib" />
-    <file src="*.pdb" target="lib" />
+
+    <file src="net40\*.dll" target="lib\net40" />
+    <file src="net40\*.pdb" target="lib\net40" />
+
+    <file src="net45\*.dll" target="lib\net45" />
+    <file src="net45\*.pdb" target="lib\net45" />
+
     <file src="nuget-transforms\web.config.transform" target="Content" />
+
   </files>
 </package>

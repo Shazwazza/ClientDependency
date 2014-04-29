@@ -14,8 +14,12 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
   </metadata>
   <files>
-    <file src="*.dll" target="lib" />
-    <file src="*.pdb" target="lib" />
+    <file src="net40\*.dll" target="lib\net40" />
+    <file src="net40\*.pdb" target="lib\net40" />
+
+    <file src="net45\*.dll" target="lib\net45" />
+    <file src="net45\*.pdb" target="lib\net45" />
+
     <file src="nuget-transforms\web.config.transform" target="Content" />
   </files>
 </package>

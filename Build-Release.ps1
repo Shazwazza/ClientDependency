@@ -30,18 +30,27 @@ $SolutionInfoPath = Join-Path -Path $SolutionRoot -ChildPath "SolutionInfo.cs"
 	-replace "(?<=Version\(`")[.\d]*(?=`"\))", $ReleaseVersionNumber |
 	sc -Path $SolutionInfoPath -Encoding UTF8
 
-# Build the solution in release mode
+# Build the solution in release mode (in both 4.0 and 4.5)
 $SolutionPath = Join-Path -Path $SolutionRoot -ChildPath "ClientDependency.sln"
+# clean sln
 & $MSBuild "$SolutionPath" /p:Configuration=Release /maxcpucount /t:Clean
 if (-not $?)
 {
 	throw "The MSBuild process returned an error code."
 }
+# for net 4.0
 & $MSBuild "$SolutionPath" /p:Configuration=Release /maxcpucount
 if (-not $?)
 {
 	throw "The MSBuild process returned an error code."
 }
+# for net 4.5
+& $MSBuild "$SolutionPath" /p:Configuration=Release-Net45 /maxcpucount
+if (-not $?)
+{
+	throw "The MSBuild process returned an error code."
+}
+
 
 $CoreFolder = Join-Path -Path $ReleaseFolder -ChildPath "Core";
 $MvcFolder = Join-Path -Path $ReleaseFolder -ChildPath "Mvc";
@@ -58,12 +67,26 @@ New-Item $CoffeeFolder -Type directory
 New-Item $TypeScriptFolder -Type directory
 
 $include = @('ClientDependency.Core.dll','ClientDependency.Core.pdb')
-$CoreBinFolder = Join-Path -Path $SolutionRoot -ChildPath "ClientDependency.Core\bin\Release";
-Copy-Item "$CoreBinFolder\*.*" -Destination $CoreFolder -Include $include
+# Need to build to specific .Net version folders
+$CoreBinFolderNet40 = Join-Path -Path $SolutionRoot -ChildPath "ClientDependency.Core\bin\Release";
+$CoreBinFolderNet45 = Join-Path -Path $SolutionRoot -ChildPath "ClientDependency.Core\bin\Release-Net45";
+$CoreFolderNet40 = Join-Path -Path $CoreFolder -ChildPath "net40";
+$CoreFolderNet45 = Join-Path -Path $CoreFolder -ChildPath "net45";
+New-Item $CoreFolderNet40 -Type directory
+New-Item $CoreFolderNet45 -Type directory
+Copy-Item "$CoreBinFolderNet40\*.*" -Destination $CoreFolderNet40 -Include $include
+Copy-Item "$CoreBinFolderNet45\*.*" -Destination $CoreFolderNet45 -Include $include
 
 $include = @('ClientDependency.Core.Mvc.dll','ClientDependency.Core.Mvc.pdb')
-$MvcBinFolder = Join-Path -Path $SolutionRoot -ChildPath "ClientDependency.Mvc\bin\Release";
-Copy-Item "$MvcBinFolder\*.*" -Destination $MvcFolder -Include $include
+# Need to build to specific .Net version folders
+$MvcBinFolderNet40 = Join-Path -Path $SolutionRoot -ChildPath "ClientDependency.Mvc\bin\Release";
+$MvcBinFolderNet45 = Join-Path -Path $SolutionRoot -ChildPath "ClientDependency.Mvc\bin\Release-Net45";
+$MvcFolderNet40 = Join-Path -Path $MvcFolder -ChildPath "net40";
+$MvcFolderNet45 = Join-Path -Path $MvcFolder -ChildPath "net45";
+New-Item $MvcFolderNet40 -Type directory
+New-Item $MvcFolderNet45 -Type directory
+Copy-Item "$MvcBinFolderNet40\*.*" -Destination $MvcFolderNet40 -Include $include
+Copy-Item "$MvcBinFolderNet45\*.*" -Destination $MvcFolderNet45 -Include $include
 
 $include = @('ClientDependency.Less.dll','ClientDependency.Less.pdb')
 $LessBinFolder = Join-Path -Path $SolutionRoot -ChildPath "ClientDependency.Less\bin\Release";
