@@ -4,7 +4,6 @@ using ClientDependency.Core.Module;
 
 namespace ClientDependency.Core.Mvc
 {
-
     /// <summary>
     /// MvcFilter is required when using ClientDependency in MVC, without it ClientDependency will not work with MVC unless you are
     /// using razor and using the Cdf view engines.
@@ -27,12 +26,12 @@ namespace ClientDependency.Core.Mvc
             _rogueFileFilter.SetHttpContext(ctx);
         }
 
-        public bool CanExecute()
+        public virtual bool CanExecute()
         {
             return CurrentContext.CurrentHandler is MvcHandler && IsCompressibleContentType(CurrentContext.Response);
         }
 
-        public bool ValidateCurrentHandler()
+        public virtual bool ValidateCurrentHandler()
         {
             return (CurrentContext.CurrentHandler is MvcHandler);
         }
