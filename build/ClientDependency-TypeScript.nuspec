@@ -2,6 +2,7 @@
 <package>
   <metadata>
     <id>ClientDependency-TypeScript</id>
+    <title>Client Dependency Framework for TypeScript</title>
     <version>0.0.0.0</version>
     <authors>Shannon Deminick</authors>
     <description>An extension for the ClientDependency framework to support TypeScript</description>
