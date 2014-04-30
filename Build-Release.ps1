@@ -29,6 +29,9 @@ $SolutionInfoPath = Join-Path -Path $SolutionRoot -ChildPath "SolutionInfo.cs"
 (gc -Path $SolutionInfoPath) `
 	-replace "(?<=Version\(`")[.\d]*(?=`"\))", $ReleaseVersionNumber |
 	sc -Path $SolutionInfoPath -Encoding UTF8
+(gc -Path $SolutionInfoPath) `
+	-replace "(?<=AssemblyInformationalVersion\(`")[.\w-]*(?=`"\))", "$ReleaseVersionNumber$PreReleaseName" |
+	sc -Path $SolutionInfoPath -Encoding UTF8
 
 # Build the solution in release mode (in both 4.0 and 4.5)
 $SolutionPath = Join-Path -Path $SolutionRoot -ChildPath "ClientDependency.sln"

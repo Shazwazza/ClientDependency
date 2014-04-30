@@ -39,16 +39,24 @@ namespace ClientDependency.Core
                 (m) =>
                 {
                     var grp = m.Groups["renderer"];
-                    if (grp != null && output.Any())
+                    if (grp != null)
                     {
-                        var rendererOutput = output.SingleOrDefault(x => x.Name == grp.ToString());
+                        if (output.Any())
+                        {
+                            var rendererOutput = output.SingleOrDefault(x => x.Name == grp.ToString());
 
-                        var args = new PlaceholderReplacementEventArgs(currentContext, ClientDependencyType.Javascript,
-                            rendererOutput != null ? rendererOutput.OutputJs : "",
-                            m);
-                        OnPlaceholderReplaced(args);
-                        
-                        return args.ReplacedText;
+                            var args = new PlaceholderReplacementEventArgs(currentContext, ClientDependencyType.Javascript,
+                                rendererOutput != null ? rendererOutput.OutputJs : "",
+                                m);
+                            OnPlaceholderReplaced(args);
+
+                            return args.ReplacedText;
+                        }
+                        else
+                        {
+                            //output a message saying that there were no refs
+                            return "<!-- CDF: No JS dependencies were declared //-->";   
+                        }                        
                     }
                     
                     return m.ToString();
@@ -59,15 +67,23 @@ namespace ClientDependency.Core
                 (m) =>
                 {
                     var grp = m.Groups["renderer"];
-                    if (grp != null && output.Any())
+                    if (grp != null)
                     {
-                        var rendererOutput = output.SingleOrDefault(x => x.Name == grp.ToString());
+                        if (output.Any())
+                        {
+                            var rendererOutput = output.SingleOrDefault(x => x.Name == grp.ToString());
 
-                        var args = new PlaceholderReplacementEventArgs(currentContext, ClientDependencyType.Css,
-                            rendererOutput != null ? rendererOutput.OutputCss : "",
-                            m);
-                        OnPlaceholderReplaced(args);
-                        return args.ReplacedText;
+                            var args = new PlaceholderReplacementEventArgs(currentContext, ClientDependencyType.Css,
+                                rendererOutput != null ? rendererOutput.OutputCss : "",
+                                m);
+                            OnPlaceholderReplaced(args);
+                            return args.ReplacedText;
+                        }
+                        else
+                        {
+                            //output a message saying that there were no refs
+                            return "<!-- CDF: No CSS dependencies were declared //-->";
+                        }                        
                     }
 
                     return m.ToString();
