@@ -47,7 +47,7 @@ CDF is flexible. It allows you to make any web component dependent on any CSS or
 
 Click the link to see the documentation on how to get started and more advanced techniques
 
-## [Releases](https://github.com/Shandem/ClientDependency/wiki/All-Releases)
+## [Releases](https://github.com/Shandem/ClientDependency/releases)
 
 Shows information about all CDF releases
 
