@@ -1,4 +1,4 @@
-![ClientDependency Framework](http://shazwazza.com/Content/Downloads/ClientDependencyLogo.png)
+![ClientDependency Framework](ClientDependencyLogo.png?raw=true)
 
 ## What is *ClientDependency Framework (CDF)* ?
 
