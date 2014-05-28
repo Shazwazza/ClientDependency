@@ -16,6 +16,19 @@ namespace ClientDependency.UnitTests
     {
 
         [Test]
+        public void Ensure_Inline_Svg_Retained()
+        {
+            var css = @"body {
+    filter: url(""data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' ><filter id='grayscale' filterRes='183' ><feColorMatrix type='matrix'   values='0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0'/></filter></svg>#grayscale"");
+}";
+
+            var output = CssHelper.ReplaceUrlsWithAbsolutePaths(css, new Uri("http://MySite/MySubFolder"));
+
+            Assert.AreEqual(css, output);
+
+        }
+
+        [Test]
         public void CssTransform_Ensure_Inline_Images_Retained()
         {
             //refer to this:http://clientdependency.codeplex.com/workitem/13173
