@@ -130,6 +130,13 @@ $MvcNuSpec = Join-Path -Path $MvcFolder -ChildPath "ClientDependency-Mvc.nuspec"
 $NuGet = Join-Path $SolutionRoot -ChildPath ".nuget\NuGet.exe"
 & $NuGet pack $MvcNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName
 
+# COPY OVER THE MVC5 NUSPEC AND BUILD THE NUGET PACKAGE
+$Mvc5NuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency-Mvc5.nuspec";
+Copy-Item $Mvc5NuSpecSource -Destination $MvcFolder
+$Mvc5NuSpec = Join-Path -Path $MvcFolder -ChildPath "ClientDependency-Mvc5.nuspec"
+$NuGet = Join-Path $SolutionRoot -ChildPath ".nuget\NuGet.exe"
+& $NuGet pack $Mvc5NuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName
+
 # COPY OVER THE LESS NUSPEC AND BUILD THE NUGET PACKAGE
 $LessNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency-Less.nuspec";
 Copy-Item $LessNuSpecSource -Destination $LessFolder

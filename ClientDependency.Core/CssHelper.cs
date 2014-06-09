@@ -22,6 +22,19 @@ namespace ClientDependency.Core
             var matches = ImportCssRegex.Matches(content);
             foreach (Match match in matches)
             {
+                //Ignore external imports
+                var urlMatch = CssUrlRegex.Match(match.Value);
+                if (urlMatch.Success && urlMatch.Groups.Count >= 2)
+                {
+                    var path = urlMatch.Groups[1].Value.Trim('\'', '"'); 
+                    if ((path.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase)
+                         || path.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase)
+                         || path.StartsWith("//", StringComparison.InvariantCultureIgnoreCase)))
+                    {
+                        continue;
+                    }
+                }
+
                 //Strip the import statement                
                 content = content.ReplaceFirst(match.Value, "");
 
@@ -64,7 +77,9 @@ namespace ClientDependency.Core
                         var hashSplit = match.Split(new[] {'#'}, StringSplitOptions.RemoveEmptyEntries);
 
                         return string.Format(@"url(""{0}{1}"")",
-                                             match.StartsWith("http") ? match : new Uri(cssLocation, match).PathAndQuery,
+                                             (match.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase)
+                                             || match.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase)
+                                             || match.StartsWith("//", StringComparison.InvariantCultureIgnoreCase)) ? match : new Uri(cssLocation, match).PathAndQuery,
                                              hashSplit.Length > 1 ? ("#" + hashSplit[1]) : "");
                     }
                     return m.Value;

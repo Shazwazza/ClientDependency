@@ -7,6 +7,8 @@ namespace ClientDependency.UnitTests
     [TestFixture]
     public class CssMinTest
     {
+        
+
         [Test]
         public void Ensure_Embedded_Image_Works()
         {
