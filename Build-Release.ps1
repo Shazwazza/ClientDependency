@@ -33,14 +33,28 @@ $SolutionInfoPath = Join-Path -Path $SolutionRoot -ChildPath "SolutionInfo.cs"
 	-replace "(?<=AssemblyInformationalVersion\(`")[.\w-]*(?=`"\))", "$ReleaseVersionNumber$PreReleaseName" |
 	sc -Path $SolutionInfoPath -Encoding UTF8
 
-# Build the solution in release mode (in both 4.0 and 4.5)
+# Build the solution in release mode (in both 4.0 and 4.5 and for MVC5)
 $SolutionPath = Join-Path -Path $SolutionRoot -ChildPath "ClientDependency.sln"
-# clean sln
+
+# clean sln for all deploys
 & $MSBuild "$SolutionPath" /p:Configuration=Release /maxcpucount /t:Clean
 if (-not $?)
 {
 	throw "The MSBuild process returned an error code."
 }
+& $MSBuild "$SolutionPath" /p:Configuration=Release-Net45 /maxcpucount /t:Clean
+if (-not $?)
+{
+	throw "The MSBuild process returned an error code."
+}
+& $MSBuild "$SolutionPath" /p:Configuration=Release-MVC5 /maxcpucount /t:Clean
+if (-not $?)
+{
+	throw "The MSBuild process returned an error code."
+}
+
+#build for all deploys
+
 # for net 4.0
 & $MSBuild "$SolutionPath" /p:Configuration=Release /maxcpucount
 if (-not $?)
@@ -53,10 +67,17 @@ if (-not $?)
 {
 	throw "The MSBuild process returned an error code."
 }
+# for MVC 5
+& $MSBuild "$SolutionPath" /p:Configuration=Release-MVC5 /maxcpucount
+if (-not $?)
+{
+	throw "The MSBuild process returned an error code."
+}
 
 
 $CoreFolder = Join-Path -Path $ReleaseFolder -ChildPath "Core";
 $MvcFolder = Join-Path -Path $ReleaseFolder -ChildPath "Mvc";
+$Mvc5Folder = Join-Path -Path $ReleaseFolder -ChildPath "Mvc5";
 $LessFolder = Join-Path -Path $ReleaseFolder -ChildPath "Less";
 $SassFolder = Join-Path -Path $ReleaseFolder -ChildPath "SASS";
 $CoffeeFolder = Join-Path -Path $ReleaseFolder -ChildPath "Coffee";
@@ -64,6 +85,7 @@ $TypeScriptFolder = Join-Path -Path $ReleaseFolder -ChildPath "TypeScript";
 
 New-Item $CoreFolder -Type directory
 New-Item $MvcFolder -Type directory
+New-Item $Mvc5Folder -Type directory
 New-Item $LessFolder -Type directory
 New-Item $SassFolder -Type directory
 New-Item $CoffeeFolder -Type directory
@@ -90,6 +112,11 @@ New-Item $MvcFolderNet40 -Type directory
 New-Item $MvcFolderNet45 -Type directory
 Copy-Item "$MvcBinFolderNet40\*.*" -Destination $MvcFolderNet40 -Include $include
 Copy-Item "$MvcBinFolderNet45\*.*" -Destination $MvcFolderNet45 -Include $include
+#need to build mvc5 separately
+$Mvc5BinFolderNet45 = Join-Path -Path $SolutionRoot -ChildPath "ClientDependency.Mvc\bin\Release-MVC5";
+$Mvc5FolderNet45 = Join-Path -Path $Mvc5Folder -ChildPath "net45";
+New-Item $Mvc5FolderNet45 -Type directory
+Copy-Item "$Mvc5BinFolderNet45\*.*" -Destination $Mvc5FolderNet45 -Include $include
 
 $include = @('ClientDependency.Less.dll','ClientDependency.Less.pdb')
 $LessBinFolder = Join-Path -Path $SolutionRoot -ChildPath "ClientDependency.Less\bin\Release";
@@ -110,6 +137,7 @@ Copy-Item "$TypeScriptBinFolder\*.*" -Destination $TypeScriptFolder -Include $in
 # COPY THE TRANSFORMS OVER
 Copy-Item "$BuildFolder\nuget-transforms\Core\web.config.transform" -Destination (New-Item (Join-Path -Path $CoreFolder -ChildPath "nuget-transforms") -Type directory);
 Copy-Item "$BuildFolder\nuget-transforms\Mvc\web.config.transform" -Destination (New-Item (Join-Path -Path $MvcFolder -ChildPath "nuget-transforms") -Type directory);
+Copy-Item "$BuildFolder\nuget-transforms\Mvc\web.config.transform" -Destination (New-Item (Join-Path -Path $Mvc5Folder -ChildPath "nuget-transforms") -Type directory);
 Copy-Item "$BuildFolder\nuget-transforms\Less\web.config.transform" -Destination (New-Item (Join-Path -Path $LessFolder -ChildPath "nuget-transforms") -Type directory);
 Copy-Item "$BuildFolder\nuget-transforms\Coffee\web.config.transform" -Destination (New-Item (Join-Path -Path $CoffeeFolder -ChildPath "nuget-transforms") -Type directory);
 Copy-Item "$BuildFolder\nuget-transforms\Sass\web.config.transform" -Destination (New-Item (Join-Path -Path $SassFolder -ChildPath "nuget-transforms") -Type directory);
@@ -132,8 +160,8 @@ $NuGet = Join-Path $SolutionRoot -ChildPath ".nuget\NuGet.exe"
 
 # COPY OVER THE MVC5 NUSPEC AND BUILD THE NUGET PACKAGE
 $Mvc5NuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency-Mvc5.nuspec";
-Copy-Item $Mvc5NuSpecSource -Destination $MvcFolder
-$Mvc5NuSpec = Join-Path -Path $MvcFolder -ChildPath "ClientDependency-Mvc5.nuspec"
+Copy-Item $Mvc5NuSpecSource -Destination $Mvc5Folder
+$Mvc5NuSpec = Join-Path -Path $Mvc5Folder -ChildPath "ClientDependency-Mvc5.nuspec"
 $NuGet = Join-Path $SolutionRoot -ChildPath ".nuget\NuGet.exe"
 & $NuGet pack $Mvc5NuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName
 
@@ -164,11 +192,6 @@ Copy-Item $TypeScriptNuSpecSource -Destination $TypeScriptFolder
 $TypeScriptNuSpec = Join-Path -Path $TypeScriptFolder -ChildPath "ClientDependency-TypeScript.nuspec"
 $NuGet = Join-Path $SolutionRoot -ChildPath ".nuget\NuGet.exe"
 & $NuGet pack $TypeScriptNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName
-
-# NOT SURE WHAT THIS WAS DOING BUT SEEMS TO BE WORKING WITHOUT IT!
-# (gc -Path (Join-Path -Path $MvcFolder -ChildPath "ClientDependency-Mvc.nuspec")) `
-# 	-replace "(?<=dependency id=`"ClientDependency`" version=`")[.\d]*(?=`")", $ReleaseVersionNumber |
-# 	sc -Path $MvcNuSpec -Encoding UTF8
 
 ""
 "Build $ReleaseVersionNumber$PreReleaseName is done!"

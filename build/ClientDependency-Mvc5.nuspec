@@ -2,11 +2,11 @@
 <package>
   <metadata>
     <id>ClientDependency-Mvc5</id>
-    <title>Client Dependency Framework for MVC5</title>
+    <title>Client Dependency Framework for MVC 5</title>
     <version>0.0.0.0</version>
     <authors>Shannon Deminick</authors>
-    <description>An extension for the ClientDependency framework to support ASP.NET MVC.</description>
-    <summary>ClientDependency for MVC</summary>
+    <description>An extension for the ClientDependency framework to support ASP.NET MVC 5.</description>
+    <summary>ClientDependency for MVC 5</summary>
     <language>en-US</language>
     <licenseUrl>http://www.opensource.org/licenses/ms-pl</licenseUrl>
     <projectUrl>https://github.com/Shandem/ClientDependency</projectUrl>
