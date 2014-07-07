@@ -53,6 +53,6 @@ Shows information about all CDF releases
 
 ## Copyright & Licence
 
-&copy; 2013 by Shannon Deminick
+&copy; 2014 by Shannon Deminick
 
 This is free software and is licensed under the [Microsoft Public License (Ms-PL)](http://opensource.org/licenses/MS-PL)
