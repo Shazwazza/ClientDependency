@@ -14,7 +14,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <dependencies>
       <dependency id="dotless" version="1.4" />
-      <dependency id="ClientDependency" version="1.8-beta4" />
+      <dependency id="ClientDependency" version="1.8" />
     </dependencies>
   </metadata>
   <files>
