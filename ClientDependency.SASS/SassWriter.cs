@@ -24,9 +24,12 @@ namespace ClientDependency.SASS
         {
             try
             {
-                //NOTE: We don't want this compressed since CDF will do that ourselves
-                var output = Compiler.Compile(fi.FullName, false, new List<string>());
+                //this stores a reference of all referenced files during processing
+                var accessedFiles = new List<string>();
 
+                //NOTE: We don't want this compressed since CDF will do that ourselves
+                var output = Compiler.Compile(fi.FullName, false, accessedFiles);
+                
                 DefaultFileWriter.WriteContentToStream(provider, sw, output, type, http, origUrl);
 
                 return true;
@@ -45,7 +48,9 @@ namespace ClientDependency.SASS
         /// <returns></returns>
         public string GetOutput(FileInfo fi)
         {
-            return Compiler.Compile(fi.FullName, false, new List<string>());            
+            //this stores a reference of all referenced files during processing
+            var accessedFiles = new List<string>();
+            return Compiler.Compile(fi.FullName, false, accessedFiles);            
         }
     }
 }

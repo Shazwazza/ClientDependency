@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using ClientDependency.Core.Config;
@@ -217,6 +218,114 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 			return ProcessCompositeList(dependencies, type, http, null);
 		}
 
+        /// <summary>
+        /// When the path type is one of the base64 paths, this will create the composite file urls for all of the dependencies. 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="dependencies"></param>
+        /// <param name="compositeFileHandlerPath"></param>
+        /// <param name="http"></param>
+        /// <param name="maxLength">the max length each url can be</param>
+        /// <param name="version">the current cdf version</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// Generally there will only be one path returned but his depends on how many dependencies there are and whether the base64 created path will exceed the max url length parameter.
+        /// If the string length exceeds it, then we need to creaet multiple paths all of which must be less length than the maximum provided.
+        /// </remarks>
+        internal IEnumerable<string> GetCompositeFileUrls(
+            ClientDependencyType type, 
+            IClientDependencyFile[] dependencies, 
+            string compositeFileHandlerPath, 
+            HttpContextBase http, 
+            int maxLength,
+            int version)
+        {
+            var files = new List<string>();
+            var currBuilder = new StringBuilder();
+            var base64Builder = new StringBuilder();
+            var builderCount = 1;
+            var stringType = type.ToString();
+
+            var remaining = new Queue<IClientDependencyFile>(dependencies);
+            while (remaining.Any())
+            {
+                var current = remaining.Peek();
+
+                //update the base64 output to get the length
+                base64Builder.Append(current.FilePath.EncodeTo64());
+
+                //test if the current base64 string exceeds the max length, if so we need to split
+                if ((base64Builder.Length
+                     + compositeFileHandlerPath.Length
+                     + stringType.Length
+                     + version.ToString(CultureInfo.InvariantCulture).Length
+                    //this number deals with the ampersands, etc...
+                     + 10)
+                    >= (maxLength))
+                {
+                    //we need to do a check here, this is the first one and it's already exceeded the max length we cannot continue
+                    if (currBuilder.Length == 0)
+                    {
+                        throw new InvalidOperationException("The path for the single dependency: '" + current.FilePath + "' exceeds the max length (" + maxLength + "), either reduce the single dependency's path length or increase the CompositeDependencyHandler.MaxHandlerUrlLength value");
+                    }
+
+                    //flush the current output to the array
+                    files.Add(currBuilder.ToString());
+                    //create some new output
+                    currBuilder = new StringBuilder();
+                    base64Builder = new StringBuilder();
+                    builderCount++;
+                }
+                else
+                {
+                    //update the normal builder
+                    currBuilder.Append(current.FilePath + ";");
+                    //remove from the queue
+                    remaining.Dequeue();
+                }
+            }
+
+            //foreach (var a in dependencies)
+            //{
+            //    //update the base64 output to get the length
+            //    base64Builder.Append(a.FilePath.EncodeTo64());
+
+            //    //test if the current base64 string exceeds the max length, if so we need to split
+            //    if ((base64Builder.Length
+            //        + compositeFileHandlerPath.Length
+            //        + stringType.Length
+            //        + version.Length
+            //        + 10)
+            //        >= (maxLength))
+            //    {
+            //        //add the current output to the array
+            //        files.Add(currBuilder.ToString());
+            //        //create some new output
+            //        currBuilder = new StringBuilder();
+            //        base64Builder = new StringBuilder();
+            //        builderCount++;
+            //    }
+
+            //    //update the normal builder
+            //    currBuilder.Append(a.FilePath + ";");
+            //}
+
+            if (builderCount > files.Count)
+            {
+                files.Add(currBuilder.ToString());
+            }
+
+            //now, compress each url
+            for (var i = 0; i < files.Count; i++)
+            {
+                //append our version to the combined url 
+                var encodedFile = files[i].EncodeTo64Url();
+                files[i] = GetCompositeFileUrl(encodedFile, type, http, UrlType, compositeFileHandlerPath, version);
+            }
+
+            return files.ToArray();
+        }
+
         public virtual string[] ProcessCompositeList(
             IEnumerable<IClientDependencyFile> dependencies, 
             ClientDependencyType type, 
@@ -250,51 +359,8 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                 default:
                     
                     //build the combined composite list urls          
-                    
-                    var files = new List<string>();
-                    var currBuilder = new StringBuilder();
-                    var base64Builder = new StringBuilder();
-                    var builderCount = 1;
-                    var stringType = type.ToString();
-                    foreach (var a in dependencies)
-                    {
-                        //update the base64 output to get the length
-                        base64Builder.Append(a.FilePath.EncodeTo64());
 
-                        //test if the current base64 string exceeds the max length, if so we need to split
-                        if ((base64Builder.Length 
-                            + compositeFileHandlerPath.Length 
-                            + stringType.Length 
-                            + ClientDependencySettings.Instance.Version.ToString().Length 
-                            + 10) 
-                            >= (CompositeDependencyHandler.MaxHandlerUrlLength))
-                        {
-                            //add the current output to the array
-                            files.Add(currBuilder.ToString());
-                            //create some new output
-                            currBuilder = new StringBuilder();
-                            base64Builder = new StringBuilder();
-                            builderCount++;
-                        }
-
-                        //update the normal builder
-                        currBuilder.Append(a.FilePath + ";");
-                    }
-
-                    if (builderCount > files.Count)
-                    {
-                        files.Add(currBuilder.ToString());
-                    }
-
-                    //now, compress each url
-                    for (var i = 0; i < files.Count; i++)
-                    {
-                        //append our version to the combined url 
-                        var encodedFile = files[i].EncodeTo64Url();
-                        files[i] = GetCompositeFileUrl(encodedFile, type, http, UrlType, compositeFileHandlerPath, ClientDependencySettings.Instance.Version);
-                    }
-
-                    return files.ToArray();
+                    return GetCompositeFileUrls(type, dependencies.ToArray(), compositeFileHandlerPath, http, CompositeDependencyHandler.MaxHandlerUrlLength, ClientDependencySettings.Instance.Version).ToArray();
             }            
         }
 

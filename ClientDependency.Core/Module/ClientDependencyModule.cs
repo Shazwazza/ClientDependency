@@ -8,13 +8,20 @@ using ClientDependency.Core.Config;
 
 namespace ClientDependency.Core.Module
 {
-
     /// <summary>
     /// This module currently replaces rogue scripts with composite scripts.
     /// Eventually it will handle css files and MVC implementation
     /// </summary>
     public class ClientDependencyModule : IHttpModule
     {
+        public static event EventHandler<ApplyingResponseFilterEventArgs> ApplyingResponseFilter;
+
+        private void OnApplyingResponseFilter(ApplyingResponseFilterEventArgs e)
+        {
+            var handler = ApplyingResponseFilter;
+            if (handler != null) handler(this, e);
+        }
+
         #region IHttpModule Members
 
         void IHttpModule.Dispose() { }
@@ -118,12 +125,20 @@ namespace ClientDependency.Core.Module
 
         private void ExecuteFilter(HttpContextBase http, IEnumerable<IFilter> filters)
         {
-            var filter = new ResponseFilterStream(http.Response.Filter, http);
-            foreach (var f in filters.Where(f => f.CanExecute()))
+            //raise event, deverlopers can cancel the filter from being applied depending on what is on the http context.
+            var args = new ApplyingResponseFilterEventArgs(http);
+            OnApplyingResponseFilter(args);
+
+            if (!args.Cancel)
             {
-                filter.TransformString += f.UpdateOutputHtml;
+                var filter = new ResponseFilterStream(http.Response.Filter, http);
+                foreach (var f in filters.Where(f => f.CanExecute()))
+                {
+                    filter.TransformString += f.UpdateOutputHtml;
+                }
+                http.Response.Filter = filter;    
             }
-            http.Response.Filter = filter;
+            
         }
 
         #endregion

@@ -27,5 +27,10 @@ namespace ClientDependency.Less
         {
             return _innerReader.DoesFileExist(fileName);
         }
+
+        public bool UseCacheDependencies
+        {
+            get { return false; }
+        }
     }
 }

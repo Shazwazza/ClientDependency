@@ -14,6 +14,29 @@ namespace ClientDependency.UnitTests
     [TestFixture]
     public class CssTransformTest
     {
+        [Test]
+        public void Ensure_External_Double_Forward_Slash_Url()
+        {
+            var cssWithImport = @"@import url(""//fonts.googleapis.com/css?subset=latin,cyrillic-ext,latin-ext,cyrillic&family=Open+Sans+Condensed:300|Open+Sans:400,600,400italic,600italic|Merriweather:400,300,300italic,400italic,700,700italic|Roboto+Slab:400,300"");
+@import url(""//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css"");";
+
+            var output = CssHelper.ReplaceUrlsWithAbsolutePaths(cssWithImport, new Uri("http://MySite/MySubFolder"));
+
+            Assert.AreEqual(output, cssWithImport);
+        }
+
+        [Test]
+        public void Ensure_Inline_Svg_Retained()
+        {
+            var css = @"body {
+    filter: url(""data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' ><filter id='grayscale' filterRes='183' ><feColorMatrix type='matrix'   values='0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0'/></filter></svg>#grayscale"");
+}";
+
+            var output = CssHelper.ReplaceUrlsWithAbsolutePaths(css, new Uri("http://MySite/MySubFolder"));
+
+            Assert.AreEqual(css, output);
+
+        }
 
         [Test]
         public void CssTransform_Ensure_Inline_Images_Retained()

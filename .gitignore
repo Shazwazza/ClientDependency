@@ -11,3 +11,5 @@ TestResults/*
 */App_Data/ClientDependency/*
 packages/*
 ClientDependency.sln.DotSettings.user
+ClientDependency.Web.Test/Css/Inuit/*
+*.orig

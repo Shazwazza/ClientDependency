@@ -2,6 +2,7 @@
 <package>
   <metadata>
     <id>ClientDependency-Less</id>
+    <title>Client Dependency Framework for .Less</title>
     <version>0.0.0.0</version>
     <authors>Shannon Deminick</authors>
     <description>An extension for the ClientDependency framework to support .Less (dotless)</description>
@@ -12,8 +13,8 @@
     <tags>.less dotless css html clientdependency cdf minification compression</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <dependencies>
-      <dependency id="dotless" version="1.3" />
-      <dependency id="ClientDependency" version="1.7" />
+      <dependency id="dotless" version="1.4" />
+      <dependency id="ClientDependency" version="1.8" />
     </dependencies>
   </metadata>
   <files>

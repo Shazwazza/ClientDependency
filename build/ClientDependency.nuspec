@@ -2,6 +2,7 @@
 <package>
   <metadata>
     <id>ClientDependency</id>
+    <title>Client Dependency Framework</title>
     <version>0.0.0.0</version>
     <authors>Shannon Deminick</authors>
     <description>ClientDependency is a framework for simplifying colaborative development of ASP.NET components, allowing components to state what CSS and JavaScript files they require, and ensuring that each file only is only added once to the response. ClientDependency also handles combination, minification and compression of CSS and JavaScript.</description>
@@ -13,8 +14,12 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
   </metadata>
   <files>
-    <file src="*.dll" target="lib" />
-    <file src="*.pdb" target="lib" />
+    <file src="net40\*.dll" target="lib\net40" />
+    <file src="net40\*.pdb" target="lib\net40" />
+
+    <file src="net45\*.dll" target="lib\net45" />
+    <file src="net45\*.pdb" target="lib\net45" />
+
     <file src="nuget-transforms\web.config.transform" target="Content" />
   </files>
 </package>

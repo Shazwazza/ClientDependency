@@ -2,6 +2,7 @@
 <package>
   <metadata>
     <id>ClientDependency-SASS</id>
+    <title>Client Dependency Framework for SASS</title>
     <version>0.0.0.0</version>
     <authors>Shannon Deminick</authors>
     <description>An extension for the ClientDependency framework to support SASS</description>
@@ -12,7 +13,7 @@
     <tags>SASS scss css html clientdependency cdf minification compression</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <dependencies>
-      <dependency id="SassAndCoffee.Ruby" version="2.0.2" />
+      <dependency id="Shaz.SassAndCoffee.Ruby" version="2.0.2.2" />
       <dependency id="ClientDependency" version="1.7" />
     </dependencies>
   </metadata>

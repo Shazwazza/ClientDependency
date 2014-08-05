@@ -552,7 +552,7 @@ namespace ClientDependency.Core.Mvc
         /// <returns></returns>
         public static HtmlHelper RequiresCssFolder(this HtmlHelper html, string folderPath)
         {
-            return html.RequiresJsFolder(folderPath, 100);
+            return html.RequiresCssFolder(folderPath, 100);
         }
 
         /// <summary>

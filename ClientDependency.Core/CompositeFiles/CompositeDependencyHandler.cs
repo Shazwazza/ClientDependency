@@ -4,6 +4,7 @@ using System.Web;
 using System.Reflection;
 using System.IO;
 using System.Linq;
+using System.Web.UI;
 using ClientDependency.Core.CompositeFiles.Providers;
 using ClientDependency.Core.Config;
 using System.Text;
@@ -13,6 +14,8 @@ namespace ClientDependency.Core.CompositeFiles
 {
     public class CompositeDependencyHandler : IHttpHandler
     {
+
+
         private readonly static object Lock = new object();
 
         /// <summary>
@@ -25,12 +28,12 @@ namespace ClientDependency.Core.CompositeFiles
         /// </remarks>
         public static int MaxHandlerUrlLength = 2048;
 
+        /// <summary>
+        /// Re-usable is true, this is a thread safe class
+        /// </summary>
         bool IHttpHandler.IsReusable
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
 
         void IHttpHandler.ProcessRequest(HttpContext context)
@@ -76,11 +79,24 @@ namespace ClientDependency.Core.CompositeFiles
 
             byte[] outputBytes = null;
 
+            //create the webforms page to perform the server side output cache, ensure
+            // the parameters are the same that we are going to use when setting our own custom
+            // caching parameters. Unfortunately server side output cache is tied so directly to 
+            // webforms this seems to be the only way to to this.
+            var page = new OutputCachedPage(new OutputCacheParameters
+            {
+                Duration = Convert.ToInt32(TimeSpan.FromDays(10).TotalSeconds),
+                Enabled = true,
+                VaryByParam = "t;s;cdv",
+                VaryByContentEncoding = "gzip;deflate",
+                Location = OutputCacheLocation.Any
+            });
+
             //retry up to 5 times... this is only here due to a bug found in another website that was returning a blank 
             //result. To date, it can't be replicated in VS, but we'll leave it here for error handling support... can't hurt
             for (int i = 0; i < 5; i++)
             {
-                outputBytes = ProcessRequestInternal(contextBase, fileKey, type, version, outputBytes);
+                outputBytes = ProcessRequestInternal(contextBase, fileKey, type, version, outputBytes, page);
                 if (outputBytes != null && outputBytes.Length > 0)
                     break;
 
@@ -96,9 +112,12 @@ namespace ClientDependency.Core.CompositeFiles
 
             context.Response.ContentType = type == ClientDependencyType.Javascript ? "application/x-javascript" : "text/css";
             context.Response.OutputStream.Write(outputBytes, 0, outputBytes.Length);
+
+            //dispose the webforms page used to do ensure server side output cache
+            page.Dispose();
         }
 
-        internal byte[] ProcessRequestInternal(HttpContextBase context, string fileset, ClientDependencyType type, int version, byte[] outputBytes)
+        internal byte[] ProcessRequestInternal(HttpContextBase context, string fileset, ClientDependencyType type, int version, byte[] outputBytes, OutputCachedPage page)
         {
             //get the compression type supported
             var clientCompression = context.GetClientCompression();
@@ -168,16 +187,19 @@ namespace ClientDependency.Core.CompositeFiles
                             {
                                 //Update the XML file map
                                 ClientDependencySettings.Instance.DefaultFileMapProvider.CreateUpdateMap(fileset, clientCompression.ToString(),
-                                    fileDefinitions.Select(x => new BasicFile(type) { FilePath = x.Uri }).Cast<IClientDependencyFile>(),
+                                    fileDefinitions.Select(x => new BasicFile(type) { FilePath = x.Uri }),
                                         compositeFileName,
+                                        //TODO: We should probably use the passed in version param?
                                         ClientDependencySettings.Instance.Version);
                             }
                         }
                     }
                 }
             }
+            
+            //set our caching params 
+            SetCaching(context, compositeFileName, fileset, clientCompression, page);
 
-            SetCaching(context, compositeFileName, fileset, clientCompression);
             return outputBytes;
         }
 
@@ -194,7 +216,7 @@ namespace ClientDependency.Core.CompositeFiles
             //the saved file's bytes are already compressed.
             outputBytes = map.GetCompositeFileBytes();
             compositeFileName = map.CompositeFileName;
-            CompressionType cType = (CompressionType)Enum.Parse(typeof(CompressionType), map.CompressionType);
+            var cType = (CompressionType)Enum.Parse(typeof(CompressionType), map.CompressionType);
             context.AddCompressionResponseHeader(cType);
         }
 
@@ -205,70 +227,44 @@ namespace ClientDependency.Core.CompositeFiles
         /// <param name="fileName">The name of the file that has been saved to disk</param>
         /// <param name="fileset">The Base64 encoded string supplied in the query string for the handler</param>
         /// <param name="compressionType"></param>
-        private void SetCaching(HttpContextBase context, string fileName, string fileset, CompressionType compressionType)
-        {            
-            //This ensures OutputCaching is set for this handler and also controls
-            //client side caching on the browser side. Default is 10 days.
-            var duration = TimeSpan.FromDays(10);
-            var cache = context.Response.Cache;
-            cache.SetCacheability(HttpCacheability.Public);
-
-            cache.SetExpires(DateTime.Now.Add(duration));
-            cache.SetMaxAge(duration);
-            cache.SetValidUntilExpires(true);
-            cache.SetLastModified(DateTime.Now);
-
-            cache.SetETag("\"" + (fileset + compressionType.ToString()).GenerateHash() + "\"");
-
-            //set server OutputCache to vary by our params
-
-            /* // proper way to do it is to have
-             * cache.SetVaryByCustom("cdparms");
-             * 
-             * // then have this in global.asax
-             * public override string GetVaryByCustomString(HttpContext context, string arg)
-             * {
-             *   if (arg == "cdparms")
-             *   {
-             *     if (string.IsNullOrEmpty(context.Request.PathInfo))
-             *     {
-             *       // querystring format
-             *       return context.Request["s"] + "+" + context.Request["t"] + "+" + (context.Request["v"] ?? "0");
-             *     }
-             *     else
-             *     {
-             *	     // path format
-             *	     return context.Request.PathInfo.Replace('/', '');
-             *     }
-             *   }
-             * }
-             * 
-             * // that way, there would be one cache entry for both querystring and path formats.
-             * // but, it requires a global.asax and I can't find a way to do without it.
-             */
+        /// <param name="page">The outputcache page - ensures server side output cache is stored</param>
+        private void SetCaching(HttpContextBase context, string fileName, string fileset, CompressionType compressionType, OutputCachedPage page)
+        {
+            //this initializes the webforms page part to get outputcaching working server side
+            page.ProcessRequest(HttpContext.Current);
 
             // in any case, cache already varies by pathInfo (build-in) so for path formats, we do not need anything
             // just add params for querystring format, just in case...
-            cache.VaryByParams["t"] = true;
-            cache.VaryByParams["s"] = true;
-            cache.VaryByParams["cdv"] = true;
-
-            //ensure the cache is different based on the encoding specified per browser
-            cache.VaryByContentEncodings["gzip"] = true;
-            cache.VaryByContentEncodings["deflate"] = true;
-
-            //don't allow varying by wildcard
-            cache.SetOmitVaryStar(true);
-            //ensure client browser maintains strict caching rules
-            cache.AppendCacheExtension("must-revalidate, proxy-revalidate");
-
-            //This is the only way to set the max-age cachability header in ASP.Net!
-            //FieldInfo maxAgeField = cache.GetType().GetField("_maxAge", BindingFlags.Instance | BindingFlags.NonPublic);
-            //maxAgeField.SetValue(cache, duration);
+            context.SetClientCachingResponse(
+                //the e-tag to use
+                (fileset + compressionType.ToString()).GenerateHash(), 
+                //10 days
+                10, 
+                //vary-by params
+                new[] { "t", "s", "cdv" });
 
             //make this output cache dependent on the file if there is one.
             if (!string.IsNullOrEmpty(fileName))
                 context.Response.AddFileDependency(fileName);
+        }
+
+        internal sealed class OutputCachedPage : Page
+        {
+            private readonly OutputCacheParameters _cacheSettings;
+
+            public OutputCachedPage(OutputCacheParameters cacheSettings)
+            {
+                // Tracing requires Page IDs to be unique.
+                ID = Guid.NewGuid().ToString();
+                _cacheSettings = cacheSettings;
+            }
+
+            protected override void FrameworkInitialize()
+            {
+                // when you put the <%@ OutputCache %> directive on a page, the generated code calls InitOutputCache() from here
+                base.FrameworkInitialize();
+                InitOutputCache(_cacheSettings);
+            }
         }
 
     }
