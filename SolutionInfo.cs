@@ -2,7 +2,7 @@
 using System.Security;
 
 [assembly: AssemblyCompany("Shannon Deminick")]
-[assembly: AssemblyCopyright("Copyright © Shannon Deminick 2011")]
+[assembly: AssemblyCopyright("Copyright © Shannon Deminick 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
