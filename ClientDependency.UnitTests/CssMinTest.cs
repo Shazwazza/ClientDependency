@@ -1,6 +1,4 @@
-﻿using ClientDependency.Core;
-using ClientDependency.Core.CompositeFiles;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace ClientDependency.UnitTests
 {

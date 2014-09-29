@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Web;
-using System.Web.UI;
-using ClientDependency.Core.Controls;
-using ClientDependency.Core.FileRegistration.Providers;
-using ClientDependency.Core.Config;
 using System.Configuration.Provider;
-using System.Runtime.CompilerServices;
+using System.Linq;
+using System.Web;
+using ClientDependency.Config;
+using ClientDependency.FileRegistration.Providers;
 
-namespace ClientDependency.Core
+namespace ClientDependency
 {
     /// <summary>
     /// The base class that exposees all of the basic operations used for rendering dependencies in a request

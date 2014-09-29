@@ -4,9 +4,9 @@ using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Compilation;
-using ClientDependency.Core.Config;
+using ClientDependency.Config;
 
-namespace ClientDependency.Core.Module
+namespace ClientDependency.Module
 {
     /// <summary>
     /// This module currently replaces rogue scripts with composite scripts.

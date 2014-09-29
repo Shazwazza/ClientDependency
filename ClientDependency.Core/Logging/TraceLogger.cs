@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Web;
 
-namespace ClientDependency.Core.Logging
+namespace ClientDependency.Logging
 {
     internal class TraceLogger : ILogger
     {

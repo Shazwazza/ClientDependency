@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Web;
-using ClientDependency.Core.CompositeFiles.Providers;
-using ClientDependency.Core.Config;
+using ClientDependency.CompositeFiles.Providers;
+using ClientDependency.Config;
 
-namespace ClientDependency.Core.CompositeFiles
+namespace ClientDependency.CompositeFiles
 {
     /// <summary>
     /// The default file local file writer in CDF

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Configuration.Provider;
 
-namespace ClientDependency.Core.CompositeFiles.Providers
+namespace ClientDependency.CompositeFiles.Providers
 {
     public class FileMapProviderCollection : ProviderCollection
     {

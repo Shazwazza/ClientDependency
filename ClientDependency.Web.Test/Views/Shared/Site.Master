@@ -1,4 +1,5 @@
 ﻿<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
+<%@ Import Namespace="ClientDependency" %>
 <%@ Import Namespace="ClientDependency.Core.Mvc" %>
 <%@ Import Namespace="ClientDependency.Core" %>
 

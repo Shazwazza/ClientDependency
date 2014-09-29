@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Web;
 
-namespace ClientDependency.Core
+namespace ClientDependency
 {
     internal static class CssHelper
     {

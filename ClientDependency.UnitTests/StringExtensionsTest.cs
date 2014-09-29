@@ -1,4 +1,3 @@
-using ClientDependency.Core;
 using NUnit.Framework;
 
 namespace ClientDependency.UnitTests

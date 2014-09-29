@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ClientDependency.Core
+namespace ClientDependency
 {
 
     /// <summary>

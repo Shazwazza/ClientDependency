@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace ClientDependency.Core
+namespace ClientDependency
 {
     /// <summary>
 	/// This attribute is used for data types that uses client assets like Javascript and CSS for liveediting.

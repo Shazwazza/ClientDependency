@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ClientDependency.Core
+namespace ClientDependency
 {
     /// <summary>
     /// Is returned when resolving a bundle

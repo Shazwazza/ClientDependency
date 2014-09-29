@@ -8,9 +8,7 @@ using System.Web.SessionState;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml.Linq;
-using ClientDependency.Core;
-using ClientDependency.Core.Config;
-using ClientDependency.Core.Mvc;
+using ClientDependency.Mvc;
 
 namespace ClientDependency.Web.Test
 {

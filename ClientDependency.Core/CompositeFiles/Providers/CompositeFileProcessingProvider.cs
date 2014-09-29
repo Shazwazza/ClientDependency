@@ -1,19 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Web.Hosting;
-using ClientDependency.Core.Config;
-using System.IO;
 using System.Web;
-using System.Net;
-using System.IO.Compression;
-using System.Configuration.Provider;
-using ClientDependency.Core.CompositeFiles;
+using ClientDependency.Config;
 
-namespace ClientDependency.Core.CompositeFiles.Providers
+namespace ClientDependency.CompositeFiles.Providers
 {
 
 	/// <summary>

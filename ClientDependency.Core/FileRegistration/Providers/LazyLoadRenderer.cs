@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ClientDependency.Core.FileRegistration.Providers;
-using ClientDependency.Core.Config;
-using System.Web.UI;
 using System.Web;
+using System.Web.UI;
+using ClientDependency.Config;
 
-namespace ClientDependency.Core.FileRegistration.Providers
+namespace ClientDependency.FileRegistration.Providers
 {
     public class LazyLoadRenderer : BaseRenderer
     {

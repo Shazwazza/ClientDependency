@@ -1,19 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
 using System.Web;
-using System.IO;
-using System.Web.UI;
-using System.Text.RegularExpressions;
-using ClientDependency.Core.Controls;
-using ClientDependency.Core.FileRegistration.Providers;
-using ClientDependency.Core.Config;
-using ClientDependency.Core;
-using System.Net;
 
-
-namespace ClientDependency.Core.Module
+namespace ClientDependency.Module
 {
     /// <summary>
     /// A semi-generic Stream implementation for Response.Filter with

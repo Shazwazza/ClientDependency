@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web;
-using System.Reflection;
-using System.IO;
 using System.Linq;
+using System.Web;
 using System.Web.UI;
-using ClientDependency.Core.CompositeFiles.Providers;
-using ClientDependency.Core.Config;
-using System.Text;
-using System.Web.Security;
+using ClientDependency.CompositeFiles.Providers;
+using ClientDependency.Config;
 
-namespace ClientDependency.Core.CompositeFiles
+namespace ClientDependency.CompositeFiles
 {
     public class CompositeDependencyHandler : IHttpHandler
     {

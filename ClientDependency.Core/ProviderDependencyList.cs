@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using ClientDependency.Core.FileRegistration.Providers;
+﻿using System.Collections.Generic;
+using ClientDependency.FileRegistration.Providers;
 
-
-namespace ClientDependency.Core
+namespace ClientDependency
 {
 	internal class ProviderDependencyList
 	{

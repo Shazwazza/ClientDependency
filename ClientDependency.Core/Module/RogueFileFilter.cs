@@ -1,19 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Web;
-using System.IO;
-using System.Web.UI;
 using System.Text.RegularExpressions;
-using ClientDependency.Core.CompositeFiles.Providers;
-using ClientDependency.Core.Controls;
-using ClientDependency.Core.FileRegistration.Providers;
-using ClientDependency.Core.Config;
-using ClientDependency.Core;
-using System.Net;
+using System.Web;
+using System.Web.UI;
+using ClientDependency.Config;
 
-namespace ClientDependency.Core.Module
+namespace ClientDependency.Module
 {
 
     /// <summary>

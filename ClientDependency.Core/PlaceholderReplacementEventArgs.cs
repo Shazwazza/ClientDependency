@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using System.Web;
 
-namespace ClientDependency.Core
+namespace ClientDependency
 {
     internal class PlaceholderReplacementEventArgs : PlaceholdersReplacedEventArgs
     {

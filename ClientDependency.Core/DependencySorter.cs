@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-namespace ClientDependency.Core
+namespace ClientDependency
 {
     /// <summary>
     /// Utility for sorting dependencies based on their priority and the index in which they exist in the list (# they were added)

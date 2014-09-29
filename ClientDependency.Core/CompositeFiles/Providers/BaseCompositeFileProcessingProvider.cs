@@ -1,15 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Configuration.Provider;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
-using ClientDependency.Core.Config;
-using System.IO;
 using System.Web;
-using System.Net;
-using System.Configuration.Provider;
+using ClientDependency.Config;
 
-namespace ClientDependency.Core.CompositeFiles.Providers
+namespace ClientDependency.CompositeFiles.Providers
 {
     public abstract class BaseCompositeFileProcessingProvider : ProviderBase, IHttpProvider
     {

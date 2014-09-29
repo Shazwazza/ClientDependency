@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ClientDependency.Core;
 using NUnit.Framework;
 
 namespace ClientDependency.UnitTests

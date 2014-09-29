@@ -2,10 +2,9 @@
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Web;
-using ClientDependency.Core.Config;
+using ClientDependency.Config;
 
-namespace ClientDependency.Core
+namespace ClientDependency
 {
     public static class StringExtensions
     {

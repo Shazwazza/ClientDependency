@@ -2,10 +2,9 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using ClientDependency.Core.CompositeFiles;
+using ClientDependency.CompositeFiles;
 
-namespace ClientDependency.Core
+namespace ClientDependency
 {
     /// <summary>
     /// Defines the file writers for file extensions or for explicit file paths

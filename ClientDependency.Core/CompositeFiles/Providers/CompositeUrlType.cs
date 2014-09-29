@@ -1,4 +1,4 @@
-﻿namespace ClientDependency.Core.CompositeFiles.Providers
+﻿namespace ClientDependency.CompositeFiles.Providers
 {
     public enum CompositeUrlType
     {

@@ -1,9 +1,8 @@
 using System;
 using System.Linq;
 using System.Text;
-using ClientDependency.Core;
 
-namespace ClientDependency.Core.CompositeFiles.Providers
+namespace ClientDependency.CompositeFiles.Providers
 {
     internal static class PathBasedUrlFormatter
     {

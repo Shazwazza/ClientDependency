@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Configuration.Provider;
 
-namespace ClientDependency.Core.FileRegistration.Providers
+namespace ClientDependency.FileRegistration.Providers
 {
     public class RendererCollection : ProviderCollection
     {

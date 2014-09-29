@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Linq;
+﻿using System.Collections.Generic;
 using System.IO;
 
-namespace ClientDependency.Core.CompositeFiles
+namespace ClientDependency.CompositeFiles
 {
     /// <summary>
 	/// Deserialized structure of the XML stored in the map file

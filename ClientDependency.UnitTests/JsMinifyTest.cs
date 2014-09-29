@@ -2,8 +2,8 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
+using ClientDependency.CompositeFiles;
 using NUnit.Framework;
-using ClientDependency.Core.CompositeFiles;
 
 namespace ClientDependency.UnitTests
 {

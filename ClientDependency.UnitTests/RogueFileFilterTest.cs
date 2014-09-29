@@ -1,5 +1,4 @@
-﻿using ClientDependency.Core.Module;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
 
 namespace ClientDependency.UnitTests

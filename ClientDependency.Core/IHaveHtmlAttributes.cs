@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ClientDependency.Core
+namespace ClientDependency
 {
     /// <summary>
     /// interface defining that an object has Html attributes

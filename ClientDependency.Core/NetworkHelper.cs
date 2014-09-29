@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Linq;
-using ClientDependency.Core.Config;
+using ClientDependency.Config;
 
-namespace ClientDependency.Core
+namespace ClientDependency
 {
     public class NetworkHelper
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ClientDependency.Core
+namespace ClientDependency
 {
     public static class DictionaryExtensions
     {

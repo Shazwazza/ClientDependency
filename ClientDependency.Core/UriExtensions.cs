@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
 using System.Web;
-using System.Net;
-using ClientDependency.Core.Config;
 
-namespace ClientDependency.Core
+namespace ClientDependency
 {
     public static class UriExtensions
     {

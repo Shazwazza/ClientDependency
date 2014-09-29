@@ -1,4 +1,4 @@
-﻿namespace ClientDependency.Core
+﻿namespace ClientDependency
 {
     /// <summary>
     /// Represents a JS file

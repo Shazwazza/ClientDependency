@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web;
-using System.Xml.Linq;
 using System.Xml;
-using System.IO;
-using ClientDependency.Core.Config;
-using System.Security.Cryptography;
+using System.Xml.Linq;
 
-namespace ClientDependency.Core.CompositeFiles.Providers
+namespace ClientDependency.CompositeFiles.Providers
 {
 
     /// <summary>

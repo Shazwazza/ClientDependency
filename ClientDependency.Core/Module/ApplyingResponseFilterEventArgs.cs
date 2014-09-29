@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Web;
 
-namespace ClientDependency.Core.Module
+namespace ClientDependency.Module
 {
     public class ApplyingResponseFilterEventArgs : CancelEventArgs
     {

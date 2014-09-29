@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using ClientDependency.Core.Config;
-using System.Web;
+﻿using System.Collections.Generic;
 using System.IO.Compression;
+using System.Linq;
 using System.Text.RegularExpressions;
+using System.Web;
+using ClientDependency.Config;
 
-namespace ClientDependency.Core.Module
+namespace ClientDependency.Module
 {
     public class MimeTypeCompressor
     {

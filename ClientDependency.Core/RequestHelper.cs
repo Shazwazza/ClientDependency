@@ -5,9 +5,9 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Web;
-using ClientDependency.Core.Config;
+using ClientDependency.Config;
 
-namespace ClientDependency.Core
+namespace ClientDependency
 {
     /// <summary>
     /// A utility class for getting the string result from an URL resource

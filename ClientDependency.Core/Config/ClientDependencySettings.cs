@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web.Configuration;
-using System.Configuration.Provider;
-using System.Web;
 using System.Configuration;
-using ClientDependency.Core.FileRegistration.Providers;
-using ClientDependency.Core.CompositeFiles.Providers;
-using ClientDependency.Core.Logging;
+using System.Configuration.Provider;
 using System.IO;
+using System.Linq;
+using System.Web;
+using System.Web.Configuration;
+using ClientDependency.CompositeFiles.Providers;
+using ClientDependency.FileRegistration.Providers;
+using ClientDependency.Logging;
 
-namespace ClientDependency.Core.Config
+namespace ClientDependency.Config
 {
     public class ClientDependencySettings
     {

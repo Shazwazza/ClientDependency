@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
+﻿using System.IO;
 using System.IO.Compression;
 
-namespace ClientDependency.Core
+namespace ClientDependency
 {
     public class SimpleCompressor
     {

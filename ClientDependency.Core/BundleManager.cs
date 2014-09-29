@@ -2,11 +2,9 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Web;
-using ClientDependency.Core.Controls;
 
-namespace ClientDependency.Core
+namespace ClientDependency
 {
     /// <summary>
     /// Allows creating pre-defined bundles for scrips and styles

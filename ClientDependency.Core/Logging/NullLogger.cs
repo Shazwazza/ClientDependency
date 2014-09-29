@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace ClientDependency.Core.Logging
+namespace ClientDependency.Logging
 {
     internal class NullLogger : ILogger
     {

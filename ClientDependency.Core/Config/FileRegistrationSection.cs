@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Configuration;
+using System.Linq;
 
-namespace ClientDependency.Core.Config
+namespace ClientDependency.Config
 {
 	public class FileRegistrationSection : ConfigurationElement
 	{

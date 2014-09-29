@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 
-namespace ClientDependency.Core
+namespace ClientDependency
 {
     public static class ObjectExtensions
     {

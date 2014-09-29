@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Text;
 using System.Configuration;
 using System.Linq;
-using ClientDependency.Core.Logging;
+using System.Security.Cryptography;
 
-namespace ClientDependency.Core.Config
+namespace ClientDependency.Config
 {
     public class ClientDependencySection : ConfigurationSection
 	{

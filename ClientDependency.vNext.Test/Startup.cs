@@ -31,24 +31,7 @@ namespace ClientDependency.vNext.Test
             app.UseServices(services =>
             {
                 services.AddMvc();
-
-                //// Add a view engine as the first one in the list.
-                //services.AddMvc(configuration)
-                //    .SetupOptions<MvcOptions>(options =>
-                //    {
-                //        options.ViewEngines.Insert(0, typeof(TestViewEngine));
-                //    });
-
-                ////NOTE: An alternative to parsing the output would be to use a custom ActionResult that derives from
-                //// ViewResult, that way there theoretically would be full control over the 'writer'
-                //// https://github.com/aspnet/Mvc/blob/c17d33154f52fa8d8553484767683e0d3932fa11/src/Microsoft.AspNet.Mvc.Core/ActionResults/ViewResult.cs
-
-                ////This replaces the default view type with our own
-
-                var config = new Configuration();
-                var describe = new ServiceDescriber(config);                
-                //services.Add(describe.Instance<IMvcRazorHost>(new MvcRazorHost(typeof(CdfRazorView).FullName)));
-                services.Add(describe.Transient<IRazorView, CdfRazorView>());
+                services.AddCdf();
             });
 
             app.UseMvc();
@@ -57,8 +40,17 @@ namespace ClientDependency.vNext.Test
         }       
     }
 
-    //NOTE: This is here PURELY to be used as a type argument above, it actually doesn't get used or invoked.
-    // and for some reason if you try to force this view the @inherits directive doesn't seem to work
+    public static class ServiceCollectionExtensions
+    {
+        public static IServiceCollection AddCdf(this IServiceCollection services)
+        {
+            //This replaces the default view type with our own
+            var config = new Configuration();
+            var describe = new ServiceDescriber(config);
+            return services.Add(describe.Transient<IRazorView, CdfRazorView>());
+        }
+    }
+
     public class CdfRazorView : RazorView
     {
         public CdfRazorView(IRazorPageFactory pageFactory,
@@ -70,7 +62,7 @@ namespace ClientDependency.vNext.Test
 
         public override async Task RenderAsync(ViewContext context)
         {
-            using (var replacements = new PlaceholderReplacer(context.Writer/*, viewContext.HttpContext*/))
+            using (var replacements = new PlaceholderReplacer(context.Writer))
             {
                 context.Writer = replacements.Writer;
 
@@ -78,84 +70,15 @@ namespace ClientDependency.vNext.Test
             }
         }
     }
-   
-    //public abstract class CdfRazorView<TModel> : RazorPage<TModel>
-    //{       
-
-    //    public string GetMyString() {
-            
-    //        return "Blah!!";
-
-    //    }
-
-        // public override Task RenderAsync(ViewContext context)
-        // {
-            // using (var replacements = new PlaceholderReplacer(context.Writer/*, viewContext.HttpContext*/))
-            // {
-                // context.Writer = replacements.Writer;
-
-                // return base.RenderAsync(context);
-            // }
-
-            
-        // }
-    //}
-
-    //public abstract class CustomRazorView<TModel> : RazorPage<TModel>
-    //{       
-
-    //    public string EatMyShorts() {
-            
-    //        return "Blah!!";
-
-    //    }
-
-    //    // public override Task RenderAsync(ViewContext context)
-    //    // {
-    //        // return base.RenderAsync(context);            
-    //    // }
-    //}
-
-    //public static class ViewEnginesExtensions
-    //{
-    //    /// <summary>
-    //    /// Replaces the default razor view engine with the specified one
-    //    /// </summary>
-    //    /// <param name="engines"></param>
-    //    /// <param name="replacement"></param>
-    //    public static void ReplaceDefaultRazorEngine(this ViewEngineCollection engines, IViewEngine replacement)
-    //    {
-    //        engines.ReplaceEngine<RazorViewEngine>(replacement);
-    //    }
-
-    //    /// <summary>
-    //    /// Replaces the engine matching 'T' with the specified one
-    //    /// </summary>
-    //    /// <typeparam name="T"></typeparam>
-    //    /// <param name="engines"></param>
-    //    /// <param name="replacement"></param>
-    //    public static void ReplaceEngine<T>(this ViewEngineCollection engines, IViewEngine replacement)
-    //        where T : IViewEngine
-    //    {
-    //        var engine = engines.SingleOrDefault(x => x.GetType() == typeof(T));
-    //        if (engine != null)
-    //        {
-    //            engines.Remove(engine);
-    //        }
-    //        engines.Add(replacement);
-    //    }
-    //}
 
     public class PlaceholderReplacer : IDisposable
     {
         private readonly TextWriter _originalWriter;
-        //private readonly HttpContext _httpContext;
         private readonly StringWriter _writer;
 
-        public PlaceholderReplacer(TextWriter originalWriter /*, HttpContext httpContext*/)
+        public PlaceholderReplacer(TextWriter originalWriter)
         {
             _originalWriter = originalWriter;
-            //_httpContext = httpContext;
             _writer = new StringWriter(new StringBuilder());
         }
 
@@ -169,7 +92,7 @@ namespace ClientDependency.vNext.Test
             var output = _writer.ToString();
 
             //do replacements
-            //var replaced = DependencyRenderer.GetInstance(_httpContext).ParseHtmlPlaceholders(output);
+            var replaced = DependencyRenderer.GetInstance(_httpContext).ParseHtmlPlaceholders(output);
 
             //var replaced = "Hello world, this is now the output of your view!";
 

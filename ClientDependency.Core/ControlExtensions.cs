@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Web.UI;
-using ClientDependency.Core.Controls;
-using System.Web;
 
-namespace ClientDependency.Core
+namespace ClientDependency
 {
     public static class ControlExtensions
     {

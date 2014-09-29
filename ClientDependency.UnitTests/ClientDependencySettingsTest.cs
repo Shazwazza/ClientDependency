@@ -1,13 +1,11 @@
 ﻿using System.Configuration;
 using System.Reflection;
-using ClientDependency.Core;
-using ClientDependency.Core.Config;
+using ClientDependency.CompositeFiles.Providers;
+using ClientDependency.Config;
+using ClientDependency.FileRegistration.Providers;
 using NUnit.Framework;
 using System;
-using ClientDependency.Core.CompositeFiles.Providers;
-using ClientDependency.Core.FileRegistration.Providers;
 using System.Collections.Generic;
-using ClientDependency.Core.Logging;
 using System.IO;
 using Rhino.Mocks;
 using System.Web;

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
-using ClientDependency.Core;
 
 namespace ClientDependency.Web.Test.Controls
 {

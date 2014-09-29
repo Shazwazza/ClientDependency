@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Query.Dynamic;
+﻿using System.Collections.Generic;
 
-namespace ClientDependency.Core
+namespace ClientDependency
 {
     internal static class HtmlAttributesStringParser
     {

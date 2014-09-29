@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.IO;
-using System.Text;
-using System.Web.UI;
 using System.Configuration.Provider;
-using System.Web;
+using System.IO;
 using System.Linq;
-using ClientDependency.Core.CompositeFiles.Providers;
-using ClientDependency.Core.Controls;
-using ClientDependency.Core.Config;
-using ClientDependency.Core;
-using ClientDependency.Core.CompositeFiles;
+using System.Text;
+using System.Web;
+using ClientDependency.CompositeFiles.Providers;
+using ClientDependency.Config;
 
-namespace ClientDependency.Core.FileRegistration.Providers
+namespace ClientDependency.FileRegistration.Providers
 {
     public abstract class BaseFileRegistrationProvider : ProviderBase
     {

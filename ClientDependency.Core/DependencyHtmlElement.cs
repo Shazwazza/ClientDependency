@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ClientDependency.Core
+namespace ClientDependency
 {
     /// <summary>
     ///  A simple model defining the source of the dependency and the Html Elements that need to be rendered as part of the html tag

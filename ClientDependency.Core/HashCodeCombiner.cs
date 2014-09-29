@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.IO;
 
-namespace ClientDependency.Core
+namespace ClientDependency
 {
     /// <summary>
     /// Used to create a hash code from multiple objects.

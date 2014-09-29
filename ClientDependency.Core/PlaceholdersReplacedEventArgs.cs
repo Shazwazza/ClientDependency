@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Web;
 
-namespace ClientDependency.Core
+namespace ClientDependency
 {
     internal class PlaceholdersReplacedEventArgs : EventArgs
     {

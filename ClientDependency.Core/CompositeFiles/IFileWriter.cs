@@ -1,8 +1,8 @@
 ﻿using System.IO;
 using System.Web;
-using ClientDependency.Core.CompositeFiles.Providers;
+using ClientDependency.CompositeFiles.Providers;
 
-namespace ClientDependency.Core.CompositeFiles
+namespace ClientDependency.CompositeFiles
 {
     /// <summary>
     /// An interface defining a file writer for a local file

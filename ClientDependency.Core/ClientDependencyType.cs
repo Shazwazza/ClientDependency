@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ClientDependency.Core
+﻿namespace ClientDependency
 {
 	/// <summary>
 	/// The type of client file

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
-namespace ClientDependency.Core
+namespace ClientDependency
 {
     /// <summary>
     /// Allows for globally specifying paths for path aliases when registering dependencies

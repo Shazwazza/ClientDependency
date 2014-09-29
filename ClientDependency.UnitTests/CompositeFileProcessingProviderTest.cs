@@ -1,12 +1,11 @@
-﻿using ClientDependency.Core.CompositeFiles.Providers;
-using System.Linq;
+﻿using System.Linq;
 using System;
 using System.Web;
-using ClientDependency.Core;
-using ClientDependency.Core.CompositeFiles;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using ClientDependency.CompositeFiles;
+using ClientDependency.CompositeFiles.Providers;
 using Moq;
 using NUnit.Framework;
 

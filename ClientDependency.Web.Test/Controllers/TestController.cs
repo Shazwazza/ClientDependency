@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Web.Mvc;
-using ClientDependency.Core.Mvc;
 using ClientDependency.Web.Test.Models;
 
 namespace ClientDependency.Web.Test.Controllers

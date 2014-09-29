@@ -138,18 +138,6 @@
       <Project>{EA35B06D-0CC8-4830-A3F7-9BB3D36D0FAF}</Project>
       <Name>ClientDependency.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ClientDependency.Mvc\ClientDependency.Core.Mvc.csproj">
-      <Project>{5A8B1824-80CD-4187-B870-384D77892A77}</Project>
-      <Name>ClientDependency.Core.Mvc</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ClientDependency.TypeScript\ClientDependency.TypeScript.csproj">
-      <Project>{DDB92A7D-879A-4314-83DA-55D0535B3539}</Project>
-      <Name>ClientDependency.TypeScript</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Umbraco4.ClientDependency\Umbraco4.ClientDependency.csproj">
-      <Project>{08DFBA02-97A5-496C-9272-09CE98C50BF5}</Project>
-      <Name>Umbraco4.ClientDependency</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="AllSections.config" />

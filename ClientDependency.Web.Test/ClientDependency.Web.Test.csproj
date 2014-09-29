@@ -399,29 +399,9 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ClientDependency.Coffee\ClientDependency.Coffee.csproj">
-      <Project>{643ca6c1-f9e6-4078-a80d-0841fed68096}</Project>
-      <Name>ClientDependency.Coffee</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ClientDependency.Core\ClientDependency.Core.csproj">
       <Project>{EA35B06D-0CC8-4830-A3F7-9BB3D36D0FAF}</Project>
       <Name>ClientDependency.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ClientDependency.Less\ClientDependency.Less.csproj">
-      <Project>{849f6123-925b-459c-80e6-fd5ca8b9896a}</Project>
-      <Name>ClientDependency.Less</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ClientDependency.Mvc\ClientDependency.Core.Mvc.csproj">
-      <Project>{5A8B1824-80CD-4187-B870-384D77892A77}</Project>
-      <Name>ClientDependency.Core.Mvc</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ClientDependency.SASS\ClientDependency.SASS.csproj">
-      <Project>{0114d544-4976-4650-bb62-16ad228d43bf}</Project>
-      <Name>ClientDependency.SASS</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ClientDependency.TypeScript\ClientDependency.TypeScript.csproj">
-      <Project>{ddb92a7d-879a-4314-83da-55d0535b3539}</Project>
-      <Name>ClientDependency.TypeScript</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
