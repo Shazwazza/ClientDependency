@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Web;
 using ClientDependency.Config;
-using ClientDependency.FileRegistration.Providers;
+using ClientDependency.FileRegistration;
 
 namespace ClientDependency.Mvc
 {
@@ -30,58 +30,6 @@ namespace ClientDependency.Mvc
         public const string ContextKey = "MvcLoader";
         private const string JsMarkupRegex = "<!--\\[Javascript:Name=\"(?<renderer>.*?)\"\\]//-->";
         private const string CssMarkupRegex = "<!--\\[Css:Name=\"(?<renderer>.*?)\"\\]//-->";
-        #endregion
-
-        #region Static methods
-
-        /// <summary>
-        /// used for locking
-        /// </summary>
-        private static readonly object Locker = new object();
-
-        /// <summary>
-        /// Singleton per request instance.
-        /// </summary>
-        /// <exception cref="NullReferenceException">
-        /// If no MvcDependencyLoader control exists on the context, an exception is thrown.
-        /// </exception>
-        public static DependencyRenderer GetInstance(HttpContext ctx)
-        {
-            if (!ctx.Items.Contains(ContextKey))
-                return null;
-            return ctx.Items[ContextKey] as DependencyRenderer;
-        }
-
-        /// <summary>
-        /// Checks if a loader already exists, if it does, it returns it, otherwise it will
-        /// create a new one in the control specified.
-        /// isNew will be true if a loader was created, otherwise false if it already existed.
-        /// </summary>
-        /// <param name="ctx"></param>
-        /// <param name="isNew"></param>
-        /// <returns></returns>
-        internal static DependencyRenderer TryCreate(HttpContext ctx, out bool isNew)
-        {
-            if (GetInstance(ctx) == null)
-            {
-                lock (Locker)
-                {
-                    //double check
-                    if (GetInstance(ctx) == null)
-                    {
-                        var loader = new DependencyRenderer(ctx);
-                        isNew = true;
-                        return loader;
-                    }
-                }
-
-            }
-
-            isNew = false;
-            return GetInstance(ctx);
-
-        }
-
         #endregion
         
         #region Internal Methods

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
-using ClientDependency.CompositeFiles.Providers;
 using ClientDependency.Config;
 
 namespace ClientDependency.CompositeFiles

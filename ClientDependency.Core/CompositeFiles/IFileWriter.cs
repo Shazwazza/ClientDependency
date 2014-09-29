@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Web;
-using ClientDependency.CompositeFiles.Providers;
 
 namespace ClientDependency.CompositeFiles
 {

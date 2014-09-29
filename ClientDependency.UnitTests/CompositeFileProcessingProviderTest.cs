@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using ClientDependency.CompositeFiles;
-using ClientDependency.CompositeFiles.Providers;
 using Moq;
 using NUnit.Framework;
 

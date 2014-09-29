@@ -1,8 +1,8 @@
 ﻿using System.Configuration;
 using System.Reflection;
-using ClientDependency.CompositeFiles.Providers;
+using ClientDependency.CompositeFiles;
 using ClientDependency.Config;
-using ClientDependency.FileRegistration.Providers;
+using ClientDependency.FileRegistration;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;

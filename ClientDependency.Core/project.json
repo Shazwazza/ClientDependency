@@ -4,18 +4,24 @@
         "Microsoft.AspNet.Hosting": "1.0.0-*",
         "Microsoft.AspNet.Mvc": "6.0.0-*"
     },
-    "code": "*CdfManager.cs",
-    "exclude": [
-        "CompositeFiles/**/*.*",
-        "Config/**/*.*",
-        "FileRegistration/**/*.*",
-        "Logging/**/*.*",
-        "Module/**/*.*",
-        "Mvc/**/*.*",
-        "Resources/**/*.*"
+    "code": [
+        "CdfManager.cs",
+        "ClientDependencyType.cs",
+        "Mvc/HtmlHelperExtensions.cs",
+        "Logging/ILogger.cs",
+        "IClientDependencyFile.cs",
+        "IHaveHtmlAttributes.cs",
+        "IRequiresHtmlAttributesParsing.cs",
+        "HtmlAttributesStringParser.cs",
+        "HashCodeCombiner.cs",
+        "DependencySorter.cs",
+        "BasicPath.cs",
+        "IClientDependencyPath.cs",
+        "Config/ClientDependencySettings.cs",
+        "FileRegistration/BaseFileRegistrationProvider.cs"
     ],
-    "frameworks": { 
-         "aspnet50": { }, 
-         "aspnetcore50": { } 
+    "frameworks": {
+        "aspnet50": { },
+        "aspnetcore50": { }
     }
 }

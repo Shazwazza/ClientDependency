@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using ClientDependency.FileRegistration.Providers;
+using ClientDependency.FileRegistration;
 
 namespace ClientDependency
 {

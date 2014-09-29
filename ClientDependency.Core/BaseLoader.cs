@@ -4,7 +4,7 @@ using System.Configuration.Provider;
 using System.Linq;
 using System.Web;
 using ClientDependency.Config;
-using ClientDependency.FileRegistration.Providers;
+using ClientDependency.FileRegistration;
 
 namespace ClientDependency
 {
@@ -243,12 +243,6 @@ namespace ClientDependency
         {
             var file = new BasicFile(type) { Group = group, Priority = priority, FilePath = filePath, PathNameAlias = pathNameAlias };
             RegisterClientDependencies(new List<IClientDependencyFile> { file }, new List<IClientDependencyPath>()); //send an empty paths collection
-        }
-
-        [Obsolete("Use the overloaded RegisterDependency method instead")]
-		public void RegisterDependencyWithProvider(int group, int priority, string filePath, string pathNameAlias, ClientDependencyType type, string provider)
-        {
-            RegisterDependency(group, priority, filePath, pathNameAlias, type, provider);
         }
 
         public void RegisterDependency(int group, int priority, string filePath, string pathNameAlias, ClientDependencyType type, string provider)
