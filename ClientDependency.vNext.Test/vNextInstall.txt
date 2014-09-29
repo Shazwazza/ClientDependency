@@ -1,0 +1,20 @@
+﻿Describes how to install vnext with the latest dev files
+
+Use the 'dev' repo:
+
+https://github.com/aspnet/Home/tree/dev
+
+if you want the 'stable' version, use the master branch:
+
+https://github.com/aspnet/Home
+
+Then you need to update the Nuget source
+
+* The NuGet.Config file located at: C:\Users\Shannon\AppData\Roaming\NuGet\NuGet.Config
+* Or located at: X:\Projects\ClientDependency\ClientDependency (overrides default)
+
+To do lots of debugging with 'k web' you can turn on trace, using cmd do:
+
+set KRE_TRACE=1
+
+to turn it off, set to 0

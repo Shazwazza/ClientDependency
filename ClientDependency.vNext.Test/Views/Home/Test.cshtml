@@ -1,0 +1,29 @@
+﻿@using System.Linq
+@inherits ClientDependency.vNext.Test.CustomRazorView<object>
+@{
+
+    //NOTE: The @inherits keyword doesn't seem to do anything
+
+    Layout = "/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>Blah</h1>
+</div>
+<div class="row">
+
+    <ul>
+        @foreach(var m in this.GetType().GetMethods().Select(x => x.Name)){
+            <li>@m</li>
+        }
+    </ul>
+
+    <ul>
+        @foreach(var m in this.GetType().GetProperties().Select(x => x.Name)){
+            <li>@m</li>
+        }
+    </ul>
+</div>
+
+
