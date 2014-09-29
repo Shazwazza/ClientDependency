@@ -116,7 +116,6 @@
     <Compile Include="CompositeFiles\CompositeFileDefinition.cs" />
     <Compile Include="CompositeFiles\BaseFileMapProvider.cs" />
     <Compile Include="CompositeFiles\CompositeUrlType.cs" />
-    <Compile Include="CompositeFiles\FileMapProviderCollection.cs" />
     <Compile Include="CompositeFiles\PathBasedUrlFormatter.cs" />
     <Compile Include="CompositeFiles\DefaultFileWriter.cs" />
     <Compile Include="CompositeFiles\IFileWriter.cs" />
