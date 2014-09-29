@@ -7,10 +7,10 @@ namespace ClientDependency
     /// <summary>
     /// Extension methods for the HttpContext object
     /// </summary>
-    public static class HttpContextBaseExtensions
+    public static class HttpContextExtensions
     {
 
-        public static void AddCompressionResponseHeader(this HttpContextBase context, CompressionType cType)
+        public static void AddCompressionResponseHeader(this HttpContext context, CompressionType cType)
         {
             if (cType == CompressionType.deflate)
             {
@@ -30,7 +30,7 @@ namespace ClientDependency
         /// <param name="fromDays">default is 10</param>
         /// <param name="varyByParams">A list of cache parameter names to vary-by</param>
         public static void SetClientCachingResponse(
-            this HttpContextBase context,              
+            this HttpContext context,              
             string etag, 
             int fromDays = 10,
             string[] varyByParams = null)
@@ -79,7 +79,7 @@ namespace ClientDependency
         /// If IE 6 is detected, we will ignore compression as it's known that some versions of IE 6
         /// have issues with it.
         /// </summary>
-        public static CompressionType GetClientCompression(this HttpContextBase context)
+        public static CompressionType GetClientCompression(this HttpContext context)
         {
             CompressionType type = CompressionType.none;
 
@@ -123,7 +123,7 @@ namespace ClientDependency
         /// <param name="context"></param>
         /// <param name="virtualPath"></param>
         /// <returns></returns>
-        public static bool IsAbsolute(this HttpContextBase context, string virtualPath)
+        public static bool IsAbsolute(this HttpContext context, string virtualPath)
         {
             if (IsAbsolutePath(context, virtualPath))
             {
@@ -147,7 +147,7 @@ namespace ClientDependency
         /// <param name="context"></param>
         /// <param name="originalUrl">Any Url including those starting with ~</param>
         /// <returns>relative url</returns>
-        public static string ResolveUrl(this HttpContextBase context, string originalUrl)
+        public static string ResolveUrl(this HttpContext context, string originalUrl)
         {
             if (string.IsNullOrEmpty(originalUrl))
                 return originalUrl;
@@ -191,7 +191,7 @@ namespace ClientDependency
         /// <param name="context"></param>
         /// <param name="originalUrl"></param>
         /// <returns></returns>
-        public static bool IsAbsolutePath(this HttpContextBase context, string originalUrl)
+        public static bool IsAbsolutePath(this HttpContext context, string originalUrl)
         {
             // *** Absolute path - just return
             var indexOfSlashes = originalUrl.IndexOf("://");

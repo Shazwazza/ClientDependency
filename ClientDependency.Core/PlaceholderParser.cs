@@ -31,7 +31,7 @@ namespace ClientDependency
         /// <param name="cssMarkupRegex"></param>
         /// <param name="output"></param>
         /// <returns></returns>
-        public static string ParseHtmlPlaceholders(HttpContextBase currentContext, string html, string jsMarkupRegex, string cssMarkupRegex, RendererOutput[] output)
+        public static string ParseHtmlPlaceholders(HttpContext currentContext, string html, string jsMarkupRegex, string cssMarkupRegex, RendererOutput[] output)
         {
             html = Regex.Replace(html, jsMarkupRegex,
                 (m) =>

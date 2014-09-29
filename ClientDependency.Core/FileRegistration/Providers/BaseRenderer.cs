@@ -10,7 +10,7 @@ namespace ClientDependency.FileRegistration.Providers
             HashSet<IClientDependencyPath> paths,
             out string jsOutput,
             out string cssOutput,
-            HttpContextBase http)
+            HttpContext http)
         {
             WriteDependencies(allDependencies, paths, out jsOutput, out cssOutput, http);
         }

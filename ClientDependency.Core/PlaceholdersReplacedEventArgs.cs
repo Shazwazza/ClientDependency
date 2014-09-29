@@ -5,10 +5,10 @@ namespace ClientDependency
 {
     internal class PlaceholdersReplacedEventArgs : EventArgs
     {
-        public HttpContextBase HttpContext { get; private set; }        
+        public HttpContext HttpContext { get; private set; }        
         public string ReplacedText { get; set; }
 
-        public PlaceholdersReplacedEventArgs(HttpContextBase httpContext, string replacedText)
+        public PlaceholdersReplacedEventArgs(HttpContext httpContext, string replacedText)
         {
             HttpContext = httpContext;
             ReplacedText = replacedText;

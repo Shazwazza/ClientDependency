@@ -15,7 +15,7 @@ namespace ClientDependency.Mvc
         /// Constructor based on MvcHandler 
         /// </summary>
         /// <param name="ctx"></param>
-        private DependencyRenderer(HttpContextBase ctx)
+        private DependencyRenderer(HttpContext ctx)
             : base(ctx)
         {
             //by default the provider is the default provider 
@@ -45,7 +45,7 @@ namespace ClientDependency.Mvc
         /// <exception cref="NullReferenceException">
         /// If no MvcDependencyLoader control exists on the context, an exception is thrown.
         /// </exception>
-        public static DependencyRenderer GetInstance(HttpContextBase ctx)
+        public static DependencyRenderer GetInstance(HttpContext ctx)
         {
             if (!ctx.Items.Contains(ContextKey))
                 return null;
@@ -60,7 +60,7 @@ namespace ClientDependency.Mvc
         /// <param name="ctx"></param>
         /// <param name="isNew"></param>
         /// <returns></returns>
-        internal static DependencyRenderer TryCreate(HttpContextBase ctx, out bool isNew)
+        internal static DependencyRenderer TryCreate(HttpContext ctx, out bool isNew)
         {
             if (GetInstance(ctx) == null)
             {

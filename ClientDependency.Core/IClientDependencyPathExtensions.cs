@@ -6,7 +6,7 @@ namespace ClientDependency
     public static class ClientDependencyPathExtensions
     {
 
-        public static string ResolvePath(this IClientDependencyPath path, HttpContextBase http)
+        public static string ResolvePath(this IClientDependencyPath path, HttpContext http)
         {
             if (string.IsNullOrEmpty(path.Path))
             {

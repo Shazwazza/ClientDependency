@@ -14,7 +14,7 @@ namespace ClientDependency
     public class BaseLoader
     {
 
-        public BaseLoader(HttpContextBase http)
+        public BaseLoader(HttpContext http)
         {
             CurrentContext = http;
 
@@ -25,7 +25,7 @@ namespace ClientDependency
             }
         }
 
-        protected HttpContextBase CurrentContext { get; private set; }
+        protected HttpContext CurrentContext { get; private set; }
 
         public BaseFileRegistrationProvider Provider { get; set; }
 

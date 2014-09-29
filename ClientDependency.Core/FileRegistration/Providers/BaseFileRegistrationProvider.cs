@@ -36,7 +36,7 @@ namespace ClientDependency.FileRegistration.Providers
         /// <param name="http"></param>
         /// <param name="htmlAttributes"></param>
         /// <returns></returns>
-        protected abstract string RenderJsDependencies(IEnumerable<IClientDependencyFile> jsDependencies, HttpContextBase http, IDictionary<string, string> htmlAttributes);
+        protected abstract string RenderJsDependencies(IEnumerable<IClientDependencyFile> jsDependencies, HttpContext http, IDictionary<string, string> htmlAttributes);
 
         /// <summary>
         /// This is called when rendering many css dependencies
@@ -45,7 +45,7 @@ namespace ClientDependency.FileRegistration.Providers
         /// <param name="http"></param>
         /// <param name="htmlAttributes"></param>
         /// <returns></returns>
-        protected abstract string RenderCssDependencies(IEnumerable<IClientDependencyFile> cssDependencies, HttpContextBase http, IDictionary<string, string> htmlAttributes);
+        protected abstract string RenderCssDependencies(IEnumerable<IClientDependencyFile> cssDependencies, HttpContext http, IDictionary<string, string> htmlAttributes);
 
         /// <summary>
         /// Called to render a single js file
@@ -129,10 +129,10 @@ namespace ClientDependency.FileRegistration.Providers
         #region Protected Methods
 
         private void StaggerOnDifferentAttributes(
-            HttpContextBase http,
+            HttpContext http,
             StringBuilder builder,
             IEnumerable<IClientDependencyFile> list,
-            Func<IEnumerable<IClientDependencyFile>, HttpContextBase, IDictionary<string, string>, string> renderCompositeFiles)
+            Func<IEnumerable<IClientDependencyFile>, HttpContext, IDictionary<string, string>, string> renderCompositeFiles)
         {
             var sameAttributes = new List<IClientDependencyFile>();
             var currHtmlAttr = GetHtmlAttributes(list.ElementAt(0));
@@ -170,10 +170,10 @@ namespace ClientDependency.FileRegistration.Providers
         /// <param name="renderCompositeFiles"></param>
         /// <param name="renderSingle"></param>
         protected void WriteStaggeredDependencies(
-            IEnumerable<IClientDependencyFile> dependencies, 
-            HttpContextBase http, 
+            IEnumerable<IClientDependencyFile> dependencies,
+            HttpContext http, 
             StringBuilder builder,
-            Func<IEnumerable<IClientDependencyFile>, HttpContextBase, IDictionary<string, string>, string> renderCompositeFiles,
+            Func<IEnumerable<IClientDependencyFile>, HttpContext, IDictionary<string, string>, string> renderCompositeFiles,
             Func<string, IDictionary<string, string>, string> renderSingle)
         {
             var fileBasedExtensions = ClientDependencySettings.Instance.FileBasedDependencyExtensionList
@@ -238,7 +238,7 @@ namespace ClientDependency.FileRegistration.Providers
         /// <param name="folderPaths"></param>
         /// <param name="http"></param>
         protected virtual void UpdateFilePaths(IEnumerable<IClientDependencyFile> dependencies,
-            HashSet<IClientDependencyPath> folderPaths, HttpContextBase http)
+            HashSet<IClientDependencyPath> folderPaths, HttpContext http)
         {
             var paths = folderPaths.ToList();
             foreach (var dependency in dependencies)
@@ -323,7 +323,7 @@ namespace ClientDependency.FileRegistration.Providers
 
         }
 
-        private string AppendVersion(string url, HttpContextBase http)
+        private string AppendVersion(string url, HttpContext http)
         {
             if (ClientDependencySettings.Instance.Version == 0)
                 return url;
@@ -414,7 +414,7 @@ namespace ClientDependency.FileRegistration.Providers
             HashSet<IClientDependencyPath> paths,
             out string jsOutput,
             out string cssOutput,
-            HttpContextBase http)
+            HttpContext http)
         {
             //create the hash to see if we've already stored it
             var hashCodeCombiner = new HashCodeCombiner();

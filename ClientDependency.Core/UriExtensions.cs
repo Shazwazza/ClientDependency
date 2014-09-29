@@ -24,7 +24,7 @@ namespace ClientDependency
         /// <param name="uri"></param>
         /// <param name="http"></param>
         /// <returns></returns>
-        public static Uri MakeAbsoluteUri(this Uri uri, HttpContextBase http)
+        public static Uri MakeAbsoluteUri(this Uri uri, HttpContext http)
         {
             if (!uri.IsAbsoluteUri)
             {
@@ -44,7 +44,7 @@ namespace ClientDependency
         /// <param name="uri"></param>
         /// <param name="http"></param>
         /// <returns></returns>
-        public static bool IsLocalUri(this Uri uri, HttpContextBase http)
+        public static bool IsLocalUri(this Uri uri, HttpContext http)
         {
             if (http.Request == null)
             {

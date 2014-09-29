@@ -11,7 +11,7 @@ namespace ClientDependency
         /// <param name="file"></param>
         /// <param name="http"></param>
         /// <returns></returns>
-        public static string ResolveFilePath(this IClientDependencyFile file, HttpContextBase http)
+        public static string ResolveFilePath(this IClientDependencyFile file, HttpContext http)
         {
             var trimmedPath = file.FilePath.Trim();
             if (string.IsNullOrEmpty(trimmedPath))

@@ -9,7 +9,7 @@ namespace ClientDependency
         public Match RegexMatch { get; private set; }
 
         public PlaceholderReplacementEventArgs(
-            HttpContextBase httpContext, 
+            HttpContext httpContext, 
             ClientDependencyType type, 
             string replacedText,
             Match regexMatch) 

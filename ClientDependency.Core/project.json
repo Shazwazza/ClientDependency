@@ -1,0 +1,21 @@
+{
+    "dependencies": {
+        "Microsoft.AspNet.Diagnostics": "1.0.0-*",
+        "Microsoft.AspNet.Hosting": "1.0.0-*",
+        "Microsoft.AspNet.Mvc": "6.0.0-*"
+    },
+    "code": "*CdfManager.cs",
+    "exclude": [
+        "CompositeFiles/**/*.*",
+        "Config/**/*.*",
+        "FileRegistration/**/*.*",
+        "Logging/**/*.*",
+        "Module/**/*.*",
+        "Mvc/**/*.*",
+        "Resources/**/*.*"
+    ],
+    "frameworks": { 
+         "aspnet50": { }, 
+         "aspnetcore50": { } 
+    }
+}
