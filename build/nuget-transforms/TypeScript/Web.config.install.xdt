@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <system.web xdt:Transform="InsertIfMissing">
+    <httpHandlers xdt:Transform="InsertIfMissing">
+      <add path="*.ts" xdt:Locator="Match(path)" xdt:Transform="InsertIfMissing" />
+      <add path="*.ts" verb="GET" type="ClientDependency.TypeScript.TypeScriptHandler, ClientDependency.TypeScript" xdt:Locator="Match(path)" xdt:Transform="SetAttributes(path,verb,type)" />
+    </httpHandlers>
+  </system.web>
+  <system.webServer xdt:Transform="InsertIfMissing">
+    <handlers xdt:Transform="InsertIfMissing">
+      <remove name="CdfTypeScriptHandler" xdt:Locator="Match(name)" xdt:Transform="InsertIfMissing" />
+      <add name="CdfTypeScriptHandler" xdt:Locator="Match(name)" xdt:Transform="InsertIfMissing" />
+      <add name="CdfTypeScriptHandler" path="*.ts" verb="GET" type="ClientDependency.TypeScript.TypeScriptHandler, ClientDependency.TypeScript" resourceType="File" preCondition=""  xdt:Locator="Match(name)" xdt:Transform="SetAttributes(path,verb,type,resourceType,preCondition)" />
+    </handlers>
+  </system.webServer>
+</configuration>
