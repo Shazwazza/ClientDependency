@@ -14,7 +14,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <dependencies>
       <dependency id="SassAndCoffee.JavaScript" version="2.0.2" />
-      <dependency id="ClientDependency" version="1.7" />
+      <dependency id="ClientDependency" version="1.8.1" />
     </dependencies>
   </metadata>
   <files>

@@ -3,7 +3,7 @@ param (
 	[ValidatePattern("^\d\.\d\.(?:\d\.\d$|\d$)")]
 	[string]
 	$ReleaseVersionNumber,
-	[Parameter(Mandatory=$true)]
+	[Parameter(Mandatory=$false)]
 	[string]
 	[AllowEmptyString()]
 	$PreReleaseName
@@ -143,7 +143,6 @@ Copy-Item "$TypeScriptBinFolder\*.*" -Destination $TypeScriptFolder -Include $in
 Copy-Item "$BuildFolder\nuget-transforms\Core\web.config.transform" -Destination (New-Item (Join-Path -Path $CoreFolder -ChildPath "nuget-transforms") -Type directory);
 Copy-Item "$BuildFolder\nuget-transforms\Mvc\web.config.transform" -Destination (New-Item (Join-Path -Path $MvcFolder -ChildPath "nuget-transforms") -Type directory);
 Copy-Item "$BuildFolder\nuget-transforms\Mvc\web.config.transform" -Destination (New-Item (Join-Path -Path $Mvc5Folder -ChildPath "nuget-transforms") -Type directory);
-Copy-Item "$BuildFolder\nuget-transforms\Less\web.config.transform" -Destination (New-Item (Join-Path -Path $LessFolder -ChildPath "nuget-transforms") -Type directory);
 Copy-Item "$BuildFolder\nuget-transforms\Coffee\web.config.transform" -Destination (New-Item (Join-Path -Path $CoffeeFolder -ChildPath "nuget-transforms") -Type directory);
 Copy-Item "$BuildFolder\nuget-transforms\Sass\web.config.transform" -Destination (New-Item (Join-Path -Path $SassFolder -ChildPath "nuget-transforms") -Type directory);
 Copy-Item "$BuildFolder\nuget-transforms\TypeScript\web.config.transform" -Destination (New-Item (Join-Path -Path $TypeScriptFolder -ChildPath "nuget-transforms") -Type directory);
