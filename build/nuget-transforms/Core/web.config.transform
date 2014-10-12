@@ -3,7 +3,7 @@
     <section name="clientDependency" type="ClientDependency.Core.Config.ClientDependencySection, ClientDependency.Core" requirePermission="false"/>
   </configSections>
 
-  <clientDependency version="1">
+  <clientDependency>
     <!-- Full config documentation is here: https://github.com/Shandem/ClientDependency/wiki/Configuration -->    
   </clientDependency>
 
