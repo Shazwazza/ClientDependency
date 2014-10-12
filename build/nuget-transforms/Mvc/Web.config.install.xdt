@@ -3,7 +3,7 @@
   <system.web xdt:Transform="InsertIfMissing">
     <pages xdt:Transform="InsertIfMissing">
       <namespaces xdt:Transform="InsertIfMissing">
-        <add namespace="ClientDependency.Core.Mvc" xdt:Transform="InsertIfMissing" />
+        <add namespace="ClientDependency.Core.Mvc" xdt:Locator="Match(namespace)" xdt:Transform="InsertIfMissing" />
       </namespaces>
     </pages>
   </system.web>

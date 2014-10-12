@@ -22,10 +22,12 @@
     </pages>
     <httpModules xdt:Transform="InsertIfMissing">
       <!-- ** Need to add the dependency module -->
+	  <add name="ClientDependencyModule" xdt:Locator="Match(name)" xdt:Transform="InsertIfMissing" />
       <add name="ClientDependencyModule" type="ClientDependency.Core.Module.ClientDependencyModule, ClientDependency.Core" xdt:Locator="Match(name)" xdt:Transform="SetAttributes(type)" />
     </httpModules>
     <httpHandlers xdt:Transform="InsertIfMissing">
       <!-- ** Need to add the dependency handler -->
+	  <add path="DependencyHandler.axd" xdt:Locator="Match(path)"  xdt:Transform="InsertIfMissing" />
       <add verb="GET" path="DependencyHandler.axd" type="ClientDependency.Core.CompositeFiles.CompositeDependencyHandler, ClientDependency.Core" xdt:Locator="Match(path)" xdt:Transform="SetAttributes(verb,type)" />
     </httpHandlers>
   </system.web>
@@ -35,11 +37,13 @@
     <modules xdt:Transform="InsertIfMissing">
       <!-- ** Need to add the dependency module -->
       <remove name="ClientDependencyModule" xdt:Locator="Match(name)" xdt:Transform="InsertIfMissing" />
+	  <add name="ClientDependencyModule" xdt:Locator="Match(name)" xdt:Transform="InsertIfMissing" />
       <add name="ClientDependencyModule" type="ClientDependency.Core.Module.ClientDependencyModule, ClientDependency.Core" xdt:Locator="Match(name)" xdt:Transform="SetAttributes(type)" />
     </modules>
     <handlers xdt:Transform="InsertIfMissing">
       <!-- ** Need to add the dependency handler -->
       <remove name="DependencyHandler" xdt:Locator="Match(name)" xdt:Transform="InsertIfMissing" />
+	  <add name="DependencyHandler" xdt:Locator="Match(name)" xdt:Transform="InsertIfMissing" />
       <add name="DependencyHandler" verb="GET" preCondition="integratedMode" path="DependencyHandler.axd" type="ClientDependency.Core.CompositeFiles.CompositeDependencyHandler, ClientDependency.Core" xdt:Locator="Match(name)" xdt:Transform="SetAttributes(preCondition,verb,path,type)" />
     </handlers>
   </system.webServer>
