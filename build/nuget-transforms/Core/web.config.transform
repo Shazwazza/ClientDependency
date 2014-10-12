@@ -1,6 +1,6 @@
 <configuration>
   <configSections>
-    <section name="clientDependency" type="ClientDependency.Core.Config.ClientDependencySection, ClientDependency.Core" requirePermission="false"/>
+    <section name="clientDependency" type="ClientDependency.Core.Config.ClientDependencySection, ClientDependency.Core" requirePermission="false" />
   </configSections>
 
   <clientDependency>
@@ -10,16 +10,16 @@
   <system.web>
     <pages>
       <namespaces>
-        <add namespace="ClientDependency.Core"/>
+        <add namespace="ClientDependency.Core" />
       </namespaces>
     </pages>
     <httpModules>
       <!-- ** Need to add the dependency module -->
-      <add name="ClientDependencyModule" type="ClientDependency.Core.Module.ClientDependencyModule, ClientDependency.Core"/>
+      <add name="ClientDependencyModule" type="ClientDependency.Core.Module.ClientDependencyModule, ClientDependency.Core" />
     </httpModules>
     <httpHandlers>
       <!-- ** Need to add the dependency handler -->
-      <add verb="GET" path="DependencyHandler.axd"  type="ClientDependency.Core.CompositeFiles.CompositeDependencyHandler, ClientDependency.Core"/>
+      <add verb="GET" path="DependencyHandler.axd"  type="ClientDependency.Core.CompositeFiles.CompositeDependencyHandler, ClientDependency.Core" />
     </httpHandlers>
   </system.web>
   <system.webServer>
@@ -27,12 +27,12 @@
     <modules>
       <remove name="ClientDependencyModule" />
       <!-- ** Need to add the dependency module -->
-      <add name="ClientDependencyModule" type="ClientDependency.Core.Module.ClientDependencyModule, ClientDependency.Core"/>
+      <add name="ClientDependencyModule" type="ClientDependency.Core.Module.ClientDependencyModule, ClientDependency.Core" />
     </modules>
     <handlers>
       <!-- ** Need to add the dependency handler -->
-      <remove name="DependencyHandler"/>
-      <add name="DependencyHandler" preCondition="integratedMode" verb="GET" path="DependencyHandler.axd"  type="ClientDependency.Core.CompositeFiles.CompositeDependencyHandler, ClientDependency.Core"/>
+      <remove name="DependencyHandler" />
+      <add verb="*" name="ClientDependency" preCondition="integratedMode" path="DependencyHandler.axd" type="ClientDependency.Core.CompositeFiles.CompositeDependencyHandler, ClientDependency.Core" />
     </handlers>
   </system.webServer>
 </configuration>
