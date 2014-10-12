@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <system.web>
+    <httpHandlers>
+      <add path="*.sass,*.scss" xdt:Locator="Match(path)" xdt:Transform="Remove" />
+    </httpHandlers>
+  </system.web>
+  <system.webServer>
+    <handlers>
+      <remove name="CdfSasSHandler" xdt:Locator="Match(name)" xdt:Transform="Remove" />
+      <remove name="CdfScssHandler" xdt:Locator="Match(name)" xdt:Transform="Remove" />
+      <add name="CdfSasSHandler" xdt:Locator="Match(name)" xdt:Transform="Remove" />
+      <add name="CdfScssHandler" xdt:Locator="Match(name)" xdt:Transform="Remove" />
+    </handlers>
+  </system.webServer>
+</configuration>

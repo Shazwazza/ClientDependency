@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <system.web>
+    <pages>
+      <namespaces>
+        <add namespace="ClientDependency.Core.Mvc" xdt:Locator="Match(namespace)" xdt:Transform="Remove" />
+      </namespaces>
+    </pages>
+  </system.web>
+</configuration>

@@ -14,12 +14,13 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <dependencies>
       <dependency id="Shaz.SassAndCoffee.Ruby" version="2.0.2.2" />
-      <dependency id="ClientDependency" version="1.7" />
+      <dependency id="ClientDependency" version="1.8.1" />
     </dependencies>
   </metadata>
   <files>
     <file src="*.dll" target="lib" />
     <file src="*.pdb" target="lib" />
-    <file src="nuget-transforms\web.config.transform" target="Content" />
+    <file src="nuget-transforms\Web.config.install.xdt" target="Content" />
+	<file src="nuget-transforms\Web.config.uninstall.xdt" target="Content" />
   </files>
 </package>

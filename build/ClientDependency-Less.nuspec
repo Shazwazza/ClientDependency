@@ -14,12 +14,11 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <dependencies>
       <dependency id="dotless" version="1.4" />
-      <dependency id="ClientDependency" version="1.8" />
+      <dependency id="ClientDependency" version="1.8.1" />
     </dependencies>
   </metadata>
   <files>
     <file src="*.dll" target="lib" />
     <file src="*.pdb" target="lib" />
-    <file src="nuget-transforms\web.config.transform" target="Content" />
   </files>
 </package>

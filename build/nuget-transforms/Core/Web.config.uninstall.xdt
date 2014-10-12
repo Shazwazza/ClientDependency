@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <configSections>
+    <section name="clientDependency" xdt:Locator="Match(name)" xdt:Transform="Remove" />
+  </configSections>
+
+  <clientDependency xdt:Transform="Remove" />
+
+  <system.web>
+    <pages>
+      <namespaces>
+        <add namespace="ClientDependency.Core" xdt:Locator="Match(namespace)" xdt:Transform="Remove" />
+      </namespaces>
+    </pages>
+    <httpModules>
+      <add name="ClientDependencyModule" xdt:Locator="Match(name)" xdt:Transform="Remove" />
+    </httpModules>
+    <httpHandlers>
+      <add path="DependencyHandler.axd" xdt:Locator="Match(path)" xdt:Transform="Remove" />
+    </httpHandlers>
+  </system.web>
+
+  <system.webServer>
+    <modules>      
+      <remove name="ClientDependencyModule" xdt:Locator="Match(name)" xdt:Transform="Remove" />
+      <add name="ClientDependencyModule" xdt:Locator="Match(name)" xdt:Transform="Remove" />
+    </modules>
+    <handlers>
+      <remove name="DependencyHandler" xdt:Locator="Match(name)" xdt:Transform="Remove" />
+      <add name="DependencyHandler" xdt:Locator="Match(name)" xdt:Transform="Remove" />
+	  <!-- Umbraco specific: is called ClientDependency instead of DependencyHandler in Umbraco -->
+      <remove name="ClientDependency" xdt:Locator="Match(name)" xdt:Transform="Remove" />
+      <add name="ClientDependency" xdt:Locator="Match(name)" xdt:Transform="Remove" />
+    </handlers>
+  </system.webServer>
+</configuration>

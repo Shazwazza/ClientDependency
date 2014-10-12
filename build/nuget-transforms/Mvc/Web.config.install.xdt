@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <system.web xdt:Transform="InsertIfMissing">
+    <pages xdt:Transform="InsertIfMissing">
+      <namespaces xdt:Transform="InsertIfMissing">
+        <add namespace="ClientDependency.Core.Mvc" xdt:Locator="Match(namespace)" xdt:Transform="InsertIfMissing" />
+      </namespaces>
+    </pages>
+  </system.web>
+</configuration>

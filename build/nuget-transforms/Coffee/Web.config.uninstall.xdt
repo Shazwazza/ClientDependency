@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <system.web>
+    <httpHandlers>
+      <add path="*.coffee" xdt:Locator="Match(path)" xdt:Transform="Remove" />
+    </httpHandlers>
+  </system.web>
+  <system.webServer>
+    <handlers>
+      <remove name="CdfCoffeeHandler" xdt:Locator="Match(name)" xdt:Transform="Remove" />
+      <add name="CdfCoffeeHandler" xdt:Locator="Match(name)" xdt:Transform="Remove" />
+    </handlers>
+  </system.webServer>
+</configuration>
