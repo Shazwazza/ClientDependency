@@ -15,7 +15,7 @@
     <dependencies>
 
       <dependency id="Microsoft.AspNet.Mvc" version="4.0.20710" />
-      <dependency id="ClientDependency" version="1.8" />
+      <dependency id="ClientDependency" version="1.8.1" />
 
     </dependencies>
   </metadata>
