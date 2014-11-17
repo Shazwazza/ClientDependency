@@ -189,8 +189,8 @@ namespace ClientDependency.Core.FileRegistration.Providers
             foreach (var f in dependencies)
             {
                 //need to parse out the request's extensions and remove query strings
-                //need to force non-bundled lines for items with query parameters.
-                var extension = f.FilePath.Contains('?') ? "" :  Path.GetExtension(f.FilePath);
+                //need to force non-bundled lines for items with query parameters or a hash value.
+                var extension = f.FilePath.Contains('?') || f.FilePath.Contains('#') ? "" : Path.GetExtension(f.FilePath);
                 var stringExt = "";
                 if (!string.IsNullOrWhiteSpace(extension))
                 {
@@ -347,10 +347,15 @@ namespace ClientDependency.Core.FileRegistration.Providers
                 if (url.Contains("cdv=" + ClientDependencySettings.Instance.Version))
                     return url;
 
+                //move hash to the end of the file name if present. Eg: /s/myscript.js?cdv=3#myhash
+                var hash = url.Contains("#") ? "#" + url.Split(new[] { '#' }, 2)[1] : "";
+                if (!String.IsNullOrEmpty(hash))
+                    url = url.Split(new[] { '#' }, 2)[0];
+
                 //ensure there's not duplicated query string syntax
                 url += url.Contains('?') ? "&" : "?";
                 //append a version
-                url += "cdv=" + ClientDependencySettings.Instance.Version;
+                url += "cdv=" + ClientDependencySettings.Instance.Version + hash;
             }
             else
             {
