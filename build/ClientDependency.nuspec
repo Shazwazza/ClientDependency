@@ -10,7 +10,7 @@
     <language>en-US</language>
     <licenseUrl>http://www.opensource.org/licenses/ms-pl</licenseUrl>
     <projectUrl>https://github.com/Shandem/ClientDependency</projectUrl>
-    <tags>webforms css html javascript</tags>
+    <tags>css html javascript minify compress combine</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
   </metadata>
   <files>

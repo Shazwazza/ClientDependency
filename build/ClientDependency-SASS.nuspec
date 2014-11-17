@@ -10,7 +10,7 @@
     <language>en-US</language>
     <licenseUrl>http://www.opensource.org/licenses/ms-pl</licenseUrl>
     <projectUrl>https://github.com/Shandem/ClientDependency</projectUrl>
-    <tags>SASS scss css html clientdependency cdf minification compression</tags>
+    <tags>SASS scss css html clientdependency cdf minify compress combine</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <dependencies>
       <dependency id="Shaz.SassAndCoffee.Ruby" version="2.0.2.2" />

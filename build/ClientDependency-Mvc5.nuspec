@@ -10,7 +10,7 @@
     <language>en-US</language>
     <licenseUrl>http://www.opensource.org/licenses/ms-pl</licenseUrl>
     <projectUrl>https://github.com/Shandem/ClientDependency</projectUrl>
-    <tags>mvc css html javascript clientdependency cdf minification compression</tags>
+    <tags>mvc css html javascript clientdependency cdf minify compress combine</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <dependencies>
 
