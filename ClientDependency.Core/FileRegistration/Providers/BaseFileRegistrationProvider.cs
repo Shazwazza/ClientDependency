@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web.UI;
 using System.Configuration.Provider;
 using System.Web;
@@ -195,6 +196,14 @@ namespace ClientDependency.Core.FileRegistration.Providers
                 {
                     stringExt = extension.ToUpper().Split(new[] {'?'}, StringSplitOptions.RemoveEmptyEntries)[0];
                 }
+
+                //if this is a protocol-relative/protocol-less uri, then we need to add the protocol for the remaining
+                // logic to work properly
+                if (f.FilePath.StartsWith("//"))
+                {
+                    f.FilePath = Regex.Replace(f.FilePath, @"^\/\/", http.Request.Url.GetLeftPart(UriPartial.Scheme));
+                }
+                
 
                 // if it is an external resource OR
                 // if it is a non-standard JS/CSS resource (i.e. a server request)
