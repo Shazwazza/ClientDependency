@@ -75,7 +75,7 @@ namespace ClientDependency.Core
                     if (url.StartsWith(http.Request.ApplicationPath.TrimEnd('/') + "/webresource.axd", StringComparison.InvariantCultureIgnoreCase))
                     {
                         bundleExternalUri = true;
-                    }                                       
+                    }
                 }
 
                 try
@@ -83,44 +83,46 @@ namespace ClientDependency.Core
                     //we've gotten this far, make the URI absolute and try to load it
                     uri = uri.MakeAbsoluteUri(http);
 
-                    //if this isn't a web resource, we need to check if its approved
-                    if (!bundleExternalUri)
+                    if (uri.IsWebUri())
                     {
-                        //first, we will just allow local requests
-                        if (uri.IsLocalUri(http))
+                        //if this isn't a web resource, we need to check if its approved
+                        if (!bundleExternalUri)
                         {
-                            bundleExternalUri = true;
-                        }
-                        else
-                        {
-                            // get the domain to test, with starting dot and trailing port, then compare with
-                            // declared (authorized) domains. the starting dot is here to allow for subdomain
-                            // approval, eg '.maps.google.com:80' will be approved by rule '.google.com:80', yet
-                            // '.roguegoogle.com:80' will not.
-                            var domain = string.Format(".{0}:{1}", uri.Host, uri.Port);
-
-                            if (approvedDomains.Any(bundleDomain => domain.EndsWith(bundleDomain)))
+                            //first, we will just allow local requests
+                            if (uri.IsLocalUri(http))
                             {
                                 bundleExternalUri = true;
                             }
+                            else
+                            {
+                                // get the domain to test, with starting dot and trailing port, then compare with
+                                // declared (authorized) domains. the starting dot is here to allow for subdomain
+                                // approval, eg '.maps.google.com:80' will be approved by rule '.google.com:80', yet
+                                // '.roguegoogle.com:80' will not.
+                                var domain = string.Format(".{0}:{1}", uri.Host, uri.Port);
+
+                                if (approvedDomains.Any(bundleDomain => domain.EndsWith(bundleDomain)))
+                                {
+                                    bundleExternalUri = true;
+                                }
+                            }
                         }
-                    }
 
-                    if (bundleExternalUri)
-                    {
-                        requestContents = GetXmlResponse(uri);
-                        resultUri = uri;
-                        return true;
-                    }
+                        if (bundleExternalUri)
+                        {
+                            requestContents = GetXmlResponse(uri);
+                            resultUri = uri;
+                            return true;
+                        }
 
-                    ClientDependencySettings.Instance.Logger.Error(string.Format("Could not load file contents from {0}. Domain is not white-listed.", url), null);
+                        ClientDependencySettings.Instance.Logger.Error(string.Format("Could not load file contents from {0}. Domain is not white-listed.", url), null);
+                    }
+                    
                 }
                 catch (Exception ex)
                 {
                     ClientDependencySettings.Instance.Logger.Error(string.Format("Could not load file contents from {0}. EXCEPTION: {1}", url, ex.Message), ex);
-                }
-
-
+                }   
             }
             requestContents = "";
             resultUri = null;

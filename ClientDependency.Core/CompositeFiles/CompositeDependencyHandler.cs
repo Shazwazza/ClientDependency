@@ -77,6 +77,10 @@ namespace ClientDependency.Core.CompositeFiles
             if (string.IsNullOrEmpty(fileKey))
                 throw new ArgumentException("Must specify a fileset in the request");
 
+             //don't process if the version doesn't match
+            if (version != ClientDependencySettings.Instance.Version)
+                throw new ArgumentException("Configured version does not match request");
+
             byte[] outputBytes = null;
 
             //create the webforms page to perform the server side output cache, ensure
