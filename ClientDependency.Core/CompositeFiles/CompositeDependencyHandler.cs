@@ -77,9 +77,10 @@ namespace ClientDependency.Core.CompositeFiles
             if (string.IsNullOrEmpty(fileKey))
                 throw new ArgumentException("Must specify a fileset in the request");
 
-             //don't process if the version doesn't match
-            if (version != ClientDependencySettings.Instance.Version)
-                throw new ArgumentException("Configured version does not match request");
+            // don't process if the version doesn't match - this would be nice to do but people will get errors if 
+            // their html pages are cached and are referencing an old version
+            //if (version != ClientDependencySettings.Instance.Version)
+            //    throw new ArgumentException("Configured version does not match request");
 
             byte[] outputBytes = null;
 
