@@ -26,6 +26,18 @@ namespace ClientDependency.UnitTests
         }
 
         [Test]
+        public void Ensure_Svg_Hash_Retained()
+        {
+            var css = @".st11 {
+mask:url(#Mask_1)
+}";
+            var output = CssHelper.ReplaceUrlsWithAbsolutePaths(css, new Uri("http://MySite/MySubFolder"));
+
+            Assert.AreEqual(css, output);
+
+        }
+
+        [Test]
         public void Ensure_Inline_Svg_Retained()
         {
             var css = @"body {
