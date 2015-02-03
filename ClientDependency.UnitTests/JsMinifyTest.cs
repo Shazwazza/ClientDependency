@@ -94,5 +94,15 @@ jQuery(this).append('<div>\
             Assert.AreEqual("\nfunction Test(){jQuery(this).append('<div>\\\n\n  <div>\\\n\n   <a href=\"http://google.com\" /></a>\\\n\n  </div>\\\n\n </div>');}", output);
 
         }
+
+        [Test]
+        public void JsMinify_TypeScript_Enum()
+        {
+            var script = @"$(""#TenderListType"").val(1 /* Calendar */.toString());";
+
+            var minifier = new JSMin();
+            var output = minifier.Minify(script);
+            Assert.AreEqual("\n$(\"#TenderListType\").val(1..toString());", output);
+        }
     }
 }
