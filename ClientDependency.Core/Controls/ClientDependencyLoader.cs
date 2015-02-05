@@ -134,7 +134,8 @@ namespace ClientDependency.Core.Controls
 		{
 			base.OnPreRender(e);
 
-            _base.Paths.UnionWith(Paths);
+            var paths = Paths.Cast<IClientDependencyPath>();
+            _base.Paths.UnionWith(paths);
 
             RegisterClientDependencies((WebFormsFileRegistrationProvider)_base.Provider, Page, _base.Paths);
 			RenderDependencies();
