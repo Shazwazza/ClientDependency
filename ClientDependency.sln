@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{09017A90-7F59-40F8-8121-8B4284697BBD}"
 	ProjectSection(SolutionItems) = preProject
@@ -31,7 +31,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mvc", "Mvc", "{D8142A9E-6FD
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{4D8DC7DA-0202-4338-B154-72A077FA88E8}"
 	ProjectSection(SolutionItems) = preProject
+		build\nuget-transforms\Core\web.config.install.xdt = build\nuget-transforms\Core\web.config.install.xdt
 		build\nuget-transforms\Core\web.config.transform = build\nuget-transforms\Core\web.config.transform
+		build\nuget-transforms\Core\web.config.uninstall.xdt = build\nuget-transforms\Core\web.config.uninstall.xdt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{86C3F7CD-2FDA-4025-805B-7DC6C8A44DDA}"

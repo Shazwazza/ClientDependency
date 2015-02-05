@@ -20,6 +20,7 @@
     <file src="net45\*.dll" target="lib\net45" />
     <file src="net45\*.pdb" target="lib\net45" />
 
-    <file src="nuget-transforms\web.config.transform" target="Content" />
+    <file src="nuget-transforms\web.config.install.xdt" target="Content" />
+    <file src="nuget-transforms\web.config.uninstall.xdt" target="Content" />
   </files>
 </package>

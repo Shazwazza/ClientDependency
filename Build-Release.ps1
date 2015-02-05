@@ -140,7 +140,7 @@ $TypeScriptBinFolder = Join-Path -Path $SolutionRoot -ChildPath "ClientDependenc
 Copy-Item "$TypeScriptBinFolder\*.*" -Destination $TypeScriptFolder -Include $include
 
 # COPY THE TRANSFORMS OVER
-Copy-Item "$BuildFolder\nuget-transforms\Core\web.config.transform" -Destination (New-Item (Join-Path -Path $CoreFolder -ChildPath "nuget-transforms") -Type directory);
+Copy-Item "$BuildFolder\nuget-transforms\Core\web.config.*" -Destination (New-Item (Join-Path -Path $CoreFolder -ChildPath "nuget-transforms") -Type directory);
 Copy-Item "$BuildFolder\nuget-transforms\Mvc\web.config.transform" -Destination (New-Item (Join-Path -Path $MvcFolder -ChildPath "nuget-transforms") -Type directory);
 Copy-Item "$BuildFolder\nuget-transforms\Mvc\web.config.transform" -Destination (New-Item (Join-Path -Path $Mvc5Folder -ChildPath "nuget-transforms") -Type directory);
 Copy-Item "$BuildFolder\nuget-transforms\Less\web.config.transform" -Destination (New-Item (Join-Path -Path $LessFolder -ChildPath "nuget-transforms") -Type directory);
