@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,8 +12,8 @@ namespace ClientDependency.Core
     public class FileWriters
     {
 
-        private static readonly ConcurrentDictionary<string, IFileWriter> ExtensionWriters = new ConcurrentDictionary<string, IFileWriter>();
-        private static readonly ConcurrentDictionary<string, IFileWriter> PathWriters = new ConcurrentDictionary<string, IFileWriter>();
+        private static readonly Dictionary<string, IFileWriter> ExtensionWriters = new Dictionary<string, IFileWriter>();
+        private static readonly Dictionary<string, IFileWriter> PathWriters = new Dictionary<string, IFileWriter>();
         private static readonly IFileWriter DefaultFileWriter = new DefaultFileWriter();
 
         /// <summary>
@@ -32,7 +31,10 @@ namespace ClientDependency.Core
         /// <returns></returns>
         internal static IEnumerable<string> GetRegisteredExtensions()
         {
-            return ExtensionWriters.Select(x => x.Key.ToUpper());
+            lock (ExtensionWriters)
+            {
+                return ExtensionWriters.Select(x => x.Key.ToUpper()).ToArray();
+            }
         }
 
         /// <summary>
@@ -50,7 +52,11 @@ namespace ClientDependency.Core
             {
                 throw new FormatException("A file extension must begin with a '.'");
             }
-            ExtensionWriters.AddOrUpdate(fileExtension.ToUpper(), s => writer, (s, fileWriter) => writer);
+            lock (ExtensionWriters)
+            {
+                //ExtensionWriters.AddOrUpdate(fileExtension.ToUpper(), s => writer, (s, fileWriter) => writer);
+                ExtensionWriters[fileExtension.ToUpper()] = writer;
+            }
         }
 
         /// <summary>
@@ -63,9 +69,12 @@ namespace ClientDependency.Core
             if (fileExtension == null) throw new ArgumentNullException("fileExtension");
             
             IFileWriter writer;
-            return ExtensionWriters.TryGetValue(fileExtension.ToUpper(), out writer) 
-                ? writer 
-                : DefaultFileWriter;
+            lock (ExtensionWriters)
+            {
+                return ExtensionWriters.TryGetValue(fileExtension.ToUpper(), out writer)
+                    ? writer
+                    : DefaultFileWriter;
+            }
         }
 
         /// <summary>
@@ -82,7 +91,11 @@ namespace ClientDependency.Core
             {
                 throw new FormatException("A file path must begin with a '/'");
             }
-            PathWriters.AddOrUpdate(filePath.ToUpper(), s => writer, (s, fileWriter) => writer);
+            lock (PathWriters)
+            {
+                //PathWriters.AddOrUpdate(filePath.ToUpper(), s => writer, (s, fileWriter) => writer);
+                PathWriters[filePath.ToUpper()] = writer;
+            }
         }
 
         /// <summary>
@@ -95,9 +108,12 @@ namespace ClientDependency.Core
             if (filePath == null) throw new ArgumentNullException("filePath");
             
             IFileWriter writer;
-            return PathWriters.TryGetValue(filePath.ToUpper(), out writer)
-                ? writer
-                : DefaultFileWriter;
+            lock (PathWriters)
+            {
+                return PathWriters.TryGetValue(filePath.ToUpper(), out writer)
+                    ? writer
+                    : DefaultFileWriter;
+            }
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,20 +19,14 @@ namespace ClientDependency.Core
 
         internal static Func<HttpContextBase> GetHttpContextDelegate { get; set; }
 
-        private static readonly ConcurrentDictionary<BundleDefinition, IEnumerable<IClientDependencyFile>> Bundles = new ConcurrentDictionary<BundleDefinition, IEnumerable<IClientDependencyFile>>();
+        private static readonly Dictionary<BundleDefinition, IEnumerable<IClientDependencyFile>> Bundles = new Dictionary<BundleDefinition, IEnumerable<IClientDependencyFile>>();
 
         internal static void ClearBundles()
         {
-            Bundles.Clear();
-        }
-
-        /// <summary>
-        /// Returns all bundles registered
-        /// </summary>
-        /// <returns></returns>
-        internal static IDictionary<BundleDefinition, IEnumerable<IClientDependencyFile>> GetBundles()
-        {
-            return Bundles;
+            lock (Bundles)
+            {
+                Bundles.Clear();
+            }
         }
 
         /// <summary>
@@ -42,7 +35,12 @@ namespace ClientDependency.Core
         /// <returns></returns>
         internal static IDictionary<BundleDefinition, IEnumerable<IClientDependencyFile>> GetCssBundles()
         {
-            return Bundles.Where(x => x.Key.Type == ClientDependencyType.Css).ToDictionary(x => x.Key, x => x.Value);
+            IEnumerable<KeyValuePair<BundleDefinition, IEnumerable<IClientDependencyFile>>> found;
+            lock (Bundles)
+            {
+                found = Bundles.Where(x => x.Key.Type == ClientDependencyType.Css).ToArray();
+            }
+            return found.ToDictionary(x => x.Key, x => x.Value);
         }
 
         /// <summary>
@@ -52,7 +50,11 @@ namespace ClientDependency.Core
         /// <returns></returns>
         internal static BundleResult GetCssBundle(string bundleName)
         {
-            var found = Bundles.Where(x => x.Key.Type == ClientDependencyType.Css && x.Key.Name.Equals(bundleName, StringComparison.InvariantCultureIgnoreCase));
+            IEnumerable<KeyValuePair<BundleDefinition, IEnumerable<IClientDependencyFile>>> found;
+            lock (Bundles)
+            {
+                found = Bundles.Where(x => x.Key.Type == ClientDependencyType.Css && x.Key.Name.Equals(bundleName, StringComparison.InvariantCultureIgnoreCase)).ToArray();
+            }
             if (!found.Any()) return null;
             var b = found.First();
             return new BundleResult {Definition = b.Key, Files = b.Value};
@@ -64,7 +66,12 @@ namespace ClientDependency.Core
         /// <returns></returns>
         internal static IDictionary<BundleDefinition, IEnumerable<IClientDependencyFile>> GetJsBundles()
         {
-            return Bundles.Where(x => x.Key.Type == ClientDependencyType.Javascript).ToDictionary(x => x.Key, x => x.Value);
+            IEnumerable<KeyValuePair<BundleDefinition, IEnumerable<IClientDependencyFile>>> found; 
+            lock (Bundles)
+            {
+                found = Bundles.Where(x => x.Key.Type == ClientDependencyType.Javascript).ToArray();
+            }
+            return found.ToDictionary(x => x.Key, x => x.Value);
         }
 
         /// <summary>
@@ -74,7 +81,11 @@ namespace ClientDependency.Core
         /// <returns></returns>
         internal static BundleResult GetJsBundle(string bundleName)
         {
-            var found = Bundles.Where(x => x.Key.Type == ClientDependencyType.Javascript && x.Key.Name.Equals(bundleName, StringComparison.InvariantCultureIgnoreCase));
+            IEnumerable<KeyValuePair<BundleDefinition, IEnumerable<IClientDependencyFile>>> found;
+            lock (Bundles)
+            {
+                found = Bundles.Where(x => x.Key.Type == ClientDependencyType.Javascript && x.Key.Name.Equals(bundleName, StringComparison.InvariantCultureIgnoreCase)).ToArray();
+            }
             if (!found.Any()) return null;
             var b = found.First();
             return new BundleResult { Definition = b.Key, Files = b.Value };
@@ -83,7 +94,11 @@ namespace ClientDependency.Core
         #region CreateCssBundle
         public static void CreateCssBundle(string name, params CssFile[] files)
         {
-            Bundles.AddOrUpdate(new BundleDefinition(ClientDependencyType.Css, name), s => OrderFiles(files), (s, enumerable) => OrderFiles(files));
+            lock (Bundles)
+            {
+                //Bundles.AddOrUpdate(new BundleDefinition(ClientDependencyType.Css, name), s => OrderFiles(files), (s, enumerable) => OrderFiles(files));
+                Bundles[new BundleDefinition(ClientDependencyType.Css, name)] = OrderFiles(files);
+            }
         }
 
         /// <summary>
@@ -101,7 +116,11 @@ namespace ClientDependency.Core
                 f.Priority = priority;
             }
 
-            Bundles.AddOrUpdate(new BundleDefinition(ClientDependencyType.Css, name), s => OrderFiles(files), (s, enumerable) => OrderFiles(files));
+            lock (Bundles)
+            {
+                //Bundles.AddOrUpdate(new BundleDefinition(ClientDependencyType.Css, name), s => OrderFiles(files), (s, enumerable) => OrderFiles(files));
+                Bundles[new BundleDefinition(ClientDependencyType.Css, name)] = OrderFiles(files);
+            }
         }
 
         /// <summary>
@@ -126,24 +145,40 @@ namespace ClientDependency.Core
                 f.Group = group;
             }
 
-            Bundles.AddOrUpdate(new BundleDefinition(ClientDependencyType.Css, name), s => OrderFiles(files), (s, enumerable) => OrderFiles(files));
+            lock (Bundles)
+            {
+                //Bundles.AddOrUpdate(new BundleDefinition(ClientDependencyType.Css, name), s => OrderFiles(files), (s, enumerable) => OrderFiles(files));
+                Bundles[new BundleDefinition(ClientDependencyType.Css, name)] = OrderFiles(files);
+            }
         }  
         #endregion
 
         #region CreateJsBundle
         public static void CreateJsBundle(string name, params JavascriptFile[] files)
         {
-            Bundles.AddOrUpdate(new BundleDefinition(ClientDependencyType.Javascript, name), s => OrderFiles(files), (s, enumerable) => OrderFiles(files));
+            lock (Bundles)
+            {
+                //Bundles.AddOrUpdate(new BundleDefinition(ClientDependencyType.Javascript, name), s => OrderFiles(files), (s, enumerable) => OrderFiles(files));
+                Bundles[new BundleDefinition(ClientDependencyType.Javascript, name)] = OrderFiles(files);
+            }
         }
 
         public static void CreateJsBundle(string name, int priority, params JavascriptFile[] files)
         {
-            Bundles.AddOrUpdate(new BundleDefinition(ClientDependencyType.Javascript, name), s => OrderFiles(files), (s, enumerable) => OrderFiles(files));
+            lock (Bundles)
+            {
+                //Bundles.AddOrUpdate(new BundleDefinition(ClientDependencyType.Javascript, name), s => OrderFiles(files), (s, enumerable) => OrderFiles(files));
+                Bundles[new BundleDefinition(ClientDependencyType.Javascript, name)] = OrderFiles(files);
+            }
         }
 
         public static void CreateJsBundle(string name, int priority, int group, params JavascriptFile[] files)
         {
-            Bundles.AddOrUpdate(new BundleDefinition(ClientDependencyType.Javascript, name), s => OrderFiles(files), (s, enumerable) => OrderFiles(files));
+            lock (Bundles)
+            {
+                //Bundles.AddOrUpdate(new BundleDefinition(ClientDependencyType.Javascript, name), s => OrderFiles(files), (s, enumerable) => OrderFiles(files));
+                Bundles[new BundleDefinition(ClientDependencyType.Javascript, name)] = OrderFiles(files);
+            }
         } 
         #endregion
         

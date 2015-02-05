@@ -85,7 +85,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
                     //double check
                     if (!_compositeFileHandlerPathInitialized)
                     {
-                        if (string.IsNullOrWhiteSpace(_compositeFileHandlerPath))
+                        if (string.IsNullOrEmpty(_compositeFileHandlerPath) || _compositeFileHandlerPath.Trim().Length == 0)
                         {
                             throw new InvalidOperationException("The compositeFileHandlerPath cannot be empty");
                         }
@@ -192,7 +192,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
                 //need to force non-bundled lines for items with query parameters or a hash value.
                 var extension = f.FilePath.Contains('?') || f.FilePath.Contains('#') ? "" : Path.GetExtension(f.FilePath);
                 var stringExt = "";
-                if (!string.IsNullOrWhiteSpace(extension))
+                if (!string.IsNullOrEmpty(extension) && extension.Trim().Length > 0)
                 {
                     stringExt = extension.ToUpper().Split(new[] {'?'}, StringSplitOptions.RemoveEmptyEntries)[0];
                 }

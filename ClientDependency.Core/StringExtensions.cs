@@ -89,17 +89,20 @@ namespace ClientDependency.Core
         /// <returns></returns>
         public static string GenerateHash(this string str)
         {
-            try
-            {                
-                return CryptoConfig.AllowOnlyFipsAlgorithms
-                    ? str.GenerateSha256Hash()
-                    : str.GenerateMd5();
-            }
-            catch (Exception)
-            {
-                //default to MD5
-                return str.GenerateMd5();
-            }
+            //try
+            //{                
+            //    return CryptoConfig.AllowOnlyFipsAlgorithms
+            //        ? str.GenerateSha256Hash()
+            //        : str.GenerateMd5();
+            //}
+            //catch (Exception)
+            //{
+            //    //default to MD5
+            //    return str.GenerateMd5();
+            //}
+
+            //default to MD5
+            return str.GenerateMd5();
         }
 
         /// <summary>
