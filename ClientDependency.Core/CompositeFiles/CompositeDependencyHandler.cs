@@ -46,13 +46,21 @@ namespace ClientDependency.Core.CompositeFiles
 
             if (string.IsNullOrEmpty(context.Request.PathInfo))
             {
+                var decodedUrl = HttpUtility.HtmlDecode(context.Request.Url.OriginalString);
+                var query = decodedUrl.Split(new char[] {'?'});
+                if (query.Length < 2)
+                {
+                    throw new ArgumentException("No query string found in request");
+                }
+                var queryStrings = HttpUtility.ParseQueryString(query[1]);
+                
                 // querystring format
-                fileKey = context.Request["s"];
-                if (!string.IsNullOrEmpty(context.Request["cdv"]) && !Int32.TryParse(context.Request["cdv"], out version))
+                fileKey = queryStrings["s"];
+                if (!string.IsNullOrEmpty(queryStrings["cdv"]) && !Int32.TryParse(queryStrings["cdv"], out version))
                     throw new ArgumentException("Could not parse the version in the request");
                 try
                 {
-                    type = (ClientDependencyType)Enum.Parse(typeof(ClientDependencyType), context.Request["t"], true);
+                    type = (ClientDependencyType)Enum.Parse(typeof(ClientDependencyType), queryStrings["t"], true);
                 }
                 catch
                 {
@@ -76,6 +84,11 @@ namespace ClientDependency.Core.CompositeFiles
 
             if (string.IsNullOrEmpty(fileKey))
                 throw new ArgumentException("Must specify a fileset in the request");
+
+            // don't process if the version doesn't match - this would be nice to do but people will get errors if 
+            // their html pages are cached and are referencing an old version
+            //if (version != ClientDependencySettings.Instance.Version)
+            //    throw new ArgumentException("Configured version does not match request");
 
             byte[] outputBytes = null;
 

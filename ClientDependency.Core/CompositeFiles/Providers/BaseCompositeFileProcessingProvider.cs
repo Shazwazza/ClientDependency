@@ -136,6 +136,27 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                         || ex is HttpException)
                     {
                         //could not parse the string into a fileinfo or couldn't mappath, so we assume it is a URI
+
+                        //before we try to load it by URI, we want to check if the URI is a local request, we'll try to detect if it is and
+                        // then try to load it from the file system, if the file isn't there then we'll continue trying to load it via the URI.
+                        Uri uri;
+                        if (Uri.TryCreate(path, UriKind.RelativeOrAbsolute, out uri) && uri.IsLocalUri(context))
+                        {
+                            var localPath = uri.PathAndQuery;
+                            var fi = new FileInfo(context.Server.MapPath(localPath));
+                            if (fi.Exists)
+                            {
+                                try
+                                {
+                                    WriteFileToStream(sw, fi, type, path, context); //internal request
+                                }
+                                catch (Exception ex1)
+                                {
+                                    ClientDependencySettings.Instance.Logger.Error(string.Format("Could not load file contents from {0}. EXCEPTION: {1}", path, ex1.Message), ex1);
+                                }
+                            }
+                        }
+
                         def = WriteFileToStream(sw, path, type, context);
                     }
                     else
