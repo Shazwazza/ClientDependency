@@ -43,6 +43,8 @@ CDF is flexible. It allows you to make any web component dependent on any CSS or
 
 	PM> Install-Package ClientDependency-Coffee
 
+Note: To build a new version of the ClientDependency package run `Build-Release.ps1`, which expects Visual Studio 2012 to be installed.
+
 ## [Documentation](https://github.com/Shandem/ClientDependency/wiki)
 
 Click the link to see the documentation on how to get started and more advanced techniques
