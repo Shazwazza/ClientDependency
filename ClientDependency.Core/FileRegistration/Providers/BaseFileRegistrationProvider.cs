@@ -209,7 +209,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
                 // if it is a non-standard JS/CSS resource (i.e. a server request)
                 // then we need to break the sequence
                 // unless it has been explicitely required that the dependency be bundled
-                if (!http.IsAbsolutePath(f.FilePath) && !fileBasedExtensions.Contains(stringExt)
+                if ((!http.IsAbsolutePath(f.FilePath) && !fileBasedExtensions.Contains(stringExt))
                     //now check for external resources
                     || (http.IsAbsolutePath(f.FilePath)
                         //remote dependencies aren't local
