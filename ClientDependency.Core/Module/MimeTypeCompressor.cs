@@ -65,7 +65,8 @@ namespace ClientDependency.Core.Module
         protected MimeTypeCompressionElement GetSupportedPath()
         {
             //we're not supporting the ASP.Net AJAX calls for compression
-            var uRawUrl = Context.Request.RawUrl.ToUpper();
+            var rawUrl = Context.Request.Unvalidated.RawUrl;
+            var uRawUrl = rawUrl.ToUpper();
             if (uRawUrl.Contains("WEBRESOURCE.AXD") || uRawUrl.Contains("SCRIPTRESOURCE.AXD"))
                 return null;
 
@@ -73,7 +74,7 @@ namespace ClientDependency.Core.Module
             {
                 //if it is only "*" then convert it to proper regex
                 var reg = m.FilePath == "*" ? ".*" : m.FilePath;
-                var matched = Regex.IsMatch(Context.Request.RawUrl, reg, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                var matched = Regex.IsMatch(rawUrl, reg, RegexOptions.Compiled | RegexOptions.IgnoreCase);
                 if (matched) return m;
             }
             return null;
