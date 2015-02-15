@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Text;
 using System.Configuration;
 using System.Linq;
-using ClientDependency.Core.Logging;
+using System.Security.Cryptography;
 
 namespace ClientDependency.Core.Config
 {
     public class ClientDependencySection : ConfigurationSection
-	{
+    {
         /// <summary>
         /// Set the version for the files, this will reset all composite file caching, and if
         /// composite files are disabled will add a query string to each request so that 
@@ -18,7 +16,18 @@ namespace ClientDependency.Core.Config
         [ConfigurationProperty("version", DefaultValue = 0)]
         public int Version
         {
-            get { return (int)base["version"]; }
+            get
+            {
+                if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings["ClientDependencyFramework.Version"]))
+                {
+                    int appSettingsVersion;
+                    if (Int32.TryParse(ConfigurationManager.AppSettings["ClientDependencyFramework.Version"], out appSettingsVersion))
+                    {
+                        return appSettingsVersion;
+                    }
+                }
+                return (int)base["version"];
+            }
             set { base["version"] = value; }
         }
 
@@ -31,24 +40,24 @@ namespace ClientDependency.Core.Config
             get { return (string)base["machineName"]; }
             set { base["machineName"] = value; }
         }
-       
-		[ConfigurationProperty("compositeFiles")]
-		public CompositeFileSection CompositeFileElement
-		{
-		    get
-		    {
-				return (CompositeFileSection)this["compositeFiles"];
-		    }
-		}
 
-		[ConfigurationProperty("fileRegistration")]
-		public FileRegistrationSection FileRegistrationElement
-		{
-			get
-			{
-				return (FileRegistrationSection)this["fileRegistration"];
-			}
-		}
+        [ConfigurationProperty("compositeFiles")]
+        public CompositeFileSection CompositeFileElement
+        {
+            get
+            {
+                return (CompositeFileSection)this["compositeFiles"];
+            }
+        }
+
+        [ConfigurationProperty("fileRegistration")]
+        public FileRegistrationSection FileRegistrationElement
+        {
+            get
+            {
+                return (FileRegistrationSection)this["fileRegistration"];
+            }
+        }
 
         [ConfigurationProperty("mvc")]
         public MvcSection MvcElement
@@ -145,6 +154,6 @@ namespace ClientDependency.Core.Config
                     .Select(x => x.Trim().ToUpper());
             }
         }
-	}
+    }
 
 }
