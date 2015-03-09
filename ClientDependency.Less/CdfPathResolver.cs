@@ -4,7 +4,7 @@ using dotless.Core.Input;
 
 namespace ClientDependency.Less
 {
-    class CdfPathResolver : IPathResolver
+    public sealed class CdfPathResolver : IPathResolver
     {
         private readonly HttpContextBase _http;
         private readonly string _origUrl;

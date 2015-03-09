@@ -3,7 +3,7 @@ using dotless.Core.Input;
 
 namespace ClientDependency.Less
 {
-    class CdfFileReader : dotless.Core.Input.IFileReader
+    public sealed class CdfFileReader : dotless.Core.Input.IFileReader
     {
         public CdfFileReader()
         {
