@@ -1,15 +1,15 @@
-﻿function myFooterAlert(txt) {
+﻿(function(txt) {
     if (!$.isReady) {
         $(document).ready(function() {
             writeFooterStuff();
         });
     }
     else {
-        writeFooterStuff();        
+        writeFooterStuff();
     }
-}
+})();
 function writeFooterStuff() {
-    var letters = "This is generated from a startup script";
+    var letters = "Hello footer";
 
     var counter = 0;
     $(".footer").html($(".footer").html() + "<br/>");

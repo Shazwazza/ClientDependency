@@ -1,5 +1,6 @@
 ﻿@import url('//fonts.googleapis.com/css?subset=latin,cyrillic-ext,latin-ext,cyrillic&family=Open+Sans+Condensed:300|Open+Sans:400,600,400italic,600italic|Merriweather:400,300,300italic,400italic,700,700italic|Roboto+Slab:400,300');
 @import url('//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css');
+@import url("http://fonts.googleapis.com/css?family=Roboto:400,700");
 
 .mainContent
 {    
@@ -15,5 +16,5 @@
 {
 	
 	float:left;
-	width:450px;
+	width:450px;    
 }

@@ -21,5 +21,6 @@
         <li><a class="white" href="<%=ResolveClientUrl("~/Pages/EmbeddedResourceTest.aspx") %>">Embedded Resource test</a></li>
         <li><a class="white" href="<%=ResolveClientUrl("~/Pages/RemoteDependencies.aspx") %>">Remote Dependencies test</a></li>
         <li><a class="white" href="<%=ResolveClientUrl("~/Pages/HtmlAttributes.aspx") %>">Html attribute tests</a></li>
+        <li><a class="white" href="<%=ResolveClientUrl("~/Pages/DependencyGroups.aspx") %>">Dependency group tests</a></li>
 	</ul>
 </div>
