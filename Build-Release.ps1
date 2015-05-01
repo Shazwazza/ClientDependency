@@ -33,9 +33,9 @@ $SolutionInfoPath = Join-Path -Path $SolutionRoot -ChildPath "SolutionInfo.cs"
 	-replace "(?<=AssemblyInformationalVersion\(`")[.\w-]*(?=`"\))", "$ReleaseVersionNumber$PreReleaseName" |
 	sc -Path $SolutionInfoPath -Encoding UTF8
 # Set the copyright
-$Copyright = "Copyright © Shannon Deminick ".(Get-Date).year
+$Copyright = "Copyright © Shannon Deminick " + (Get-Date).year
 (gc -Path $SolutionInfoPath) `
-	-replace "(?<=AssemblyCopyright\(`")[.\w-]*(?=`"\))", $Copyright |
+	-replace "(?<=AssemblyCopyright\(`").*(?=`"\))", $Copyright |
 	sc -Path $SolutionInfoPath -Encoding UTF8
 	
 # Build the solution in release mode (in both 4.0 and 4.5 and for MVC5)
