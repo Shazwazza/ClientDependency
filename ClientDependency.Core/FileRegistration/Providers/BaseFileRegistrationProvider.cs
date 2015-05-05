@@ -24,6 +24,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
         protected BaseFileRegistrationProvider()
         {
             EnableCompositeFiles = true;
+            EnableDebugVersionQueryString = false;
         }
 
         /// <summary>
@@ -31,6 +32,13 @@ namespace ClientDependency.Core.FileRegistration.Providers
         /// Composite files are never enabled with compilation debug="true" however.
         /// </summary>
         public bool EnableCompositeFiles { get; set; }
+
+        /// <summary>
+        /// By default this is false but can be enabled (in either config or code). When this
+        /// is enabled a query string like ?cdv=1235 of the current CDF version will be appended
+        /// to dependencies when debugging is enabled or when composite files are disabled
+        /// </summary>
+        public bool EnableDebugVersionQueryString { get; set; }
 
         #region Abstract methods/properties
 
@@ -110,6 +118,11 @@ namespace ClientDependency.Core.FileRegistration.Providers
             if (config != null && config["enableCompositeFiles"] != null && !string.IsNullOrEmpty(config["enableCompositeFiles"]))
             {
                 EnableCompositeFiles = bool.Parse(config["enableCompositeFiles"]);
+            }
+
+            if (config != null && config["enableDebugVersionQueryString"] != null && !string.IsNullOrEmpty(config["enableDebugVersionQueryString"]))
+            {
+                EnableDebugVersionQueryString = bool.Parse(config["enableDebugVersionQueryString"]);
             }
 		}
 
@@ -260,7 +273,8 @@ namespace ClientDependency.Core.FileRegistration.Providers
                 }
 
                 //append query strings to each file if we are in debug mode
-                if (http.IsDebuggingEnabled || !EnableCompositeFiles)
+                if (EnableDebugVersionQueryString &&
+                    (http.IsDebuggingEnabled || !EnableCompositeFiles))
                 {
                     dependency.FilePath = AppendVersion(dependency.FilePath, http);
                 }
