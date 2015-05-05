@@ -446,9 +446,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>54153</DevelopmentServerPort>
           <DevelopmentServerVPath>/VirtualFolderTest</DevelopmentServerVPath>
-          <IISUrl>http://localhost:54154/VirtualFolderTest</IISUrl>
-          <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
-          <IISAppRootUrl>http://localhost:54154/VirtualFolderTest</IISAppRootUrl>
+          <IISUrl>http://localhost:5432/VirtualFolderTest</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

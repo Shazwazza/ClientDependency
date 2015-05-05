@@ -417,7 +417,9 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             HttpContextBase http,
             string compositeFileHandlerPath)
         {
-            if (!dependencies.Any())
+            var asArray = dependencies.ToArray();
+
+            if (!asArray.Any())
                 return new string[] { };
 
             compositeFileHandlerPath = compositeFileHandlerPath ?? ClientDependencySettings.Instance.CompositeFileHandlerPath;
@@ -429,7 +431,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                     //use the file mapper to create us a file key/id for the file set
                     var fileKey = ClientDependencySettings.Instance.DefaultFileMapProvider.CreateNewMap(
                         http,
-                        dependencies,
+                        asArray,
                         ClientDependencySettings.Instance.Version);
 
                     //create the url
@@ -445,7 +447,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 
                     //build the combined composite list urls          
 
-                    return GetCompositeFileUrls(type, dependencies.ToArray(), compositeFileHandlerPath, http, CompositeDependencyHandler.MaxHandlerUrlLength, ClientDependencySettings.Instance.Version).ToArray();
+                    return GetCompositeFileUrls(type, asArray, compositeFileHandlerPath, http, CompositeDependencyHandler.MaxHandlerUrlLength, ClientDependencySettings.Instance.Version).ToArray();
             }
         }
 

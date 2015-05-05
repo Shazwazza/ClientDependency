@@ -76,6 +76,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
         private string _compositeFileHandlerPath = "~/DependencyHandler.axd";
         private volatile bool _compositeFileHandlerPathInitialized = false;
 
+        [Obsolete("The GetCompositeFileHandlerPath should be retrieved from the compositeFiles element in config: ClientDependencySettings.Instance.CompositeFileHandlerPath")]
 		protected internal string GetCompositeFileHandlerPath(HttpContextBase http)
 		{
 		    if (!_compositeFileHandlerPathInitialized)
@@ -84,11 +85,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
                 {
                     //double check
                     if (!_compositeFileHandlerPathInitialized)
-                    {
-                        if (string.IsNullOrWhiteSpace(_compositeFileHandlerPath))
-                        {
-                            throw new InvalidOperationException("The compositeFileHandlerPath cannot be empty");
-                        }
+                    {                        
                         //we may need to convert this to a real path
                         if (_compositeFileHandlerPath.StartsWith("~/"))
                         {
@@ -114,19 +111,6 @@ namespace ClientDependency.Core.FileRegistration.Providers
             {
                 EnableCompositeFiles = bool.Parse(config["enableCompositeFiles"]);
             }
-
-            //if (config != null && config["websiteBaseUrl"] != null && !string.IsNullOrEmpty(config["websiteBaseUrl"]))
-            //{
-            //    WebsiteBaseUrl = config["website"];
-            //    if (!string.IsNullOrEmpty(WebsiteBaseUrl))
-            //        WebsiteBaseUrl = WebsiteBaseUrl.TrimEnd('/');
-            //}
-
-            if (config != null && config["compositeFileHandlerPath"] != null)
-            {
-                _compositeFileHandlerPath = config["compositeFileHandlerPath"];
-            }
-            
 		}
 
         #endregion
