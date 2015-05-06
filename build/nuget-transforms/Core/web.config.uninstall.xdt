@@ -3,23 +3,23 @@
 
     <section name="clientDependency" type="ClientDependency.Core.Config.ClientDependencySection, ClientDependency.Core" requirePermission="false"
             xdt:Transform="Remove"
-            xdt:Locator="Condition(@name='clientDependency')" />
+    xdt:Locator="Condition(@name='clientDependency' and count(/configuration/clientDependency[@configSource])=0)" />
 
   </configSections>
 
-  <clientDependency version="1" xdt:Transform="Remove">
+  <clientDependency version="1" xdt:Transform="Remove" xdt:Locator="Condition(count(@configSource)=0)">
     <!-- Full config documentation is here: https://github.com/Shandem/ClientDependency/wiki/Configuration -->
   </clientDependency>
 
   <system.web>
     <pages>
-      
+
       <namespaces>
         <add namespace="ClientDependency.Core" xdt:Transform="Remove" xdt:Locator="Condition(@namespace='ClientDependency.Core')" />
       </namespaces>
 
       <namespaces xdt:Transform="RemoveAll" xdt:Locator="Condition(count(*)=0)" />
-      
+
     </pages>
     <httpModules>
       <!-- ** Need to add the dependency module -->
@@ -68,6 +68,6 @@
   </system.webServer>
 
   <configSections xdt:Transform="RemoveAll" xdt:Locator="Condition(count(*)=0)" />
-  
-  
+
+
 </configuration>
