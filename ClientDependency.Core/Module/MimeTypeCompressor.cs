@@ -27,9 +27,14 @@ namespace ClientDependency.Core.Module
 
         public void AddCompression()
         {
+            if (Context == null) return;
+
             //if debug is on, then don't compress
             if (!Context.IsDebuggingEnabled)
             {
+                if (Context.Response == null) return;
+                if (Context.Response.Filter == null) return;
+
                 //if the current filter is not the default ASP.Net filter, then we will not continue.
                 var filterType = Context.Response.Filter.GetType();
                 //the default is normally: System.Web.HttpResponseStreamFilterSink

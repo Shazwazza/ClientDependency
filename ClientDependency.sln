@@ -32,7 +32,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{4D8DC7DA-0202-4338-B154-72A077FA88E8}"
 	ProjectSection(SolutionItems) = preProject
 		build\nuget-transforms\Core\web.config.install.xdt = build\nuget-transforms\Core\web.config.install.xdt
-		build\nuget-transforms\Core\web.config.transform = build\nuget-transforms\Core\web.config.transform
 		build\nuget-transforms\Core\web.config.uninstall.xdt = build\nuget-transforms\Core\web.config.uninstall.xdt
 	EndProjectSection
 EndProject
