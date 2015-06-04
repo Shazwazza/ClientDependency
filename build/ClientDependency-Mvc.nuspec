@@ -12,6 +12,7 @@
     <projectUrl>https://github.com/Shandem/ClientDependency</projectUrl>
     <tags>mvc css html javascript clientdependency cdf minify compress combine</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <copyright>$copyright$</copyright>
     <dependencies>
 
       <dependency id="Microsoft.AspNet.Mvc" version="4.0.20710" />

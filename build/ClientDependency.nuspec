@@ -12,6 +12,7 @@
     <projectUrl>https://github.com/Shandem/ClientDependency</projectUrl>
     <tags>css html javascript minify compress combine</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <copyright>$copyright$</copyright>
   </metadata>
   <files>
     <file src="net40\*.dll" target="lib\net40" />
