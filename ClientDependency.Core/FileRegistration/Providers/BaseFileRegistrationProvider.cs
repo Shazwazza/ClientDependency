@@ -24,7 +24,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
         protected BaseFileRegistrationProvider()
         {
             EnableCompositeFiles = true;
-            EnableDebugVersionQueryString = false;
+            EnableDebugVersionQueryString = true;
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
         public bool EnableCompositeFiles { get; set; }
 
         /// <summary>
-        /// By default this is false but can be enabled (in either config or code). When this
+        /// By default this is true but can be disabled (in either config or code). When this
         /// is enabled a query string like ?cdv=1235 of the current CDF version will be appended
         /// to dependencies when debugging is enabled or when composite files are disabled
         /// </summary>
