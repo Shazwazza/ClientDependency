@@ -12,7 +12,7 @@
     <projectUrl>https://github.com/Shandem/ClientDependency</projectUrl>
     <tags>CoffeeScript coffee script javascript js html clientdependency cdf minify compress combine</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <copyright>$copyright$</copyright>
+    <copyright>Copyright © Shannon Deminick $copyrightyear$</copyright>
     <dependencies>
       <dependency id="SassAndCoffee.JavaScript" version="2.0.2" />
       <dependency id="ClientDependency" version="1.7" />

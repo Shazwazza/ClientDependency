@@ -33,9 +33,8 @@ $SolutionInfoPath = Join-Path -Path $SolutionRoot -ChildPath "SolutionInfo.cs"
 	-replace "(?<=AssemblyInformationalVersion\(`")[.\w-]*(?=`"\))", "$ReleaseVersionNumber$PreReleaseName" |
 	sc -Path $SolutionInfoPath -Encoding UTF8
 # Set the copyright
-$Copyright = "Copyright © Shannon Deminick " + (Get-Date).year
 (gc -Path $SolutionInfoPath) `
-	-replace "(?<=AssemblyCopyright\(`").*(?=`"\))", $Copyright |
+	-replace "(?<=AssemblyCopyright\(`".*?)\d\d\d\d(?=`"\))", (Get-Date).year |
 	sc -Path $SolutionInfoPath -Encoding UTF8
 	
 # Build the solution in release mode (in both 4.0 and 4.5 and for MVC5)
@@ -148,55 +147,57 @@ Copy-Item "$BuildFolder\nuget-transforms\Coffee\web.config.transform" -Destinati
 Copy-Item "$BuildFolder\nuget-transforms\Sass\web.config.transform" -Destination (New-Item (Join-Path -Path $SassFolder -ChildPath "nuget-transforms") -Type directory);
 Copy-Item "$BuildFolder\nuget-transforms\TypeScript\web.config.transform" -Destination (New-Item (Join-Path -Path $TypeScriptFolder -ChildPath "nuget-transforms") -Type directory);
 
+$CopyrightYear = (Get-Date).year;
+
 # COPY OVER THE CORE NUSPEC AND BUILD THE NUGET PACKAGE
 $CoreNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency.nuspec";
 Copy-Item $CoreNuSpecSource -Destination $CoreFolder
 $CoreNuSpec = Join-Path -Path $CoreFolder -ChildPath "ClientDependency.nuspec";
 $NuGet = Join-Path $SolutionRoot -ChildPath ".nuget\NuGet.exe"
 Write-Output "DEBUGGING: " $CoreNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName
-& $NuGet pack $CoreNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName -Properties copyright=$Copyright
+& $NuGet pack $CoreNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName -Properties copyrightyear=$CopyrightYear
 
 # COPY OVER THE MVC NUSPEC AND BUILD THE NUGET PACKAGE
 $MvcNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency-Mvc.nuspec";
 Copy-Item $MvcNuSpecSource -Destination $MvcFolder
 $MvcNuSpec = Join-Path -Path $MvcFolder -ChildPath "ClientDependency-Mvc.nuspec"
 $NuGet = Join-Path $SolutionRoot -ChildPath ".nuget\NuGet.exe"
-& $NuGet pack $MvcNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName -Properties copyright=$Copyright
+& $NuGet pack $MvcNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName -Properties copyrightyear=$CopyrightYear
 
 # COPY OVER THE MVC5 NUSPEC AND BUILD THE NUGET PACKAGE
 $Mvc5NuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency-Mvc5.nuspec";
 Copy-Item $Mvc5NuSpecSource -Destination $Mvc5Folder
 $Mvc5NuSpec = Join-Path -Path $Mvc5Folder -ChildPath "ClientDependency-Mvc5.nuspec"
 $NuGet = Join-Path $SolutionRoot -ChildPath ".nuget\NuGet.exe"
-& $NuGet pack $Mvc5NuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName -Properties copyright=$Copyright
+& $NuGet pack $Mvc5NuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName -Properties copyrightyear=$CopyrightYear
 
 # COPY OVER THE LESS NUSPEC AND BUILD THE NUGET PACKAGE
 $LessNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency-Less.nuspec";
 Copy-Item $LessNuSpecSource -Destination $LessFolder
 $LessNuSpec = Join-Path -Path $LessFolder -ChildPath "ClientDependency-Less.nuspec"
 $NuGet = Join-Path $SolutionRoot -ChildPath ".nuget\NuGet.exe"
-& $NuGet pack $LessNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName -Properties copyright=$Copyright
+& $NuGet pack $LessNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName -Properties copyrightyear=$CopyrightYear
 
 # COPY OVER THE SASS NUSPEC AND BUILD THE NUGET PACKAGE
 $SassNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency-SASS.nuspec";
 Copy-Item $SassNuSpecSource -Destination $SassFolder
 $SassNuSpec = Join-Path -Path $SassFolder -ChildPath "ClientDependency-SASS.nuspec"
 $NuGet = Join-Path $SolutionRoot -ChildPath ".nuget\NuGet.exe"
-& $NuGet pack $SassNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName -Properties copyright=$Copyright
+& $NuGet pack $SassNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName -Properties copyrightyear=$CopyrightYear
 
 # COPY OVER THE COFFEE NUSPEC AND BUILD THE NUGET PACKAGE
 $CoffeeNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency-Coffee.nuspec";
 Copy-Item $CoffeeNuSpecSource -Destination $CoffeeFolder
 $CoffeeNuSpec = Join-Path -Path $CoffeeFolder -ChildPath "ClientDependency-Coffee.nuspec"
 $NuGet = Join-Path $SolutionRoot -ChildPath ".nuget\NuGet.exe"
-& $NuGet pack $CoffeeNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName -Properties copyright=$Copyright
+& $NuGet pack $CoffeeNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName -Properties copyrightyear=$CopyrightYear
 
 # COPY OVER THE TypeScript NUSPEC AND BUILD THE NUGET PACKAGE
 $TypeScriptNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency-TypeScript.nuspec";
 Copy-Item $TypeScriptNuSpecSource -Destination $TypeScriptFolder
 $TypeScriptNuSpec = Join-Path -Path $TypeScriptFolder -ChildPath "ClientDependency-TypeScript.nuspec"
 $NuGet = Join-Path $SolutionRoot -ChildPath ".nuget\NuGet.exe"
-& $NuGet pack $TypeScriptNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName -Properties copyright=$Copyright
+& $NuGet pack $TypeScriptNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName -Properties copyrightyear=$CopyrightYear
 
 ""
 "Build $ReleaseVersionNumber$PreReleaseName is done!"

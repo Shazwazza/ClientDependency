@@ -12,7 +12,7 @@
     <projectUrl>https://github.com/Shandem/ClientDependency</projectUrl>
     <tags>.less dotless css html clientdependency cdf minification minify compress combine</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <copyright>$copyright$</copyright>
+    <copyright>Copyright © Shannon Deminick $copyrightyear$</copyright>
     <dependencies>
       <dependency id="dotless" version="1.4" />
       <dependency id="ClientDependency" version="1.8" />
