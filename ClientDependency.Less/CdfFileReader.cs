@@ -1,8 +1,10 @@
-﻿using System.Web;
+﻿using System.Security;
+using System.Web;
 using dotless.Core.Input;
 
 namespace ClientDependency.Less
 {
+    [SecurityCritical]
     public sealed class CdfFileReader : dotless.Core.Input.IFileReader
     {
         public CdfFileReader()
@@ -13,16 +15,19 @@ namespace ClientDependency.Less
 
         private readonly FileReader _innerReader;
 
+        [SecurityCritical]
         public byte[] GetBinaryFileContents(string fileName)
         {
             return _innerReader.GetBinaryFileContents(fileName);
         }
 
+        [SecurityCritical]
         public string GetFileContents(string fileName)
         {
             return _innerReader.GetFileContents(fileName);
         }
 
+        [SecurityCritical]
         public bool DoesFileExist(string fileName)
         {
             return _innerReader.DoesFileExist(fileName);
@@ -30,6 +35,7 @@ namespace ClientDependency.Less
 
         public bool UseCacheDependencies
         {
+            [SecurityCritical]
             get { return false; }
         }
     }

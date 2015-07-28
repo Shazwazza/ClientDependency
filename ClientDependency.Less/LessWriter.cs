@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -20,7 +21,9 @@ namespace ClientDependency.Less
     /// A file writer for dotLess
     /// </summary>
     public sealed class LessWriter : IFileWriter
-    {        
+    {
+
+        [SecuritySafeCritical]
         public bool WriteToStream(BaseCompositeFileProcessingProvider provider, StreamWriter sw, FileInfo fi, ClientDependencyType type, string origUrl, HttpContextBase http)
         {
             try

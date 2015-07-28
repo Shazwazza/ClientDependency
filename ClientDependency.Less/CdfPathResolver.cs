@@ -1,13 +1,16 @@
 ﻿using System.IO;
+using System.Security;
 using System.Web;
 using dotless.Core.Input;
 
 namespace ClientDependency.Less
 {
+    [SecurityCritical]
     public sealed class CdfPathResolver : IPathResolver
     {
         private readonly HttpContextBase _http;
         private readonly string _origUrl;
+        [SecurityCritical]
         private readonly AspRelativePathResolver _inner = new AspRelativePathResolver();
         private readonly string _currentFolder;
 
@@ -19,6 +22,7 @@ namespace ClientDependency.Less
             _currentFolder = Path.GetDirectoryName(_http.Server.MapPath(_origUrl));
         }
 
+        [SecurityCritical]
         public string GetFullPath(string path)
         {
             if (path.StartsWith("/"))
