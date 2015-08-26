@@ -39,25 +39,32 @@ namespace ClientDependency.Core.CompositeFiles
     {
         const int EOF = -1;
 
-        StringReader sr;
-        StringWriter sw;
+        TextReader sr;
+        TextWriter sw;
         int theA;
         int theB;
         int theLookahead = EOF;
         static int theX = EOF;
         static int theY = EOF;
 
+        [Obsolete("Use the overloads specifying a Stream instead")]
         public static string CompressJS(string body)
         {
             return new JSMin().Minify(body);
         }
 
-        public static string CompressJS(Stream body)
+        public static string CompressJS(Stream stream)
         {
-            throw new NotImplementedException();
-            //return new JSMin().Minify(body);
+            var jsMin = new JSMin();
+            if (!stream.CanRead) throw new InvalidOperationException("Cannot read input stream");
+            if (stream.CanSeek)
+            {
+                stream.Position = 0;
+            }
+            return jsMin.Minify(new StreamReader(stream));
         }
 
+        [Obsolete("Use the overloads specifying a TextReader instead")]
         public string Minify(string src)
         {
             StringBuilder sb = new StringBuilder();
@@ -67,6 +74,17 @@ namespace ClientDependency.Core.CompositeFiles
                 {
                     jsmin();
                 }
+            }
+            return sb.ToString();
+        }
+
+        public string Minify(TextReader reader)
+        {
+            sr = reader;
+            var sb = new StringBuilder();
+            using (sw = new StringWriter(sb))
+            {
+                jsmin();
             }
             return sb.ToString();
         }

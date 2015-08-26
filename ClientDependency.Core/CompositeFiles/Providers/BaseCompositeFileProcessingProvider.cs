@@ -594,10 +594,10 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         /// <summary>
         /// Minifies the file
         /// </summary>
-        /// <param name="fileContents"></param>
+        /// <param name="fileStream"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        public virtual string MinifyFile(Stream fileContents, ClientDependencyType type)
+        public virtual string MinifyFile(Stream fileStream, ClientDependencyType type)
         {
             Func<Stream, string> streamToString = stream =>
             {
@@ -608,11 +608,11 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             switch (type)
             {
                 case ClientDependencyType.Css:
-                    return EnableCssMinify ? CssHelper.MinifyCss(fileContents) : streamToString(fileContents);
+                    return EnableCssMinify ? CssHelper.MinifyCss(fileStream) : streamToString(fileStream);
                 case ClientDependencyType.Javascript:
-                    return EnableJsMinify ? JSMin.CompressJS(fileContents) : streamToString(fileContents);
+                    return EnableJsMinify ? JSMin.CompressJS(fileStream) : streamToString(fileStream);
                 default:
-                    return streamToString(fileContents);
+                    return streamToString(fileStream);
             }
         }
 
