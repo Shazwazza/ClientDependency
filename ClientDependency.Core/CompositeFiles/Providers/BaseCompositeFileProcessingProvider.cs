@@ -199,7 +199,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                                 }
                                 catch (Exception ex1)
                                 {
-                                    ClientDependencySettings.Instance.Logger.Error(string.Format("Could not load file contents from {0}. EXCEPTION: {1}", path, ex1.Message), ex1);
+                                    ClientDependencySettings.Instance.Logger.Error($"Could not load file contents from {path}. EXCEPTION: {ex1.Message}", ex1);
                                 }
                             }
                         }
@@ -209,7 +209,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                     else
                     {
                         //if this fails, log the exception, but continue
-                        ClientDependencySettings.Instance.Logger.Error(string.Format("Could not load file contents from {0}. EXCEPTION: {1}", path, ex.Message), ex);
+                        ClientDependencySettings.Instance.Logger.Error($"Could not load file contents from {path}. EXCEPTION: {ex.Message}", ex);
                     }
                 }
             }
@@ -577,6 +577,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         /// <param name="fileContents"></param>
         /// <param name="type"></param>
         /// <returns></returns>
+        [Obsolete("Work with the Stream overloadds instead of raw string content")]
         public virtual string MinifyFile(string fileContents, ClientDependencyType type)
         {
             switch (type)

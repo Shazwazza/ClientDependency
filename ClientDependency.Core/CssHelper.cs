@@ -172,54 +172,12 @@ namespace ClientDependency.Core
             return str;
         }
 
-
-        ///// <summary>
-        ///// Writes the CSS contents with all of the url's formatted to be absolute locations
-        ///// </summary>
-        ///// <param name="writer"></param>
-        ///// <param name="inputStream"></param>
-        ///// <param name="url"></param>
-        ///// <param name="http"></param>
-        ///// <returns></returns>
-        //public static void ReplaceUrlsWithAbsolutePaths(StreamWriter writer, Stream inputStream, string url, HttpContextBase http)
-        //{
-        //    var uri = new Uri(url, UriKind.RelativeOrAbsolute);
-        //    CssHelper.ReplaceUrlsWithAbsolutePaths(writer, inputStream, uri.MakeAbsoluteUri(http));  
-        //}
-
-        ///// <summary>
-        ///// Writes the CSS contents with all of the url's formatted to be absolute locations
-        ///// </summary>
-        ///// <param name="writer"></param>
-        ///// <param name="inputStream">content of the css file</param>
-        ///// <param name="cssLocation">the uri location of the css file</param>
-        ///// <returns></returns>
-        //public static void ReplaceUrlsWithAbsolutePaths(StreamWriter writer, Stream inputStream, Uri cssLocation)
-        //{
-        //    //var str = CssUrlRegex.Replace(inputStream, m =>
-        //    //{
-        //    //    if (m.Groups.Count == 2)
-        //    //    {
-        //    //        var match = m.Groups[1].Value.Trim('\'', '"');
-        //    //        var hashSplit = match.Split(new[] { '#' }, StringSplitOptions.RemoveEmptyEntries);
-
-        //    //        return string.Format(@"url(""{0}{1}"")",
-        //    //                             (match.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase)
-        //    //                             || match.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase)
-        //    //                             || match.StartsWith("//", StringComparison.InvariantCultureIgnoreCase)) ? match : new Uri(cssLocation, match).PathAndQuery,
-        //    //                             hashSplit.Length > 1 ? ("#" + hashSplit[1]) : "");
-        //    //    }
-        //    //    return m.Value;
-        //    //});
-
-        //    //return str;
-        //}
-
         /// <summary>
         /// Minifies Css
         /// </summary>
         /// <param name="body"></param>
         /// <returns></returns>
+        [Obsolete("Work with the Stream overloadds instead of raw string content")]
         public static string MinifyCss(string body)
         {
             body = Regex.Replace(body, @"[\n\r]+\s*", " ");

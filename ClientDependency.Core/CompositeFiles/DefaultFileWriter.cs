@@ -17,14 +17,16 @@ namespace ClientDependency.Core.CompositeFiles
         {
             try
             {
-                //if it is a file based dependency then read it				
-                var fileContents = File.ReadAllText(fi.FullName, Encoding.UTF8); //read as utf 8
-                WriteContentToStream(provider, sw, fileContents, type, http, origUrl);
+                //if it is a file based dependency then read it
+                using (var fileStream = fi.OpenRead())
+                {
+                    WriteContentToStream(provider, sw, fileStream, type, http, origUrl);
+                }
                 return true;
             }
             catch (Exception ex)
             {
-                ClientDependencySettings.Instance.Logger.Error(string.Format("Could not write file {0} contents to stream. EXCEPTION: {1}", fi.FullName, ex.Message), ex);
+                ClientDependencySettings.Instance.Logger.Error($"Could not write file {fi.FullName} contents to stream. EXCEPTION: {ex.Message}", ex);
                 return false;
             }
         }
@@ -38,6 +40,7 @@ namespace ClientDependency.Core.CompositeFiles
         /// <param name="type"></param>
         /// <param name="context"></param>
         /// <param name="originalUrl">The original Url that the content is related to</param>
+        [Obsolete("Work with the Stream overloadds instead of raw string content")]
         public static void WriteContentToStream(BaseCompositeFileProcessingProvider provider, StreamWriter sw, string content, ClientDependencyType type, HttpContextBase context, string originalUrl)
         {
             if (type == ClientDependencyType.Css)
@@ -85,7 +88,6 @@ namespace ClientDependency.Core.CompositeFiles
                     var absolute = uri.ToAbsolutePath(importPath);
                     provider.WritePathToStream(ClientDependencyType.Css, absolute, context, sw);
                 }
-
                 
                 var minified = provider.MinifyFile(stream, type);
 
@@ -93,7 +95,7 @@ namespace ClientDependency.Core.CompositeFiles
                 var parsedUrls = CssHelper.ReplaceUrlsWithAbsolutePaths(minified, originalUrl, context);
 
                 //then we write the css with the removed import statements
-                sw.WriteLine(provider.MinifyFile(parsedUrls, type));
+                sw.WriteLine(parsedUrls);
             }
             else
             {

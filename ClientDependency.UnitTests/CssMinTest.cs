@@ -10,7 +10,7 @@ namespace ClientDependency.UnitTests
     [TestFixture]
     public class CssMinTest
     {
-        [Ignore]
+        [Ignore("benchmark test from new/old css min, will remove in the future")]
         [Test]
         public void Benchmark()
         {
