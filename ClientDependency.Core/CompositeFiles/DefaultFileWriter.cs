@@ -65,5 +65,40 @@ namespace ClientDependency.Core.CompositeFiles
                 sw.WriteLine(provider.MinifyFile(content, type));
             }
         }
+
+        public static void WriteContentToStream(BaseCompositeFileProcessingProvider provider, StreamWriter sw, Stream stream, ClientDependencyType type, HttpContextBase context, string originalUrl)
+        {
+            if (type == ClientDependencyType.Css)
+            {
+                IEnumerable<string> importedPaths;
+                string externalImports;
+                CssHelper.ParseImportStatements(stream, out importedPaths, out externalImports);
+
+                //we can write the external imports found at the top
+                sw.WriteLine(externalImports);
+
+                //need to write the imported sheets first since these theoretically should *always* be at the top for browser to support them
+                foreach (var importPath in importedPaths)
+                {
+                    var uri = new Uri(originalUrl, UriKind.RelativeOrAbsolute)
+                        .MakeAbsoluteUri(context);
+                    var absolute = uri.ToAbsolutePath(importPath);
+                    provider.WritePathToStream(ClientDependencyType.Css, absolute, context, sw);
+                }
+
+                
+                var minified = provider.MinifyFile(stream, type);
+
+                //ensure the Urls in the css are changed to absolute
+                var parsedUrls = CssHelper.ReplaceUrlsWithAbsolutePaths(minified, originalUrl, context);
+
+                //then we write the css with the removed import statements
+                sw.WriteLine(provider.MinifyFile(parsedUrls, type));
+            }
+            else
+            {
+                sw.WriteLine(provider.MinifyFile(stream, type));
+            }
+        }
     }
 }

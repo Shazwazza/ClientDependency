@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using ClientDependency.Core.CompositeFiles;
 
 namespace ClientDependency.Core
 {
@@ -48,6 +51,87 @@ namespace ClientDependency.Core
         }
 
         /// <summary>
+        /// Searches from the beginning of the stream to detect @import statements. Any relative @import statement found will be 
+        /// added to the importedPaths collection, any absolute/external @import statement will be appended to the externalImportedPaths
+        /// which will need to be pre-fixed to the resulting css file after processing.        
+        /// </summary>
+        /// <param name="stream">The css stream</param>
+        /// <param name="importedPaths"></param>
+        /// <param name="externalImportedPaths">
+        /// The absolute/external @import statement that will need to be prefixed to the resultant css
+        /// </param>
+        /// <returns>
+        /// The Streams position starting at the first char after all @import statements
+        /// </returns>
+        /// <remarks>
+        /// The Stream's position will be at the position returned from this method
+        /// </remarks>
+        public static long ParseImportStatements(Stream stream, out IEnumerable<string> importedPaths, out string externalImportedPaths)
+        {
+            if (!stream.CanRead) throw new InvalidOperationException("Cannot read Stream object");
+
+            //read the content until we know we are no longer on an import statement
+            if (stream.CanSeek)
+            {
+                stream.Position = 0;
+            }
+
+            const string searchStatement = "@import ";
+            var imports = new StringBuilder();
+
+            //new reader (but don't dispose since we don't want to dispose the stream)
+            TextReader reader = new StreamReader(stream);
+            var exit = false;
+            var currIndex = -1;
+            
+            while (exit == false)
+            {
+                var next = reader.Read();
+                if (next == -1) exit = true;
+                var c = (char) next;
+
+                //still searching for the '@import' block at the top
+                if (currIndex == -1 && char.IsWhiteSpace(c))
+                {
+                    //maintain whitespace with the output
+                    imports.Append(c);
+                }
+                else if (currIndex == -2)
+                {
+                    //we've found the searchStatement, keep processing until we hit the end
+
+                    imports.Append(c);
+
+                    if (c == ';')
+                    {
+                        //we're at the end, reset the index so that it looks for the searchStatement again
+                        currIndex = -1;
+                    }
+                }
+                else if (searchStatement[currIndex + 1] == c)
+                {
+                    //we've found the next char in the search statement
+                    imports.Append(c);
+                    currIndex++;
+                    if (currIndex == (searchStatement.Length - 1))
+                    {
+                        //we've found the whole statement, set the flag that we are processing
+                        currIndex = -2;
+                    }
+                }
+                else
+                {
+                    //time to quit
+                    exit = true;
+                }
+            }
+
+            externalImportedPaths = ParseImportStatements(imports.ToString(), out importedPaths);
+
+            return stream.Position;
+        }
+
+        /// <summary>
         /// Returns the CSS file with all of the url's formatted to be absolute locations
         /// </summary>
         /// <param name="fileContents"></param>
@@ -88,6 +172,49 @@ namespace ClientDependency.Core
             return str;
         }
 
+
+        ///// <summary>
+        ///// Writes the CSS contents with all of the url's formatted to be absolute locations
+        ///// </summary>
+        ///// <param name="writer"></param>
+        ///// <param name="inputStream"></param>
+        ///// <param name="url"></param>
+        ///// <param name="http"></param>
+        ///// <returns></returns>
+        //public static void ReplaceUrlsWithAbsolutePaths(StreamWriter writer, Stream inputStream, string url, HttpContextBase http)
+        //{
+        //    var uri = new Uri(url, UriKind.RelativeOrAbsolute);
+        //    CssHelper.ReplaceUrlsWithAbsolutePaths(writer, inputStream, uri.MakeAbsoluteUri(http));  
+        //}
+
+        ///// <summary>
+        ///// Writes the CSS contents with all of the url's formatted to be absolute locations
+        ///// </summary>
+        ///// <param name="writer"></param>
+        ///// <param name="inputStream">content of the css file</param>
+        ///// <param name="cssLocation">the uri location of the css file</param>
+        ///// <returns></returns>
+        //public static void ReplaceUrlsWithAbsolutePaths(StreamWriter writer, Stream inputStream, Uri cssLocation)
+        //{
+        //    //var str = CssUrlRegex.Replace(inputStream, m =>
+        //    //{
+        //    //    if (m.Groups.Count == 2)
+        //    //    {
+        //    //        var match = m.Groups[1].Value.Trim('\'', '"');
+        //    //        var hashSplit = match.Split(new[] { '#' }, StringSplitOptions.RemoveEmptyEntries);
+
+        //    //        return string.Format(@"url(""{0}{1}"")",
+        //    //                             (match.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase)
+        //    //                             || match.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase)
+        //    //                             || match.StartsWith("//", StringComparison.InvariantCultureIgnoreCase)) ? match : new Uri(cssLocation, match).PathAndQuery,
+        //    //                             hashSplit.Length > 1 ? ("#" + hashSplit[1]) : "");
+        //    //    }
+        //    //    return m.Value;
+        //    //});
+
+        //    //return str;
+        //}
+
         /// <summary>
         /// Minifies Css
         /// </summary>
@@ -95,13 +222,24 @@ namespace ClientDependency.Core
         /// <returns></returns>
         public static string MinifyCss(string body)
         {
-            body = Regex.Replace(body, @"[\n\r]+\s*", string.Empty);
+            body = Regex.Replace(body, @"[\n\r]+\s*", " ");
             body = Regex.Replace(body, @"\s+", " ");
             body = Regex.Replace(body, @"\s?([:,;{}])\s?", "$1");
             body = Regex.Replace(body, @"([\s:]0)(px|pt|%|em)", "$1");
             body = Regex.Replace(body, @"/\*[\d\D]*?\*/", string.Empty);
             return body;
 
+        }
+
+        public static string MinifyCss(Stream stream)
+        {
+            var cssMinify = new CssMinifier();
+            if (!stream.CanRead) throw new InvalidOperationException("Cannot read input stream");
+            if (stream.CanSeek)
+            {
+                stream.Position = 0;
+            }
+            return cssMinify.Minify(new StreamReader(stream));
         }
     }
 }

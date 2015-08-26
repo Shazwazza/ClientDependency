@@ -591,6 +591,31 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         }
 
         /// <summary>
+        /// Minifies the file
+        /// </summary>
+        /// <param name="fileContents"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public virtual string MinifyFile(Stream fileContents, ClientDependencyType type)
+        {
+            Func<Stream, string> streamToString = stream =>
+            {
+                var reader = new StreamReader(stream);
+                return reader.ReadToEnd();
+            };
+
+            switch (type)
+            {
+                case ClientDependencyType.Css:
+                    return EnableCssMinify ? CssHelper.MinifyCss(fileContents) : streamToString(fileContents);
+                case ClientDependencyType.Javascript:
+                    return EnableJsMinify ? JSMin.CompressJS(fileContents) : streamToString(fileContents);
+                default:
+                    return streamToString(fileContents);
+            }
+        }
+
+        /// <summary>
         /// This ensures that all paths (i.e. images) in a CSS file have their paths change to absolute paths.
         /// </summary>
         /// <param name="fileContents"></param>

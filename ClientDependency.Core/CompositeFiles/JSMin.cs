@@ -52,6 +52,12 @@ namespace ClientDependency.Core.CompositeFiles
             return new JSMin().Minify(body);
         }
 
+        public static string CompressJS(Stream body)
+        {
+            throw new NotImplementedException();
+            //return new JSMin().Minify(body);
+        }
+
         public string Minify(string src)
         {
             StringBuilder sb = new StringBuilder();
