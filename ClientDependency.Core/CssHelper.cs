@@ -173,22 +173,26 @@ namespace ClientDependency.Core
         }
 
         /// <summary>
-        /// Minifies Css
+        /// Minifies Css from a string input
         /// </summary>
         /// <param name="body"></param>
         /// <returns></returns>
-        [Obsolete("Work with the Stream overloadds instead of raw string content")]
         public static string MinifyCss(string body)
         {
-            body = Regex.Replace(body, @"[\n\r]+\s*", " ");
-            body = Regex.Replace(body, @"\s+", " ");
-            body = Regex.Replace(body, @"\s?([:,;{}])\s?", "$1");
-            body = Regex.Replace(body, @"([\s:]0)(px|pt|%|em)", "$1");
-            body = Regex.Replace(body, @"/\*[\d\D]*?\*/", string.Empty);
-            return body;
-
+            using (var ms = new MemoryStream())
+            using (var writer = new StreamWriter(ms))
+            {
+                writer.Write(body);
+                writer.Flush();
+                return MinifyCss(ms);
+            }
         }
 
+        /// <summary>
+        /// Minifies CSS from a stream input
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
         public static string MinifyCss(Stream stream)
         {
             var cssMinify = new CssMinifier();

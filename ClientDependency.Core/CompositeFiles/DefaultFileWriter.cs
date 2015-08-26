@@ -40,7 +40,6 @@ namespace ClientDependency.Core.CompositeFiles
         /// <param name="type"></param>
         /// <param name="context"></param>
         /// <param name="originalUrl">The original Url that the content is related to</param>
-        [Obsolete("Work with the Stream overloadds instead of raw string content")]
         public static void WriteContentToStream(BaseCompositeFileProcessingProvider provider, StreamWriter sw, string content, ClientDependencyType type, HttpContextBase context, string originalUrl)
         {
             if (type == ClientDependencyType.Css)
@@ -69,6 +68,15 @@ namespace ClientDependency.Core.CompositeFiles
             }
         }
 
+        /// <summary>
+        /// Writes the input stream to the output stream and ensures the contents are minified if necessary
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <param name="sw"></param>
+        /// <param name="stream"></param>
+        /// <param name="type"></param>
+        /// <param name="context"></param>
+        /// <param name="originalUrl">The original Url that the content is related to</param>
         public static void WriteContentToStream(BaseCompositeFileProcessingProvider provider, StreamWriter sw, Stream stream, ClientDependencyType type, HttpContextBase context, string originalUrl)
         {
             if (type == ClientDependencyType.Css)

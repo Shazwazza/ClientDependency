@@ -577,7 +577,6 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         /// <param name="fileContents"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        [Obsolete("Work with the Stream overloadds instead of raw string content")]
         public virtual string MinifyFile(string fileContents, ClientDependencyType type)
         {
             switch (type)
