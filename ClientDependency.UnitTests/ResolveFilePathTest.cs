@@ -80,5 +80,30 @@ namespace ClientDependency.UnitTests
 
             Assert.AreEqual("/the/path/file.js", resolvedPath);
         }
+
+        [Test]
+        public void NonCanonicalRelativePath_IsCanonicalized()
+        {
+            var mockHttp = Mock.Of<HttpContextBase>();
+            Mock.Get(mockHttp).DefaultValue = DefaultValue.Mock;
+            Mock.Get(mockHttp.Request).Setup(r => r.AppRelativeCurrentExecutionFilePath).Returns("/the/path/page.aspx");
+
+            var file = new BasicFile(ClientDependencyType.Javascript) { FilePath = "../file.js", };
+
+            var resolvedPath = file.ResolveFilePath(mockHttp);
+
+            Assert.AreEqual("/the/file.js", resolvedPath);
+        }
+
+        [Test]
+        public void NonCanonicalAbsolutePath_IsCanonicalized()
+        {
+            var mockHttp = Mock.Of<HttpContextBase>();
+            var file = new BasicFile(ClientDependencyType.Javascript) { FilePath = "/website/folder/../js.js", };
+
+            var resolvedPath = file.ResolveFilePath(mockHttp);
+
+            Assert.AreEqual("/website/js.js", resolvedPath);
+        }
     }
 }
