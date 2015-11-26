@@ -13,7 +13,8 @@ $PSScriptFilePath = (Get-Item $MyInvocation.MyCommand.Path).FullName
 
 $SolutionRoot = Split-Path -Path $PSScriptFilePath -Parent
 
-$MSBuild = "${Env:ProgramFiles(x88)}\MSBuild\14.0\Bin\msbuild.exe"
+$ProgFiles86 = [Environment]::GetEnvironmentVariable("ProgramFiles(x86)");
+$MSBuild = "$ProgFiles86\MSBuild\14.0\Bin\MSBuild.exe"
 
 # Make sure we don't have a release folder for this version already
 $BuildFolder = Join-Path -Path $SolutionRoot -ChildPath "build";
