@@ -130,6 +130,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CssTransformTest.cs" />
     <Compile Include="RogueFileFilterTest.cs" />
+    <Compile Include="ResolveFilePathTest.cs" />
     <Compile Include="StringExtensionsTest.cs" />
     <Compile Include="TypeScriptTests.cs" />
   </ItemGroup>
