@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/qx991ywaat8r8a2r?svg=true)](https://ci.appveyor.com/project/Shandem/clientdependency)
+
 ![ClientDependency Framework](ClientDependencyLogo.png?raw=true)
 
 ## What is *ClientDependency Framework (CDF)* ?
