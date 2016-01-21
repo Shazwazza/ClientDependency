@@ -174,9 +174,12 @@ namespace ClientDependency.Core.CompositeFiles
                                                                " ,CompositeUrlType.MappedId requires that a map is found");
                             }
 
+                            var filePathArray = filePaths.ToArray();
+                            // sanity check/fix for file type
+                            type = ValidateTypeFromFileNames(context, type, filePathArray);
                             //combine files and get the definition types of them (internal vs external resources)
                             fileBytes = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider
-                                .CombineFiles(filePaths.ToArray(), context, type, out fileDefinitions);
+                                .CombineFiles(filePathArray, context, type, out fileDefinitions);
                         }
                         else
                         {
@@ -215,11 +218,40 @@ namespace ClientDependency.Core.CompositeFiles
 
             return outputBytes;
         }
+        
+        /// <summary>
+        /// Validate ClientDependencyType and return one which is derived from file extension of first file in bundle. We currently see bug in production where
+        /// js bundles are saved as cdC files and are improperly CSS-minifed due to this. Without this validation one can force wrong {type} via http request to /DependencyHandler.axd/{id}/{version}/{type}
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="type"></param>
+        /// <param name="filePaths"></param>
+        /// <returns></returns>
+        private ClientDependencyType ValidateTypeFromFileNames(HttpContextBase context,ClientDependencyType type, string[] filePaths)
+        {
+            if (filePaths.Length > 0)
+            {
+                // sanity check of file types, we see a bug when javascript bundles are saved as cdC bundles and are minified as CSS which breaks them completely
+                if (filePaths[0].EndsWith(".js", StringComparison.OrdinalIgnoreCase) && type == ClientDependencyType.Css)
+                {
+                    type = ClientDependencyType.Javascript;
+                    ClientDependencySettings.Instance.Logger.Error(string.Format("Mismatched ClientDependencyType, attempt to treat .js files bundle as css, forcing js type, Url={0}, UserAgent={1}", context.Request.Url, context.Request.UserAgent), null);
+                }
+                if (filePaths[0].EndsWith(".css", StringComparison.OrdinalIgnoreCase) && type == ClientDependencyType.Javascript)
+                {
+                    type = ClientDependencyType.Css;
+                    ClientDependencySettings.Instance.Logger.Error(string.Format("Mismatched ClientDependencyType, attempt to treat .css files bundle as js, forcing css type, Url={0}, UserAgent={1}", context.Request.Url, context.Request.UserAgent), null);
+                }
+            }
+            return type;
+        }
 
         private byte[] GetCombinedFiles(HttpContextBase context, string fileset, ClientDependencyType type, out List<CompositeFileDefinition> fDefs)
         {
             //get the file list
             string[] filePaths = fileset.DecodeFrom64Url().Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            // sanity check/fix for file type
+            type = ValidateTypeFromFileNames(context, type, filePaths);
             //combine files and get the definition types of them (internal vs external resources)
             return ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CombineFiles(filePaths, context, type, out fDefs);
         }
