@@ -46,7 +46,7 @@ namespace ClientDependency.Core.CompositeFiles
         int theLookahead = EOF;
         static int theX = EOF;
         static int theY = EOF;
-
+        
         [Obsolete("Use the overloads specifying a Stream instead")]
         public static string CompressJS(string body)
         {
@@ -154,7 +154,7 @@ namespace ClientDependency.Core.CompositeFiles
                                         action(isAlphanum(theA) ? 1 : 3);
                                         break;
                                 }
-                                break;
+                                break;                           
                             default:
                                 action(1);
                                 break;
@@ -185,10 +185,11 @@ namespace ClientDependency.Core.CompositeFiles
                         put(theY);
                     }
                     goto case 2;
-                case 2:
+                case 2:   
                     theA = theB;
                     if (theA == '\'' || theA == '"' || theA == '`')
                     {
+                        //This is a string literal...
                         for (;;)
                         {
                             put(theA);
@@ -197,6 +198,7 @@ namespace ClientDependency.Core.CompositeFiles
                             {
                                 break;
                             }
+                            //check for escaped chars
                             if (theA == '\\')
                             {
                                 put(theA);
@@ -211,65 +213,84 @@ namespace ClientDependency.Core.CompositeFiles
                     goto case 3;
                 case 3:
                     theB = next();
-                    if (theB == '/' && (
-                                           theA == '(' || theA == ',' || theA == '=' || theA == ':' ||
-                                           theA == '[' || theA == '!' || theA == '&' || theA == '|' ||
-                                           theA == '?' || theA == '+' || theA == '-' || theA == '~' ||
-                                           theA == '*' || theA == '/' || theA == '{' || theA == '\n'
-                                       ))
+
+                    //This is supposed to be testing for regex literals, however it doesn't actually work in many cases,
+                    // for example see this bug report: https://github.com/douglascrockford/JSMin/issues/11
+                    // or this: https://github.com/Shazwazza/ClientDependency/issues/73                    
+                    if (theB == '/')
                     {
-                        put(theA);
-                        if (theA == '/' || theA == '*')
+                        //This is the original logic from JSMin, but it doesn't cater for the above issue mentioned
+                        if (theA == '(' || theA == ',' || theA == '=' || theA == ':' ||
+                            theA == '[' || theA == '!' || theA == '&' || theA == '|' ||
+                            theA == '?' || theA == '+' || theA == '-' || theA == '~' ||
+                            theA == '*' || theA == '/' || theA == '{' || theA == '\n' ||
+                            //We've now added these additional characters and tests pass, the 'n' is specifically relating
+                            // to the term 'return', the space is there because a regex literal can always begin after a space
+                            theA == '+' || theA == 'n' || theA == ' ')
                         {
-                            put(' ');
-                        }
-                        put(theB);
-                        for (;;)
-                        {
-                            theA = get();
-                            if (theA == '[')
+                            put(theA);
+                            if (theA == '/' || theA == '*')
                             {
-                                for (;;)
+                                put(' ');
+                            }
+                            put(theB);
+                            for (;;)
+                            {
+                                theA = get();
+                                if (theA == '[')
                                 {
-                                    put(theA);
-                                    theA = get();
-                                    if (theA == ']')
-                                    {
-                                        break;
-                                    }
-                                    if (theA == '\\')
+                                    for (;;)
                                     {
                                         put(theA);
                                         theA = get();
-                                    }
-                                    if (theA == EOF)
-                                    {
-                                        throw new Exception(string.Format("Error: JSMIN Unterminated set in Regular Expression literal: {0}\n", theA));
+                                        if (theA == ']')
+                                        {
+                                            break;
+                                        }
+                                        if (theA == '\\')
+                                        {
+                                            put(theA);
+                                            theA = get();
+                                        }
+                                        if (theA == EOF)
+                                        {
+                                            throw new Exception(string.Format("Error: JSMIN Unterminated set in Regular Expression literal: {0}\n", theA));
+                                        }
                                     }
                                 }
-                            }
-                            else if (theA == '/')
-                            {
-                                switch (peek())
+                                else if (theA == '/')
                                 {
-                                    case '/':
-                                    case '*':
-                                        throw new Exception(string.Format("Error: JSMIN Unterminated set in Regular Expression literal: {0}\n", theA));
+                                    switch (peek())
+                                    {
+                                        case 'i':
+                                        case 'g':
+                                            //regex modifiers, do we care?
+                                            break;
+                                        case ' ':
+                                            //skip the space
+                                            put(theA);
+                                            get();
+                                            theA = get();
+                                            break;
+                                        case '/':
+                                        case '*':
+                                            throw new Exception(string.Format("Error: JSMIN Unterminated set in Regular Expression literal: {0}\n", theA));
+                                    }
+                                    break;
                                 }
-                                break;
-                            }
-                            else if (theA == '\\')
-                            {
+                                else if (theA == '\\')
+                                {
+                                    put(theA);
+                                    theA = get();
+                                }
+                                if (theA == EOF)
+                                {
+                                    throw new Exception(string.Format("Error: JSMIN Unterminated Regular Expression literal: {0}\n", theA));
+                                }
                                 put(theA);
-                                theA = get();
                             }
-                            if (theA == EOF)
-                            {
-                                throw new Exception(string.Format("Error: JSMIN Unterminated Regular Expression literal: {0}\n", theA));
-                            }
-                            put(theA);
+                            theB = next();
                         }
-                        theB = next();
                     }
                     goto default;
                 default:
@@ -376,6 +397,8 @@ namespace ClientDependency.Core.CompositeFiles
         void put(int c)
         {
             sw.Write((char)c);
+
+           
         }
         /* isAlphanum -- return true if the character is a letter, digit, underscore,
                 dollar sign, or non-ASCII character.
@@ -386,5 +409,6 @@ namespace ClientDependency.Core.CompositeFiles
                     (c >= 'A' && c <= 'Z') || c == '_' || c == '$' || c == '\\' ||
                     c > 126);
         }
+        
     }
 }

@@ -11,6 +11,44 @@ namespace ClientDependency.UnitTests
     public class JsMinifyTest
     {
         [Test]
+        public void JsMinify_Escaped_Quotes_In_String_Literal()
+        {
+            var script = "var asdf=\"Some string\\\'s with \\\"quotes\\\" in them\"";
+
+            var minifier = new JSMin();
+
+            //Act
+
+            var output = minifier.Minify(script);
+
+            Assert.AreEqual("\nvar asdf=\"Some string\\\'s with \\\"quotes\\\" in them\"", output);
+        }
+
+        [Test]
+        public void JsMinify_Handles_Regex()
+        {
+            var script1 = @"b.prototype._normalizeURL=function(a){return/^https?:\/\//.test(a)||(a=""http://""+a),a}";
+            var script2 = @"var ex = +  /w$/.test(resizing),
+    ey = +/^ n /.test(resizing); ";
+            var script3 = @"return /["",\n]/.test(text)
+      ? ""\"""" + text.replace(/\"" / g, ""\""\"""") + ""\""""
+      : text; ";
+
+            var minifier = new JSMin();
+
+            //Act
+
+            var output1 = minifier.Minify(script1);
+            Assert.AreEqual("\n" + script1, output1);
+
+            var output2 = minifier.Minify(script2);
+            Assert.AreEqual("\n" + @"var ex=+/w$/.test(resizing),ey=+/^ n /.test(resizing);", output2);
+
+            var output3 = minifier.Minify(script3);
+            Assert.AreEqual("\n" + @"return /["",\n]/.test(text)?""\""""+text.replace(/\"" /g,""\""\"""")+""\"""":text;", output3);
+        }
+
+        [Test]
         public void JsMinify_Minify()
         {
             //Arrange
