@@ -2,6 +2,14 @@
 using System.IO;
 using System.Text;
 
+/* Over the years i've fixed various bugs that have come along, I've written unit
+ * tests to show that they are solved... hopefully not causing more bugs along the
+ * way. I haven't seen any other C based implementations of this with these fixes,
+ * though there is a python implementation which is still actively developed...
+ * though looks a whole lot different.
+ * - Shannon Deminick
+ */
+
 /* Originally written in 'C', this code has been converted to the C# language.
  * The author's copyright message is reproduced below.
  * All modifications from the original to C# are placed in the public domain.
