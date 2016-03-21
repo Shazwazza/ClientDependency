@@ -13,3 +13,4 @@ packages/*
 ClientDependency.sln.DotSettings.user
 ClientDependency.Web.Test/Css/Inuit/*
 *.orig
+.ClientDependency.boltdata/*

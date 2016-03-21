@@ -21,7 +21,7 @@ namespace ClientDependency.UnitTests
 
             var output = minifier.Minify(script);
 
-            Assert.AreEqual("\nvar asdf=\"Some string\\\'s with \\\"quotes\\\" in them\"", output);
+            Assert.AreEqual("var asdf=\"Some string\\\'s with \\\"quotes\\\" in them\"", output);
         }
 
         [Test]
@@ -39,13 +39,13 @@ namespace ClientDependency.UnitTests
             //Act
 
             var output1 = minifier.Minify(script1);
-            Assert.AreEqual("\n" + script1, output1);
+            Assert.AreEqual("" + script1, output1);
 
             var output2 = minifier.Minify(script2);
-            Assert.AreEqual("\n" + @"var ex=+/w$/.test(resizing),ey=+/^ n /.test(resizing);", output2);
+            Assert.AreEqual("" + @"var ex=+/w$/.test(resizing),ey=+/^ n /.test(resizing);", output2);
 
             var output3 = minifier.Minify(script3);
-            Assert.AreEqual("\n" + @"return /["",\n]/.test(text)?""\""""+text.replace(/\"" /g,""\""\"""")+""\"""":text;", output3);
+            Assert.AreEqual("" + @"return /["",\n]/.test(text)?""\""""+text.replace(/\"" /g,""\""\"""")+""\"""":text;", output3);
         }
 
         [Test]
@@ -81,7 +81,7 @@ namespace ClientDependency.UnitTests
             var output = minifier.Minify(script);
 
             Assert.AreEqual(
-                "\nvar Messaging={GetMessage:function(callback){$.ajax({type:\"POST\",url:\"/Services/MessageService.asmx/HelloWorld\",data:\"{}\",contentType:\"application/json; charset=utf-8\",dataType:\"json\",success:function(msg){callback.apply(this,[msg.d]);}});}\nvar blah=1;blah++;blah=blah+2;var newBlah=++blah;newBlah+=234+4;};",
+                "var Messaging={GetMessage:function(callback){$.ajax({type:\"POST\",url:\"/Services/MessageService.asmx/HelloWorld\",data:\"{}\",contentType:\"application/json; charset=utf-8\",dataType:\"json\",success:function(msg){callback.apply(this,[msg.d]);}});}var blah=1;blah++;blah=blah+2;var newBlah=++blah;newBlah+=234+4;};",
                 output);
         }
 
@@ -107,7 +107,7 @@ alert(c.name);";
 
             //Assert
 
-            Assert.AreEqual("\nvar c={};var c.name=0;var i=1;c.name=i+ +new Date;alert(c.name);", output);
+            Assert.AreEqual("var c={};var c.name=0;var i=1;c.name=i+ +new Date;alert(c.name);", output);
         }
 
         [Test]
@@ -129,7 +129,7 @@ jQuery(this).append('<div>\
 
             //Assert
 
-            Assert.AreEqual("\nfunction Test(){jQuery(this).append('<div>\\\n\n  <div>\\\n\n   <a href=\"http://google.com\" /></a>\\\n\n  </div>\\\n\n </div>');}", output);
+            Assert.AreEqual("function Test(){jQuery(this).append('<div>  <div>   <a href=\"http://google.com\" /></a>  </div> </div>');}", output);
 
         }
 
@@ -140,7 +140,7 @@ jQuery(this).append('<div>\
 
             var minifier = new JSMin();
             var output = minifier.Minify(script);
-            Assert.AreEqual("\n$(\"#TenderListType\").val(1..toString());", output);
+            Assert.AreEqual("$(\"#TenderListType\").val(1..toString());", output);
         }
     }
 }
