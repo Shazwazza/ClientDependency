@@ -14,7 +14,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright © Shannon Deminick $copyrightyear$</copyright>
     <dependencies>
-      <dependency id="dotless" version="1.4" />
+      <dependency id="dotless" version="1.5" />
       <dependency id="ClientDependency" version="1.8" />
     </dependencies>
   </metadata>
