@@ -5,7 +5,7 @@ using dotless.Core.Input;
 namespace ClientDependency.Less
 {
     [SecurityCritical]
-    public sealed class CdfFileReader : dotless.Core.Input.IFileReader
+    public class CdfFileReader : dotless.Core.Input.IFileReader
     {
         public CdfFileReader()
         {
