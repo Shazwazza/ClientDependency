@@ -39,7 +39,7 @@ namespace ClientDependency.Core.CompositeFiles
         void IHttpHandler.ProcessRequest(HttpContext context)
         {
             var contextBase = new HttpContextWrapper(context);
-            
+
             ClientDependencyType type;
             string fileKey;
             int version = 0;
@@ -47,13 +47,13 @@ namespace ClientDependency.Core.CompositeFiles
             if (string.IsNullOrEmpty(context.Request.PathInfo))
             {
                 var decodedUrl = HttpUtility.HtmlDecode(context.Request.Url.OriginalString);
-                var query = decodedUrl.Split(new char[] {'?'});
+                var query = decodedUrl.Split(new char[] { '?' });
                 if (query.Length < 2)
                 {
                     throw new ArgumentException("No query string found in request");
                 }
                 var queryStrings = HttpUtility.ParseQueryString(query[1]);
-                
+
                 // querystring format
                 fileKey = queryStrings["s"];
                 if (!string.IsNullOrEmpty(queryStrings["cdv"]) && !Int32.TryParse(queryStrings["cdv"], out version))
@@ -135,10 +135,10 @@ namespace ClientDependency.Core.CompositeFiles
             //get the compression type supported
             var clientCompression = context.GetClientCompression();
 
-			var x1 = ClientDependencySettings.Instance;
-			if (x1 == null) throw new Exception("x1");
-			var x2 = x1.DefaultFileMapProvider;
-			if (x2 == null) throw new Exception("x2");
+            var x1 = ClientDependencySettings.Instance;
+            if (x1 == null) throw new Exception("x1");
+            var x2 = x1.DefaultFileMapProvider;
+            if (x2 == null) throw new Exception("x2");
 
             //get the map to the composite file for this file set, if it exists.
             var map = ClientDependencySettings.Instance.DefaultFileMapProvider.GetCompositeFile(fileset, version, clientCompression.ToString());
@@ -184,7 +184,7 @@ namespace ClientDependency.Core.CompositeFiles
                         else
                         {
                             //need to do the combining, etc... and save the file map                            
-                            fileBytes = GetCombinedFiles(context, fileset, type, out fileDefinitions);                           
+                            fileBytes = GetCombinedFiles(context, fileset, type, out fileDefinitions);
                         }
 
                         //compress data                        
@@ -212,13 +212,13 @@ namespace ClientDependency.Core.CompositeFiles
                     }
                 }
             }
-            
+
             //set our caching params 
             SetCaching(context, compositeFileName, fileset, clientCompression, page);
 
             return outputBytes;
         }
-        
+
         /// <summary>
         /// Validate ClientDependencyType and return one which is derived from file extension of first file in bundle. We currently see bug in production where
         /// js bundles are saved as cdC files and are improperly CSS-minifed due to this. Without this validation one can force wrong {type} via http request to /DependencyHandler.axd/{id}/{version}/{type}
@@ -227,7 +227,7 @@ namespace ClientDependency.Core.CompositeFiles
         /// <param name="type"></param>
         /// <param name="filePaths"></param>
         /// <returns></returns>
-        private ClientDependencyType ValidateTypeFromFileNames(HttpContextBase context,ClientDependencyType type, string[] filePaths)
+        private ClientDependencyType ValidateTypeFromFileNames(HttpContextBase context, ClientDependencyType type, string[] filePaths)
         {
             if (filePaths.Length > 0)
             {
@@ -282,9 +282,9 @@ namespace ClientDependency.Core.CompositeFiles
             // just add params for querystring format, just in case...
             context.SetClientCachingResponse(
                 //the e-tag to use
-                (fileset + compressionType.ToString()).GenerateHash(), 
+                (fileset + compressionType.ToString()).GenerateHash(),
                 //10 days
-                10, 
+                10,
                 //vary-by params
                 new[] { "t", "s", "cdv" });
 
