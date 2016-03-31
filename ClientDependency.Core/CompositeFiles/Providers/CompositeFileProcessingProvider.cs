@@ -68,15 +68,41 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 	    /// <returns></returns>
 	    public override byte[] CombineFiles(string[] filePaths, HttpContextBase context, ClientDependencyType type, out List<CompositeFileDefinition> fileDefs)
 		{
-	        var ms = new MemoryStream(5000);            
+	        var ms = new MemoryStream(5000);
             var sw = new StreamWriter(ms, Encoding.UTF8);
+			var externalImports = new List<string>();
 
-	        var fDefs = filePaths.Select(s => WritePathToStream(type, s, context, sw)).Where(def => def != null).ToList();
+	        var fDefs = filePaths.Select(s => WritePathToStream(type, s, context, sw, externalImports)).Where(def => def != null).ToList();
 
 	        sw.Flush();
 			byte[] outputBytes = ms.ToArray();
 			sw.Close();
 			ms.Close();
+
+			if (externalImports.Count > 0)
+			{
+				var eMs = new MemoryStream();
+				var eSw = new StreamWriter(eMs, Encoding.UTF8);
+
+				foreach (var externalImport in externalImports)
+				{
+					eSw.WriteLine(String.Format("@import url(\"{0}\");", externalImport)); //TODO minify output (no new lines) if CSS minification is enabled
+				}
+
+				eSw.Write(Environment.NewLine);
+
+				eSw.Flush();
+				byte[] externalImportsBytes = eMs.ToArray();
+				eSw.Close();
+				eMs.Close();
+
+				byte[] combined = new byte[externalImportsBytes.Length + outputBytes.Length];
+				Buffer.BlockCopy(externalImportsBytes, 0, combined, 0, externalImportsBytes.Length);
+				Buffer.BlockCopy(outputBytes, 0, combined, externalImportsBytes.Length, outputBytes.Length);
+
+				outputBytes = combined;
+			}
+
 			fileDefs = fDefs;
 			return outputBytes;
 		}
@@ -102,7 +128,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         [EditorBrowsable(EditorBrowsableState.Never)]
 	    protected virtual void WriteFileToStream(ref StreamWriter sw, string url, ClientDependencyType type, ref List<CompositeFileDefinition> fileDefs, HttpContextBase http)
 	    {
-	        var def = WriteFileToStream(sw, url, type, http);
+	        var def = WriteFileToStream(sw, url, type, http, new List<string>());
             if (def != null)
             {
                 fileDefs.Add(def);
@@ -122,7 +148,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         [EditorBrowsable(EditorBrowsableState.Never)]
         protected virtual void WriteFileToStream(ref StreamWriter sw, FileInfo fi, ClientDependencyType type, string origUrl, ref List<CompositeFileDefinition> fileDefs, HttpContextBase http)
         {
-            var def = WriteFileToStream(sw, fi, type, origUrl, http);
+            var def = WriteFileToStream(sw, fi, type, origUrl, http, new List<string>());
             if (def != null)
             {
                 fileDefs.Add(def);

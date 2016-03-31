@@ -9,6 +9,7 @@ using ClientDependency.Core.Config;
 using SassAndCoffee.Core;
 using SassAndCoffee.JavaScript;
 using SassAndCoffee.JavaScript.CoffeeScript;
+using System.Collections.Generic;
 
 namespace ClientDependency.Coffee
 {
@@ -17,7 +18,7 @@ namespace ClientDependency.Coffee
     /// </summary>
     public sealed class CoffeeWriter : IFileWriter
     {
-        public bool WriteToStream(BaseCompositeFileProcessingProvider provider, StreamWriter sw, FileInfo fi, ClientDependencyType type, string origUrl, HttpContextBase http)
+        public bool WriteToStream(BaseCompositeFileProcessingProvider provider, StreamWriter sw, FileInfo fi, ClientDependencyType type, string origUrl, HttpContextBase http, List<string> externalCssImports)
         {
             try
             {

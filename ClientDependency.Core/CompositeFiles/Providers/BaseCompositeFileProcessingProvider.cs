@@ -131,8 +131,9 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         /// <param name="path">The path could be a local url or an absolute url</param>
         /// <param name="context"></param>
         /// <param name="sw"></param>
+        /// <param name="externalImports">If writing CSS, this object will contain every external import call that was extracted from the content</param>
         /// <returns>If successful returns a CompositeFileDefinition, otherwise returns null</returns>
-        public CompositeFileDefinition WritePathToStream(ClientDependencyType type, string path, HttpContextBase context, StreamWriter sw)
+        public CompositeFileDefinition WritePathToStream(ClientDependencyType type, string path, HttpContextBase context, StreamWriter sw, List<string> externalImports)
         {
             CompositeFileDefinition def = null;
             if (!string.IsNullOrEmpty(path))
@@ -161,19 +162,19 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                             else
                             {
                                 var fi = new FileInfo(context.Server.MapPath(path));
-                                WriteFileToStream(sw, fi, type, path, context);
+                                WriteFileToStream(sw, fi, type, path, context, externalImports);
                             }                            
                         }
                         else
                         {
                             //external request
-                            def = WriteFileToStream(sw, path, type, context);
+                            def = WriteFileToStream(sw, path, type, context, externalImports);
                         }
                     }
                     else
                     {
                         //if it's not a file based dependency, try to get the request output.
-                        def = WriteFileToStream(sw, path, type, context);
+                        def = WriteFileToStream(sw, path, type, context, externalImports);
                     }
                 }
                 catch (Exception ex)
@@ -195,7 +196,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                             {
                                 try
                                 {
-                                    WriteFileToStream(sw, fi, type, path, context); //internal request
+                                    WriteFileToStream(sw, fi, type, path, context, externalImports); //internal request
                                 }
                                 catch (Exception ex1)
                                 {
@@ -204,7 +205,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                             }
                         }
 
-                        def = WriteFileToStream(sw, path, type, context);
+                        def = WriteFileToStream(sw, path, type, context, externalImports);
                     }
                     else
                     {
@@ -229,7 +230,8 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         /// <param name="url"></param>
         /// <param name="type"></param>
         /// <param name="http"></param>
-        protected virtual CompositeFileDefinition WriteFileToStream(StreamWriter sw, string url, ClientDependencyType type, HttpContextBase http)
+        /// <param name="externalImports"></param>
+        protected virtual CompositeFileDefinition WriteFileToStream(StreamWriter sw, string url, ClientDependencyType type, HttpContextBase http, List<string> externalImports)
         {
             string requestOutput;
             Uri resultUri;
@@ -237,7 +239,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             if (!rVal) return null;
 
             //write the contents of the external request.
-            DefaultFileWriter.WriteContentToStream(this, sw, requestOutput, type, http, url);
+            DefaultFileWriter.WriteContentToStream(this, sw, requestOutput, type, http, url, externalImports);
             return new CompositeFileDefinition(url, false);
         }
 
@@ -249,7 +251,8 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         /// <param name="type"></param>
         /// <param name="origUrl"></param>
         /// <param name="http"></param>
-        protected virtual CompositeFileDefinition WriteFileToStream(StreamWriter sw, FileInfo fi, ClientDependencyType type, string origUrl, HttpContextBase http)
+        /// <param name="externalImports">If writing CSS, this object will contain every external import call that was extracted from the content</param>
+        protected virtual CompositeFileDefinition WriteFileToStream(StreamWriter sw, FileInfo fi, ClientDependencyType type, string origUrl, HttpContextBase http, List<string> externalImports)
         {
             //get a writer for the file, first check if there's a specific file writer
             //then check for an extension writer.
@@ -259,7 +262,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                 writer = FileWriters.GetWriterForExtension(fi.Extension);
                 if (writer == null) return null;
             }
-            return writer.WriteToStream(this, sw, fi, type, origUrl, http)
+            return writer.WriteToStream(this, sw, fi, type, origUrl, http, externalImports)
                 ? new CompositeFileDefinition(origUrl, true)
                 : null;
         }

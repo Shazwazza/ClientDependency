@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Web;
 using ClientDependency.Core.CompositeFiles.Providers;
+using System.Collections.Generic;
 
 namespace ClientDependency.Core.CompositeFiles
 {
@@ -18,7 +19,8 @@ namespace ClientDependency.Core.CompositeFiles
         /// <param name="type"></param>
         /// <param name="origUrl"></param>
         /// <param name="http"></param>
+        /// <param name="externalCssImports"></param>
         /// <returns></returns>
-        bool WriteToStream(BaseCompositeFileProcessingProvider provider, StreamWriter sw, FileInfo fi, ClientDependencyType type, string origUrl, HttpContextBase http);
+        bool WriteToStream(BaseCompositeFileProcessingProvider provider, StreamWriter sw, FileInfo fi, ClientDependencyType type, string origUrl, HttpContextBase http, List<string> externalCssImports);
     }
 }

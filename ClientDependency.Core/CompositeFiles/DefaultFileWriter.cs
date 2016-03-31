@@ -13,15 +13,13 @@ namespace ClientDependency.Core.CompositeFiles
     /// </summary>
     public class DefaultFileWriter : IFileWriter
     {
-        public bool WriteToStream(BaseCompositeFileProcessingProvider provider, StreamWriter sw, FileInfo fi, ClientDependencyType type, string origUrl, HttpContextBase http)
+        public bool WriteToStream(BaseCompositeFileProcessingProvider provider, StreamWriter sw, FileInfo fi, ClientDependencyType type, string origUrl, HttpContextBase http, List<string> externalCssImports)
         {
             try
             {
                 //if it is a file based dependency then read it
-                using (var fileStream = fi.OpenRead())
-                {
-                    WriteContentToStream(provider, sw, fileStream, type, http, origUrl);
-                }
+                var fileContents = File.ReadAllText(fi.FullName, Encoding.UTF8); //read as utf 8
+                WriteContentToStream(provider, sw, fileContents, type, http, origUrl, externalCssImports);
                 return true;
             }
             catch (Exception ex)
@@ -41,11 +39,35 @@ namespace ClientDependency.Core.CompositeFiles
         /// <param name="context"></param>
         /// <param name="originalUrl">The original Url that the content is related to</param>
         public static void WriteContentToStream(BaseCompositeFileProcessingProvider provider, StreamWriter sw, string content, ClientDependencyType type, HttpContextBase context, string originalUrl)
+		{
+			WriteContentToStream(provider, sw, content, type, context, originalUrl, new List<string>());
+		}
+
+        /// <summary>
+        /// Writes the actual contents of a file or request result to the stream and ensures the contents are minified if necessary
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <param name="sw"></param>
+        /// <param name="content"></param>
+        /// <param name="type"></param>
+        /// <param name="context"></param>
+        /// <param name="originalUrl">The original Url that the content is related to</param>
+        /// <param name="externalCssImports">If writing CSS, this object will contain every external import call that was extracted from the CSS</param>
+        public static void WriteContentToStream(BaseCompositeFileProcessingProvider provider, StreamWriter sw, string content, ClientDependencyType type, HttpContextBase context, string originalUrl, List<string> externalCssImports)
         {
             if (type == ClientDependencyType.Css)
             {
                 IEnumerable<string> importedPaths;
-                var removedImports = CssHelper.ParseImportStatements(content, out importedPaths);
+                IEnumerable<string> newExternalImports;
+                var removedImports = CssHelper.ParseImportStatements(content, out importedPaths, out newExternalImports);
+
+                foreach (var externalImport in newExternalImports)
+                {
+					if (externalCssImports.Contains(externalImport))
+						continue;
+
+					externalCssImports.Add(externalImport);
+                }
 
                 //need to write the imported sheets first since these theoretically should *always* be at the top for browser to support them
                 foreach (var importPath in importedPaths)
@@ -53,7 +75,17 @@ namespace ClientDependency.Core.CompositeFiles
                     var uri = new Uri(originalUrl, UriKind.RelativeOrAbsolute)
                         .MakeAbsoluteUri(context);
                     var absolute = uri.ToAbsolutePath(importPath);
-                    provider.WritePathToStream(ClientDependencyType.Css, absolute, context, sw);
+					var additionalExternalImports = new List<string>();
+
+                    provider.WritePathToStream(ClientDependencyType.Css, absolute, context, sw, additionalExternalImports);
+
+					foreach (var externalImport in additionalExternalImports)
+					{
+						if (externalCssImports.Contains(externalImport))
+							continue;
+
+						externalCssImports.Add(externalImport);
+					}
                 }
 
                 //ensure the Urls in the css are changed to absolute
@@ -65,49 +97,6 @@ namespace ClientDependency.Core.CompositeFiles
             else
             {
                 sw.WriteLine(provider.MinifyFile(content, type));
-            }
-        }
-
-        /// <summary>
-        /// Writes the input stream to the output stream and ensures the contents are minified if necessary
-        /// </summary>
-        /// <param name="provider"></param>
-        /// <param name="sw"></param>
-        /// <param name="stream"></param>
-        /// <param name="type"></param>
-        /// <param name="context"></param>
-        /// <param name="originalUrl">The original Url that the content is related to</param>
-        public static void WriteContentToStream(BaseCompositeFileProcessingProvider provider, StreamWriter sw, Stream stream, ClientDependencyType type, HttpContextBase context, string originalUrl)
-        {
-            if (type == ClientDependencyType.Css)
-            {
-                IEnumerable<string> importedPaths;
-                string externalImports;
-                CssHelper.ParseImportStatements(stream, out importedPaths, out externalImports);
-
-                //we can write the external imports found at the top
-                sw.WriteLine(externalImports);
-
-                //need to write the imported sheets first since these theoretically should *always* be at the top for browser to support them
-                foreach (var importPath in importedPaths)
-                {
-                    var uri = new Uri(originalUrl, UriKind.RelativeOrAbsolute)
-                        .MakeAbsoluteUri(context);
-                    var absolute = uri.ToAbsolutePath(importPath);
-                    provider.WritePathToStream(ClientDependencyType.Css, absolute, context, sw);
-                }
-                
-                var minified = provider.MinifyFile(stream, type);
-
-                //ensure the Urls in the css are changed to absolute
-                var parsedUrls = CssHelper.ReplaceUrlsWithAbsolutePaths(minified, originalUrl, context);
-
-                //then we write the css with the removed import statements
-                sw.WriteLine(parsedUrls);
-            }
-            else
-            {
-                sw.WriteLine(provider.MinifyFile(stream, type));
             }
         }
     }

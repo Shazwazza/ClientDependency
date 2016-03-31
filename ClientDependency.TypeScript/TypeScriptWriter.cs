@@ -9,12 +9,13 @@ using ClientDependency.Core.CompositeFiles.Providers;
 using ClientDependency.Core.Config;
 using SassAndCoffee.Core;
 using SassAndCoffee.JavaScript;
+using System.Collections.Generic;
 
 namespace ClientDependency.TypeScript
 {
     public sealed class TypeScriptWriter : IFileWriter
     {
-        public bool WriteToStream(BaseCompositeFileProcessingProvider provider, StreamWriter sw, FileInfo fi, ClientDependencyType type, string origUrl, HttpContextBase http)
+        public bool WriteToStream(BaseCompositeFileProcessingProvider provider, StreamWriter sw, FileInfo fi, ClientDependencyType type, string origUrl, HttpContextBase http, List<string> externalCssImports)
         {
             //if it is a file based dependency then read it				
             var fileContents = File.ReadAllText(fi.FullName, Encoding.UTF8); //read as utf 8

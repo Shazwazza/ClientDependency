@@ -21,114 +21,52 @@ namespace ClientDependency.Core
         /// <returns></returns>
         public static string ParseImportStatements(string content, out IEnumerable<string> importedPaths)
         {
+            IEnumerable<string> externalImports;
+            return ParseImportStatements(content, out importedPaths, out externalImports);
+        }
+
+        /// <summary>
+        /// Returns the paths for the import statements and the resultant original css without the import statements
+        /// </summary>
+        /// <param name="content">The original css contents</param>
+        /// <param name="importedPaths"></param>
+        /// <param name="externalImports">Will contain every external CSS import call that was extracted from the content</param>
+        /// <returns></returns>
+        public static string ParseImportStatements(string content, out IEnumerable<string> importedPaths, out IEnumerable<string> externalImports)
+        {
             var pathsFound = new List<string>();
+            var externalImportsFound = new List<string>();
             var matches = ImportCssRegex.Matches(content);
             foreach (Match match in matches)
             {
-                //Ignore external imports
                 var urlMatch = CssUrlRegex.Match(match.Value);
+                bool isExternal = false;
                 if (urlMatch.Success && urlMatch.Groups.Count >= 2)
                 {
-                    var path = urlMatch.Groups[1].Value.Trim('\'', '"'); 
+                    var path = urlMatch.Groups[1].Value.Trim('\'', '"');
                     if ((path.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase)
                          || path.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase)
                          || path.StartsWith("//", StringComparison.InvariantCultureIgnoreCase)))
                     {
-                        continue;
+                        externalImportsFound.Add(path);
+                        isExternal = true;
                     }
                 }
 
                 //Strip the import statement                
                 content = content.ReplaceFirst(match.Value, "");
 
+                if (isExternal)
+                    continue;
+
                 //write import css content
                 var filePath = match.Groups[1].Value.Trim('\'', '"');
                 pathsFound.Add(filePath);
             }
-           
+
             importedPaths = pathsFound;
+            externalImports = externalImportsFound;
             return content.Trim();
-        }
-
-        /// <summary>
-        /// Searches from the beginning of the stream to detect @import statements. Any relative @import statement found will be 
-        /// added to the importedPaths collection, any absolute/external @import statement will be appended to the externalImportedPaths
-        /// which will need to be pre-fixed to the resulting css file after processing.        
-        /// </summary>
-        /// <param name="stream">The css stream</param>
-        /// <param name="importedPaths"></param>
-        /// <param name="externalImportedPaths">
-        /// The absolute/external @import statement that will need to be prefixed to the resultant css
-        /// </param>
-        /// <returns>
-        /// The Streams position starting at the first char after all @import statements
-        /// </returns>
-        /// <remarks>
-        /// The Stream's position will be at the position returned from this method
-        /// </remarks>
-        public static long ParseImportStatements(Stream stream, out IEnumerable<string> importedPaths, out string externalImportedPaths)
-        {
-            if (!stream.CanRead) throw new InvalidOperationException("Cannot read Stream object");
-
-            //read the content until we know we are no longer on an import statement
-            if (stream.CanSeek)
-            {
-                stream.Position = 0;
-            }
-
-            const string searchStatement = "@import ";
-            var imports = new StringBuilder();
-
-            //new reader (but don't dispose since we don't want to dispose the stream)
-            TextReader reader = new StreamReader(stream);
-            var exit = false;
-            var currIndex = -1;
-            
-            while (exit == false)
-            {
-                var next = reader.Read();
-                if (next == -1) exit = true;
-                var c = (char) next;
-
-                //still searching for the '@import' block at the top
-                if (currIndex == -1 && char.IsWhiteSpace(c))
-                {
-                    //maintain whitespace with the output
-                    imports.Append(c);
-                }
-                else if (currIndex == -2)
-                {
-                    //we've found the searchStatement, keep processing until we hit the end
-
-                    imports.Append(c);
-
-                    if (c == ';')
-                    {
-                        //we're at the end, reset the index so that it looks for the searchStatement again
-                        currIndex = -1;
-                    }
-                }
-                else if (searchStatement[currIndex + 1] == c)
-                {
-                    //we've found the next char in the search statement
-                    imports.Append(c);
-                    currIndex++;
-                    if (currIndex == (searchStatement.Length - 1))
-                    {
-                        //we've found the whole statement, set the flag that we are processing
-                        currIndex = -2;
-                    }
-                }
-                else
-                {
-                    //time to quit
-                    exit = true;
-                }
-            }
-
-            externalImportedPaths = ParseImportStatements(imports.ToString(), out importedPaths);
-
-            return stream.Position;
         }
 
         /// <summary>
