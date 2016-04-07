@@ -7,6 +7,7 @@ using System.Text;
  * way. I haven't seen any other C based implementations of this with these fixes,
  * though there is a python implementation which is still actively developed...
  * though looks a whole lot different.
+ * Much of this has now been refactored, slightly more readable but still just as crazy.
  * - Shannon Deminick
  */
 
@@ -85,6 +86,7 @@ namespace ClientDependency.Core.CompositeFiles
         private int _theX = Eof;
         private int _theY = Eof;
         private int _retStatement = -1;
+        private bool _start = false;
 
         public string Minify(TextReader reader)
         {
@@ -105,6 +107,8 @@ namespace ClientDependency.Core.CompositeFiles
         /// </summary>
         private void ExecuteJsMin()
         {
+            _start = false;
+
             if (Peek() == 0xEF)
             {
                 Get();
@@ -123,29 +127,47 @@ namespace ClientDependency.Core.CompositeFiles
                     case '\n':
                     case '\u2028':
                     case '\u2029':
-                        Action(2);
 
-                        //TODO: I don't understand why this was here, no need to keep 
-                        // new lines, we'll see when adding more tests
+                        switch (_theB)
+                        {
+                            //TODO: This was in the original logic, not sure why
+                            //case '{':
+                            //case '[':
+                            //case '(':
+                            //case '+':
+                            //case '-':
+                            //case '!':
+                            //case '~':                                
+                            //    Action(1);
+                            //    break;
+                            case ' ':
+                            case '\n':
+                            case '\u2028':
+                            case '\u2029':
+                                //new line -> read next
+                                Action(2);
+                                break;
+                            default:
+                                if (!_start)
+                                {
+                                    //this is the first write, we don't want to write a new line to begin,
+                                    // read next
+                                    Action(2);
+                                    break;
+                                }
 
-                        //switch (_theB)
-                        //{
-                        //    case '{':
-                        //    case '[':
-                        //    case '(':
-                        //    case '+':
-                        //    case '-':
-                        //    case '!':
-                        //    case '~':
-                        //        Action(1);
-                        //        break;                            
-                        //    case ' ':                                     
-                        //        Action(3);
-                        //        break;
-                        //    default:
-                        //        Action(isAlphanum(_theB) ? 1 : 2);
-                        //        break;
-                        //}
+                                var alpha = IsAlphanum(_theB);
+
+                                if (alpha)
+                                {
+                                    _theA = ' '; //convert to space instead of line feed
+                                    Action(1);
+                                }
+                                else
+                                    Action(2);
+
+                                break;
+                        }
                         break;
                     default:
                         switch (_theB)
@@ -196,6 +218,7 @@ namespace ClientDependency.Core.CompositeFiles
             {
                 case 1:
                     Put(_theA);
+                    _start = true;
 
                     //process unary operator
                     var handled1 = HandleUnaryOperator();
@@ -267,19 +290,18 @@ namespace ClientDependency.Core.CompositeFiles
         }
 
         /// <summary>
-        /// write the end and skip all whitespace
+        /// If it's an end of statement char read over whitespace
         /// </summary>
         private bool HandleEndOfStatement()
         {
             if (_theA != '}') return false;
 
-            //write the } and move next
-            Put(_theA);
-            do
+            var peek = Peek();
+            while (peek != Eof && char.IsWhiteSpace((char)peek))
             {
-                _theA = Get();
-            } while (char.IsWhiteSpace((char)_theA));
-
+                Get();
+                peek = Peek();
+            }
             return true;
         }
 
@@ -413,6 +435,7 @@ namespace ClientDependency.Core.CompositeFiles
         private bool HandleRegexLiteral()
         {
             if (_theB != '/') return false;
+            //if (_theA == '/') return false;
 
             //The original testing for regex literals didn't actually work in many cases,
             // for example see these bug reports: 
