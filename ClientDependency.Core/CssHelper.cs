@@ -77,7 +77,9 @@ namespace ClientDependency.Core
             }
 
             const string searchStatement = "@import ";
+
             var imports = new StringBuilder();
+            var tempImports = new StringBuilder();
 
             //new reader (but don't dispose since we don't want to dispose the stream)
             TextReader reader = new StreamReader(stream);
@@ -94,24 +96,27 @@ namespace ClientDependency.Core
                 if (currIndex == -1 && char.IsWhiteSpace(c))
                 {
                     //maintain whitespace with the output
-                    imports.Append(c);
+                    tempImports.Append(c);
                 }
                 else if (currIndex == -2)
                 {
                     //we've found the searchStatement, keep processing until we hit the end
 
-                    imports.Append(c);
+                    tempImports.Append(c);
 
                     if (c == ';')
                     {
                         //we're at the end, reset the index so that it looks for the searchStatement again
                         currIndex = -1;
+                        //write to the main imports and reset the temp one
+                        imports.Append(tempImports);
+                        tempImports = new StringBuilder();
                     }
                 }
                 else if (searchStatement[currIndex + 1] == c)
                 {
                     //we've found the next char in the search statement
-                    imports.Append(c);
+                    tempImports.Append(c);
                     currIndex++;
                     if (currIndex == (searchStatement.Length - 1))
                     {

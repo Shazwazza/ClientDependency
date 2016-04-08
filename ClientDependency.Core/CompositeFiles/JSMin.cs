@@ -127,25 +127,27 @@ namespace ClientDependency.Core.CompositeFiles
                     case '\n':
                     case '\u2028':
                     case '\u2029':
-
                         switch (_theB)
                         {
-                            //TODO: This was in the original logic, not sure why
-                            //case '{':
-                            //case '[':
-                            //case '(':
-                            //case '+':
-                            //case '-':
-                            //case '!':
-                            //case '~':                                
-                            //    Action(1);
-                            //    break;
+                            case '{':
+                            case '[':
+                            case '(':
+                            case '+':
+                            case '-':
+                            case '!':
+                            case '~':
+                                if (!_start)
+                                {
+                                    //this is the first write, we don't want to write a new line to begin,
+                                    // read next
+                                    Action(2);
+                                    break;
+                                }
+                                //Maintain the line break
+                                Action(1);
+                                break;
                             case ' ':
-                            case '\n':
-                            case '\u2028':
-                            case '\u2029':
-                                //new line -> read next
-                                Action(2);
+                                Action(3);
                                 break;
                             default:
                                 if (!_start)
@@ -155,17 +157,7 @@ namespace ClientDependency.Core.CompositeFiles
                                     Action(2);
                                     break;
                                 }
-
-                                var alpha = IsAlphanum(_theB);
-
-                                if (alpha)
-                                {
-                                    _theA = ' '; //convert to space instead of line feed
-                                    Action(1);
-                                }
-                                else
-                                    Action(2);
-
+                                Action(IsAlphanum(_theB) ? 1 : 2);
                                 break;
                         }
                         break;
@@ -290,14 +282,18 @@ namespace ClientDependency.Core.CompositeFiles
         }
 
         /// <summary>
-        /// If it's an end of statement char read over whitespace
+        /// If it's an end of statement char read over whitespace but not new lines
         /// </summary>
         private bool HandleEndOfStatement()
         {
             if (_theA != '}') return false;
 
             var peek = Peek();
-            while (peek != Eof && char.IsWhiteSpace((char)peek))
+            //NOTE: We don't skip over a new line, this is becase in some cases 
+            // library managers don't put a semicolon after a } when they have defined a variable as a method,
+            // in this case when minifying it might break because the next declaration won't be valid unless
+            // there's a semicolon or a line break, so we'll leave line breaks.            
+            while (peek != Eof && peek != '\n' && char.IsWhiteSpace((char)peek))
             {
                 Get();
                 peek = Peek();

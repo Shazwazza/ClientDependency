@@ -60,11 +60,11 @@ namespace ClientDependency.Core.CompositeFiles
                 var parsedUrls = CssHelper.ReplaceUrlsWithAbsolutePaths(removedImports, originalUrl, context);
 
                 //then we write the css with the removed import statements
-                sw.WriteLine(provider.MinifyFile(parsedUrls, ClientDependencyType.Css));
+                sw.Write(provider.MinifyFile(parsedUrls, ClientDependencyType.Css));
             }
             else
             {
-                sw.WriteLine(provider.MinifyFile(content, type));
+                sw.Write(provider.MinifyFile(content, type));
             }
         }
 
@@ -86,7 +86,7 @@ namespace ClientDependency.Core.CompositeFiles
                 CssHelper.ParseImportStatements(stream, out importedPaths, out externalImports);
 
                 //we can write the external imports found at the top
-                sw.WriteLine(externalImports);
+                sw.Write(externalImports);
 
                 //need to write the imported sheets first since these theoretically should *always* be at the top for browser to support them
                 foreach (var importPath in importedPaths)
@@ -103,11 +103,11 @@ namespace ClientDependency.Core.CompositeFiles
                 var parsedUrls = CssHelper.ReplaceUrlsWithAbsolutePaths(minified, originalUrl, context);
 
                 //then we write the css with the removed import statements
-                sw.WriteLine(parsedUrls);
+                sw.Write(parsedUrls);
             }
             else
             {
-                sw.WriteLine(provider.MinifyFile(stream, type));
+                sw.Write(provider.MinifyFile(stream, type));
             }
         }
     }

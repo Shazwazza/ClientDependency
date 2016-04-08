@@ -10,6 +10,34 @@ namespace ClientDependency.UnitTests
     public class CssImportStatementsTest
     {
         [Test]
+        public void Ensure_Non_Temp_Search_Strings_Are_Resolved_From_Stream()
+        {
+            var css = @"@font-face{
+font-family:'Open Sans';
+font-style:normal;
+font-weight:400;
+src:url('../fonts/opensans/OpenSans-Regular-webfont.eot');
+src:local('Open Sans'),
+	local('OpenSans'),
+	url('../fonts/opensans/OpenSans-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+	url('../fonts/opensans/OpenSans-Regular-webfont.ttf') format('truetype'),
+	url('../fonts/opensans/OpenSans-Regular-webfont.svg#open_sansregular') format('svg')}";
+
+            using (var ms = new MemoryStream())
+            using (var writer = new StreamWriter(ms))
+            {
+                writer.Write(css);
+                writer.Flush();
+
+                string externalImports;
+                IEnumerable<string> importPaths;
+                CssHelper.ParseImportStatements(ms, out importPaths, out externalImports);
+                
+                Assert.AreEqual("", externalImports);
+            }            
+        }
+
+        [Test]
         public void Retain_External_Imports()
         {
             var cssWithImport = @"@import url(""//fonts.googleapis.com/css?subset=latin,cyrillic-ext,latin-ext,cyrillic&family=Open+Sans+Condensed:300|Open+Sans:400,600,400italic,600italic|Merriweather:400,300,300italic,400italic,700,700italic|Roboto+Slab:400,300"");
