@@ -38,6 +38,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             UrlType = UrlTypeDefault;
             PathBasedUrlFormat = "{dependencyId}/{version}/{type}";
             CompositeFilePathAsString = DefaultDependencyPath;
+            BundleDomains = new List<string>();
         }
 
         #region Public Properties
