@@ -46,6 +46,17 @@ namespace ClientDependency.Core.CompositeFiles
 {
     public class JSMin
     {
+        private const int Eof = -1;
+        private TextReader _sr;
+        private TextWriter _sw;
+        private int _theA;
+        private int _theB;
+        private int _theLookahead = Eof;
+        private int _theX = Eof;
+        private int _theY = Eof;
+        private int _retStatement = -1;
+        private bool _start = false;
+
         [Obsolete("Use the overloads specifying a Stream instead")]
         public static string CompressJS(string body)
         {
@@ -76,17 +87,6 @@ namespace ClientDependency.Core.CompositeFiles
             }
             return sb.ToString();
         }
-
-        private const int Eof = -1;
-        private TextReader _sr;
-        private TextWriter _sw;
-        private int _theA;
-        private int _theB;
-        private int _theLookahead = Eof;
-        private int _theX = Eof;
-        private int _theY = Eof;
-        private int _retStatement = -1;
-        private bool _start = false;
 
         public string Minify(TextReader reader)
         {
@@ -213,21 +213,22 @@ namespace ClientDependency.Core.CompositeFiles
                     _start = true;
 
                     //process unary operator
-                    var handled1 = HandleUnaryOperator();
+                    HandleUnaryOperator();
 
                     goto case 2;
                 case 2:
                     _theA = _theB;
 
                     //process string literals or end of statement and track return statement
-                    var handled2 = HandleStringLiteral() || HandleEndOfStatement();
+                    if (!HandleStringLiteral())
+                        HandleEndOfStatement();
 
                     goto case 3;
                 case 3:
                     _theB = NextCharExcludingComments();
 
                     //track return statement
-                    var handled3 = TrackReturnStatement();
+                    TrackReturnStatement();
 
                     //Check for a regex literal and process it if it is found
                     HandleRegexLiteral();
@@ -437,12 +438,14 @@ namespace ClientDependency.Core.CompositeFiles
             // for example see these bug reports: 
             //  https://github.com/douglascrockford/JSMin/issues/11
             //  https://github.com/Shazwazza/ClientDependency/issues/73                    
-
+            //  https://github.com/Shazwazza/JsMinSharp/issues/8
             //The original logic from JSMin doesn't cater for the above issues mentioned
             // We've now added these additional characters to be able to preceed a regex literal: +
             // And now we also track a return statement which can preceed a regex literal.
-            const string toMatch = "(,=:[!&|?+-~*/{\n+";
-            if (toMatch.IndexOf((char)_theA) < 0 && _retStatement != 5)
+            // To fix the single line no-op  issue - we need to allow for a new line to precede a 
+            // regex statement too but _theA will not be a newline char here, only _theY will be.
+            const string toMatch = "(,=:[!&|?+-~*/{\n+;";
+            if (toMatch.IndexOf((char)_theA) < 0 && (char)_theY != '\n' && _retStatement != 5)
                 return false;
 
             Put(_theA);
@@ -657,4 +660,5 @@ namespace ClientDependency.Core.CompositeFiles
         }
 
     }
+
 }
