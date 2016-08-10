@@ -83,13 +83,16 @@ namespace ClientDependency.Core
 
             //new reader (but don't dispose since we don't want to dispose the stream)
             TextReader reader = new StreamReader(stream);
-            var exit = false;
             var currIndex = -1;
             
-            while (exit == false)
+            while (true)
             {
                 var next = reader.Read();
-                if (next == -1) exit = true;
+                if (next == -1)
+                {
+                    break;
+                }
+
                 var c = (char) next;
 
                 //still searching for the '@import' block at the top
@@ -100,7 +103,7 @@ namespace ClientDependency.Core
                 }
                 else if (currIndex == -2)
                 {
-                    //we've found the searchStatement, keep processing until we hit the end
+                    //we've found the entire searchStatement, keep processing until we hit the semicolon
 
                     tempImports.Append(c);
 
@@ -110,7 +113,7 @@ namespace ClientDependency.Core
                         currIndex = -1;
                         //write to the main imports and reset the temp one
                         imports.Append(tempImports);
-                        tempImports = new StringBuilder();
+                        tempImports.Clear();
                     }
                 }
                 else if (searchStatement[currIndex + 1] == c)
@@ -126,9 +129,10 @@ namespace ClientDependency.Core
                 }
                 else
                 {
-                    //time to quit
-                    exit = true;
-                }
+                    //reset and start again
+                    currIndex = -1;
+                    tempImports.Clear();
+                }             
             }
 
             externalImportedPaths = ParseImportStatements(imports.ToString(), out importedPaths);

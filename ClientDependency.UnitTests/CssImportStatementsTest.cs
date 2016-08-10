@@ -98,6 +98,72 @@ div {display: block;}", output);
         }
 
         [Test]
+        public void Can_Parse_Import_Statements_From_Stream_2()
+        {
+            var css = @"@-ms-viewport {
+  width: device-width;
+}
+.visible-xs,
+tr.visible-xs,
+th.visible-xs,
+td.visible-xs {
+  display: none !important;
+}
+@media (max-width: 767px) {
+  .visible-xs {
+    display: block !important;
+  }
+  table.visible-xs {
+    display: table;
+  }
+  tr.visible-xs {
+    display: table-row !important;
+  }
+  th.visible-xs,
+  td.visible-xs {
+    display: table-cell !important;
+  }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+  .visible-xs.visible-sm {
+    display: block !important;
+  }
+  table.visible-xs.visible-sm {
+    display: table;
+  }
+  tr.visible-xs.visible-sm {
+    display: table-row !important;
+  }
+  th.visible-xs.visible-sm,
+  td.visible-xs.visible-sm {
+    display: table-cell !important;
+  }
+}
+";
+            using (var ms = new MemoryStream())
+            using (var writer = new StreamWriter(ms))
+            {
+                writer.Write(css);
+                writer.Flush();
+
+                IEnumerable<string> importPaths;
+                string externalImports;
+                var position = CssHelper.ParseImportStatements(ms, out importPaths, out externalImports);
+
+                Assert.AreEqual(string.Empty, externalImports);
+
+                //Assert.AreEqual(10, importPaths.Count());
+                //Assert.AreEqual("/css/typography.css", importPaths.ElementAt(0));
+                //Assert.AreEqual("/css/layout.css", importPaths.ElementAt(1));
+                ////Assert.AreEqual("http://mysite/css/color.css", importPaths.ElementAt(2));
+                //Assert.AreEqual("/css/blah.css", importPaths.ElementAt(2));
+            }
+
+
+
+        }
+
+        [Test]
         public void Can_Parse_Import_Statements_From_Stream()
         {
             var css = @"@import url('/css/typography.css');

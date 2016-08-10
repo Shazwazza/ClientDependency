@@ -18,13 +18,13 @@ namespace ClientDependency.Core.CompositeFiles
 {
     public sealed class CssMinifier
     {
-        const int EOF = -1;
+        private const int Eof = -1;
 
-        TextReader tr;
-        StringBuilder sb;
-        int theA;
-        int theB;
-        int theLookahead = EOF;
+        private TextReader _tr;
+        private StringBuilder _sb;
+        int _theA;
+        int _theB;
+        int _theLookahead = Eof;
 
 
         /// <summary>
@@ -34,28 +34,28 @@ namespace ClientDependency.Core.CompositeFiles
         /// <returns></returns>
         public string Minify(TextReader reader)
         {
-            sb = new StringBuilder();
-            tr = reader;
-            theA = '\n';
-            theB = 0;
-            theLookahead = EOF;
-            cssmin();
-            return sb.ToString();
+            _sb = new StringBuilder();
+            _tr = reader;
+            _theA = '\n';
+            _theB = 0;
+            _theLookahead = Eof;
+            ExecuteCssMin();
+            return _sb.ToString();
         }
 
         /// <summary>
         /// Excute the actual minify
         /// </summary>
-        void cssmin()
+        private void ExecuteCssMin()
         {
-            action(3);
-            while (theA != EOF)
+            Action(3);
+            while (_theA != Eof)
             {
-                switch (theA)
+                switch (_theA)
                 {
                     case ' ':
                         {
-                            switch (theB)
+                            switch (_theB)
                             {
                                 case ' ':        //body.Replace("  ", String.Empty);
                                 case '{':        //body = body.Replace(" {", "{");
@@ -63,23 +63,23 @@ namespace ClientDependency.Core.CompositeFiles
                                 case '\n':       //body = body.Replace(" \n", "\n");
                                 case '\r':       //body = body.Replace(" \r", "\r");
                                 case '\t':       //body = body.Replace(" \t", "\t");
-                                    action(2);
+                                    Action(2);
                                     break;
                                 default:
-                                    action(1);
+                                    Action(1);
                                     break;
                             }
                             break;
-                        }                    
+                        }
                     case '\t':              //body = body.Replace("\t", "");
                     case '\r':              //body = body.Replace("\r", "");
-                        action(2);
+                        Action(2);
                         break;
                     case '\n':              //body = body.Replace("\n", "");
-                        if (char.IsWhiteSpace((char) theB))
+                        if (char.IsWhiteSpace((char)_theB))
                         {
                             //skip over whitespace
-                            action(3);
+                            Action(3);
                         }
                         else
                         {
@@ -87,8 +87,8 @@ namespace ClientDependency.Core.CompositeFiles
                             //TODO: this isn't the best place to put this logic since all puts are done
                             // in the action, but i don't see any other way to do this,
                             //we could set theA = ' ' and call action(1) ?
-                            if (sb.Length > 0) put(' ');
-                            action(2);
+                            if (_sb.Length > 0) Put(' ');
+                            Action(2);
                         }
                         break;
                     case '}':
@@ -97,10 +97,10 @@ namespace ClientDependency.Core.CompositeFiles
                     case ',':
                     case ';':
                         //skip over whitespace
-                        action(char.IsWhiteSpace((char) theB) ? 3 : 1);
+                        Action(char.IsWhiteSpace((char)_theB) ? 3 : 1);
                         break;
                     default:
-                        action(1);
+                        Action(1);
                         break;
                 }
             }
@@ -110,97 +110,99 @@ namespace ClientDependency.Core.CompositeFiles
                 2   Copy B to A. Get the next B. (Delete A).
                 3   Get the next B. (Delete B).
         */
-        void action(int d)
+
+        private void Action(int d)
         {
             if (d <= 1)
             {
-                put(theA);
+                Put(_theA);
             }
             if (d <= 2)
             {
-                theA = theB;
-                if (theA == '\'' || theA == '"')
+                _theA = _theB;
+                if (_theA == '\'' || _theA == '"')
                 {
                     for (;;)
                     {
-                        put(theA);
-                        theA = get();
-                        if (theA == theB)
+                        Put(_theA);
+                        _theA = Get();
+                        if (_theA == _theB)
                         {
                             break;
                         }
-                        if (theA <= '\n')
+                        if (_theA <= '\n')
                         {
-                            throw new FormatException(string.Format("Error: unterminated string literal: {0}\n", theA));
+                            throw new FormatException(string.Format("Error: unterminated string literal: {0}\n", _theA));
                         }
-                        if (theA == '\\')
+                        if (_theA == '\\')
                         {
-                            put(theA);
-                            theA = get();
+                            Put(_theA);
+                            _theA = Get();
                         }
                     }
                 }
             }
             if (d <= 3)
             {
-                theB = next();
-                if (theB == '/' && (theA == '(' || theA == ',' || theA == '=' ||
-                                    theA == '[' || theA == '!' || theA == ':' ||
-                                    theA == '&' || theA == '|' || theA == '?' ||
-                                    theA == '{' || theA == '}' || theA == ';' ||
-                                    theA == '\n'))
+                _theB = Next();
+                if (_theB == '/' && (_theA == '(' || _theA == ',' || _theA == '=' ||
+                                    _theA == '[' || _theA == '!' || _theA == ':' ||
+                                    _theA == '&' || _theA == '|' || _theA == '?' ||
+                                    _theA == '{' || _theA == '}' || _theA == ';' ||
+                                    _theA == '\n'))
                 {
-                    put(theA);
-                    put(theB);
+                    Put(_theA);
+                    Put(_theB);
                     for (;;)
                     {
-                        theA = get();
-                        if (theA == '/')
+                        _theA = Get();
+                        if (_theA == '/')
                         {
                             break;
                         }
-                        else if (theA == '\\')
+                        else if (_theA == '\\')
                         {
-                            put(theA);
-                            theA = get();
+                            Put(_theA);
+                            _theA = Get();
                         }
-                        else if (theA <= '\n')
+                        else if (_theA <= '\n')
                         {
-                            throw new FormatException(string.Format("Error: unterminated Regular Expression literal : {0}.\n", theA));
+                            throw new FormatException(string.Format("Error: unterminated Regular Expression literal : {0}.\n", _theA));
                         }
-                        put(theA);
+                        Put(_theA);
                     }
-                    theB = next();
+                    _theB = Next();
                 }
             }
         }
         /* next -- get the next character, excluding comments. peek() is used to see
                 if a '/' is followed by a '*'.
         */
-        int next()
+
+        private int Next()
         {
-            int c = get();
+            int c = Get();
             if (c == '/')
             {
-                switch (peek())
-                {                   
+                switch (Peek())
+                {
                     case '*':
                         {
-                            get();
+                            Get();
                             for (;;)
                             {
-                                switch (get())
+                                switch (Get())
                                 {
                                     case '*':
                                         {
-                                            if (peek() == '/')
+                                            if (Peek() == '/')
                                             {
-                                                get();
+                                                Get();
                                                 return ' ';
                                             }
                                             break;
                                         }
-                                    case EOF:
+                                    case Eof:
                                         {
                                             throw new FormatException("Error: Unterminated comment.\n");
                                         }
@@ -217,24 +219,26 @@ namespace ClientDependency.Core.CompositeFiles
         }
         /* peek -- get the next character without getting it.
         */
-        int peek()
+
+        private int Peek()
         {
-            theLookahead = get();
-            return theLookahead;
+            _theLookahead = Get();
+            return _theLookahead;
         }
         /* get -- return the next character from stdin. Watch out for lookahead. If
                 the character is a control character, translate it to a space or
                 linefeed.
         */
-        int get()
+
+        private int Get()
         {
-            int c = theLookahead;
-            theLookahead = EOF;
-            if (c == EOF)
+            int c = _theLookahead;
+            _theLookahead = Eof;
+            if (c == Eof)
             {
-                c = tr.Read();
+                c = _tr.Read();
             }
-            if (c >= ' ' || c == '\n' || c == EOF)
+            if (c >= ' ' || c == '\n' || c == Eof)
             {
                 return c;
             }
@@ -244,9 +248,10 @@ namespace ClientDependency.Core.CompositeFiles
             }
             return ' ';
         }
-        void put(int c)
+
+        private void Put(int c)
         {
-            sb.Append((char)c);
+            _sb.Append((char)c);
         }
     }
 }
