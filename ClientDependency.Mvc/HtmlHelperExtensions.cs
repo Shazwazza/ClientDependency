@@ -131,7 +131,6 @@ namespace ClientDependency.Core.Mvc
 			return html;
 		}
 
-
         public static HtmlHelper RequiresJs(this HtmlHelper html, string filePath, object htmlAttributes)
         {
             html.ViewContext.GetLoader().RegisterDependency(filePath, ClientDependencyType.Javascript, htmlAttributes);
