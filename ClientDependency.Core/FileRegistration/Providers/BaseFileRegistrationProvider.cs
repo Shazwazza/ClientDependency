@@ -24,6 +24,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
         protected BaseFileRegistrationProvider()
         {
             EnableCompositeFiles = true;
+            DisableCompositeBundling = false;
             EnableDebugVersionQueryString = true;
         }
 
@@ -32,6 +33,12 @@ namespace ClientDependency.Core.FileRegistration.Providers
         /// Composite files are never enabled with compilation debug="true" however.
         /// </summary>
         public bool EnableCompositeFiles { get; set; }
+
+        /// <summary>
+        /// By default this is false. Enabling this setting will output each dependeny as its own file in the markup instead of bundling them
+        /// as a single composite bundle.
+        /// </summary>
+        public bool DisableCompositeBundling { get; set; }
 
         /// <summary>
         /// By default this is true but can be disabled (in either config or code). When this
@@ -118,6 +125,11 @@ namespace ClientDependency.Core.FileRegistration.Providers
             if (config != null && config["enableCompositeFiles"] != null && !string.IsNullOrEmpty(config["enableCompositeFiles"]))
             {
                 EnableCompositeFiles = bool.Parse(config["enableCompositeFiles"]);
+            }
+
+            if (config != null && config["disableCompositeBundling"] != null && !string.IsNullOrEmpty(config["disableCompositeBundling"]))
+            {
+                DisableCompositeBundling = bool.Parse(config["disableCompositeBundling"]);
             }
 
             if (config != null && config["enableDebugVersionQueryString"] != null && !string.IsNullOrEmpty(config["enableDebugVersionQueryString"]))
