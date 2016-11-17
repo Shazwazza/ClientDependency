@@ -124,17 +124,29 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
             if (config != null && config["enableCompositeFiles"] != null && !string.IsNullOrEmpty(config["enableCompositeFiles"]))
             {
-                EnableCompositeFiles = bool.Parse(config["enableCompositeFiles"]);
+                bool enableCompositeFiles;
+                if (bool.TryParse(config["enableCompositeFiles"], out enableCompositeFiles))
+                {
+                    EnableCompositeFiles = enableCompositeFiles;
+                }
             }
 
             if (config != null && config["disableCompositeBundling"] != null && !string.IsNullOrEmpty(config["disableCompositeBundling"]))
             {
-                DisableCompositeBundling = bool.Parse(config["disableCompositeBundling"]);
+                bool disableCompositeBundling;
+                if (bool.TryParse(config["disableCompositeBundling"], out disableCompositeBundling))
+                {
+                    DisableCompositeBundling = disableCompositeBundling;
+                }
             }
 
             if (config != null && config["enableDebugVersionQueryString"] != null && !string.IsNullOrEmpty(config["enableDebugVersionQueryString"]))
             {
-                EnableDebugVersionQueryString = bool.Parse(config["enableDebugVersionQueryString"]);
+                bool enableDebugVersionQueryString;
+                if (bool.TryParse(config["disableCompositeBundling"], out enableDebugVersionQueryString))
+                {
+                    EnableDebugVersionQueryString = enableDebugVersionQueryString;
+                }
             }
 		}
 
@@ -491,6 +503,34 @@ namespace ClientDependency.Core.FileRegistration.Providers
 
             cssOutput = cssBuilder.ToString();
             jsOutput = jsBuilder.ToString();
+        }
+
+        protected virtual void RenderJsComposites(HttpContextBase http, IDictionary<string, string> htmlAttributes, StringBuilder sb, IEnumerable<IClientDependencyFile> dependencies)
+        {
+            var comp = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.ProcessCompositeList(
+                    dependencies,
+                    ClientDependencyType.Javascript, 
+                    http,
+                    ClientDependencySettings.Instance.CompositeFileHandlerPath);
+
+            foreach (var s in comp)
+            {
+                sb.Append(RenderSingleJsFile(s, htmlAttributes));
+            }
+        }
+
+        protected virtual void RenderCssComposites(HttpContextBase http, IDictionary<string, string> htmlAttributes, StringBuilder sb, IEnumerable<IClientDependencyFile> dependencies)
+        {
+            var comp = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.ProcessCompositeList(
+                    dependencies,
+                    ClientDependencyType.Css,
+                    http,
+                    ClientDependencySettings.Instance.CompositeFileHandlerPath);
+
+            foreach (var s in comp)
+            {
+                sb.Append(RenderSingleCssFile(s, htmlAttributes));
+            }
         }
     }
 }
