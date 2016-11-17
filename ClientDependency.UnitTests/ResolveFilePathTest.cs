@@ -105,5 +105,16 @@ namespace ClientDependency.UnitTests
 
             Assert.AreEqual("/website/js.js", resolvedPath);
         }
+
+        [Test]
+        public void Schema_Relative_Path()
+        {
+            var mockHttp = Mock.Of<HttpContextBase>();
+            var file = new BasicFile(ClientDependencyType.Javascript) { FilePath = "//website/js.js", };
+
+            var resolvedPath = file.ResolveFilePath(mockHttp);
+
+            Assert.AreEqual("//website/js.js", resolvedPath);
+        }
     }
 }

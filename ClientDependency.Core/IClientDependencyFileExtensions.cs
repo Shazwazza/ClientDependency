@@ -38,6 +38,10 @@ namespace ClientDependency.Core
                 var path = http.Request.AppRelativeCurrentExecutionFilePath.Substring(0, http.Request.AppRelativeCurrentExecutionFilePath.LastIndexOf('/') + 1);
                 filePath = http.ResolveUrl(path + filePath);
             }
+            else if (filePath.StartsWith("//"))
+            {
+                return filePath;
+            }
 
             var uri = new Uri(new Uri("https://example.com"), filePath);
             return uri.PathAndQuery;
