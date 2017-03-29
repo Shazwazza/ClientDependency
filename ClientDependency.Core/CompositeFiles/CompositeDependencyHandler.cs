@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Web;
-using System.Reflection;
-using System.IO;
-using System.Linq;
-using System.Web.UI;
-using ClientDependency.Core.CompositeFiles.Providers;
+﻿using ClientDependency.Core.CompositeFiles.Providers;
 using ClientDependency.Core.Config;
-using System.Text;
-using System.Web.Security;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
 
 namespace ClientDependency.Core.CompositeFiles
 {
@@ -102,6 +98,7 @@ namespace ClientDependency.Core.CompositeFiles
                 Enabled = true,
                 VaryByParam = "t;s;cdv",
                 VaryByContentEncoding = "gzip;deflate",
+                VaryByHeader = "Accept-Encoding",
                 Location = OutputCacheLocation.Any
             });
 
