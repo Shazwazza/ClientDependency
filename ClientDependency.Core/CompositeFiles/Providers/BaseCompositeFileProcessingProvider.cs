@@ -601,6 +601,12 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         {
             Func<Stream, string> streamToString = stream =>
             {
+                if (!stream.CanRead)
+                    throw new InvalidOperationException("Cannot read input stream");
+
+                if (stream.CanSeek)
+                    stream.Position = 0;
+
                 var reader = new StreamReader(stream);
                 return reader.ReadToEnd();
             };
