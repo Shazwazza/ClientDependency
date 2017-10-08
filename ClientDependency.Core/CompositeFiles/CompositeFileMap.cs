@@ -10,8 +10,8 @@ namespace ClientDependency.Core.CompositeFiles
     /// <summary>
 	/// Deserialized structure of the XML stored in the map file
 	/// </summary>
-	public class CompositeFileMap
-	{
+	public class CompositeFileMap : ICompositeFileMappleable
+    {
 
 		internal CompositeFileMap(string key, string compressionType, string file, IEnumerable<string> filePaths, int version)
 		{

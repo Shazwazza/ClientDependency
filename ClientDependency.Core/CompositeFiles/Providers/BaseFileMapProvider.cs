@@ -15,7 +15,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         /// <param name="version"></param>
         /// <param name="compression"></param>
         /// <returns></returns>
-        public abstract CompositeFileMap GetCompositeFile(string fileKey, 
+        public abstract ICompositeFileMappleable GetCompositeFile(string fileKey, 
             int version, 
             string compression);
 
