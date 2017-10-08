@@ -253,7 +253,7 @@ namespace ClientDependency.Core.CompositeFiles
             return ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.CombineFiles(filePaths, context, type, out fDefs);
         }
 
-        private void ProcessFromFile(HttpContextBase context, CompositeFileMap map, out string compositeFileName, out byte[] outputBytes)
+        private void ProcessFromFile(HttpContextBase context, ICompositeFileMappleable map, out string compositeFileName, out byte[] outputBytes)
         {
             //the saved file's bytes are already compressed.
             outputBytes = map.GetCompositeFileBytes();

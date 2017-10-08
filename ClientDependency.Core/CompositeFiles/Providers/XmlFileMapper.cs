@@ -96,7 +96,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         /// <param name="version"></param>
         /// <param name="compression"></param>
         /// <returns></returns>
-        public override CompositeFileMap GetCompositeFile(string fileKey, int version, string compression)
+        public override ICompositeFileMappleable GetCompositeFile(string fileKey, int version, string compression)
         {
             if (string.IsNullOrEmpty(fileKey)) throw new ArgumentNullException("fileKey");
 
