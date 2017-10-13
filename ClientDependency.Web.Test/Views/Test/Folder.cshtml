@@ -1,0 +1,19 @@
+﻿@model ClientDependency.Web.Test.Models.TestModel
+@using ClientDependency.Core.Mvc
+
+@{
+    Layout = "~/Views/Shared/Master.cshtml";
+}
+
+@section TitleContent
+{
+Home Page
+}
+
+@{ Html.RequiresJsFolder("~/Js/TestPath"); }
+
+<div class="mainContent">
+    <h2>
+        This tests including an entire folder</h2>
+    
+</div>

@@ -36,6 +36,7 @@
     <IISExpressUseClassicPipelineMode />
     <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked>
     <UseGlobalApplicationHostFile />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -374,6 +375,7 @@
     <Content Include="Views\Test\Sass.cshtml" />
     <Content Include="Views\Test\Coffee.cshtml" />
     <Content Include="Views\Test\TypeScript.cshtml" />
+    <Content Include="Views\Test\Folder.cshtml" />
     <None Include="Views\Test\Default.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -450,7 +452,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>54153</DevelopmentServerPort>
           <DevelopmentServerVPath>/VirtualFolderTest</DevelopmentServerVPath>
-          <IISUrl>http://localhost:54321/VirtualFolderTest/</IISUrl>
+          <IISUrl>http://localhost:54322/VirtualFolderTest/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

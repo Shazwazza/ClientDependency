@@ -313,7 +313,7 @@ namespace ClientDependency.Core.Mvc
         /// <returns></returns>
         public static HtmlHelper RequiresJsFolder(this HtmlHelper html, string folderPath, string searchFilter)
         {
-            return html.RequiresFolder(folderPath, 100, searchFilter, (absPath, pri) => html.RequiresJs(absPath, pri));        
+            return html.RequiresFolder(folderPath, searchFilter, (absPath) => html.RequiresJs(absPath, 100));        
         }
 
         /// <summary>
@@ -326,7 +326,7 @@ namespace ClientDependency.Core.Mvc
         /// <returns></returns>
         public static HtmlHelper RequiresJsFolder(this HtmlHelper html, string folderPath, string searchFilter, int priority)
         {
-            return html.RequiresFolder(folderPath, priority, searchFilter, (absPath, pri) => html.RequiresJs(absPath, pri));
+            return html.RequiresFolder(folderPath, searchFilter, (absPath) => html.RequiresJs(absPath, priority));
         }
 
         /// <summary>
@@ -340,7 +340,7 @@ namespace ClientDependency.Core.Mvc
         /// <returns></returns>
         public static HtmlHelper RequiresJsFolder(this HtmlHelper html, string folderPath, string searchFilter, int priority, int group)
         {
-            return html.RequiresFolder(folderPath, priority, searchFilter, (absPath, pri) => html.RequiresJs(absPath, pri, group));
+            return html.RequiresFolder(folderPath, searchFilter, (absPath) => html.RequiresJs(absPath, priority, group));
         }
 
         /// <summary>
@@ -355,7 +355,28 @@ namespace ClientDependency.Core.Mvc
         /// <returns></returns>
         public static HtmlHelper RequiresJsFolder(this HtmlHelper html, string folderPath, string searchFilter, int priority, int group, object htmlAttributes)
         {
-            return html.RequiresFolder(folderPath, priority, searchFilter, (absPath, pri) => html.RequiresJs(absPath, pri, group, htmlAttributes));
+            return html.RequiresFolder(folderPath, searchFilter, (absPath) => html.RequiresJs(absPath, priority, group, htmlAttributes));
+        }
+
+        public static HtmlHelper RequiresJsFolder(this HtmlHelper html, string folderPath, string searchFilter, int priority, int group, object htmlAttributes, string forcedProvider)
+        {
+            return html.RequiresFolder(folderPath, searchFilter, (absPath) =>
+            {
+                var file = new JavascriptFile(absPath)
+                {
+                    ForceProvider = forcedProvider,
+                    Group = @group,
+                    Priority = priority
+                };
+
+                //now add the attributes to the list
+                foreach (var d in htmlAttributes.ToDictionary())
+                {
+                    file.HtmlAttributes.Add(d.Key, d.Value.ToString());
+                }
+
+                html.RequiresJs(file);
+            });
         }
 
         /// <summary>
@@ -369,7 +390,7 @@ namespace ClientDependency.Core.Mvc
         /// <returns></returns>
         public static HtmlHelper RequiresJsFolder(this HtmlHelper html, string folderPath, string searchFilter, int priority, object htmlAttributes)
         {
-            return html.RequiresFolder(folderPath, priority, searchFilter, (absPath, pri) => html.RequiresJs(absPath, pri, htmlAttributes));
+            return html.RequiresFolder(folderPath, searchFilter, (absPath) => html.RequiresJs(absPath, priority, htmlAttributes));
         }
 
         /// <summary>
@@ -382,7 +403,7 @@ namespace ClientDependency.Core.Mvc
         /// <returns></returns>
         public static HtmlHelper RequiresJsFolder(this HtmlHelper html, string folderPath, string searchFilter, object htmlAttributes)
         {
-            return html.RequiresFolder(folderPath, 100, searchFilter, (absPath, pri) => html.RequiresJs(absPath, pri, htmlAttributes));
+            return html.RequiresFolder(folderPath, searchFilter, (absPath) => html.RequiresJs(absPath, 100, htmlAttributes));
         }
 
         /// <summary>
@@ -405,7 +426,7 @@ namespace ClientDependency.Core.Mvc
         /// <returns></returns>
         public static HtmlHelper RequiresJsFolder(this HtmlHelper html, string folderPath, int priority)
         {
-            return html.RequiresFolder(folderPath, priority, "*.js", (absPath, pri) => html.RequiresJs(absPath, pri));
+            return html.RequiresFolder(folderPath, "*.js", (absPath) => html.RequiresJs(absPath, priority));
         }
 
         /// <summary>
@@ -418,7 +439,7 @@ namespace ClientDependency.Core.Mvc
         /// <returns></returns>
         public static HtmlHelper RequiresJsFolder(this HtmlHelper html, string folderPath, int priority, int group)
         {
-            return html.RequiresFolder(folderPath, priority, "*.js", (absPath, pri) => html.RequiresJs(absPath, pri, group));
+            return html.RequiresFolder(folderPath, "*.js", (absPath) => html.RequiresJs(absPath, priority, group));
         }
 
         /// <summary>
@@ -432,7 +453,7 @@ namespace ClientDependency.Core.Mvc
         /// <returns></returns>
         public static HtmlHelper RequiresJsFolder(this HtmlHelper html, string folderPath, int priority, int group, object htmlAttributes)
         {
-            return html.RequiresFolder(folderPath, priority, "*.js", (absPath, pri) => html.RequiresJs(absPath, pri, group, htmlAttributes));
+            return html.RequiresFolder(folderPath, "*.js", (absPath) => html.RequiresJs(absPath, priority, group, htmlAttributes));
         }
 
         /// <summary>
@@ -445,7 +466,7 @@ namespace ClientDependency.Core.Mvc
         /// <returns></returns>
         public static HtmlHelper RequiresJsFolder(this HtmlHelper html, string folderPath, int priority, object htmlAttributes)
         {
-            return html.RequiresFolder(folderPath, priority, "*.js", (absPath, pri) => html.RequiresJs(absPath, pri, htmlAttributes));
+            return html.RequiresFolder(folderPath, "*.js", (absPath) => html.RequiresJs(absPath, priority, htmlAttributes));
         }
 
         /// <summary>
@@ -457,7 +478,7 @@ namespace ClientDependency.Core.Mvc
         /// <returns></returns>
         public static HtmlHelper RequiresJsFolder(this HtmlHelper html, string folderPath, object htmlAttributes)
         {
-            return html.RequiresFolder(folderPath, 100, "*.js", (absPath, pri) => html.RequiresJs(absPath, pri, htmlAttributes));
+            return html.RequiresFolder(folderPath, "*.js", (absPath) => html.RequiresJs(absPath, 100, htmlAttributes));
         } 
 
         #endregion
@@ -472,7 +493,7 @@ namespace ClientDependency.Core.Mvc
         /// <returns></returns>
         public static HtmlHelper RequiresCssFolder(this HtmlHelper html, string folderPath, string searchFilter)
         {
-            return html.RequiresFolder(folderPath, 100, searchFilter, (absPath, pri) => html.RequiresCss(absPath, pri));
+            return html.RequiresFolder(folderPath, searchFilter, (absPath) => html.RequiresCss(absPath, 100));
         }
 
         /// <summary>
@@ -485,7 +506,7 @@ namespace ClientDependency.Core.Mvc
         /// <returns></returns>
         public static HtmlHelper RequiresCssFolder(this HtmlHelper html, string folderPath, string searchFilter, int priority)
         {
-            return html.RequiresFolder(folderPath, priority, searchFilter, (absPath, pri) => html.RequiresCss(absPath, pri));
+            return html.RequiresFolder(folderPath, searchFilter, (absPath) => html.RequiresCss(absPath, priority));
         }
 
         /// <summary>
@@ -499,7 +520,7 @@ namespace ClientDependency.Core.Mvc
         /// <returns></returns>
         public static HtmlHelper RequiresCssFolder(this HtmlHelper html, string folderPath, string searchFilter, int priority, int group)
         {
-            return html.RequiresFolder(folderPath, priority, searchFilter, (absPath, pri) => html.RequiresCss(absPath, pri, group));
+            return html.RequiresFolder(folderPath, searchFilter, (absPath) => html.RequiresCss(absPath, priority, group));
         }
 
         /// <summary>
@@ -514,7 +535,28 @@ namespace ClientDependency.Core.Mvc
         /// <returns></returns>
         public static HtmlHelper RequiresCssFolder(this HtmlHelper html, string folderPath, string searchFilter, int priority, int group, object htmlAttributes)
         {
-            return html.RequiresFolder(folderPath, priority, searchFilter, (absPath, pri) => html.RequiresCss(absPath, pri, group, htmlAttributes));
+            return html.RequiresFolder(folderPath, searchFilter, (absPath) => html.RequiresCss(absPath, priority, group, htmlAttributes));
+        }
+
+        public static HtmlHelper RequiresCssFolder(this HtmlHelper html, string folderPath, string searchFilter, int priority, int group, object htmlAttributes, string forcedProvider)
+        {
+            return html.RequiresFolder(folderPath, searchFilter, (absPath) =>
+            {
+                var file = new CssFile(absPath)
+                {
+                    ForceProvider = forcedProvider,
+                    Group = @group,
+                    Priority = priority
+                };
+
+                //now add the attributes to the list
+                foreach (var d in htmlAttributes.ToDictionary())
+                {
+                    file.HtmlAttributes.Add(d.Key, d.Value.ToString());
+                }
+
+                html.RequiresJs(file);
+            });
         }
 
         /// <summary>
@@ -528,7 +570,7 @@ namespace ClientDependency.Core.Mvc
         /// <returns></returns>
         public static HtmlHelper RequiresCssFolder(this HtmlHelper html, string folderPath, string searchFilter, int priority, object htmlAttributes)
         {
-            return html.RequiresFolder(folderPath, priority, searchFilter, (absPath, pri) => html.RequiresCss(absPath, pri, htmlAttributes));
+            return html.RequiresFolder(folderPath, searchFilter, (absPath) => html.RequiresCss(absPath, priority, htmlAttributes));
         }
 
         /// <summary>
@@ -541,7 +583,7 @@ namespace ClientDependency.Core.Mvc
         /// <returns></returns>
         public static HtmlHelper RequiresCssFolder(this HtmlHelper html, string folderPath, string searchFilter, object htmlAttributes)
         {
-            return html.RequiresFolder(folderPath, 100, searchFilter, (absPath, pri) => html.RequiresCss(absPath, pri, htmlAttributes));
+            return html.RequiresFolder(folderPath, searchFilter, (absPath) => html.RequiresCss(absPath, 100, htmlAttributes));
         } 
 
         /// <summary>
@@ -564,7 +606,7 @@ namespace ClientDependency.Core.Mvc
         /// <returns></returns>
         public static HtmlHelper RequiresCssFolder(this HtmlHelper html, string folderPath, int priority)
         {
-            return html.RequiresFolder(folderPath, priority, "*.css", (absPath, pri) => html.RequiresCss(absPath, pri));
+            return html.RequiresFolder(folderPath, "*.css", (absPath) => html.RequiresCss(absPath, priority));
         }
 
         /// <summary>
@@ -577,7 +619,7 @@ namespace ClientDependency.Core.Mvc
         /// <returns></returns>
         public static HtmlHelper RequiresCssFolder(this HtmlHelper html, string folderPath, int priority, int group)
         {
-            return html.RequiresFolder(folderPath, priority, "*.css", (absPath, pri) => html.RequiresCss(absPath, pri, group));
+            return html.RequiresFolder(folderPath, "*.css", (absPath) => html.RequiresCss(absPath, priority, group));
         }
 
         /// <summary>
@@ -591,7 +633,7 @@ namespace ClientDependency.Core.Mvc
         /// <returns></returns>
         public static HtmlHelper RequiresCssFolder(this HtmlHelper html, string folderPath, int priority, int group, object htmlAttributes)
         {
-            return html.RequiresFolder(folderPath, priority, "*.css", (absPath, pri) => html.RequiresCss(absPath, pri, group, htmlAttributes));
+            return html.RequiresFolder(folderPath, "*.css", (absPath) => html.RequiresCss(absPath, priority, group, htmlAttributes));
         }
 
         /// <summary>
@@ -604,7 +646,7 @@ namespace ClientDependency.Core.Mvc
         /// <returns></returns>
         public static HtmlHelper RequiresCssFolder(this HtmlHelper html, string folderPath, int priority, object htmlAttributes)
         {
-            return html.RequiresFolder(folderPath, priority, "*.css", (absPath, pri) => html.RequiresCss(absPath, pri, htmlAttributes));
+            return html.RequiresFolder(folderPath, "*.css", (absPath) => html.RequiresCss(absPath, priority, htmlAttributes));
         }
 
         /// <summary>
@@ -616,11 +658,11 @@ namespace ClientDependency.Core.Mvc
         /// <returns></returns>
         public static HtmlHelper RequiresCssFolder(this HtmlHelper html, string folderPath, object htmlAttributes)
         {
-            return html.RequiresFolder(folderPath, 100, "*.css", (absPath, pri) => html.RequiresCss(absPath, pri, htmlAttributes));
+            return html.RequiresFolder(folderPath, "*.css", (absPath) => html.RequiresCss(absPath, 100, htmlAttributes));
         } 
         #endregion
 
-        private static HtmlHelper RequiresFolder(this HtmlHelper html, string folderPath, int priority, string fileSearch, Action<string, int> requiresAction)
+        private static HtmlHelper RequiresFolder(this HtmlHelper html, string folderPath, string fileSearch, Action<string> requiresAction)
         {
             var httpContext = html.ViewContext.HttpContext;
             var systemRootPath = httpContext.Server.MapPath("~/");
@@ -632,8 +674,7 @@ namespace ClientDependency.Core.Mvc
                 foreach (var file in files)
                 {
                     var absoluteFilePath = "~/" + file.Substring(systemRootPath.Length).Replace("\\", "/");
-                    requiresAction(absoluteFilePath, priority);
-                    html.RequiresJs(absoluteFilePath, priority);
+                    requiresAction(absoluteFilePath);
                 }
             }
 
