@@ -12,6 +12,22 @@ namespace ClientDependency.UnitTests
     public class HtmlAttributesStringParserTest
     {
         [Test]
+        public void Ensure_No_Duplicates()
+        {
+            const string attributes = "defer:true,async:true";
+            var destination = new Dictionary<string, string>();
+
+            HtmlAttributesStringParser.ParseIntoDictionary(attributes, destination);
+
+            Assert.AreEqual(2, destination.Count);
+            Assert.AreEqual("defer", destination.First().Key);
+            Assert.AreEqual("true", destination.First().Value);
+            Assert.AreEqual("async", destination.Last().Key);
+            Assert.AreEqual("true", destination.Last().Value);
+
+        }
+
+        [Test]
         public void Parse_Media_Query()
         {
             const string attributes = "media:(max-width:560px)";
