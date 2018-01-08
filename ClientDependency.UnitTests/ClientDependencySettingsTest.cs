@@ -67,8 +67,8 @@ namespace ClientDependency.UnitTests
             Assert.AreEqual(1, settings.ConfigSection.CompositeFileElement.MimeTypeCompression.Count);
             Assert.AreEqual(0, settings.ConfigSection.CompositeFileElement.RogueFileCompression.Count);
 
-            Assert.AreEqual(settings.DefaultCompositeFileProcessingProvider.CompositeFilePathAsString, "~/App_Data/TEMP/ClientDependency");
-            Assert.AreEqual(settings.DefaultCompositeFileProcessingProvider.CompositeFilePathAsString, XmlFileMapper.FileMapVirtualFolder);
+            Assert.AreEqual(settings.DefaultCompositeFileProcessingProvider.CompositeFilePathVirtualFolder, "~/App_Data/TEMP/ClientDependency");
+            Assert.AreEqual(settings.DefaultCompositeFileProcessingProvider.CompositeFilePathVirtualFolder, XmlFileMapper.FileMapVirtualFolder);
             Assert.AreEqual(CompositeUrlType.Base64QueryStrings, settings.DefaultCompositeFileProcessingProvider.UrlType);
         }
 

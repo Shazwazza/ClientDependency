@@ -14,18 +14,20 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 {
     public abstract class BaseCompositeFileProcessingProvider : ProviderBase, IHttpProvider
     {
-
-        private const string DefaultDependencyPath = "~/App_Data/ClientDependency";
+        /// <summary>
+        /// The default path for storing composite files
+        /// </summary>
+        /// <remarks>
+        /// Can be set dynamically during startup
+        /// </remarks>
+        public static string CompositeFilePathVirtualFolderDefault = "~/App_Data/ClientDependency";
 
         /// <summary>
         /// Defines the UrlType default value, this can be set at startup
         /// </summary>
         public static CompositeUrlType UrlTypeDefault = CompositeUrlType.MappedId;
-
-        /// <summary>
-        /// The path specified in the config
-        /// </summary>
-        internal string CompositeFilePathAsString;
+        
+        public string CompositeFilePathVirtualFolder { get; private set; } = CompositeFilePathVirtualFolderDefault;
 
         /// <summary>
         /// constructor sets defaults
@@ -37,7 +39,6 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             EnableJsMinify = true;
             UrlType = UrlTypeDefault;
             PathBasedUrlFormat = "{dependencyId}/{version}/{type}";
-            CompositeFilePathAsString = DefaultDependencyPath;
             BundleDomains = new List<string>();
         }
 
@@ -88,7 +89,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 
         public void Initialize(HttpContextBase http)
         {
-            CompositeFilePath = new DirectoryInfo(http.Server.MapPath(CompositeFilePathAsString));
+            CompositeFilePath = new DirectoryInfo(http.Server.MapPath(CompositeFilePathVirtualFolder));
         }
 
         #endregion
@@ -547,7 +548,16 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                 PathBasedUrlFormatter.Validate(PathBasedUrlFormat);
             }
 
-            CompositeFilePathAsString = config["compositeFilePath"] ?? DefaultDependencyPath;
+            if (config["compositeFilePath"] != null)
+            {
+                //use the config setting if it has not been dynamically set OR
+                //when the config section doesn't equal the default
+                if (CompositeFilePathVirtualFolder == CompositeFilePathVirtualFolderDefault
+                    || config["compositeFilePath"] != CompositeFilePathVirtualFolderDefault)
+                {
+                    CompositeFilePathVirtualFolder = config["compositeFilePath"];
+                }
+            }
 
             string bundleDomains = config["bundleDomains"];
             if (bundleDomains != null)
