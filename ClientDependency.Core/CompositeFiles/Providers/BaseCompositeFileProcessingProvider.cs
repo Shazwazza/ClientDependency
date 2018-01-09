@@ -14,20 +14,32 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 {
     public abstract class BaseCompositeFileProcessingProvider : ProviderBase, IHttpProvider
     {
+
+        private static bool _dynamicallyConfiguredPath = false;
+        private static string _compositeFilePathDefaultFolder = "~/App_Data/ClientDependency";
+
         /// <summary>
-        /// The default path for storing composite files
+        /// The default path for storing composite files, either absolute or virtual 
         /// </summary>
         /// <remarks>
         /// Can be set dynamically during startup
         /// </remarks>
-        public static string CompositeFilePathVirtualFolderDefault = "~/App_Data/ClientDependency";
+        public static string CompositeFilePathDefaultFolder
+        {
+            get { return _compositeFilePathDefaultFolder; }
+            set
+            {
+                _compositeFilePathDefaultFolder = value;
+                _dynamicallyConfiguredPath = true;
+            }
+        }
 
         /// <summary>
         /// Defines the UrlType default value, this can be set at startup
         /// </summary>
         public static CompositeUrlType UrlTypeDefault = CompositeUrlType.MappedId;
-        
-        public string CompositeFilePathVirtualFolder { get; private set; } = CompositeFilePathVirtualFolderDefault;
+
+        public string CompositeFilePathFolder { get; private set; } 
 
         /// <summary>
         /// constructor sets defaults
@@ -40,6 +52,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             UrlType = UrlTypeDefault;
             PathBasedUrlFormat = "{dependencyId}/{version}/{type}";
             BundleDomains = new List<string>();
+            CompositeFilePathFolder = CompositeFilePathDefaultFolder;
         }
 
         #region Public Properties
@@ -89,7 +102,9 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 
         public void Initialize(HttpContextBase http)
         {
-            CompositeFilePath = new DirectoryInfo(http.Server.MapPath(CompositeFilePathVirtualFolder));
+            CompositeFilePath = CompositeFilePathFolder.StartsWith("~/")
+                ? new DirectoryInfo(http.Server.MapPath(CompositeFilePathFolder))
+                : new DirectoryInfo(CompositeFilePathFolder);
         }
 
         #endregion
@@ -550,12 +565,10 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 
             if (config["compositeFilePath"] != null)
             {
-                //use the config setting if it has not been dynamically set OR
-                //when the config section doesn't equal the default
-                if (CompositeFilePathVirtualFolder == CompositeFilePathVirtualFolderDefault
-                    || config["compositeFilePath"] != CompositeFilePathVirtualFolderDefault)
+                //use the config setting if it has not been dynamically set 
+                if (!_dynamicallyConfiguredPath)
                 {
-                    CompositeFilePathVirtualFolder = config["compositeFilePath"];
+                    CompositeFilePathFolder = config["compositeFilePath"];
                 }
             }
 

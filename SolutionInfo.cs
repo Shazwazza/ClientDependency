@@ -9,4 +9,4 @@ using System.Security;
 
 [assembly: AssemblyVersion("1.9.4")]
 [assembly: AssemblyFileVersion("1.9.4")]
-[assembly: AssemblyInformationalVersion("1.9.4-beta")]
+[assembly: AssemblyInformationalVersion("1.9.4-beta02")]

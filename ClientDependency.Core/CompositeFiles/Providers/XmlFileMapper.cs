@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Web;
@@ -31,24 +32,50 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         private FileInfo _xmlFile;
         
         private static readonly object Locker = new object();
+        private static string _fileMapFolder = "~/App_Data/ClientDependency";
+        private static bool _dynamicallyConfiguredPath = false;
+
+        [Obsolete("Use FileMapDefaultFolder instead")]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static string FileMapVirtualFolder
+        {
+            get { return FileMapDefaultFolder; }
+            set { FileMapDefaultFolder = value; }
+        }
 
         /// <summary>
-        /// Specifies the default folder to store the file map in
+        /// Specifies the default folder to store the file map in, either absolute or virtual 
         /// </summary>
         /// <remarks>
         /// allows for dynamically changing the folder on startup
         /// </remarks>
-        public static string FileMapVirtualFolder = "~/App_Data/ClientDependency";
+        public static string FileMapDefaultFolder
+        {
+            get { return _fileMapFolder; }
+            set
+            {
+                _fileMapFolder = value;
+                _dynamicallyConfiguredPath = true;
+            }
+        }
 
-        public string FileMapFolder { get; private set; } = FileMapVirtualFolder;
+        public string FileMapFolder { get; private set; }
 
         private DirectoryInfo _xmlMapFolder;
+
+        public XmlFileMapper()
+        {
+            FileMapFolder = FileMapDefaultFolder;
+        }
 
         public override void Initialize(HttpContextBase http)
         {
             if (http == null) throw new ArgumentNullException("http");
 
-            _xmlMapFolder = new DirectoryInfo(http.Server.MapPath(FileMapFolder));
+            //check for a virtual path before MapPath
+            _xmlMapFolder = FileMapFolder.StartsWith("~/")
+                ? new DirectoryInfo(http.Server.MapPath(FileMapFolder))
+                : new DirectoryInfo(FileMapFolder);
 
             //Name the map file according to the machine name
             _xmlFile = new FileInfo(GetXmlMapPath());
@@ -82,10 +109,8 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 
             if (config["mapPath"] != null)
             {
-                //use the config setting if it has not been dynamically set OR
-                //when the config section doesn't equal the default
-                if (FileMapFolder == FileMapVirtualFolder
-                    || config["mapPath"] != FileMapVirtualFolder)
+                //use the config setting if it has not been dynamically set
+                if (!_dynamicallyConfiguredPath)
                 {
                     FileMapFolder = config["mapPath"];
                 }
