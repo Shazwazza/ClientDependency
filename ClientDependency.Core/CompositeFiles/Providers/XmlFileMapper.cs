@@ -37,11 +37,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 
         [Obsolete("Use FileMapDefaultFolder instead")]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static string FileMapVirtualFolder
-        {
-            get { return FileMapDefaultFolder; }
-            set { FileMapDefaultFolder = value; }
-        }
+        public static string FileMapVirtualFolder = _fileMapFolder;
 
         /// <summary>
         /// Specifies the default folder to store the file map in, either absolute or virtual 
@@ -65,6 +61,14 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 
         public XmlFileMapper()
         {
+            //here we need to do a backwards compat check
+            if (FileMapVirtualFolder != _fileMapFolder)
+            {
+                //in this case, the legacy FileMapVirtualFolder was updated which means that we need to change
+                //the non-legacy FileMapDefaultFolder value
+                FileMapDefaultFolder = FileMapVirtualFolder;
+            }
+
             FileMapFolder = FileMapDefaultFolder;
         }
 
