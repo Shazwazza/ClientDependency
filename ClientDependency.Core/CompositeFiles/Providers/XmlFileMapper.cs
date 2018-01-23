@@ -25,19 +25,19 @@ namespace ClientDependency.Core.CompositeFiles.Providers
     {
 
         public const string DefaultName = "XmlFileMap";
-
         private const string MapFileName = "map.xml";
+        private const string DefaultFileMapFolder = "~/App_Data/ClientDependency";
 
         private XDocument _doc;
         private FileInfo _xmlFile;
         
         private static readonly object Locker = new object();
-        private static string _fileMapFolder = "~/App_Data/ClientDependency";
+        private static string _fileMapFolder = DefaultFileMapFolder;
         private static bool _dynamicallyConfiguredPath = false;
 
         [Obsolete("Use FileMapDefaultFolder instead")]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static string FileMapVirtualFolder = _fileMapFolder;
+        public static string FileMapVirtualFolder = DefaultFileMapFolder;
 
         /// <summary>
         /// Specifies the default folder to store the file map in, either absolute or virtual 
@@ -62,7 +62,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         public XmlFileMapper()
         {
             //here we need to do a backwards compat check
-            if (FileMapVirtualFolder != _fileMapFolder)
+            if (FileMapVirtualFolder != DefaultFileMapFolder)
             {
                 //in this case, the legacy FileMapVirtualFolder was updated which means that we need to change
                 //the non-legacy FileMapDefaultFolder value
