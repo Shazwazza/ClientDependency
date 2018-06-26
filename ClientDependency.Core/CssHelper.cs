@@ -10,7 +10,7 @@ namespace ClientDependency.Core
 {
     internal static class CssHelper
     {
-        private static readonly Regex ImportCssRegex = new Regex(@"@import url\((.+?)\);?", RegexOptions.Compiled);
+        private static readonly Regex ImportCssRegex = new Regex(@"@import url\((.+?)\)\s*?;?", RegexOptions.Compiled);
         private static readonly Regex CssUrlRegex = new Regex(@"url\(((?![""']?data:|[""']?#).+?)\)", RegexOptions.Compiled);
 
         /// <summary>
