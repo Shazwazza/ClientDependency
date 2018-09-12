@@ -6,24 +6,61 @@ param (
 	[Parameter(Mandatory=$true)]
 	[string]
 	[AllowEmptyString()]
-	$PreReleaseName
+	$PreReleaseName,
+	[Parameter(Mandatory=$false)]
+	[int]
+	$IsBuildServer = 0
 )
 
 $PSScriptFilePath = (Get-Item $MyInvocation.MyCommand.Path).FullName
-
+$RepoRoot = (get-item $PSScriptFilePath).Directory.FullName;
 $SolutionRoot = Split-Path -Path $PSScriptFilePath -Parent
 
-$ProgFiles86 = [Environment]::GetEnvironmentVariable("ProgramFiles(x86)");
-$MSBuild = "$ProgFiles86\MSBuild\14.0\Bin\MSBuild.exe"
-
 # Make sure we don't have a release folder for this version already
-$BuildFolder = Join-Path -Path $SolutionRoot -ChildPath "build";
-$ReleaseFolder = Join-Path -Path $BuildFolder -ChildPath "Releases\v$ReleaseVersionNumber$PreReleaseName";
+$BuildFolder = Join-Path -Path $RepoRoot -ChildPath "build";
+$ReleaseFolder = Join-Path -Path $BuildFolder -ChildPath "Release";
 if ((Get-Item $ReleaseFolder -ErrorAction SilentlyContinue) -ne $null)
 {
 	Write-Warning "$ReleaseFolder already exists on your local machine. It will now be deleted."
 	Remove-Item $ReleaseFolder -Recurse
 }
+
+# Go get nuget.exe if we don't hae it
+$NuGet = "$BuildFolder\nuget.exe"
+$FileExists = Test-Path $NuGet 
+If ($FileExists -eq $False) {
+	Write-Host "Retrieving nuget.exe..."
+	$SourceNugetExe = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
+	Invoke-WebRequest $SourceNugetExe -OutFile $NuGet
+}
+
+if ($IsBuildServer -eq 1) { 
+	$MSBuild = "MSBuild.exe"
+}
+else {
+	# ensure we have vswhere
+	New-Item "$BuildFolder\vswhere" -type directory -force
+	$vswhere = "$BuildFolder\vswhere.exe"
+	if (-not (test-path $vswhere))
+	{
+	   Write-Host "Download VsWhere..."
+	   $path = "$BuildFolder\tmp"
+	   &$nuget install vswhere -OutputDirectory $path -Verbosity quiet
+	   $dir = ls "$path\vswhere.*" | sort -property Name -descending | select -first 1
+	   $file = ls -path "$dir" -name vswhere.exe -recurse
+	   mv "$dir\$file" $vswhere   
+	 }
+
+	$MSBuild = &$vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath
+	if ($MSBuild) {
+	  $MSBuild = join-path $MSBuild 'MSBuild\15.0\Bin\MSBuild.exe'
+	  if (-not (test-path $msbuild)) {
+		throw "MSBuild not found!"
+	  }
+	}
+}
+
+Write-Host "MSBUILD = $MSBuild"
 
 # Set the version number in SolutionInfo.cs
 $SolutionInfoPath = Join-Path -Path $SolutionRoot -ChildPath "SolutionInfo.cs"
@@ -154,7 +191,6 @@ $CopyrightYear = (Get-Date).year;
 $CoreNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency.nuspec";
 Copy-Item $CoreNuSpecSource -Destination $CoreFolder
 $CoreNuSpec = Join-Path -Path $CoreFolder -ChildPath "ClientDependency.nuspec";
-$NuGet = Join-Path $SolutionRoot -ChildPath ".nuget\NuGet.exe"
 Write-Output "DEBUGGING: " $CoreNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName
 & $NuGet pack $CoreNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName -Properties copyrightyear=$CopyrightYear
 
@@ -162,42 +198,36 @@ Write-Output "DEBUGGING: " $CoreNuSpec -OutputDirectory $ReleaseFolder -Version 
 $MvcNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency-Mvc.nuspec";
 Copy-Item $MvcNuSpecSource -Destination $MvcFolder
 $MvcNuSpec = Join-Path -Path $MvcFolder -ChildPath "ClientDependency-Mvc.nuspec"
-$NuGet = Join-Path $SolutionRoot -ChildPath ".nuget\NuGet.exe"
 & $NuGet pack $MvcNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName -Properties copyrightyear=$CopyrightYear
 
 # COPY OVER THE MVC5 NUSPEC AND BUILD THE NUGET PACKAGE
 $Mvc5NuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency-Mvc5.nuspec";
 Copy-Item $Mvc5NuSpecSource -Destination $Mvc5Folder
 $Mvc5NuSpec = Join-Path -Path $Mvc5Folder -ChildPath "ClientDependency-Mvc5.nuspec"
-$NuGet = Join-Path $SolutionRoot -ChildPath ".nuget\NuGet.exe"
 & $NuGet pack $Mvc5NuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName -Properties copyrightyear=$CopyrightYear
 
 # COPY OVER THE LESS NUSPEC AND BUILD THE NUGET PACKAGE
 $LessNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency-Less.nuspec";
 Copy-Item $LessNuSpecSource -Destination $LessFolder
 $LessNuSpec = Join-Path -Path $LessFolder -ChildPath "ClientDependency-Less.nuspec"
-$NuGet = Join-Path $SolutionRoot -ChildPath ".nuget\NuGet.exe"
 & $NuGet pack $LessNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName -Properties copyrightyear=$CopyrightYear
 
 # COPY OVER THE SASS NUSPEC AND BUILD THE NUGET PACKAGE
 $SassNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency-SASS.nuspec";
 Copy-Item $SassNuSpecSource -Destination $SassFolder
 $SassNuSpec = Join-Path -Path $SassFolder -ChildPath "ClientDependency-SASS.nuspec"
-$NuGet = Join-Path $SolutionRoot -ChildPath ".nuget\NuGet.exe"
 & $NuGet pack $SassNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName -Properties copyrightyear=$CopyrightYear
 
 # COPY OVER THE COFFEE NUSPEC AND BUILD THE NUGET PACKAGE
 $CoffeeNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency-Coffee.nuspec";
 Copy-Item $CoffeeNuSpecSource -Destination $CoffeeFolder
 $CoffeeNuSpec = Join-Path -Path $CoffeeFolder -ChildPath "ClientDependency-Coffee.nuspec"
-$NuGet = Join-Path $SolutionRoot -ChildPath ".nuget\NuGet.exe"
 & $NuGet pack $CoffeeNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName -Properties copyrightyear=$CopyrightYear
 
 # COPY OVER THE TypeScript NUSPEC AND BUILD THE NUGET PACKAGE
 $TypeScriptNuSpecSource = Join-Path -Path $BuildFolder -ChildPath "ClientDependency-TypeScript.nuspec";
 Copy-Item $TypeScriptNuSpecSource -Destination $TypeScriptFolder
 $TypeScriptNuSpec = Join-Path -Path $TypeScriptFolder -ChildPath "ClientDependency-TypeScript.nuspec"
-$NuGet = Join-Path $SolutionRoot -ChildPath ".nuget\NuGet.exe"
 & $NuGet pack $TypeScriptNuSpec -OutputDirectory $ReleaseFolder -Version $ReleaseVersionNumber$PreReleaseName -Properties copyrightyear=$CopyrightYear
 
 ""

@@ -96,20 +96,6 @@ namespace ClientDependency.Core.FileRegistration.Providers
             return sb.ToString();
         }
 
-        private void RenderCssComposites(HttpContextBase http, IDictionary<string, string> htmlAttributes, StringBuilder sb, IEnumerable<IClientDependencyFile> cssDependencies)
-        {
-            var comp = ClientDependencySettings.Instance.DefaultCompositeFileProcessingProvider.ProcessCompositeList(
-                cssDependencies,
-                ClientDependencyType.Css,
-                http,
-                ClientDependencySettings.Instance.CompositeFileHandlerPath);
-
-            foreach (var s in comp)
-            {
-                sb.Append(RenderSingleCssFile(s, htmlAttributes));
-            }
-        }
-
         protected override string RenderSingleJsFile(string js, IDictionary<string, string> htmlAttributes)
         {
             return string.Format(HtmlEmbedContants.ScriptEmbedWithSource, js, htmlAttributes.ToHtmlAttributes());
