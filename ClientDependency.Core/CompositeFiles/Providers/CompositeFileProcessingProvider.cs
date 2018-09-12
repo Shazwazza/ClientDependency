@@ -68,17 +68,25 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 	    /// <returns></returns>
 	    public override byte[] CombineFiles(string[] filePaths, HttpContextBase context, ClientDependencyType type, out List<CompositeFileDefinition> fileDefs)
 		{
-	        var ms = new MemoryStream(5000);            
-            var sw = new StreamWriter(ms, Encoding.UTF8);
+            using (var ms = new MemoryStream(5000))
+            using (var sw = new StreamWriter(ms, Encoding.UTF8))
+            {
+                var fDefs = filePaths.Select(s => WritePathToStream(type, s, context, sw)).Where(def => def != null).ToList();
 
-	        var fDefs = filePaths.Select(s => WritePathToStream(type, s, context, sw)).Where(def => def != null).ToList();
+                fileDefs = fDefs;
 
-	        sw.Flush();
-			byte[] outputBytes = ms.ToArray();
-			sw.Close();
-			ms.Close();
-			fileDefs = fDefs;
-			return outputBytes;
+                if (fDefs.Count == 0)
+                {
+                    return null;
+                }
+
+                sw.Flush();
+                byte[] outputBytes = ms.ToArray();
+                sw.Close();
+                ms.Close();
+                
+                return outputBytes;
+            }   
 		}
 
 		/// <summary>

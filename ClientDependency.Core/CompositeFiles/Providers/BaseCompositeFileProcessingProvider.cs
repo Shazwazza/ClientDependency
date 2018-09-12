@@ -113,24 +113,46 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         public abstract byte[] CombineFiles(string[] filePaths, HttpContextBase context, ClientDependencyType type, out List<CompositeFileDefinition> fileDefs);
         public abstract byte[] CompressBytes(CompressionType type, byte[] fileBytes);
 
+        /// <summary>
+        /// This will check if there's a file writer for the file extension of the file path and if that file physically exists in the website
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="filePath"></param>
+        /// <param name="virtualFileWriter"></param>
+        /// <returns></returns>
         protected bool CanProcessLocally(HttpContextBase context, string filePath, out IVirtualFileWriter virtualFileWriter)
         {
             //First check if there's any virtual file providers that can handle this
             var writer = FileWriters.GetVirtualWriterForFile(filePath);
             if (writer == null)
             {
-                var ext = Path.GetExtension(filePath);
+                if (!PathHelper.TryGetFileExtension(filePath, out var ext))
+                {
+                    virtualFileWriter = null;
+                    return false;
+                }
                 writer = FileWriters.GetVirtualWriterForExtension(ext);                
             }
             if (writer != null)
             {
                 virtualFileWriter = writer;
-                return writer.FileProvider.FileExists(filePath);
+                try
+                {
+                    return writer.FileProvider.FileExists(filePath);
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
             }
 
             //can process if it exists locally
             virtualFileWriter = null;
-            return File.Exists(context.Server.MapPath(filePath));
+
+            if (!PathHelper.TryMapPath(filePath, context, out var mappedPath))
+                return false;
+
+            return File.Exists(mappedPath);
         }
 
         protected virtual VirtualFile GetVirtualFile(HttpContextBase context, string filePath)
@@ -151,85 +173,71 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         /// <returns>If successful returns a CompositeFileDefinition, otherwise returns null</returns>
         public CompositeFileDefinition WritePathToStream(ClientDependencyType type, string path, HttpContextBase context, StreamWriter sw)
         {
+            path = path.Trim();
+
+            if (string.IsNullOrEmpty(path) || !PathHelper.TryGetFileExtension(path, out var extension)) 
+                return null;
+
             CompositeFileDefinition def = null;
-            if (!string.IsNullOrEmpty(path))
+
+            //all config based extensions and all extensions registered by file writers
+            var fileBasedExtensions = ClientDependencySettings.Instance.FileBasedDependencyExtensionList
+                                                              .Union(FileWriters.GetRegisteredExtensions());
+
+            try
             {
-                try
+                if (fileBasedExtensions.Contains(extension, StringComparer.InvariantCultureIgnoreCase))
                 {
-                    //var fi = new FileInfo(context.Server.MapPath(path));
-
-                    var extension = Path.GetExtension(path);
-
-                    //all config based extensions and all extensions registered by file writers
-                    var fileBasedExtensions = ClientDependencySettings.Instance.FileBasedDependencyExtensionList
-                                                                      .Union(FileWriters.GetRegisteredExtensions());
-
-                    if (fileBasedExtensions.Contains(extension.ToUpper()))
+                    if (CanProcessLocally(context, path, out IVirtualFileWriter virtualWriter))
                     {
-                        IVirtualFileWriter virtualWriter;
-                        if (CanProcessLocally(context, path, out virtualWriter))
+                        //internal request
+                        if (virtualWriter != null)
                         {
-                            //internal request
-                            if (virtualWriter != null)
-                            {
-                                var vf = virtualWriter.FileProvider.GetFile(path);
-                                WriteVirtualFileToStream(sw, vf, virtualWriter, type, context);
-                            }
-                            else
-                            {
-                                var fi = new FileInfo(context.Server.MapPath(path));
-                                WriteFileToStream(sw, fi, type, path, context);
-                            }                            
+                            var vf = virtualWriter.FileProvider.GetFile(path);
+                            def = WriteVirtualFileToStream(sw, vf, virtualWriter, type, context);
                         }
                         else
                         {
-                            //external request
+                            if (PathHelper.TryGetFileInfo(path, context, out var fi))
+                            {
+                                def = WriteFileToStream(sw, fi, type, path, context);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //Before we try to load it by URI, we want to check if the URI is a local file request.
+                        //We can try to detect if it is and try to load it from the file system.
+                        //If the file isn't local and doesn't exist then we'll continue trying to load it via the URI.
+                        //NOTE: At this stage we've already validated that the file type is based on the file types registered with CDF.
+                        if (Uri.TryCreate(path, UriKind.RelativeOrAbsolute, out Uri uri)
+                            && uri.IsLocalUri(context)
+                            //extract the path/query of the request and ensure it starts with the virtual path marker (~/) so that the file
+                            //can only be looked up local to this website.
+                            && PathHelper.TryGetFileInfo(uri.PathAndQuery.EnsureStartsWith("/").EnsureStartsWith("~"), context, out var fi))
+                        {
+                            def = WriteFileToStream(sw, fi, type, path, context);
+                        }
+                        else
+                        {
+                            //external request to a file based dependency
                             def = WriteFileToStream(sw, path, type, context);
                         }
                     }
-                    else
-                    {
-                        //if it's not a file based dependency, try to get the request output.
-                        def = WriteFileToStream(sw, path, type, context);
-                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    if (ex is NotSupportedException
-                        || ex is ArgumentException
-                        || ex is HttpException)
-                    {
-                        //could not parse the string into a fileinfo or couldn't mappath, so we assume it is a URI
-
-                        //before we try to load it by URI, we want to check if the URI is a local request, we'll try to detect if it is and
-                        // then try to load it from the file system, if the file isn't there then we'll continue trying to load it via the URI.
-                        Uri uri;
-                        if (Uri.TryCreate(path, UriKind.RelativeOrAbsolute, out uri) && uri.IsLocalUri(context))
-                        {
-                            var localPath = uri.PathAndQuery;
-                            var fi = new FileInfo(context.Server.MapPath(localPath));
-                            if (fi.Exists)
-                            {
-                                try
-                                {
-                                    WriteFileToStream(sw, fi, type, path, context); //internal request
-                                }
-                                catch (Exception ex1)
-                                {
-                                    ClientDependencySettings.Instance.Logger.Error($"Could not load file contents from {path}. EXCEPTION: {ex1.Message}", ex1);
-                                }
-                            }
-                        }
-
-                        def = WriteFileToStream(sw, path, type, context);
-                    }
-                    else
-                    {
-                        //if this fails, log the exception, but continue
-                        ClientDependencySettings.Instance.Logger.Error($"Could not load file contents from {path}. EXCEPTION: {ex.Message}", ex);
-                    }
+                    //if it's not a file based dependency, try to get the request output.
+                    def = WriteFileToStream(sw, path, type, context);
                 }
             }
+            catch (Exception ex)
+            {
+                //if this fails, log the exception, but continue
+                ClientDependencySettings.Instance.Logger.Error($"Could not load file contents from {path}. EXCEPTION: {ex.Message}", ex);
+            }
+
+            if (def == null) return null;
 
             if (type == ClientDependencyType.Javascript)
             {
@@ -248,9 +256,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         /// <param name="http"></param>
         protected virtual CompositeFileDefinition WriteFileToStream(StreamWriter sw, string url, ClientDependencyType type, HttpContextBase http)
         {
-            string requestOutput;
-            Uri resultUri;
-            var rVal = RequestHelper.TryReadUri(url, http, BundleDomains, out requestOutput, out resultUri);
+            var rVal = RequestHelper.TryReadUri(url, http, BundleDomains, out string requestOutput, out Uri resultUri);
             if (!rVal) return null;
 
             //write the contents of the external request.
