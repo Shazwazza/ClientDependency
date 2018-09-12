@@ -95,6 +95,10 @@ if (-not $?)
 	throw "The MSBuild process returned an error code."
 }
 
+#restore nuget packages
+Write-Host "Restoring nuget packages..."
+& $NuGet restore $SolutionPath
+
 #build for all deploys
 
 # for net 4.0
