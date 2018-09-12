@@ -108,7 +108,6 @@
     <Compile Include="BundleDefinition.cs" />
     <Compile Include="BundleManager.cs" />
     <Compile Include="BundleResult.cs" />
-    <Compile Include="ClientDependencyResourceHandler.cs" />
     <Compile Include="CompositeFiles\CSSMin.cs" />
     <Compile Include="CompositeFiles\CssMinifier.cs" />
     <Compile Include="CompositeFiles\IVirtualFile.cs" />
@@ -186,6 +185,7 @@
     <Compile Include="Module\RogueFileFilter.cs" />
     <Compile Include="NetworkHelper.cs" />
     <Compile Include="ObjectExtensions.cs" />
+    <Compile Include="PathHelper.cs" />
     <Compile Include="PathsCollection.cs" />
     <Compile Include="PlaceholderParser.cs" />
     <Compile Include="PlaceholderReplacementEventArgs.cs" />
