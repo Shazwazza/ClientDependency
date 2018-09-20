@@ -93,8 +93,11 @@ namespace ClientDependency.Core.Module
         private RogueFileCompressionElement GetSupportedPath()
         {
             var rawUrl = CurrentContext.GetRawUrlSafe();
+#if !Net35
             if (string.IsNullOrWhiteSpace(rawUrl)) return null;
-
+#else
+            if (string.IsNullOrEmpty(rawUrl)) return null;
+#endif
 
             var rogueFiles = ClientDependencySettings.Instance
                 .ConfigSection

@@ -1,9 +1,11 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using ClientDependency.Core.CompositeFiles;
+
+#if !Net35
+using System.Collections.Concurrent;
+#endif
 
 namespace ClientDependency.Core
 {
@@ -13,10 +15,21 @@ namespace ClientDependency.Core
     public class FileWriters
     {
 
+#if !Net35
         private static readonly ConcurrentDictionary<string, IFileWriter> ExtensionWriters = new ConcurrentDictionary<string, IFileWriter>();
         private static readonly ConcurrentDictionary<string, IFileWriter> PathWriters = new ConcurrentDictionary<string, IFileWriter>();
         private static readonly ConcurrentDictionary<string, IVirtualFileWriter> VirtualExtensionWriters = new ConcurrentDictionary<string, IVirtualFileWriter>();
         private static readonly ConcurrentDictionary<string, IVirtualFileWriter> VirtualPathWriters = new ConcurrentDictionary<string, IVirtualFileWriter>();
+#else
+        private static readonly Dictionary<string, IFileWriter> ExtensionWriters = new Dictionary<string, IFileWriter>();
+        private static readonly Dictionary<string, IFileWriter> PathWriters = new Dictionary<string, IFileWriter>();
+        private static readonly Dictionary<string, IVirtualFileWriter> VirtualExtensionWriters = new Dictionary<string, IVirtualFileWriter>();
+        private static readonly Dictionary<string, IVirtualFileWriter> VirtualPathWriters = new Dictionary<string, IVirtualFileWriter>();
+
+        private static readonly object DictionaryLocker = new object();
+#endif
+
+        
         private static readonly IFileWriter DefaultFileWriter = new DefaultFileWriter();
 
         /// <summary>
@@ -53,7 +66,17 @@ namespace ClientDependency.Core
             {
                 throw new FormatException("A file extension must begin with a '.'");
             }
+
+#if !Net35
             VirtualExtensionWriters.AddOrUpdate(fileExtension.ToUpper(), s => writer, (s, fileWriter) => writer);
+#else
+            lock (DictionaryLocker)
+            {
+                VirtualExtensionWriters[fileExtension.ToUpper()] = writer;
+            }
+#endif
+
+            
         }
 
         /// <summary>
@@ -85,7 +108,16 @@ namespace ClientDependency.Core
             {
                 throw new FormatException("A file path must begin with a '/'");
             }
+
+#if !Net35
             VirtualPathWriters.AddOrUpdate(filePath.ToUpper(), s => writer, (s, fileWriter) => writer);
+#else
+            lock (DictionaryLocker)
+            {
+                VirtualPathWriters[filePath.ToUpper()] = writer;
+            }
+#endif
+            
         }
 
         /// <summary>
@@ -118,7 +150,16 @@ namespace ClientDependency.Core
             {
                 throw new FormatException("A file extension must begin with a '.'");
             }
+
+#if !Net35
             ExtensionWriters.AddOrUpdate(fileExtension.ToUpper(), s => writer, (s, fileWriter) => writer);
+#else
+            lock (DictionaryLocker)
+            {
+                ExtensionWriters[fileExtension.ToUpper()] = writer;
+            }
+#endif
+            
         }
 
         /// <summary>
@@ -150,7 +191,16 @@ namespace ClientDependency.Core
             {
                 throw new FormatException("A file path must begin with a '/'");
             }
+
+#if !Net35
             PathWriters.AddOrUpdate(filePath.ToUpper(), s => writer, (s, fileWriter) => writer);
+#else
+            lock (DictionaryLocker)
+            {
+                PathWriters[filePath.ToUpper()] = writer;
+            }
+#endif
+            
         }
 
         /// <summary>

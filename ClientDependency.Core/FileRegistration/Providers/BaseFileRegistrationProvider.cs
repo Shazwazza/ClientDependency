@@ -213,7 +213,11 @@ namespace ClientDependency.Core.FileRegistration.Providers
                 //need to force non-bundled lines for items with query parameters or a hash value.
                 var extension = f.FilePath.Contains('?') || f.FilePath.Contains('#') ? "" : Path.GetExtension(f.FilePath);
                 var stringExt = "";
+#if !Net35
                 if (!string.IsNullOrWhiteSpace(extension))
+#else
+                if (!string.IsNullOrEmpty(extension))
+#endif
                 {
                     stringExt = extension.ToUpper().Split(new[] {'?'}, StringSplitOptions.RemoveEmptyEntries)[0];
                 }

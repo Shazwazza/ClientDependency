@@ -113,7 +113,11 @@ namespace ClientDependency.Core
                         currIndex = -1;
                         //write to the main imports and reset the temp one
                         imports.Append(tempImports);
+#if !Net35
                         tempImports.Clear();
+#else
+                        tempImports.Length = 0;
+#endif                  
                     }
                 }
                 else if (searchStatement[currIndex + 1] == c)
@@ -131,7 +135,11 @@ namespace ClientDependency.Core
                 {
                     //reset and start again
                     currIndex = -1;
+#if !Net35
                     tempImports.Clear();
+#else
+                    tempImports.Length = 0;
+#endif
                 }             
             }
 

@@ -243,7 +243,12 @@ namespace ClientDependency.Core.CompositeFiles
                             {
                                 //Update the XML file map
                                 ClientDependencySettings.Instance.DefaultFileMapProvider.CreateUpdateMap(fileset, clientCompression.ToString(),
-                                    fileDefinitions.Select(x => new BasicFile(type) { FilePath = x.Uri }),
+
+#if !Net35
+                                fileDefinitions.Select(x => new BasicFile(type) { FilePath = x.Uri }),
+#else
+                                fileDefinitions.Select(x => (IClientDependencyFile)new BasicFile(type) { FilePath = x.Uri }),
+#endif
                                         compositeFileName,
                                         version);
                             }

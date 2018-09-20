@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Web;
-using ClientDependency.Core.Controls;
+
+#if !Net35
+using System.Collections.Concurrent;
+#endif
 
 namespace ClientDependency.Core
 {
@@ -20,8 +21,12 @@ namespace ClientDependency.Core
 
         internal static Func<HttpContextBase> GetHttpContextDelegate { get; set; }
 
+#if !Net35
         private static readonly ConcurrentDictionary<BundleDefinition, IEnumerable<IClientDependencyFile>> Bundles = new ConcurrentDictionary<BundleDefinition, IEnumerable<IClientDependencyFile>>();
-
+#else
+        private static readonly Dictionary<BundleDefinition, IEnumerable<IClientDependencyFile>> Bundles = new Dictionary<BundleDefinition, IEnumerable<IClientDependencyFile>>();
+        private static readonly object DictionaryLocker = new object();
+#endif
         internal static void ClearBundles()
         {
             Bundles.Clear();
@@ -80,10 +85,19 @@ namespace ClientDependency.Core
             return new BundleResult { Definition = b.Key, Files = b.Value };
         }
 
-        #region CreateCssBundle
+#region CreateCssBundle
         public static void CreateCssBundle(string name, params CssFile[] files)
         {
-            Bundles.AddOrUpdate(new BundleDefinition(ClientDependencyType.Css, name), s => OrderFiles(files), (s, enumerable) => OrderFiles(files));
+            var def = new BundleDefinition(ClientDependencyType.Css, name);
+#if !Net35
+            Bundles.AddOrUpdate(def, s => OrderFiles(files), (s, enumerable) => OrderFiles(files));
+#else
+            lock (DictionaryLocker)
+            {
+                Bundles[def] = OrderFiles(files);
+            }
+#endif
+
         }
 
         /// <summary>
@@ -100,8 +114,16 @@ namespace ClientDependency.Core
             {
                 f.Priority = priority;
             }
-
-            Bundles.AddOrUpdate(new BundleDefinition(ClientDependencyType.Css, name), s => OrderFiles(files), (s, enumerable) => OrderFiles(files));
+            
+            var def = new BundleDefinition(ClientDependencyType.Css, name);
+#if !Net35
+            Bundles.AddOrUpdate(def, s => OrderFiles(files), (s, enumerable) => OrderFiles(files));
+#else
+            lock (DictionaryLocker)
+            {
+                Bundles[def] = OrderFiles(files);
+            }
+#endif
         }
 
         /// <summary>
@@ -126,14 +148,34 @@ namespace ClientDependency.Core
                 f.Group = group;
             }
 
-            Bundles.AddOrUpdate(new BundleDefinition(ClientDependencyType.Css, name), s => OrderFiles(files), (s, enumerable) => OrderFiles(files));
-        }  
-        #endregion
+            var def = new BundleDefinition(ClientDependencyType.Css, name);
+#if !Net35
+            Bundles.AddOrUpdate(def, s => OrderFiles(files), (s, enumerable) => OrderFiles(files));
+#else
+            lock (DictionaryLocker)
+            {
+                Bundles[def] = OrderFiles(files);
+            }
+#endif
 
-        #region CreateJsBundle
+            
+        }  
+#endregion
+
+#region CreateJsBundle
         public static void CreateJsBundle(string name, params JavascriptFile[] files)
         {
-            Bundles.AddOrUpdate(new BundleDefinition(ClientDependencyType.Javascript, name), s => OrderFiles(files), (s, enumerable) => OrderFiles(files));
+            var def = new BundleDefinition(ClientDependencyType.Javascript, name);
+#if !Net35
+            Bundles.AddOrUpdate(def, s => OrderFiles(files), (s, enumerable) => OrderFiles(files));
+#else
+            lock (DictionaryLocker)
+            {
+                Bundles[def] = OrderFiles(files);
+            }
+#endif
+
+            
         }
 
         /// <summary>
@@ -151,7 +193,17 @@ namespace ClientDependency.Core
                 f.Priority = priority;
             }
 
-            Bundles.AddOrUpdate(new BundleDefinition(ClientDependencyType.Javascript, name), s => OrderFiles(files), (s, enumerable) => OrderFiles(files));
+            var def = new BundleDefinition(ClientDependencyType.Javascript, name);
+#if !Net35
+            Bundles.AddOrUpdate(def, s => OrderFiles(files), (s, enumerable) => OrderFiles(files));
+#else
+            lock (DictionaryLocker)
+            {
+                Bundles[def] = OrderFiles(files);
+            }
+#endif
+
+            
         }
 
         /// <summary>
@@ -176,9 +228,18 @@ namespace ClientDependency.Core
                 f.Group = group;
             }
 
-            Bundles.AddOrUpdate(new BundleDefinition(ClientDependencyType.Javascript, name), s => OrderFiles(files), (s, enumerable) => OrderFiles(files));
+            var def = new BundleDefinition(ClientDependencyType.Javascript, name);
+#if !Net35
+            Bundles.AddOrUpdate(def, s => OrderFiles(files), (s, enumerable) => OrderFiles(files));
+#else
+            lock (DictionaryLocker)
+            {
+                Bundles[def] = OrderFiles(files);
+            }
+#endif
+            
         } 
-        #endregion
+#endregion
         
         /// <summary>
         /// This will order the files

@@ -72,7 +72,11 @@ namespace ClientDependency.Core.Module
             //we're not supporting the ASP.Net AJAX calls for compression
             var rawUrl = Context.GetRawUrlSafe();
 
+#if !Net35
             if (string.IsNullOrWhiteSpace(rawUrl)) return null;
+#else
+            if (string.IsNullOrEmpty(rawUrl)) return null;
+#endif
 
             var uRawUrl = rawUrl.ToUpper();
             if (uRawUrl.Contains("WEBRESOURCE.AXD") || uRawUrl.Contains("SCRIPTRESOURCE.AXD"))

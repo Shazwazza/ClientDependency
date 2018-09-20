@@ -134,7 +134,11 @@ namespace ClientDependency.Core.Controls
 		{
 			base.OnPreRender(e);
 
+#if !Net35
             _base.Paths.UnionWith(Paths);
+#else
+            _base.Paths.UnionWith((IEnumerable<IClientDependencyPath>)Paths);
+#endif
 
             RegisterClientDependencies((WebFormsFileRegistrationProvider)_base.Provider, Page, _base.Paths);
 			RenderDependencies();

@@ -89,9 +89,14 @@ namespace ClientDependency.Core
         /// <returns></returns>
         public static string GenerateHash(this string str)
         {
+#if !Net35
             return CryptoConfig.AllowOnlyFipsAlgorithms
                 ? str.GenerateSha1Hash()
                 : str.GenerateMd5();
+#else
+            return str.GenerateMd5();
+#endif
+
         }
 
         /// <summary>

@@ -118,7 +118,14 @@ namespace ClientDependency.Core.Config
         [ConfigurationProperty("allowOnlyFipsAlgorithms", DefaultValue = false)]
         public bool AllowOnlyFipsAlgorithms
         {
-            get { return CryptoConfig.AllowOnlyFipsAlgorithms; }
+            get 
+            {
+#if !Net35
+                return CryptoConfig.AllowOnlyFipsAlgorithms;
+#else
+                return false;
+#endif
+            }
             set
             {
                 //this does nothing now                
