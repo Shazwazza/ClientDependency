@@ -214,7 +214,7 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                             && uri.IsLocalUri(context)
                             //extract the path/query of the request and ensure it starts with the virtual path marker (~/) so that the file
                             //can only be looked up local to this website.
-                            && PathHelper.TryGetFileInfo(uri.PathAndQuery.EnsureStartsWith("/").EnsureStartsWith("~"), context, out var fi))
+                            && PathHelper.TryGetFileInfo(uri.MakeAbsoluteUri(context).PathAndQuery.EnsureStartsWith("/").EnsureStartsWith("~"), context, out var fi))
                         {
                             def = WriteFileToStream(sw, fi, type, path, context);
                         }
