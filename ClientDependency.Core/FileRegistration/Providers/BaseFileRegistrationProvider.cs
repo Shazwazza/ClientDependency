@@ -143,7 +143,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
             if (config != null && config["enableDebugVersionQueryString"] != null && !string.IsNullOrEmpty(config["enableDebugVersionQueryString"]))
             {
                 bool enableDebugVersionQueryString;
-                if (bool.TryParse(config["disableCompositeBundling"], out enableDebugVersionQueryString))
+                if (bool.TryParse(config["enableDebugVersionQueryString"], out enableDebugVersionQueryString))
                 {
                     EnableDebugVersionQueryString = enableDebugVersionQueryString;
                 }
