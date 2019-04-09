@@ -13,6 +13,7 @@ using ClientDependency.Core.Controls;
 using ClientDependency.Core.Config;
 using ClientDependency.Core;
 using ClientDependency.Core.CompositeFiles;
+using System.Configuration;
 
 namespace ClientDependency.Core.FileRegistration.Providers
 {
@@ -423,7 +424,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
             switch(file.DependencyType)
             {
                 case ClientDependencyType.Javascript:
-                    if (!attributes.ContainsKey("type"))
+                    if (!attributes.ContainsKey("type") && ConfigurationManager.AppSettings["ClientDependencyHTML4"] == "true")
                         attributes.Add("type", "text/javascript");
                     if (attributes.ContainsKey("src"))
                         attributes.Remove("src");
