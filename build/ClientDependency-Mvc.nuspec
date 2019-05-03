@@ -13,6 +13,7 @@
     <tags>mvc css html javascript clientdependency cdf minify compress combine</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright © Shannon Deminick $copyrightyear$</copyright>
+    <repository type="git" url="https://github.com/Shandem/ClientDependency" />
     <dependencies>
 
       <dependency id="Microsoft.AspNet.Mvc" version="4.0.20710" />

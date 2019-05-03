@@ -13,6 +13,7 @@
         <tags>css html javascript minify compress combine</tags>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <copyright>Copyright © Shannon Deminick $copyrightyear$</copyright>
+        <repository type="git" url="https://github.com/Shandem/ClientDependency" />
     </metadata>
     <files>
         <file src="net35\*.dll" target="lib\net35" />
