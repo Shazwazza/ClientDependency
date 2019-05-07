@@ -22,6 +22,7 @@ namespace ClientDependency.Core.CompositeFiles
 
         private TextReader _tr;
         private StringBuilder _sb;
+        private bool _inSelector;
         int _theA;
         int _theB;
         int _theLookahead = Eof;
@@ -39,6 +40,7 @@ namespace ClientDependency.Core.CompositeFiles
             _theA = '\n';
             _theB = 0;
             _theLookahead = Eof;
+            _inSelector = true;
             ExecuteCssMin();
             return _sb.ToString();
         }
@@ -59,11 +61,13 @@ namespace ClientDependency.Core.CompositeFiles
                             {
                                 case ' ':        //body.Replace("  ", String.Empty);
                                 case '{':        //body = body.Replace(" {", "{");
-                                case ':':        //body = body.Replace(" {", "{");
                                 case '\n':       //body = body.Replace(" \n", "\n");
                                 case '\r':       //body = body.Replace(" \r", "\r");
                                 case '\t':       //body = body.Replace(" \t", "\t");
                                     Action(2);
+                                    break;
+                                case ':':        //body = body.Replace(" {", "{");
+                                    Action(_inSelector ? 1 : 2);
                                     break;
                                 default:
                                     Action(1);
@@ -92,7 +96,13 @@ namespace ClientDependency.Core.CompositeFiles
                         }
                         break;
                     case '}':
+                        _inSelector = true;
+                        Action(char.IsWhiteSpace((char)_theB) ? 3 : 1);
+                        break;
                     case '{':
+                        _inSelector = false;
+                        Action(char.IsWhiteSpace((char)_theB) ? 3 : 1);
+                        break;
                     case ':':
                     case ',':
                     case ';':
