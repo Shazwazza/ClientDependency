@@ -51,9 +51,16 @@ else {
 	   mv "$dir\$file" $vswhere   
 	 }
 
-	$MSBuild = &$vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath
+	$MSBuild = &$vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath	
+	#TO get this working with pre-release use:
+	#$MSBuild = &$vswhere -prerelease -property installationPath
+	
 	if ($MSBuild) {
+	  
 	  $MSBuild = join-path $MSBuild 'MSBuild\15.0\Bin\MSBuild.exe'
+	  #TO get this working with pre-release use:
+	  #$MSBuild = join-path $MSBuild 'MSBuild\Current\Bin\MSBuild.exe'
+	  
 	  if (-not (test-path $msbuild)) {
 		throw "MSBuild not found!"
 	  }
