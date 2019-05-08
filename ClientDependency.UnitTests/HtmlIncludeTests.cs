@@ -40,7 +40,7 @@ namespace ClientDependency.UnitTests
 
 <script src='/js/myjs1.js' type='text/javascript'></script>
 <link href='/css/mycss1.css'  type='text/css' media='print,screen' rel='stylesheet'></link>
-    <script src='/js/myjs2.js'  type='text/javascript' async='true' defer='true'></script>
+    <script src='/js/myjs2.js' async='true' defer='true'></script>
 
         <script src='/js/myjs3.js' type='text/javascript' charset='utf8' ></script>
 ";

@@ -111,6 +111,12 @@ namespace ClientDependency.Core.Config
             set { base["fileDependencyExtensions"] = value; }
         }
 
+        [ConfigurationProperty("htmlCompatibility", DefaultValue = "html4")]
+        public string HtmlCompatibility {
+            get { return (string)base["htmlCompatibility"]; }
+            set { base["htmlCompatibility"] = value; }
+        }
+
         /// <summary>
         /// Indicates whether CDF should enforce the policy to create only Federal Information Processing Standard (FIPS) certified algorithms.
         /// </summary>
@@ -152,6 +158,8 @@ namespace ClientDependency.Core.Config
                     .Select(x => x.Trim().ToUpper());
             }
         }
-	}
+
+        
+    }
 
 }

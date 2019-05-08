@@ -72,94 +72,81 @@ namespace ClientDependency.UnitTests
         }
 
         [Test]
-        [ExpectedException(typeof(FormatException))]
         public void PathBasedUrlFormat_Test_EndsWith()
         {
-            PathBasedUrlFormatter.Validate("{dependencyId}.{version}.{type}a");
+            Assert.Throws<FormatException>(() => PathBasedUrlFormatter.Validate("{dependencyId}.{version}.{type}a"));
         }
 
         [Test]
-        [ExpectedException(typeof(FormatException))]
         public void PathBasedUrlFormat_Test_StartsWith()
         {
-            PathBasedUrlFormatter.Validate("a{dependencyId}.{version}.{type}");
+            Assert.Throws<FormatException>(() => PathBasedUrlFormatter.Validate("a{dependencyId}.{version}.{type}"));
         }
 
         [Test]
-        [ExpectedException(typeof(FormatException))]
         public void PathBasedUrlFormat_Test_Invalid_Delimiter1()
         {
-            PathBasedUrlFormatter.Validate("{dependencyId}}{version}.{type}");
+            Assert.Throws<FormatException>(() => PathBasedUrlFormatter.Validate("{dependencyId}}{version}.{type}"));
         }
 
         [Test]
-        [ExpectedException(typeof(FormatException))]
         public void PathBasedUrlFormat_Test_Invalid_Delimiter2()
         {
-            PathBasedUrlFormatter.Validate("{dependencyId}{{version}.{type}");
+            Assert.Throws<FormatException>(() => PathBasedUrlFormatter.Validate("{dependencyId}{{version}.{type}"));
         }
 
         [Test]
-        [ExpectedException(typeof(FormatException))]
         public void PathBasedUrlFormat_Test_Invalid_Delimiter3()
         {
-            PathBasedUrlFormatter.Validate("{dependencyId}.{version}}{type}");
+            Assert.Throws<FormatException>(() => PathBasedUrlFormatter.Validate("{dependencyId}.{version}}{type}"));
         }
 
         [Test]
-        [ExpectedException(typeof(FormatException))]
         public void PathBasedUrlFormat_Test_Invalid_Delimiter4()
         {
-            PathBasedUrlFormatter.Validate("{dependencyId}.{version}{{type}");
+            Assert.Throws<FormatException>(() => PathBasedUrlFormatter.Validate("{dependencyId}.{version}{{type}"));
         }
 
         [Test]
-        [ExpectedException(typeof(FormatException))]
         public void PathBasedUrlFormat_Test_Null_Or_Empty()
         {
-            PathBasedUrlFormatter.Validate("");
+            Assert.Throws<FormatException>(() => PathBasedUrlFormatter.Validate(""));
         }
 
         [Test]
-        [ExpectedException(typeof(FormatException))]
         public void PathBasedUrlFormat_Test_Missing_DependencyId_Token()
         {
-            PathBasedUrlFormatter.Validate("{version}.{type}");
+            Assert.Throws<FormatException>(() => PathBasedUrlFormatter.Validate("{version}.{type}"));
         }
 
         [Test]
-        [ExpectedException(typeof(FormatException))]
         public void PathBasedUrlFormat_Test_Missing_Version_Token()
         {
-            PathBasedUrlFormatter.Validate("{dependencyId}.{type}");
+            Assert.Throws<FormatException>(() => PathBasedUrlFormatter.Validate("{dependencyId}.{type}"));
         }
 
         [Test]
-        [ExpectedException(typeof(FormatException))]
         public void PathBasedUrlFormat_Test_Missing_Type_Token()
         {
-            PathBasedUrlFormatter.Validate("{dependencyId}.{version}");
+            Assert.Throws<FormatException>(() => PathBasedUrlFormatter.Validate("{dependencyId}.{version}"));
         }
 
         [Test]
-        [ExpectedException(typeof(FormatException))]
         public void PathBasedUrlFormat_Test_Missing_DependencyId_Delimiter()
         {
-            PathBasedUrlFormatter.Validate("{dependencyId}{version}.{type}");
+            Assert.Throws<FormatException>(() => PathBasedUrlFormatter.Validate("{dependencyId}{version}.{type}"));
         }
 
         [Test]
-        [ExpectedException(typeof(FormatException))]
         public void PathBasedUrlFormat_Test_Missing_Version_Delimiter()
         {
-            PathBasedUrlFormatter.Validate("{dependencyId}.{version}{type}");
+            Assert.Throws<FormatException>(() => PathBasedUrlFormatter.Validate("{dependencyId}.{version}{type}"));
         }
 
         [Test]
-        [ExpectedException(typeof(FormatException))]
         public void PathBasedUrlFormat_Test_Token_Ordering()
         {
-            PathBasedUrlFormatter.Validate("{version}.{dependencyId}.{type}");
+            Assert.Throws<FormatException>(() => PathBasedUrlFormatter.Validate("{version}.{dependencyId}.{type}"));
         }
 
     }

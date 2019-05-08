@@ -66,7 +66,7 @@ namespace ClientDependency.Core.Controls
             {
                 tag = "script";
                 sourceAttribute = "src";
-                mime = "text/javascript";
+                mime = null;
             }
 
             var tagPattern = string.Format(TagPattern, tag);
@@ -92,7 +92,7 @@ namespace ClientDependency.Core.Controls
                     return x.Groups[1].Value == sourceAttribute;
                 });
 
-                if (type == null || href == null || type.Groups[2].Value != mime) continue;
+                if (href == null || (type == null && mime != null) || (type != null && mime != null && type.Groups[2].Value != mime)) continue;
 
                 var attributes = allAttributes.Where(x =>
                 {

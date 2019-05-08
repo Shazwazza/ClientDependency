@@ -7,7 +7,7 @@
     <CD:HtmlInclude runat="server">
       <link rel="stylesheet" type="text/css" href="/css/content.css" />
       <link rel="stylesheet" type="text/css" href="relative.css" />
-      <script src='/js/htmlincludetest1.js' type='text/javascript'></script>
+      <script src='/js/htmlincludetest1.js'></script>
       <script type="text/javascript" src="/js/htmlincludetest2.js"></script>
     </CD:HtmlInclude>
 	<div class="mainContent">

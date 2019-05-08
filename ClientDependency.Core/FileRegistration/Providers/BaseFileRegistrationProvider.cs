@@ -424,7 +424,7 @@ namespace ClientDependency.Core.FileRegistration.Providers
             switch(file.DependencyType)
             {
                 case ClientDependencyType.Javascript:
-                    if (!attributes.ContainsKey("type") && ConfigurationManager.AppSettings["ClientDependencyHTML4"] == "true")
+                    if (!attributes.ContainsKey("type") && ClientDependencySettings.Instance.HtmlCompatibility == "html4")
                         attributes.Add("type", "text/javascript");
                     if (attributes.ContainsKey("src"))
                         attributes.Remove("src");

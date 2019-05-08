@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web;
@@ -40,7 +41,7 @@ namespace ClientDependency.UnitTests
         {
             public override string MapPath(string path)
             {
-                return path;
+                return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path.Replace("/", "\\").TrimStart(new[] { '~', '\\' }));
             }
         }
 
