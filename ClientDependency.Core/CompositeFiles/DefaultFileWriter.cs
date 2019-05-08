@@ -17,11 +17,7 @@ namespace ClientDependency.Core.CompositeFiles
         {
             try
             {
-                //if it is a file based dependency then read it
-                using (var fileStream = fi.OpenRead())
-                {
-                    WriteContentToStream(provider, sw, fileStream, type, http, origUrl);
-                }
+                WriteContentToStream(provider, sw, fi, type, http, origUrl);
                 return true;
             }
             catch (Exception ex)
@@ -68,16 +64,21 @@ namespace ClientDependency.Core.CompositeFiles
             }
         }
 
-        /// <summary>
-        /// Writes the input stream to the output stream and ensures the contents are minified if necessary
-        /// </summary>
-        /// <param name="provider"></param>
-        /// <param name="sw"></param>
-        /// <param name="stream"></param>
-        /// <param name="type"></param>
-        /// <param name="context"></param>
-        /// <param name="originalUrl">The original Url that the content is related to</param>
         public static void WriteContentToStream(BaseCompositeFileProcessingProvider provider, StreamWriter sw, Stream stream, ClientDependencyType type, HttpContextBase context, string originalUrl)
+        {
+            WriteContentToStream(provider, sw, null, stream, type, context, originalUrl);
+        }
+
+        public static void WriteContentToStream(BaseCompositeFileProcessingProvider provider, StreamWriter sw, FileInfo inputFile, ClientDependencyType type, HttpContextBase context, string originalUrl)
+        {
+            using (var fileStream = inputFile.OpenRead())
+            {
+                WriteContentToStream(provider, sw, inputFile, fileStream, type, context, originalUrl);
+            }
+        }
+
+        private static void WriteContentToStream(BaseCompositeFileProcessingProvider provider, StreamWriter sw, FileInfo inputFile, Stream stream, 
+            ClientDependencyType type, HttpContextBase context, string originalUrl)
         {
             if (type == ClientDependencyType.Css)
             {
@@ -96,8 +97,8 @@ namespace ClientDependency.Core.CompositeFiles
                     var absolute = uri.ToAbsolutePath(importPath);
                     provider.WritePathToStream(ClientDependencyType.Css, absolute, context, sw);
                 }
-                
-                var minified = provider.MinifyFile(stream, type);
+
+                var minified = GetMinifiedOutput(provider, type, inputFile, stream);
 
                 //ensure the Urls in the css are changed to absolute
                 var parsedUrls = CssHelper.ReplaceUrlsWithAbsolutePaths(minified, originalUrl, context);
@@ -107,8 +108,24 @@ namespace ClientDependency.Core.CompositeFiles
             }
             else
             {
-                sw.WriteLine(provider.MinifyFile(stream, type));
+                sw.WriteLine(GetMinifiedOutput(provider, type, inputFile, stream));
             }
         }
+
+        private static string GetMinifiedOutput(BaseCompositeFileProcessingProvider provider, ClientDependencyType type, FileInfo inputFile, Stream inputStream)
+        {
+            return ShouldMinify(inputFile)
+                ? provider.MinifyFile(inputStream, type)
+                : BaseCompositeFileProcessingProvider.StreamToString(inputStream);
+        }
+
+        private static bool ShouldMinify(FileInfo inputFile)
+        {
+            return inputFile != null && !inputFile.Name.EndsWithOneOf(MinifiedExtensions);
+               
+        }
+
+        //TODO: Leave hard coded?
+        private static readonly string[] MinifiedExtensions = new[] { ".min.js", ".pack.js", ".min.css", ".pack.css" };
     }
 }

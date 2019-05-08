@@ -620,6 +620,18 @@ namespace ClientDependency.Core.CompositeFiles.Providers
             }
         }
 
+        internal static string StreamToString(Stream stream)
+        {
+            if (!stream.CanRead)
+                throw new InvalidOperationException("Cannot read input stream");
+
+            if (stream.CanSeek)
+                stream.Position = 0;
+
+            var reader = new StreamReader(stream);
+            return reader.ReadToEnd();
+        }
+
         /// <summary>
         /// Minifies the file
         /// </summary>
@@ -628,26 +640,14 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         /// <returns></returns>
         public virtual string MinifyFile(Stream fileStream, ClientDependencyType type)
         {
-            Func<Stream, string> streamToString = stream =>
-            {
-                if (!stream.CanRead)
-                    throw new InvalidOperationException("Cannot read input stream");
-
-                if (stream.CanSeek)
-                    stream.Position = 0;
-
-                var reader = new StreamReader(stream);
-                return reader.ReadToEnd();
-            };
-
             switch (type)
             {
                 case ClientDependencyType.Css:
-                    return EnableCssMinify ? CssHelper.MinifyCss(fileStream) : streamToString(fileStream);
+                    return EnableCssMinify ? CssHelper.MinifyCss(fileStream) : StreamToString(fileStream);
                 case ClientDependencyType.Javascript:
-                    return EnableJsMinify ? JSMin.CompressJS(fileStream) : streamToString(fileStream);
+                    return EnableJsMinify ? JSMin.CompressJS(fileStream) : StreamToString(fileStream);
                 default:
-                    return streamToString(fileStream);
+                    return StreamToString(fileStream);
             }
         }
 
