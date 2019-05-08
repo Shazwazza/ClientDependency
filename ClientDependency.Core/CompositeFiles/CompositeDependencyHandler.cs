@@ -120,7 +120,7 @@ namespace ClientDependency.Core.CompositeFiles
             // webforms this seems to be the only way to to this.
             using (var page = new OutputCachedPage(new OutputCacheParameters
             {
-                Duration = Convert.ToInt32(TimeSpan.FromDays(10).TotalSeconds),
+                Duration = Convert.ToInt32(TimeSpan.FromDays(ClientDependencySettings.Instance.OutputCacheDays).TotalSeconds),
                 Enabled = true,
                 VaryByParam = "t;s;cdv",
                 VaryByContentEncoding = "gzip;deflate",
@@ -330,8 +330,8 @@ namespace ClientDependency.Core.CompositeFiles
             context.SetClientCachingResponse(
                 //the e-tag to use
                 (fileset + compressionType.ToString()).GenerateHash(),
-                //10 days
-                10,
+                //browser cache
+                ClientDependencySettings.Instance.OutputCacheDays,
                 //vary-by params
                 new[] { "t", "s", "cdv" });
 

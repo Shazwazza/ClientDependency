@@ -47,6 +47,16 @@ namespace ClientDependency.Core.Config
         }
 
         /// <summary>
+        /// How many days to tell the browser to cache the output files
+        /// </summary>
+        [ConfigurationProperty("outputCacheDays", DefaultValue = 10)]
+        public int OutputCacheDays
+        {
+            get { return (int)base["outputCacheDays"]; }
+            set { base["outputCacheDays"] = value; }
+        }
+
+        /// <summary>
         /// The default File processing provider
         /// </summary>
         [StringValidator(MinLength = 1)]
