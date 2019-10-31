@@ -131,7 +131,6 @@ namespace ClientDependency.Core.Mvc
 			return html;
 		}
 
-
         public static HtmlHelper RequiresJs(this HtmlHelper html, string filePath, object htmlAttributes)
         {
             html.ViewContext.GetLoader().RegisterDependency(filePath, ClientDependencyType.Javascript, htmlAttributes);
@@ -271,7 +270,27 @@ namespace ClientDependency.Core.Mvc
                     ClientDependencyType.Javascript, rendererName, Enumerable.Empty<IClientDependencyPath>()));
         } 
         #endregion
-        
+
+        #region RenderJsBundleHere Extensions
+
+        public static IHtmlString RenderJsBundleHere(this HtmlHelper html, string bundleName) 
+        {
+            html.RequiresJsBundle(bundleName);
+            return html.RenderJsHere(bundleName);
+        }
+
+        #endregion
+
+        #region RenderCssBundleHere Extensions
+
+        public static IHtmlString RenderCssBundleHere(this HtmlHelper html, string bundleName)
+        {
+            html.RequiresCssBundle(bundleName);
+            return html.RenderCssHere(bundleName);
+        }
+
+        #endregion
+
         #region RenderCssHere Extensions
         public static IHtmlString RenderCssHere(this HtmlHelper html)
         {
