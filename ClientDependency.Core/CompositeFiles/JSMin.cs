@@ -164,7 +164,7 @@ namespace ClientDependency.Core.CompositeFiles
                     default:
                         switch (_theB)
                         {
-
+                    
                             case ' ':
                                 Action(IsAlphanum(_theA) ? 1 : 3);
                                 break;
@@ -316,7 +316,7 @@ namespace ClientDependency.Core.CompositeFiles
             //write the start quote
             Put(_theA);
             _theA = Get(replaceCr: !allowLineFeed); //don't replace CR here, if we need to deal with that
-
+            
             for (;;)
             {
                 //If the A matches B it means the string literal is done
@@ -590,6 +590,26 @@ namespace ClientDependency.Core.CompositeFiles
                 }
             }
 
+            //ECMA javascript standard comment format <!--singleLinecommentChars--> 
+            else if (c=='<')
+            {
+                if (Peek()=='!')
+                {
+                    for(;;)
+                    {
+                        c = Get();
+                        if(c=='-'){
+                            if(Peek()=='>')
+                            {
+                                Get();
+                                break;
+                            }
+                        }
+                    }
+                    c = Get();
+                }
+            }
+
             _theY = _theX;
             _theX = c;
             return c;
@@ -615,6 +635,8 @@ namespace ClientDependency.Core.CompositeFiles
         {
             int c = _theLookahead;
             _theLookahead = Eof;
+            //c==Eof means Get() without Peek()
+            //if c!=Eof means the next char already in Peek(), no need to read again
             if (c == Eof)
             {
                 c = _sr.Read();
