@@ -14,7 +14,7 @@ param (
 
 $PSScriptFilePath = (Get-Item $MyInvocation.MyCommand.Path).FullName
 $RepoRoot = (get-item $PSScriptFilePath).Directory.FullName;
-$SolutionRoot = Split-Path -Path $PSScriptFilePath -Parent
+$SolutionRoot = Join-Path -Path $RepoRoot -ChildPath "src";
 
 # Make sure we don't have a release folder for this version already
 $BuildFolder = Join-Path -Path $RepoRoot -ChildPath "build";
