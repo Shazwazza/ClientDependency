@@ -2,6 +2,9 @@
 
 ![ClientDependency Framework](ClientDependencyLogo.png?raw=true)
 
+---
+_❤️ If you use and like CDF please consider [becoming a GitHub Sponsor](https://github.com/sponsors/Shazwazza/) ❤️_
+
 ## What is *ClientDependency Framework (CDF)* ?
 
 CDF is a framework for managing CSS & JavaScript dependencies and optimizations for your web application. It allows for each individual component in your web application to declare what CSS and JavaScript files they require instead of relying on a single master page to include all dependencies for all modules. It also manages runtime optimizations: minification, compression, caching, and so on....
