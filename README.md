@@ -1,6 +1,6 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/qx991ywaat8r8a2r?svg=true)](https://ci.appveyor.com/project/Shandem/clientdependency)
 
-![ClientDependency Framework](ClientDependencyLogo.png?raw=true)
+![ClientDependency Framework](assets/ClientDependencyLogo.png?raw=true)
 
 ---
 _❤️ If you use and like CDF please consider [becoming a GitHub Sponsor](https://github.com/sponsors/Shazwazza/) ❤️_
