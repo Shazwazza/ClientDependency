@@ -209,19 +209,32 @@ namespace ClientDependency.Core.CompositeFiles.Providers
                         //Before we try to load it by URI, we want to check if the URI is a local file request.
                         //We can try to detect if it is and try to load it from the file system.
                         //If the file isn't local and doesn't exist then we'll continue trying to load it via the URI.
+                        
                         //NOTE: At this stage we've already validated that the file type is based on the file types registered with CDF.
-                        if (Uri.TryCreate(path, UriKind.RelativeOrAbsolute, out Uri uri)
-                            && uri.IsLocalUri(context)
-                            //extract the path/query of the request and ensure it starts with the virtual path marker (~/) so that the file
-                            //can only be looked up local to this website.
-                            && PathHelper.TryGetFileInfo(uri.PathAndQuery.EnsureStartsWith("/").EnsureStartsWith("~"), context, out var fi))
+
+                        if (Uri.TryCreate(path, UriKind.RelativeOrAbsolute, out Uri uri))
                         {
-                            def = WriteFileToStream(sw, fi, type, path, context);
-                        }
-                        else
-                        {
-                            //external request to a file based dependency
-                            def = WriteFileToStream(sw, path, type, context);
+                            if (uri.IsLocalUri(context))
+                            {
+                                //extract the path of the request and ensure it starts with the virtual path marker (~/) so that the file
+                                //can only be looked up local to this website.
+                                var absPath = uri.AbsolutePath.EnsureStartsWith("/").EnsureStartsWith("~");
+
+                                if (PathHelper.TryGetFileInfo(absPath, context, out var fi))
+                                {
+                                    //Re-validate the extension since URIs and file names can parse differently
+                                    extension = fi.Extension;
+                                    if (fileBasedExtensions.Contains(extension, StringComparer.InvariantCultureIgnoreCase))
+                                    {
+                                        def = WriteFileToStream(sw, fi, type, path, context);
+                                    }
+                                }                               
+                            }
+                            else
+                            {
+                                //external request to a file based dependency
+                                def = WriteFileToStream(sw, path, type, context);
+                            }
                         }
                     }
                 }
@@ -274,6 +287,13 @@ namespace ClientDependency.Core.CompositeFiles.Providers
         /// <param name="http"></param>
         protected virtual CompositeFileDefinition WriteFileToStream(StreamWriter sw, FileInfo fi, ClientDependencyType type, string origUrl, HttpContextBase http)
         {
+            if (fi is null) throw new ArgumentNullException(nameof(fi));
+
+            if (!PathHelper.TryGetFileExtension(origUrl, out var ext1))
+                throw new InvalidOperationException($"Could not get extension from file name {origUrl}");
+            if (!fi.Extension.Equals(ext1, StringComparison.InvariantCultureIgnoreCase))
+                throw new InvalidOperationException("The file extensions for the resolved file and the original URL do not match");
+
             //get a writer for the file, first check if there's a specific file writer
             //then check for an extension writer.
             var writer = FileWriters.GetWriterForFile(origUrl);

@@ -50,13 +50,15 @@ namespace ClientDependency.Core
                 //otherwise change it to an absolute path and try to request it.
                 if (!uri.IsAbsoluteUri)
                 {
+                    var domainPathQuery = uri.GetLeftPart(UriPartial.Query);
+
                     //if this is an ASPX page, we should execute it instead of http getting it.
-                    if (uri.ToString().EndsWith(".aspx", StringComparison.InvariantCultureIgnoreCase))
+                    if (domainPathQuery.EndsWith(".aspx", StringComparison.InvariantCultureIgnoreCase))
                     {
                         var sw = new StringWriter();
                         try
                         {
-                            http.Server.Execute(url, sw);
+                            http.Server.Execute(domainPathQuery, sw);
                             requestContents = sw.ToString();
                             sw.Close();
                             resultUri = uri;
@@ -72,7 +74,7 @@ namespace ClientDependency.Core
                     }
 
                     //if this is a call for a web resource, we should http get it
-                    if (url.StartsWith(http.Request.ApplicationPath.TrimEnd('/') + "/webresource.axd", StringComparison.InvariantCultureIgnoreCase))
+                    if (domainPathQuery.StartsWith(http.Request.ApplicationPath.TrimEnd('/') + "/webresource.axd", StringComparison.InvariantCultureIgnoreCase))
                     {
                         bundleExternalUri = true;
                     }
