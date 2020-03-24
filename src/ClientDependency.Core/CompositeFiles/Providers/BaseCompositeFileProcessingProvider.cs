@@ -182,7 +182,8 @@ namespace ClientDependency.Core.CompositeFiles.Providers
 
             //all config based extensions and all extensions registered by file writers
             var fileBasedExtensions = ClientDependencySettings.Instance.FileBasedDependencyExtensionList
-                                                              .Union(FileWriters.GetRegisteredExtensions());
+                                                              .Union(FileWriters.GetRegisteredExtensions())
+                                                              .ToList();
 
             try
             {
