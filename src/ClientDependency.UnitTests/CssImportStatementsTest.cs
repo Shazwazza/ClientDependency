@@ -74,7 +74,7 @@ src:local('Open Sans'),
         public void Can_Parse_Import_Statements()
         {
             var css = @"@import url('/css/typography.css');
-@import url('/css/layout.css');
+@import url('/css/layout.css') ;
 @import url('http://mysite/css/color.css');
 @import url(/css/blah.css);
 
