@@ -1,4 +1,4 @@
-version: 1.1.1
+version: 1.9.10
 skip_non_tags: true
 image: Visual Studio 2019
 build_script:

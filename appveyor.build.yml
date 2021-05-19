@@ -1,4 +1,4 @@
-version: 1.9.8.{build}
+version: 1.9.10.{build}
 skip_tags: true
 image: Visual Studio 2019
 build_script:
