@@ -13,7 +13,7 @@ namespace ClientDependency.Core.CompositeFiles
 	public class CompositeFileMap
 	{
 
-		internal CompositeFileMap(string key, string compressionType, string file, IEnumerable<string> filePaths, int version)
+		public CompositeFileMap(string key, string compressionType, string file, IEnumerable<string> filePaths, int version)
 		{
             DependentFiles = filePaths;
 			FileKey = key;
