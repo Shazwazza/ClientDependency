@@ -89,8 +89,10 @@ namespace ClientDependency.Core.Config
                         //double check
                         if (_settings == null)
                         {
-                            _settings = new ClientDependencySettings();
-                            _loadProviders();
+                            var tmpSettings = new ClientDependencySettings();
+                            tmpSettings.LoadProviders(new HttpContextWrapper(HttpContext.Current));
+
+                            _settings = tmpSettings;
                         }
                     }
                 }
