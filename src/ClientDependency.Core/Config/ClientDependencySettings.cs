@@ -92,11 +92,7 @@ namespace ClientDependency.Core.Config
                             var tmpSettings = new ClientDependencySettings();
                             tmpSettings.LoadProviders(new HttpContextWrapper(HttpContext.Current));
 
-                            System.Threading.Thread.MemoryBarrier();
-
                             _settings = tmpSettings;
-
-                            //_loadProviders();
                         }
                     }
                 }
